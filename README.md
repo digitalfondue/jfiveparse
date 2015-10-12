@@ -8,6 +8,31 @@ jfiveparse pass all the non scripted tests for the tokenizer and tree constructi
 
 It provide both fragment and full document parsing. It can parse from String or Reader.
 
+## Why?
+
+As far as I know, there is no pure java html5 parser that currently pass the html5-lib test suite (well, the more relevant tests :D).
+
+Additionally, I wanted a library with a reduced footprint. Currently the jar weight around 130kb.
+
+Performance should be competitive with other java parsers.
+
+
+## License
+
+jfiveparse is licensed under the Apache License Version 2.0.
+
+## Download
+
+maven:
+
+```xml
+<dependency>
+    <groupId>ch.digitalfondue.jfiveparse</groupId>
+    <artifactId>jfiveparse</artifactId>
+    <version>0.1.1</version>
+</dependency>
+```
+
 ## Use:
 
 ```java
@@ -50,8 +75,13 @@ It will print:
 
 ## Notes:
 
+### template element handling
+
+The template element is a "normal" element, so the child nodes are _not_
+placed inside a documentFragment. This will be fixed.
+
 ### Entities
-The &ntities; are by default (and by specs) parsed and interpreted. 
+The &ntities; are by default (and by specification) parsed and interpreted. 
 This behavior can be disabled by:
 
   - passing the enum "Option.DONT_TRANSFORM_ENTITIES" to the Parser
