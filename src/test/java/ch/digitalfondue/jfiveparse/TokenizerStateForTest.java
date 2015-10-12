@@ -1,0 +1,93 @@
+/**
+ * Copyright (C) 2015 digitalfondue (info@digitalfondue.ch)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ch.digitalfondue.jfiveparse;
+
+/* NOTE: PRESERVE THE SAME ORDER ! as TokenizerState !!*/
+public enum TokenizerStateForTest {
+        //
+        DATA_STATE, //
+        ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE, //
+        ATTRIBUTE_NAME_STATE, //
+        TAG_NAME_STATE, //
+        RAWTEXT_STATE, //
+        SCRIPT_DATA_STATE, //
+        TAG_OPEN_STATE, //
+        BEFORE_ATTRIBUTE_NAME_STATE, //
+        BEFORE_ATTRIBUTE_VALUE_STATE, //
+        AFTER_ATTRIBUTE_VALUE_QUOTED_STATE, //
+        END_TAG_OPEN_STATE, //
+        //
+
+        //
+        CHARACTER_REFERENCE_IN_DATA_STATE, //
+        RCDATA_STATE, //
+        CHARACTER_REFERENCE_IN_RCDATA_STATE, //
+
+        PLAINTEXT_STATE, //
+        RCDATA_LESS_THAN_SIGN_STATE, //
+        RCDATA_END_TAG_OPEN_STATE, //
+        RCDATA_END_TAG_NAME_STATE, //
+        RAWTEXT_LESS_THAN_SIGN_STATE, //
+        RAWTEXT_END_TAG_OPEN_STATE, //
+        RAWTEXT_END_TAG_NAME_STATE, //
+        SCRIPT_DATA_LESS_THAN_SIGN_STATE, //
+        SCRIPT_DATA_END_TAG_OPEN_STATE, //
+        SCRIPT_DATA_END_TAG_NAME_STATE, //
+        SCRIPT_DATA_ESCAPE_START_STATE, //
+        SCRIPT_DATA_ESCAPE_START_DASH_STATE, //
+        SCRIPT_DATA_ESCAPED_STATE, //
+        SCRIPT_DATA_ESCAPED_DASH_STATE, //
+        SCRIPT_DATA_ESCAPED_DASH_DASH_STATE, //
+        SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE, //
+        SCRIPT_DATA_ESCAPED_END_TAG_OPEN_STATE, //
+        SCRIPT_DATA_ESCAPED_END_TAG_NAME_STATE, //
+        SCRIPT_DATA_DOUBLE_ESCAPE_START_STATE, //
+        SCRIPT_DATA_DOUBLE_ESCAPED_STATE, //
+        SCRIPT_DATA_DOUBLE_ESCAPED_DASH_STATE, //
+        SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_STATE, //
+        SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE, //
+        SCRIPT_DATA_DOUBLE_ESCAPE_END_STATE, //
+        AFTER_ATTRIBUTE_NAME_STATE, //
+        ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE, //
+        ATTRIBUTE_VALUE_UNQUOTED_STATE, //
+        CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE, //
+        SELF_CLOSING_START_TAG_STATE, //
+        BOGUS_COMMENT_STATE, //
+        MARKUP_DECLARATION_OPEN_STATE, //
+        COMMENT_START_STATE, //
+        COMMENT_START_DASH_STATE, //
+        COMMENT_STATE, //
+        COMMENT_END_DASH_STATE, //
+        COMMENT_END_STATE, //
+        COMMENT_END_BANG_STATE, //
+        DOCTYPE_STATE, //
+        BEFORE_DOCTYPE_NAME_STATE, //
+        DOCTYPE_NAME_STATE, //
+        AFTER_DOCTYPE_NAME_STATE, //
+        AFTER_DOCTYPE_PUBLIC_KEYWORD_STATE, //
+        BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_STATE, //
+        DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_STATE, //
+        DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_STATE, //
+        AFTER_DOCTYPE_PUBLIC_IDENTIFIER_STATE, //
+        BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_STATE, //
+        AFTER_DOCTYPE_SYSTEM_KEYWORD_STATE, //
+        BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_STATE, //
+        DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE, //
+        DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE, //
+        AFTER_DOCTYPE_SYSTEM_IDENTIFIER_STATE, //
+        BOGUS_DOCTYPE_STATE, //
+        CDATA_SECTION_STATE;
+}
