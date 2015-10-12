@@ -1,5 +1,8 @@
 # jfiveparse: a java html5 parser
 
+[![Build Status](https://travis-ci.org/digitalfondue/jfiveparse.png?branch=master)](https://travis-ci.org/digitalfondue/jfiveparse)
+[![Coverage Status](https://coveralls.io/repos/digitalfondue/jfiveparse/badge.svg?branch=master)](https://coveralls.io/r/digitalfondue/jfiveparse?branch=master)
+
 
 jfiveparse pass all the non scripted tests for the tokenizer and tree construction from the html5lib-tests suite.
 
