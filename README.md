@@ -12,7 +12,7 @@ It provide both fragment and full document parsing. It can parse from String or 
 
 As far as I know, there is no pure java html5 parser that currently pass the html5-lib test suite (well, the more relevant tests :D).
 
-Additionally, I wanted a library with a reduced footprint. Currently the jar weight around 130kb.
+Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around 130kb. The target is to keep it under 200kb.
 
 Performance should be competitive with other java parsers.
 
@@ -93,6 +93,7 @@ This behavior can be disabled by:
 - keep track of ' " o empty for attribute (TRACK_ATTRIBUTE_VALUE_QUOTING_TYPE)
 - keep track of UpperCase tagname/attribute names with a BitSet (if the overhead is not too much, obviously) (TRACK_CASE_FOR_ATTRIBUTES_AND_TAG)
 - add a typesafe matcher api
+  - expand NodeMatchers: add "AND" rule, expand tagName with NS support, add attribute matcher
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - $0.firstElementChild, $0.lastElementChild

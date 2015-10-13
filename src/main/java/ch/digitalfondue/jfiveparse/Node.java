@@ -180,43 +180,21 @@ public abstract class Node {
             }
         }
     }
-    
+
     public List<Node> getElementsByTagName(final String name) {
         final List<Node> l = new ArrayList<>();
-        traverse(new NodesVisitor() {
-            @Override
-            public void start(Node node) {
-                if (node instanceof Element) {
-                    Element e = (Element) node;
-                    if(e.getNodeName().equals(name)) {
-                        l.add(e);
-                    }
-                }
-            }
-            @Override
-            public void end(Node node) {
-            }
-        });
+        traverse(new NodeMatchers(new NodeMatchers.ElementHasTagName(name), l));
         return l;
     }
 
     public String getTextContent() {
-        final StringBuilder s = new StringBuilder();
-        traverse(new NodesVisitor() {
-
-            @Override
-            public void start(Node node) {
-                if (node instanceof Text) {
-                    s.append(((Text) node).getData());
-                }
-            }
-
-            @Override
-            public void end(Node node) {
-            }
-        });
-
-        return s.toString();
+        List<Node> textNodes = new ArrayList<>();
+        traverse(new NodeMatchers(NodeMatchers.text(), textNodes));
+        StringBuilder sb = new StringBuilder();
+        for (Node n : textNodes) {
+            sb.append(((Text) n).getData());
+        }
+        return sb.toString();
     }
 
     public void traverseWithCurrentNode(NodesVisitor visitor) {
