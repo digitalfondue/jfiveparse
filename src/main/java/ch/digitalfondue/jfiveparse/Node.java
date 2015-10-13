@@ -15,6 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -169,7 +170,7 @@ public abstract class Node {
                     visitor.end(node);
                     node = node.getParentNode();
                 }
-                
+
                 if (node == this) {
                     break;
                 }
@@ -178,6 +179,44 @@ public abstract class Node {
                 node = node.getNextSibling();
             }
         }
+    }
+    
+    public List<Node> getElementsByTagName(final String name) {
+        final List<Node> l = new ArrayList<>();
+        traverse(new NodesVisitor() {
+            @Override
+            public void start(Node node) {
+                if (node instanceof Element) {
+                    Element e = (Element) node;
+                    if(e.getNodeName().equals(name)) {
+                        l.add(e);
+                    }
+                }
+            }
+            @Override
+            public void end(Node node) {
+            }
+        });
+        return l;
+    }
+
+    public String getTextContent() {
+        final StringBuilder s = new StringBuilder();
+        traverse(new NodesVisitor() {
+
+            @Override
+            public void start(Node node) {
+                if (node instanceof Text) {
+                    s.append(((Text) node).getData());
+                }
+            }
+
+            @Override
+            public void end(Node node) {
+            }
+        });
+
+        return s.toString();
     }
 
     public void traverseWithCurrentNode(NodesVisitor visitor) {

@@ -92,15 +92,16 @@ This behavior can be disabled by:
 ## TODO:
 - keep track of ' " o empty for attribute (TRACK_ATTRIBUTE_VALUE_QUOTING_TYPE)
 - keep track of UpperCase tagname/attribute names with a BitSet (if the overhead is not too much, obviously) (TRACK_CASE_FOR_ATTRIBUTES_AND_TAG)
+- add a typesafe matcher api
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - $0.firstElementChild, $0.lastElementChild
   - $0.previousElementSibling, $0.nextElementSibling
-  - textContent
+  - getElementsByTagNameNS
+  - getElementById
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable 
 - check if we can use directly a hashmap for the entities
-- add a typesafe matcher support lib
 - parameters for parser
 - keep track of lines, eventually chars too (this has some issues with multibyte char :D)
 - profile
