@@ -99,7 +99,6 @@ This behavior can be disabled by:
   - $0.firstElementChild, $0.lastElementChild
   - $0.previousElementSibling, $0.nextElementSibling
   - getElementsByTagNameNS
-  - getElementById
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable 
 - check if we can use directly a hashmap for the entities

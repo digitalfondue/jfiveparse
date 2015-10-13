@@ -181,15 +181,21 @@ public abstract class Node {
         }
     }
 
-    public List<Node> getElementsByTagName(final String name) {
-        final List<Node> l = new ArrayList<>();
-        traverse(new NodeMatchers(new NodeMatchers.ElementHasTagName(name), l));
+    public List<Element> getElementsByTagName(String name) {
+        List<Element> l = new ArrayList<>();
+        traverse(new NodeMatchers<>(new NodeMatchers.ElementHasTagName(name), l));
         return l;
     }
 
+    public Element getElementById(String idValue) {
+        List<Element> l = new ArrayList<>();
+        traverse(new NodeMatchers<>(new NodeMatchers.HasAttribute("id", idValue), l));
+        return l.isEmpty() ? null : l.get(0);
+    }
+
     public String getTextContent() {
-        List<Node> textNodes = new ArrayList<>();
-        traverse(new NodeMatchers(NodeMatchers.text(), textNodes));
+        List<Text> textNodes = new ArrayList<>();
+        traverse(new NodeMatchers<>(NodeMatchers.text(), textNodes));
         StringBuilder sb = new StringBuilder();
         for (Node n : textNodes) {
             sb.append(((Text) n).getData());

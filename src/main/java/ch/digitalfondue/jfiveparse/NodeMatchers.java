@@ -17,12 +17,12 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.List;
 
-public class NodeMatchers implements NodesVisitor {
+public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     private final NodeMatcher matcher;
-    private final List<Node> toAdd;
+    private final List<T> toAdd;
 
-    public NodeMatchers(NodeMatcher matcher, List<Node> toAdd) {
+    public NodeMatchers(NodeMatcher matcher, List<T> toAdd) {
         this.matcher = matcher;
         this.toAdd = toAdd;
     }
@@ -59,6 +59,38 @@ public class NodeMatchers implements NodesVisitor {
 
     }
 
+    public static class HasAttribute implements NodeMatcher {
+        private final String name;
+        private final String value;
+
+        public HasAttribute(String name) {
+            this(name, null);
+        }
+
+        public HasAttribute(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        public boolean match(Node node) {
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                return false;
+            }
+
+            Element elem = (Element) node;
+
+            if (!elem.getAttributes().containsKey(name)) {
+                return false;
+            } else if (value == null) {
+                return true;
+            } else {
+                return value.equals(elem.getAttributes().get(name).getValue());
+            }
+        }
+
+    }
+
     public static NodeMatcher element() {
         return new NodeHasType(Node.ELEMENT_NODE);
     }
@@ -67,10 +99,11 @@ public class NodeMatchers implements NodesVisitor {
         return new NodeHasType(Node.TEXT_NODE);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void start(Node node) {
         if (matcher.match(node)) {
-            toAdd.add(node);
+            toAdd.add((T) node);
         }
     }
 
