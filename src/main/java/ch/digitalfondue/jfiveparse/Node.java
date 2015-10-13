@@ -197,8 +197,8 @@ public abstract class Node {
         List<Text> textNodes = new ArrayList<>();
         traverse(new NodeMatchers<>(NodeMatchers.text(), textNodes));
         StringBuilder sb = new StringBuilder();
-        for (Node n : textNodes) {
-            sb.append(((Text) n).getData());
+        for (Text n : textNodes) {
+            sb.append(n.getData());
         }
         return sb.toString();
     }
