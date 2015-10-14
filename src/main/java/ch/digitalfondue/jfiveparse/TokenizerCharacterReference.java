@@ -99,7 +99,7 @@ class TokenizerCharacterReference {
         // parse error.
 
         int tentativelyMatchedLength = tentativelyMatched.length();
-        boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.charAt(tentativelyMatchedLength - 1) == Characters.SEMICOLON;
+        boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.buff[tentativelyMatchedLength - 1] == Characters.SEMICOLON;
         if (emitParseError) {
             for (int i = 0; emitParseError && i < tentativelyMatchedLength - 1; i++) {
                 emitParseError = emitParseError && Common.isAlphaNumericASCII(chr);

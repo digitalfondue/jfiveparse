@@ -31,28 +31,18 @@ class Entities {
 
     static {
 
-        // number of entities with only one codepoint
-        final int length = 2138;
-
-        // number of entities with 2 codepoints
-        final int length2 = 93;
-
         try {
 
             DataInputStream dais = new DataInputStream(new GZIPInputStream(Entities.class.getResourceAsStream("/ch/digitalfondue/jfiveparse/entities-with-1-2-codepoint")));
 
-            for (int i = 0; i < length; i++) {
-
-                String name = dais.readUTF();
-                int[] codePoints = new int[] { dais.readInt() };
-                ENTITIES.addWord(name, codePoints);
-
+            // number of entities with only one codepoint
+            for (int i = 0; i < 2138; i++) {
+                ENTITIES.addWord(dais.readUTF(), new int[] { dais.readInt() });
             }
 
-            for (int i = 0; i < length2; i++) {
-                String name = dais.readUTF();
-                int[] codePoints = new int[] { dais.readInt(), dais.readInt() };
-                ENTITIES.addWord(name, codePoints);
+            // number of entities with 2 codepoints
+            for (int i = 0; i < 93; i++) {
+                ENTITIES.addWord(dais.readUTF(), new int[] { dais.readInt(), dais.readInt() });
             }
 
             ENTITIES.compact();

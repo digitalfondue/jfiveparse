@@ -21,6 +21,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import ch.digitalfondue.jfiveparse.NodeMatchers.NodeMatcher;
+
 public abstract class Node {
 
     private static final List<Node> EMPTY_LIST = Collections.emptyList();
@@ -123,6 +125,27 @@ public abstract class Node {
         return childs.isEmpty() ? null : childs.get(0);
     }
 
+    public Element getFirstElementChild() {
+        List<Node> childs = getChildNodes();
+        for (Node n : childs) {
+            if (n.getNodeType() == ELEMENT_NODE) {
+                return (Element) n;
+            }
+        }
+        return null;
+    }
+
+    public Element getLastElementChild() {
+        List<Node> childs = getChildNodes();
+        for (int i = childs.size(); i >= 0; i--) {
+            Node n = childs.get(i);
+            if (n.getNodeType() == ELEMENT_NODE) {
+                return (Element) n;
+            }
+        }
+        return null;
+    }
+
     public Node getLastChild() {
         List<Node> childs = getChildNodes();
         return childs.isEmpty() ? null : childs.get(childs.size() - 1);
@@ -180,22 +203,28 @@ public abstract class Node {
             }
         }
     }
-
-    public List<Element> getElementsByTagName(String name) {
-        List<Element> l = new ArrayList<>();
-        traverse(new NodeMatchers<>(new NodeMatchers.ElementHasTagName(name), l));
+    
+    public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher) {
+        List<T> l = new ArrayList<>();
+        traverse(new NodeMatchers<>(matcher, l));
         return l;
     }
 
+    public List<Element> getElementsByTagName(String name) {
+        return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name));
+    }
+    
+    public List<Element> getElementsByTagNameNS(String name, String namespace) {
+        return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name, namespace));
+    }
+
     public Element getElementById(String idValue) {
-        List<Element> l = new ArrayList<>();
-        traverse(new NodeMatchers<>(new NodeMatchers.HasAttribute("id", idValue), l));
+        List<Element> l = getAllNodesMatching(new NodeMatchers.HasAttribute("id", idValue));
         return l.isEmpty() ? null : l.get(0);
     }
 
     public String getTextContent() {
-        List<Text> textNodes = new ArrayList<>();
-        traverse(new NodeMatchers<>(NodeMatchers.text(), textNodes));
+        List<Text> textNodes = getAllNodesMatching(NodeMatchers.text());
         StringBuilder sb = new StringBuilder();
         for (Text n : textNodes) {
             sb.append(n.getData());

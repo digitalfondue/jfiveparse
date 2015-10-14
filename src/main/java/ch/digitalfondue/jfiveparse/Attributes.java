@@ -47,9 +47,7 @@ public class Attributes implements Iterable<Attribute> {
             return false;
         }
 
-        Attributes other = (Attributes) obj;
-
-        return Objects.equals(attributes, other.attributes);
+        return Objects.equals(attributes, ((Attributes) obj).attributes);
     }
 
     public Attributes copy() {

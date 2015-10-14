@@ -41,18 +41,11 @@ class ResizableCharBuilder {
     }
 
     void append(char c) {
-        if (pos < buff.length) {
-            buff[pos] = c;
-            pos++;
-        } else {
+        if (pos >= buff.length) {
             buff = Arrays.copyOf(buff, buff.length * 2 + 2);
-            buff[pos] = c;
-            pos++;
         }
-    }
-
-    char charAt(int idx) {
-        return buff[idx];
+        buff[pos] = c;
+        pos++;
     }
 
     String asString() {

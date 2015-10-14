@@ -47,14 +47,22 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     public static class ElementHasTagName implements NodeMatcher {
         private final String tagName;
+        private final String nameSpace;
 
         public ElementHasTagName(String tagName) {
             this.tagName = tagName;
+            this.nameSpace = null;
+        }
+
+        public ElementHasTagName(String tagName, String namespace) {
+            this.tagName = tagName;
+            this.nameSpace = namespace;
         }
 
         @Override
         public boolean match(Node node) {
-            return node.getNodeType() == Node.ELEMENT_NODE && tagName.equals(((Element) node).getNodeName());
+            return node.getNodeType() == Node.ELEMENT_NODE && tagName.equals(((Element) node).getNodeName())
+                    && (nameSpace == null ? true : nameSpace.equals(((Element) node).getNamespaceURI()));
         }
 
     }

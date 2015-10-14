@@ -135,7 +135,7 @@ class Prefix {
             if (idx < 0 || idx >= childsCompacted.length) {
                 return null;
             } else {
-                return childsCompacted[c - offset];
+                return childsCompacted[idx];
             }
         } else {
             return null;

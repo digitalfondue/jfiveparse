@@ -265,13 +265,11 @@ class Common {
 
     static {
 
-        final String[] SPECIAL_ELEMENTS_HTML = new String[] { "address", "applet", "area", "article", "aside", "base", "basefont", "bgsound", "blockquote", "body", "br", "button",
-                "caption", "center", "col", "colgroup", "dd", "details", "dir", "div", "dl", "dt", "embed", "fieldset", "figcaption", "figure", "footer", "form", "frame",
-                "frameset", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "iframe", "img", "input", "isindex", "li", "link", "listing", "main",
-                "marquee", "menu", "menuitem", "meta", "nav", "noembed", "noframes", "noscript", "object", "ol", "p", "param", "plaintext", "pre", "script", "section", "select",
-                "source", "style", "summary", "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "title", "tr", "track", "ul", "wbr", "xmp" };
-
-        for (String s : SPECIAL_ELEMENTS_HTML) {
+        for (String s : new String[] { "address", "applet", "area", "article", "aside", "base", "basefont", "bgsound", "blockquote", "body", "br", "button", "caption", "center",
+                "col", "colgroup", "dd", "details", "dir", "div", "dl", "dt", "embed", "fieldset", "figcaption", "figure", "footer", "form", "frame", "frameset", "h1", "h2", "h3",
+                "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "iframe", "img", "input", "isindex", "li", "link", "listing", "main", "marquee", "menu", "menuitem",
+                "meta", "nav", "noembed", "noframes", "noscript", "object", "ol", "p", "param", "plaintext", "pre", "script", "section", "select", "source", "style", "summary",
+                "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "title", "tr", "track", "ul", "wbr", "xmp" }) {
             SPECIAL_ELEMENTS_HTML_SET_V2.add(s);
         }
         Arrays.sort(SPECIAL_ELEMENTS_MATHML);
@@ -296,8 +294,7 @@ class Common {
 
     static boolean isInCommonInScope(String tagName, String namespace) {
         if (Node.NAMESPACE_HTML.equals(namespace)) {
-            int length = tagName.length();
-            switch (length) {
+            switch (tagName.length()) {
             case 2:
                 return "td".equals(tagName) || "th".equals(tagName);
             case 4:
@@ -385,7 +382,7 @@ class Common {
 
     static {
 
-        final String[] ELEMENTS = new String[] { "big", //
+        for (String s : new String[] { "big", //
                 "rb",//
                 "math", //
                 "rp", //
@@ -499,9 +496,7 @@ class Common {
                 "track",//
                 "ul",//
                 "wbr",//
-                "xmp" };
-
-        for (String s : ELEMENTS) {
+                "xmp" }) {
             ELEMENTS_NAME_CACHE_V2.put(s, s);
         }
     }

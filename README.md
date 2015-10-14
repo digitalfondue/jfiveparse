@@ -96,12 +96,16 @@ This behavior can be disabled by:
   - expand NodeMatchers: add "AND" rule, expand tagName with NS support, add attribute matcher
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
-  - $0.firstElementChild, $0.lastElementChild
   - $0.previousElementSibling, $0.nextElementSibling
-  - getElementsByTagNameNS
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable 
 - check if we can use directly a hashmap for the entities
+- remove ResizableCharBuilder.toCharArray -> 1 use in the library
+- in TreeConstructorInTemplate the pattern:
+  - treeConstructor.popFromStackTemplatesInsertionMode();
+  - treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
+  - treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
+  - appear quite often -> make a single method
 - parameters for parser
 - keep track of lines, eventually chars too (this has some issues with multibyte char :D)
 - profile
