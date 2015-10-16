@@ -27,16 +27,14 @@ class TokenizerDoctypeStates {
             tokenizer.setState(TokenizerState.BEFORE_DOCTYPE_NAME_STATE);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.createNewDoctypeToken();
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(null, null, null);
             processedInputStream.reconsume(chr);
             break;
         default:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.BEFORE_DOCTYPE_NAME_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.BEFORE_DOCTYPE_NAME_STATE);
             processedInputStream.reconsume(chr);
             break;
         }
@@ -65,8 +63,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(null, null, null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.createNewDoctypeToken();
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(null, null, null);
@@ -104,8 +101,7 @@ class TokenizerDoctypeStates {
             tokenizer.appendDoctypeNameCharacter(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
             processedInputStream.reconsume(chr);
@@ -130,8 +126,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
             processedInputStream.reconsume(chr);
@@ -186,8 +181,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
             processedInputStream.reconsume(chr);
@@ -224,8 +218,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
             processedInputStream.reconsume(chr);
@@ -255,8 +248,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             processedInputStream.reconsume(chr);
@@ -284,8 +276,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             processedInputStream.reconsume(chr);
@@ -320,8 +311,7 @@ class TokenizerDoctypeStates {
             tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             processedInputStream.reconsume(chr);
@@ -356,8 +346,7 @@ class TokenizerDoctypeStates {
             tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             processedInputStream.reconsume(chr);
@@ -396,8 +385,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             processedInputStream.reconsume(chr);
@@ -435,8 +423,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
             processedInputStream.reconsume(chr);
@@ -466,8 +453,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
             processedInputStream.reconsume(chr);
@@ -495,8 +481,7 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
             processedInputStream.reconsume(chr);
@@ -521,15 +506,13 @@ class TokenizerDoctypeStates {
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.setDoctypeForceQuirksFlag(true);
             tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
             processedInputStream.reconsume(chr);
             break;
         default:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.BOGUS_DOCTYPE_STATE);
             break;
         }
     }

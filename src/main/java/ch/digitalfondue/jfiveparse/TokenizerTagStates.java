@@ -48,8 +48,7 @@ class TokenizerTagStates {
     }
 
     private static void handleTagOpenStateAnythingElse(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.emitParseError();
-        tokenizer.setState(TokenizerState.DATA_STATE);
+        tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
         tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
         processedInputStream.reconsume(chr);
     }
@@ -58,8 +57,7 @@ class TokenizerTagStates {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
         case Characters.GREATERTHAN_SIGN:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             break;
         case Characters.EOF:
             handleEndTagOpenStateEOF(tokenizer, processedInputStream, chr);
@@ -84,8 +82,7 @@ class TokenizerTagStates {
     }
 
     private static void handleEndTagOpenStateEOF(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.emitParseError();
-        tokenizer.setState(TokenizerState.DATA_STATE);
+        tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
         tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
         tokenizer.emitCharacter(Characters.SOLIDUS);
         processedInputStream.reconsume(chr);
@@ -112,8 +109,7 @@ class TokenizerTagStates {
             tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -134,13 +130,11 @@ class TokenizerTagStates {
             tokenizer.addCurrentAttributeAndEmitToken();
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
             processedInputStream.reconsume(chr);
             break;
         }

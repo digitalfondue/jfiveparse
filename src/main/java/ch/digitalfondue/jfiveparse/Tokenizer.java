@@ -579,6 +579,11 @@ class Tokenizer {
     void resetTokenHandlerInsertCharacterPreviousTextNode() {
         tokenHandler.setInsertCharacterPreviousTextNode(null);
     }
+    
+    void emitParseErrorAndSetState(int state) {
+        tokenHandler.emitParseError();
+        this.state = state;
+    }
 
     //
 

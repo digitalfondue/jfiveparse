@@ -46,8 +46,7 @@ class TokenizerMarkupDeclarationState {
                 tokenizer.setState(TokenizerState.CDATA_SECTION_STATE);
 
             } else {
-                tokenizer.emitParseError();
-                tokenizer.setState(TokenizerState.BOGUS_COMMENT_STATE);
+                tokenizer.emitParseErrorAndSetState(TokenizerState.BOGUS_COMMENT_STATE);
             }
         }
     }

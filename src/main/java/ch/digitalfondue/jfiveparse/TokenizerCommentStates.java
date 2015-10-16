@@ -29,13 +29,11 @@ class TokenizerCommentStates {
             tokenizer.setState(TokenizerState.COMMENT_STATE);
             break;
         case Characters.GREATERTHAN_SIGN:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.emitComment();
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.emitComment();
             processedInputStream.reconsume(chr);
             break;
@@ -58,13 +56,11 @@ class TokenizerCommentStates {
             tokenizer.setState(TokenizerState.COMMENT_STATE);
             break;
         case Characters.GREATERTHAN_SIGN:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.emitComment();
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.emitComment();
             processedInputStream.reconsume(chr);
             break;
@@ -86,8 +82,7 @@ class TokenizerCommentStates {
             tokenizer.appendCommentCharacter(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.emitComment();
             processedInputStream.reconsume(chr);
             break;
@@ -109,8 +104,7 @@ class TokenizerCommentStates {
             tokenizer.setState(TokenizerState.COMMENT_STATE);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.emitComment();
             processedInputStream.reconsume(chr);
             break;
@@ -135,16 +129,14 @@ class TokenizerCommentStates {
             tokenizer.setState(TokenizerState.COMMENT_STATE);
             break;
         case Characters.EXCLAMATION_MARK:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.COMMENT_END_BANG_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.COMMENT_END_BANG_STATE);
             break;
         case Characters.HYPHEN_MINUS:
             tokenizer.emitParseError();
             tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.emitComment();
             processedInputStream.reconsume(chr);
             break;

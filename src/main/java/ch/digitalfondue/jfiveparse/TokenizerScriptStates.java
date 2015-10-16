@@ -189,13 +189,11 @@ class TokenizerScriptStates {
             tokenizer.emitCharacter(Characters.GREATERTHAN_SIGN);
             break;
         case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
             tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -241,13 +239,11 @@ class TokenizerScriptStates {
             tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE);
             break;
         case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
             tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -392,8 +388,7 @@ class TokenizerScriptStates {
             tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -414,13 +409,11 @@ class TokenizerScriptStates {
             tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
             break;
         case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
             tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -445,13 +438,11 @@ class TokenizerScriptStates {
             tokenizer.emitCharacter(Characters.GREATERTHAN_SIGN);
             break;
         case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
             tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:

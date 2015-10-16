@@ -47,8 +47,7 @@ class TokenizerAttributesState {
             tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -98,8 +97,7 @@ class TokenizerAttributesState {
             tokenizer.appendCurrentAttributeName(chr);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -148,8 +146,7 @@ class TokenizerAttributesState {
             tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -193,8 +190,7 @@ class TokenizerAttributesState {
             tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             break;
         case Characters.GREATERTHAN_SIGN:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             tokenizer.addCurrentAttributeAndEmitToken();
             break;
         case Characters.LESSTHAN_SIGN:
@@ -205,8 +201,7 @@ class TokenizerAttributesState {
             tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -234,8 +229,7 @@ class TokenizerAttributesState {
             tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -263,8 +257,7 @@ class TokenizerAttributesState {
             tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -304,8 +297,7 @@ class TokenizerAttributesState {
             tokenizer.appendCurrentAttributeValue(chr);
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
@@ -348,13 +340,11 @@ class TokenizerAttributesState {
             tokenizer.addCurrentAttributeAndEmitToken();
             break;
         case Characters.EOF:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
-            tokenizer.emitParseError();
-            tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+            tokenizer.emitParseErrorAndSetState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
             processedInputStream.reconsume(chr);
             break;
         }
