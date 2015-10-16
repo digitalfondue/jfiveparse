@@ -68,15 +68,10 @@ class TokenizerRCDataStates {
 
     static void handleRCDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
-
-        if (Common.isUpperCaseASCIILetter(chr)) {
+        boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
+        if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr + 0x0020);
-            tokenizer.appendToTemporaryBuffer(chr);
-            tokenizer.setState(TokenizerState.RCDATA_END_TAG_NAME_STATE);
-        } else if (Common.isLowerCaseASCIILetter(chr)) {
-            tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr);
+            tokenizer.appendCurrentTagToken(chr + (isUpperCase ? 0x0020 : 0));
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.RCDATA_END_TAG_NAME_STATE);
         } else {
@@ -117,11 +112,9 @@ class TokenizerRCDataStates {
             }
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr + 0x0020);
-                tokenizer.appendToTemporaryBuffer(chr);
-            } else if (Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr);
+            boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
+            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendCurrentTagToken(chr + (isUpperCase ? 0x0020 : 0));
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
                 anythingElseRCDataEndTagNameState(tokenizer, processedInputStream, chr);

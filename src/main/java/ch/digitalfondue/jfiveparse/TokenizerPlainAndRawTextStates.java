@@ -15,7 +15,6 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-
 class TokenizerPlainAndRawTextStates {
 
     // ----
@@ -101,15 +100,10 @@ class TokenizerPlainAndRawTextStates {
 
     static void handleRawTextEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
-
-        if (Common.isUpperCaseASCIILetter(chr)) {
+        boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
+        if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr + 0x0020);
-            tokenizer.appendToTemporaryBuffer(chr);
-            tokenizer.setState(TokenizerState.RAWTEXT_END_TAG_NAME_STATE);
-        } else if (Common.isLowerCaseASCIILetter(chr)) {
-            tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr);
+            tokenizer.appendCurrentTagToken(chr + (isUpperCase ? 0x0020 : 0));
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.RAWTEXT_END_TAG_NAME_STATE);
         } else {
@@ -150,11 +144,9 @@ class TokenizerPlainAndRawTextStates {
             }
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr + 0x0020);
-                tokenizer.appendToTemporaryBuffer(chr);
-            } else if (Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr);
+            boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
+            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendCurrentTagToken(chr + (isUpperCase ? 0x0020 : 0));
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
                 anythingElseRawTextEndTagNameState(tokenizer, processedInputStream, chr);

@@ -34,17 +34,15 @@ class TokenizerAttributesState {
             tokenizer.addCurrentAttributeAndEmitToken();
             break;
         case Characters.NULL:
-            tokenizer.emitParseError();
+            tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
             tokenizer.startNewAttributeAndAppendToName(Characters.REPLACEMENT_CHARACTER);
-            tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
             break;
         case Characters.QUOTATION_MARK:
         case Characters.APOSTROPHE:
         case Characters.LESSTHAN_SIGN:
         case Characters.EQUALS_SIGN:
-            tokenizer.emitParseError();
+            tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
             tokenizer.startNewAttributeAndAppendToName(chr);
-            tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
             break;
         case Characters.EOF:
             tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
@@ -131,19 +129,17 @@ class TokenizerAttributesState {
             //
             break;
         case Characters.NULL:
-            tokenizer.emitParseError();
+            tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
             tokenizer.addCurrentAttributeInAttributes();
             tokenizer.startNewAttributeAndAppendToName(Characters.REPLACEMENT_CHARACTER);
-            tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
             break;
 
         case Characters.QUOTATION_MARK:
         case Characters.APOSTROPHE:
         case Characters.LESSTHAN_SIGN:
-            tokenizer.emitParseError();
+            tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
             tokenizer.addCurrentAttributeInAttributes();
             tokenizer.startNewAttributeAndAppendToName(chr);
-            tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
             break;
         case Characters.EOF:
             tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
@@ -185,9 +181,8 @@ class TokenizerAttributesState {
             tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
             break;
         case Characters.NULL:
-            tokenizer.emitParseError();
+            tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
-            tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             break;
         case Characters.GREATERTHAN_SIGN:
             tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
@@ -196,9 +191,8 @@ class TokenizerAttributesState {
         case Characters.LESSTHAN_SIGN:
         case Characters.EQUALS_SIGN:
         case Characters.GRAVE_ACCENT:
-            tokenizer.emitParseError();
+            tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             tokenizer.appendCurrentAttributeValue(chr);
-            tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             break;
         case Characters.EOF:
             tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
