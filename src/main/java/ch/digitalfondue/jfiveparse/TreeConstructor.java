@@ -585,9 +585,9 @@ class TreeConstructor {
     }
 
     //
-    void insertCharacters(char[] chars) {
-        for (char c : chars) {
-            insertCharacter(c);
+    void insertCharacters(char[] chars, int pos) {
+        for (int i = 0; i < pos; i++) {
+            insertCharacter(chars[i]);
         }
     }
 
@@ -1018,8 +1018,8 @@ class TreeConstructor {
         pendingTableCharactersToken.append((char) chr);
     }
 
-    char[] getPendingTableCharactersToken() {
-        return pendingTableCharactersToken.toCharArray();
+    ResizableCharBuilder getPendingTableCharactersToken() {
+        return pendingTableCharactersToken;
     }
 
     Element getForm() {

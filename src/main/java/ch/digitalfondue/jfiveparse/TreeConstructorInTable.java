@@ -222,7 +222,7 @@ class TreeConstructorInTable {
         } else if (tokenType == CHARACTER) {
             treeConstructor.appendToPendingTableCharactersToken(chr);
         } else {
-            char[] chars = treeConstructor.getPendingTableCharactersToken();
+            ResizableCharBuilder chars = treeConstructor.getPendingTableCharactersToken();
             if (!isAllSpaceCharacters(chars)) {
                 // TODO CHECK
 
@@ -240,8 +240,8 @@ class TreeConstructorInTable {
                 treeConstructor.enableFosterParenting();
                 //
                 treeConstructor.setTokenType(CHARACTER);
-                for (char c : chars) {
-                    treeConstructor.setChr(c);
+                for (int i = 0; i < chars.pos; i++) {
+                    treeConstructor.setChr(chars.buff[i]);
                     TreeConstructorInBody.inBody(CHARACTER, tagName, treeConstructor);
                 }
 
@@ -252,7 +252,7 @@ class TreeConstructorInTable {
                 treeConstructor.setTokenType(currentTokenType);
                 treeConstructor.setChr((char) currentChar);
             } else {
-                treeConstructor.insertCharacters(chars);
+                treeConstructor.insertCharacters(chars.buff, chars.pos);
             }
 
             treeConstructor.switchToOriginalInsertionMode();
@@ -260,9 +260,9 @@ class TreeConstructorInTable {
         }
     }
 
-    private static boolean isAllSpaceCharacters(char[] chars) {
-        for (char c : chars) {
-            if (!Common.isTabLfFfCrOrSpace(c)) {
+    private static boolean isAllSpaceCharacters(ResizableCharBuilder chars) {
+        for(int i = 0; i < chars.pos; i++) {
+            if (!Common.isTabLfFfCrOrSpace(chars.buff[i])) {
                 return false;
             }
         }

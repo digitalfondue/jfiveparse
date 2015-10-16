@@ -52,10 +52,6 @@ class ResizableCharBuilder {
         return new String(buff, 0, pos);
     }
 
-    char[] toCharArray() {
-        return Arrays.copyOf(buff, pos);
-    }
-
     @Override
     public String toString() {
         return asString();

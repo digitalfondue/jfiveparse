@@ -100,7 +100,6 @@ This behavior can be disabled by:
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable 
 - check if we can use directly a hashmap for the entities
-- remove ResizableCharBuilder.toCharArray -> 1 use in the library
 - in TreeConstructorInTemplate the pattern:
   - treeConstructor.popFromStackTemplatesInsertionMode();
   - treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TABLE);

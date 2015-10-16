@@ -365,7 +365,8 @@ class TreeConstructorInBody {
             if (treeConstructor.hasAttribute("prompt")) {
                 firstStream = treeConstructor.getAttribute("prompt").getValue();
             }
-            treeConstructor.insertCharacters(firstStream.toCharArray());
+            char[] arr = firstStream.toCharArray();
+            treeConstructor.insertCharacters(arr, arr.length);
 
             Attributes attrs = treeConstructor.getAttributes().copy();
             attrs.remove("name");
