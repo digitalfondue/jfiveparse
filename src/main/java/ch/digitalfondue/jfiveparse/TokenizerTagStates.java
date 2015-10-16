@@ -38,7 +38,7 @@ class TokenizerTagStates {
         default:
             boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
             if (Common.isLowerCaseASCIILetter(chr) || isUpperCase) { //
-                tokenizer.createNewStartTagToken(chr + (isUpperCase ? 0x0020 : 0));
+                tokenizer.createNewStartTagToken(chr, isUpperCase);
                 tokenizer.setState(TokenizerState.TAG_NAME_STATE);
             } else { // default
                 handleTagOpenStateAnythingElse(tokenizer, processedInputStream, chr);
@@ -66,7 +66,7 @@ class TokenizerTagStates {
             boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
             if (Common.isLowerCaseASCIILetter(chr) || isUpperCase) {
                 tokenizer.newEndTokenTag();
-                tokenizer.appendCurrentTagToken(chr + (isUpperCase ? 0x0020 : 0));
+                tokenizer.appendCurrentTagToken(chr, isUpperCase);
                 tokenizer.setState(TokenizerState.TAG_NAME_STATE);
             } else {
                 tokenizer.emitParseError();
@@ -106,17 +106,14 @@ class TokenizerTagStates {
             break;
         case Characters.NULL:
             tokenizer.emitParseError();
-            tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER);
+            tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER, false);
             break;
         case Characters.EOF:
             tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr)) {
-                chr += 0x0020;
-            }
-            tokenizer.appendCurrentTagToken(chr);
+            tokenizer.appendCurrentTagToken(chr, Common.isUpperCaseASCIILetter(chr));
             break;
         }
     }

@@ -49,9 +49,6 @@ class TokenizerAttributesState {
             processedInputStream.reconsume(chr);
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr)) {
-                chr += 0x0020;
-            }
             tokenizer.startNewAttributeAndAppendToName(chr);
             tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
             break;
@@ -99,9 +96,6 @@ class TokenizerAttributesState {
             processedInputStream.reconsume(chr);
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr)) {
-                chr += 0x0020;
-            }
             tokenizer.appendCurrentAttributeName(chr);
             break;
         }
@@ -146,9 +140,6 @@ class TokenizerAttributesState {
             processedInputStream.reconsume(chr);
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr)) {
-                chr += 0x0020;
-            }
             try {
                 tokenizer.addCurrentAttributeInAttributes();
             } catch (NullPointerException npe) {

@@ -58,7 +58,6 @@ class Tokenizer {
 
     final boolean transformEntities;
 
-    
     Tokenizer(TreeConstructor tokenHandler) {
         this(tokenHandler, true);
     }
@@ -71,6 +70,9 @@ class Tokenizer {
 
     //
     void appendCurrentAttributeName(int chr) {
+        if (Common.isUpperCaseASCIILetter(chr)) {
+            chr += 0x0020;
+        }
         currentAttributeName.append((char) chr);
     }
 
@@ -415,9 +417,9 @@ class Tokenizer {
         addCurrentAttributeInAttributes();
         currentAttributeName = new ResizableCharBuilder();
         currentAttributeValue = new ResizableCharBuilder();
-        currentAttributeName.append((char) chr);
+        appendCurrentAttributeName(chr);
     }
-    
+
     void setAttributeQuoteType(int currentAttributeQuoteType) {
         this.currentAttributeQuoteType = currentAttributeQuoteType;
     }
@@ -430,13 +432,16 @@ class Tokenizer {
         currentAttributeValue = null;
     }
 
-    void appendCurrentTagToken(int chr) {
+    void appendCurrentTagToken(int chr, boolean isUpperCase) {
+        if (isUpperCase) {
+            chr += 0x0020;
+        }
         tagName.append((char) chr);
     }
 
-    void createNewStartTagToken(int chr) {
+    void createNewStartTagToken(int chr, boolean isUpperCase) {
         tagName = new ResizableCharBuilder();
-        tagName.append((char) chr);
+        appendCurrentTagToken(chr, isUpperCase);
         isEndTagToken = false;
         attributes = new Attributes();
         currentAttributeName = null;
@@ -585,7 +590,7 @@ class Tokenizer {
     void resetTokenHandlerInsertCharacterPreviousTextNode() {
         tokenHandler.setInsertCharacterPreviousTextNode(null);
     }
-    
+
     void emitParseErrorAndSetState(int state) {
         tokenHandler.emitParseError();
         this.state = state;
