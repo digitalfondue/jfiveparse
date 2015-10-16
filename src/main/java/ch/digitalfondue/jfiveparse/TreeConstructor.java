@@ -696,10 +696,10 @@ class TreeConstructor {
 
         if (!nodes.isEmpty() && position > 0 && (last = nodes.get(position - 1)).getNodeType() == Node.TEXT_NODE) {
             t = (Text) last;
-            t.append(charToInsert);
+            t.data.append(charToInsert);
         } else {
             t = new Text();
-            t.append(charToInsert);
+            t.data.append(charToInsert);
             toInsert.insertChildren(position, t);
         }
         // optimization

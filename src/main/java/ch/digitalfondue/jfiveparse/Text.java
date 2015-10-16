@@ -17,15 +17,11 @@ package ch.digitalfondue.jfiveparse;
 
 public class Text extends Node {
 
-    private final ResizableCharBuilder data = new ResizableCharBuilder();
+    final ResizableCharBuilder data = new ResizableCharBuilder();
 
     @Override
     public byte getNodeType() {
         return TEXT_NODE;
-    }
-
-    void append(char chr) {
-        data.append(chr);
     }
 
     public String getData() {

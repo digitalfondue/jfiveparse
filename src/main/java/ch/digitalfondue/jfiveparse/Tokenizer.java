@@ -395,7 +395,7 @@ class Tokenizer {
     // FIXME maybe handle it better?
     void addCurrentAttributeInAttributes() {
         try {
-            if (currentAttributeName != null && currentAttributeName.length() > 0) {
+            if (currentAttributeName != null && currentAttributeName.pos > 0) {
                 String curAttrName = currentAttributeName.asString();
                 if (!attributes.isEmpty() && attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
@@ -583,8 +583,9 @@ class Tokenizer {
         return tokenHandler.isInHtmlContent();
     }
 
-    Text getTokenHandlerInsertCharacterPreviousTextNode() {
-        return tokenHandler.getInsertCharacterPreviousTextNode();
+    ResizableCharBuilder getTokenHandlerInsertCharacterPreviousTextNode() {
+        Text node = tokenHandler.getInsertCharacterPreviousTextNode();
+        return node == null ? null : node.data;
     }
 
     void resetTokenHandlerInsertCharacterPreviousTextNode() {

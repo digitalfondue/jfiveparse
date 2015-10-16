@@ -56,10 +56,6 @@ class ResizableCharBuilder {
         return asString();
     }
 
-    int length() {
-        return pos;
-    }
-
     boolean same(ResizableCharBuilder cb) {
         return pos == cb.pos && Arrays.equals(buff, cb.buff);
     }

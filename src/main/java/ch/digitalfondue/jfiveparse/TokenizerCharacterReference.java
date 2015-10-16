@@ -98,7 +98,7 @@ class TokenizerCharacterReference {
         // followed by a U+003B SEMICOLON character (;), then this is a
         // parse error.
 
-        int tentativelyMatchedLength = tentativelyMatched.length();
+        int tentativelyMatchedLength = tentativelyMatched.pos;
         boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.buff[tentativelyMatchedLength - 1] == Characters.SEMICOLON;
         if (emitParseError) {
             for (int i = 0; emitParseError && i < tentativelyMatchedLength - 1; i++) {

@@ -40,7 +40,7 @@ class TokenizerCDataSectionAndDataState {
             tokenizer.emitCharacter(chr);
             // vvv optimization vvv
             int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
-            Text textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
+            ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
             if (tokenizer.getState() == TokenizerState.DATA_STATE && previousInsertionMode == currentInsertionMode
                     && (currentInsertionMode == TreeConstructionInsertionMode.IN_BODY || currentInsertionMode == TreeConstructionInsertionMode.IN_CELL)
                     && tokenizer.isTokenHandlerInHtmlContent() && textNode != null) {

@@ -36,7 +36,7 @@ class TokenizerScriptStates {
             int previousInsertionMode = tokenizer.getTokenHandlerInsertionMode();
             tokenizer.emitCharacter(chr);
             int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
-            Text textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
+            ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
 
             // optimization: bypass if possible
             if (tokenizer.getState() == TokenizerState.SCRIPT_DATA_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {

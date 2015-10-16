@@ -55,7 +55,7 @@ class TokenizerPlainAndRawTextStates {
             tokenizer.emitCharacter(chr);
             // vvv optimization vvv
             int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
-            Text textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
+            ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
             if (tokenizer.getState() == TokenizerState.RAWTEXT_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
 
                 for (;;) {
