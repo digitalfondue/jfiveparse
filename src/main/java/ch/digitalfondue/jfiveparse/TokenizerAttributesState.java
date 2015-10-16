@@ -224,8 +224,35 @@ class TokenizerAttributesState {
             processedInputStream.reconsume(chr);
             break;
         default:
-            tokenizer.appendCurrentAttributeValue(chr);
-            break;
+            ResizableCharBuilder currAttrValue = tokenizer.getCurrentAttributeValue();
+            currAttrValue.append((char) chr);
+            //vvv optimization vvv
+            for(;;) {
+                int nextChr = processedInputStream.getNextInputCharacterAndConsume();
+                switch(nextChr) {
+                case Characters.QUOTATION_MARK:
+                    tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
+                    return;
+                case Characters.AMPERSAND:
+                    // save current state
+                    tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
+                    //
+                    tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
+                    tokenizer.setAdditionalAllowedCharacter(Characters.QUOTATION_MARK);
+                    return;
+                case Characters.NULL:
+                    tokenizer.emitParseError();
+                    currAttrValue.append(Characters.REPLACEMENT_CHARACTER);
+                    break;
+                case Characters.EOF:
+                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    processedInputStream.reconsume(nextChr);
+                    return;
+                default:
+                    currAttrValue.append((char) nextChr);
+                    break;
+                }
+            }
         }
 
     }
