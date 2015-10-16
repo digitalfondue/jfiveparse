@@ -119,7 +119,6 @@ back in a string, pass the following parameters:
   - $0.previousElementSibling, $0.nextElementSibling
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable 
-- check if we can use directly a hashmap for the entities
 - in TreeConstructorInTemplate the pattern:
   - treeConstructor.popFromStackTemplatesInsertionMode();
   - treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TABLE);

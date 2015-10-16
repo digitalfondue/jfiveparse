@@ -77,8 +77,11 @@ class TokenizerCharacterReference {
             }
         }
 
-        if (!currentPrefix.isComplete() && currentPrefix.hasParentComplete()) {
-            currentPrefix = currentPrefix.getCompleteParent();
+        if (!currentPrefix.isComplete()) {
+            Prefix maybeCompleteParent = currentPrefix.getMaybeCompleteParent();
+            if (maybeCompleteParent != null) {
+                currentPrefix = maybeCompleteParent;
+            }
         }
 
         if (currentPrefix.isComplete()) {

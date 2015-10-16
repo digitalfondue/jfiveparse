@@ -75,7 +75,7 @@ class Prefix {
         return sb.reverse().toString();
     }
 
-    Prefix getCompleteParent() {
+    Prefix getMaybeCompleteParent() {
         Prefix p = parent;
         while (p != null) {
             if (p.isComplete()) {
@@ -84,17 +84,6 @@ class Prefix {
             p = p.parent;
         }
         return null;
-    }
-
-    boolean hasParentComplete() {
-        Prefix p = parent;
-        while (p != null) {
-            if (p.isComplete()) {
-                return true;
-            }
-            p = p.parent;
-        }
-        return false;
     }
 
     void addWord(String s, int[] codepoints) {
