@@ -38,6 +38,7 @@ class Tokenizer {
     private Attributes attributes;
     private ResizableCharBuilder currentAttributeName;
     private ResizableCharBuilder currentAttributeValue;
+    private int currentAttributeQuoteType;
     private boolean selfClosing;
     private ResizableCharBuilder tagName;
     private boolean isEndTagToken;
@@ -56,6 +57,7 @@ class Tokenizer {
     private ResizableCharBuilder temporaryBuffer;
 
     final boolean transformEntities;
+
     
     Tokenizer(TreeConstructor tokenHandler) {
         this(tokenHandler, true);
@@ -396,7 +398,7 @@ class Tokenizer {
                 if (!attributes.isEmpty() && attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
-                    attributes.put(new Attribute(curAttrName, currentAttributeValue.asString()));
+                    attributes.put(new Attribute(curAttrName, currentAttributeValue.asString(), currentAttributeQuoteType));
                 }
             }
         } catch (NullPointerException npe) {
@@ -414,6 +416,10 @@ class Tokenizer {
         currentAttributeName = new ResizableCharBuilder();
         currentAttributeValue = new ResizableCharBuilder();
         currentAttributeName.append((char) chr);
+    }
+    
+    void setAttributeQuoteType(int currentAttributeQuoteType) {
+        this.currentAttributeQuoteType = currentAttributeQuoteType;
     }
 
     void newEndTokenTag() {
@@ -613,5 +619,4 @@ class Tokenizer {
         this.attributes = attributes;
         this.isEndTagToken = false;
     }
-
 }

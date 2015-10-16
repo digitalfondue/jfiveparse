@@ -31,12 +31,14 @@ public class HtmlSerializer implements NodesVisitor {
     protected final boolean transformEntities;
     protected final boolean hideEmptyAttributeValue;
     protected final boolean scriptingDisabled;
+    protected final boolean printOriginalAttributeQuote;
 
     public HtmlSerializer(Appendable appendable, Set<Option> options) {
         this.appendable = appendable;
         this.transformEntities = !options.contains(Option.DONT_TRANSFORM_ENTITIES);
         this.hideEmptyAttributeValue = options.contains(Option.HIDE_EMPTY_ATTRIBUTE_VALUE);
         this.scriptingDisabled = options.contains(Option.SCRIPTING_DISABLED);
+        this.printOriginalAttributeQuote = options.contains(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE);
     }
 
     protected static String serializeAttributeName(Attribute attribute) {
@@ -54,6 +56,17 @@ public class HtmlSerializer implements NodesVisitor {
         } else {
             return name;
         }
+    }
+
+    protected String quoteCharacters(Attribute attribute) {
+        if (printOriginalAttributeQuote) {
+            if (attribute.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE) {
+                return "";
+            } else if (attribute.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE) {
+                return "'";
+            }
+        }
+        return "\"";
     }
 
     protected String escapeAttributeValue(Attribute attribute) {
@@ -96,7 +109,7 @@ public class HtmlSerializer implements NodesVisitor {
                     if (hideEmptyAttributeValue && (attr.getValue() == null || "".equals(attr.getValue()))) {
                         continue;
                     }
-                    appendable.append("=\"").append(escapeAttributeValue(attr)).append("\"");
+                    appendable.append("=").append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
                 }
                 appendable.append('>');
 

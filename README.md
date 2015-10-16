@@ -88,9 +88,29 @@ This behavior can be disabled by:
   - when calling Node.get{Inner,Outer}HTML(), pass the enum 
     "Option.DONT_TRANSFORM_ENTITIES" for disabling the escaping.
     It's possible that something will be wrong in the generated document.
+    
+### Preserving as much as possible the original document when serializing
+By default, when parsing/serializing, the following transformations will 
+be applied:
+ 
+ - entities will be interpreted and converted
+ - all the attributes values will be double quoted
+ - tag and attribute names will be lower case
+ - the "/" character used in self closing tag will be ignored
+ - some whitespace will be ignored
+ 
+Currently, jfiveparse can preserve the entities and the attribute quoting type.
+ 
+If you require to preserve as much as possible the document when serializing
+back in a string, pass the following parameters:
+
+ - pass the enum "Option.DONT_TRANSFORM_ENTITIES" to the Parser
+ - when calling Node.get{Inner,Outer}HTML(), pass the enums:
+   - Option.DONT_TRANSFORM_ENTITIES
+   - Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE
+
 
 ## TODO:
-- keep track of ' " o empty for attribute (TRACK_ATTRIBUTE_VALUE_QUOTING_TYPE)
 - keep track of UpperCase tagname/attribute names with a BitSet (if the overhead is not too much, obviously) (TRACK_CASE_FOR_ATTRIBUTES_AND_TAG)
 - add a typesafe matcher api
   - expand NodeMatchers: add "AND" rule, expand tagName with NS support, add attribute matcher

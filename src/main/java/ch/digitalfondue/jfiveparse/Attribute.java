@@ -25,12 +25,19 @@ public class Attribute {
     //
     String prefix;
     String namespace;
-
     //
+
+    // double/single/not quoted
+    int attributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
 
     public Attribute(String name, String value) {
         this.name = name;
         this.value = value;
+    }
+
+    Attribute(String name, String value, int attributeQuoteType) {
+        this(name, value);
+        this.attributeQuoteType = attributeQuoteType;
     }
 
     public Attribute(String name, String value, String prefix, String namespace) {
