@@ -97,10 +97,8 @@ abstract class ProcessedInputStream {
     }
 
     private int handleChrIsCR() {
-        int chr;
-        chr = Characters.LF;
         crFound = true;
-        return chr;
+        return Characters.LF;
     }
 
     private int handleCrFoundInternal(int chr) {
