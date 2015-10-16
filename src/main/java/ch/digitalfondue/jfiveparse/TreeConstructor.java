@@ -166,7 +166,7 @@ class TreeConstructor {
         // most used
         switch (insertionMode) {
         case TreeConstructionInsertionMode.TEXT:
-            TreeConstructorText.text(tokenType, tagName, this);
+            TreeConstructorText.text(tokenType, this);
             break;
         case TreeConstructionInsertionMode.IN_BODY:
             TreeConstructorInBody.inBody(tokenType, tagName, this);
@@ -205,7 +205,7 @@ class TreeConstructor {
             TreeConstructorInBody.inBody(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.TEXT:
-            TreeConstructorText.text(tokenType, tagName, this);
+            TreeConstructorText.text(tokenType, this);
             break;
         case TreeConstructionInsertionMode.IN_TABLE:
             TreeConstructorInTable.inTable(tokenType, tagName, this);
@@ -285,7 +285,7 @@ class TreeConstructor {
             Element currentNode = getCurrentNode();
             final boolean check = Common.isImpliedTag(currentNode) && //
                     ((excludeTagName == null) || //
-                    (excludeTagName != null && !(currentNode.getNodeName().equals(excludeTagName) && currentNode.getNamespaceURI().equals(excludeNameSpace))));
+                    (!(currentNode.getNodeName().equals(excludeTagName) && currentNode.getNamespaceURI().equals(excludeNameSpace))));
             if (check) {
                 popCurrentNode();
             } else {

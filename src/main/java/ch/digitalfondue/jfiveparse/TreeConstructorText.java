@@ -20,7 +20,7 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.END_TAG;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.EOF;
 
 class TreeConstructorText {
-    static void text(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void text(byte tokenType, TreeConstructor treeConstructor) {
         switch (tokenType) {
         case CHARACTER:
             treeConstructor.insertCharacter();
@@ -29,12 +29,12 @@ class TreeConstructorText {
             textEof(treeConstructor);
             break;
         case END_TAG:
-            textEndTag(tagName, treeConstructor);
+            textEndTag(treeConstructor);
             break;
         }
     }
 
-    private static void textEndTag(String tagName, TreeConstructor treeConstructor) {
+    private static void textEndTag(TreeConstructor treeConstructor) {
         // if ("script".equals(tagName)) {
         // // TODO check
         // treeConstructor.popCurrentNode();
