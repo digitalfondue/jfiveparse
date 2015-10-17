@@ -120,7 +120,11 @@ back in a string, pass the following parameters:
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
 - add some methods from jquery too
-- cleanup code: but beware, no measurable slowdown is acceptable 
+- cleanup code: but beware, no measurable slowdown is acceptable
+  - treeConstructor.insertHtmlElementToken();
+  - treeConstructor.popCurrentNode();
+  - treeConstructor.ackSelfClosingTagIfSet()
+  - this 3 calls can be made in a single one 
 - parameters for parser
 - keep track of lines, eventually chars too (this has some issues with multibyte char :D)
 - profile

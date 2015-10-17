@@ -137,7 +137,7 @@ public abstract class Node {
 
     public Element getLastElementChild() {
         List<Node> childs = getChildNodes();
-        for (int i = childs.size(); i >= 0; i--) {
+        for (int i = childs.size() - 1; i >= 0; i--) {
             Node n = childs.get(i);
             if (n.getNodeType() == ELEMENT_NODE) {
                 return (Element) n;
