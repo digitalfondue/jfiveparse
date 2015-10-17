@@ -98,9 +98,8 @@ class Tokenizer {
         }
     }
 
-    boolean isTemporaryBufferEquals(String s) {
-        // TODO: could do a direct compare
-        return temporaryBuffer.asString().equals(s);
+    boolean isTemporaryBufferEquals(ResizableCharBuilder s) {
+        return temporaryBuffer.same(s);
     }
 
     //

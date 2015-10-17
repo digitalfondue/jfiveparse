@@ -342,6 +342,8 @@ class TokenizerScriptStates {
 
         processedInputStream.reconsume(chr);
     }
+    
+    private static final ResizableCharBuilder SCRIPT = new ResizableCharBuilder("script");
 
     static void handleScriptDataDoubleEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
@@ -352,7 +354,7 @@ class TokenizerScriptStates {
         case Characters.SPACE:
         case Characters.SOLIDUS:
         case Characters.GREATERTHAN_SIGN:
-            if (tokenizer.isTemporaryBufferEquals("script")) {
+            if (tokenizer.isTemporaryBufferEquals(SCRIPT)) {
                 tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
             } else {
                 tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
@@ -473,7 +475,7 @@ class TokenizerScriptStates {
         case Characters.SPACE:
         case Characters.SOLIDUS:
         case Characters.GREATERTHAN_SIGN:
-            if (tokenizer.isTemporaryBufferEquals("script")) {
+            if (tokenizer.isTemporaryBufferEquals(SCRIPT)) {
                 tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
             } else {
                 tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);

@@ -120,7 +120,6 @@ class TokenizerAttributesState {
             tokenizer.addCurrentAttributeInAttributes();
             tokenizer.startNewAttributeAndAppendToName(Characters.REPLACEMENT_CHARACTER);
             break;
-
         case Characters.QUOTATION_MARK:
         case Characters.APOSTROPHE:
         case Characters.LESSTHAN_SIGN:
