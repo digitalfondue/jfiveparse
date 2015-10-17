@@ -120,7 +120,17 @@ abstract class ProcessedInputStream {
         return buffer.getCharAt(offset);
     }
 
+    /**
+     * Ideally, it's a combination of getNextInputCharacter + consume in term of
+     * behavior.
+     * 
+     * @return
+     */
     int getNextInputCharacterAndConsume() {
+        return consume();
+    }
+
+    int consume() {
         if (buffer.isEmpty()) {
             return readWithCRHandling(crFound, read());
         } else {
@@ -134,14 +144,6 @@ abstract class ProcessedInputStream {
 
     void reconsume(int chr) {
         buffer.addFirst(chr);
-    }
-
-    void consume() {
-        if (buffer.isEmpty()) {
-            readWithCRHandling(crFound, read());
-        } else {
-            buffer.removeFirst();
-        }
     }
 
     void consume(int count) {

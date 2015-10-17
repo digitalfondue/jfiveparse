@@ -42,11 +42,12 @@ class ProcessedInputStreamWithParseError extends StringProcessedInputStream {
     }
 
     @Override
-    void consume() {
+    int consume() {
         previousCharacter = getCurrentInputCharacter();
-        super.consume();
+        int chr = super.consume();
         position++;
         consumeWithCheck();
+        return chr;
     }
 
     private int getCurrentInputCharacter() {
