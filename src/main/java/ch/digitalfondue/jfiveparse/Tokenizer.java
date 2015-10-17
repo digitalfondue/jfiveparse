@@ -391,13 +391,13 @@ class Tokenizer {
     // compared to the other attributes on the same token; if there is already
     // an attribute on the token with the exact same name, then this is a parse
     // error and the new attribute must be removed from the token.
-    // FIXME let's see how much this is true
-    // FIXME maybe handle it better?
+    //
+    // TODO: maybe handle it better?
     void addCurrentAttributeInAttributes() {
         try {
-            if (currentAttributeName != null && currentAttributeName.pos > 0) {
+            if (currentAttributeName != null) {
                 String curAttrName = currentAttributeName.asString();
-                if (!attributes.isEmpty() && attributes.containsKey(curAttrName)) {
+                if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
                     attributes.put(new Attribute(curAttrName, currentAttributeValue.asString(), currentAttributeQuoteType));

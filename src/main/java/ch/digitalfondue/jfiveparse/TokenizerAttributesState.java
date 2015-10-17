@@ -55,13 +55,6 @@ class TokenizerAttributesState {
         }
     }
 
-    /*
-     * FIXME: When the user agent leaves the attribute name state (and before
-     * emitting the tag token, if appropriate), the complete attribute's name
-     * must be compared to the other attributes on the same token; if there is
-     * already an attribute on the token with the exact same name, then this is
-     * a parse error and the new attribute must be removed from the token.
-     */
     static void handleAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
@@ -226,10 +219,10 @@ class TokenizerAttributesState {
         default:
             ResizableCharBuilder currAttrValue = tokenizer.getCurrentAttributeValue();
             currAttrValue.append((char) chr);
-            //vvv optimization vvv
-            for(;;) {
+            // vvv optimization vvv
+            for (;;) {
                 int nextChr = processedInputStream.getNextInputCharacterAndConsume();
-                switch(nextChr) {
+                switch (nextChr) {
                 case Characters.QUOTATION_MARK:
                     tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
                     return;
