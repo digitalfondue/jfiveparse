@@ -113,7 +113,7 @@ public class Parser {
         }
 
         // 5
-        Element root = TreeConstructor.buildElement("html", Node.NAMESPACE_HTML, TreeConstructor.emptyAttrs());
+        Element root = TreeConstructor.buildElement("html", Node.NAMESPACE_HTML, TreeConstructor.emptyAttrs(), false);
 
         tokenHandler.setContext(node);
 

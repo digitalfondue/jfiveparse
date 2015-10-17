@@ -99,7 +99,8 @@ be applied:
  - the "/" character used in self closing tag will be ignored
  - some whitespace will be ignored
  
-Currently, jfiveparse can preserve the entities and the attribute quoting type.
+Currently, jfiveparse can preserve the entities, the attribute quoting type
+and the "/" in self closing tags.
  
 If you require to preserve as much as possible the document when serializing
 back in a string, pass the following parameters:
@@ -108,6 +109,7 @@ back in a string, pass the following parameters:
  - when calling Node.get{Inner,Outer}HTML(), pass the enums:
    - Option.DONT_TRANSFORM_ENTITIES
    - Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE
+   - Option.PRINT_SELF_CLOSING_SOLIDUS
 
 
 ## TODO:

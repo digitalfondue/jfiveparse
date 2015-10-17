@@ -481,7 +481,7 @@ class TreeConstructor {
                 }
 
                 // 13.7
-                Element newElement = buildElement(node.getNodeName(), node.getNamespaceURI(), node.getAttributes().copy());
+                Element newElement = buildElement(node.getNodeName(), node.getNamespaceURI(), node.getAttributes().copy(), node.selfClosing);
                 commonAncestor.appendChild(newElement);
                 activeFormattingElements.replace(node, newElement);
                 openElements.set(openElements.lastIndexOf(node), newElement);
@@ -516,7 +516,7 @@ class TreeConstructor {
             toInsert.insertChildren(position, lastNode);
 
             // 15
-            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.getNamespaceURI(), formattingElement.getAttributes().copy());
+            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.getNamespaceURI(), formattingElement.getAttributes().copy(), node.selfClosing);
 
             // 16
             List<Node> childs = new ArrayList<>(furthestBlock.getChildNodes());
@@ -595,22 +595,22 @@ class TreeConstructor {
         insertCharacter(chr);
     }
 
-    static Element buildElement(String name, String namespace, Attributes attrs) {
-        return new Element(name, namespace, attrs);
+    static Element buildElement(String name, String namespace, Attributes attrs, boolean selfClosing) {
+        return new Element(name, namespace, attrs, selfClosing);
     }
 
     Element insertElementToken(String name, String namespace, Attributes attrs) {
-        Element element = buildElement(name, namespace, attrs);
+        Element element = buildElement(name, namespace, attrs, selfClosing);
         return insertHtmlElementToken(element);
     }
 
     Element insertHtmlElementWithEmptyAttributes(String name) {
-        Element element = buildElement(name, Node.NAMESPACE_HTML, emptyAttrs());
+        Element element = buildElement(name, Node.NAMESPACE_HTML, emptyAttrs(), selfClosing);
         return insertHtmlElementToken(element);
     }
 
     Element insertHtmlElementToken() {
-        Element element = buildElement(tagName, Node.NAMESPACE_HTML, attrs);
+        Element element = buildElement(tagName, Node.NAMESPACE_HTML, attrs, selfClosing);
         return insertHtmlElementToken(element);
     }
 

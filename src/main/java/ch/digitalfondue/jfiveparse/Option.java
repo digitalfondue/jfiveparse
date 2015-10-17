@@ -30,5 +30,10 @@ public enum Option {
     HIDE_EMPTY_ATTRIBUTE_VALUE,
     //
     TRACK_CASE_FOR_ATTRIBUTES_AND_TAG,//
-    PRINT_ORIGINAL_ATTRIBUTE_QUOTE
+    PRINT_ORIGINAL_ATTRIBUTE_QUOTE,
+    
+    // Serialization parameter
+    // /!\ this will break the conformance of the serialization
+    // Print the '/' on self closing tag.
+    PRINT_SELF_CLOSING_SOLIDUS;
 }

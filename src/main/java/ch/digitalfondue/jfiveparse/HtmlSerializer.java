@@ -32,6 +32,7 @@ public class HtmlSerializer implements NodesVisitor {
     protected final boolean hideEmptyAttributeValue;
     protected final boolean scriptingDisabled;
     protected final boolean printOriginalAttributeQuote;
+    protected final boolean printSelfClosing;
 
     public HtmlSerializer(Appendable appendable, Set<Option> options) {
         this.appendable = appendable;
@@ -39,6 +40,7 @@ public class HtmlSerializer implements NodesVisitor {
         this.hideEmptyAttributeValue = options.contains(Option.HIDE_EMPTY_ATTRIBUTE_VALUE);
         this.scriptingDisabled = options.contains(Option.SCRIPTING_DISABLED);
         this.printOriginalAttributeQuote = options.contains(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE);
+        this.printSelfClosing = options.contains(Option.PRINT_SELF_CLOSING_SOLIDUS);
     }
 
     protected static String serializeAttributeName(Attribute attribute) {
@@ -67,6 +69,10 @@ public class HtmlSerializer implements NodesVisitor {
             }
         }
         return "\"";
+    }
+    
+    protected boolean isSelfClosing(Element e) {
+        return e.selfClosing;
     }
 
     protected String escapeAttributeValue(Attribute attribute) {
@@ -111,6 +117,11 @@ public class HtmlSerializer implements NodesVisitor {
                     }
                     appendable.append("=").append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
                 }
+                
+                if(e.selfClosing && printSelfClosing) {
+                    appendable.append('/');
+                }
+                
                 appendable.append('>');
 
                 if ((e.is("pre", Node.NAMESPACE_HTML) || e.is("textarea", Node.NAMESPACE_HTML) || e.is("listing", Node.NAMESPACE_HTML)) && //

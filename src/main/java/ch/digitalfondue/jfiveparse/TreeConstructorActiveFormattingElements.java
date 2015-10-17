@@ -25,13 +25,13 @@ class TreeConstructorActiveFormattingElements {
 
     private static final class Marker extends Element {
         Marker() {
-            super(null, null, null);
+            super(null, null);
         }
     }
 
     private static final class Bookmark extends Element {
         Bookmark() {
-            super(null, null, null);
+            super(null, null);
         }
     }
 

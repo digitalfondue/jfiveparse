@@ -26,20 +26,26 @@ public class Element extends Node {
     private Attributes attributes;
 
     private List<Node> childNodes = null;
+    
+    final boolean selfClosing;
 
     public Element(String name) {
         this(name, Node.NAMESPACE_HTML);
     }
 
     public Element(String name, String nameSpace) {
-        this.nodeName = name;
-        this.namespaceURI = nameSpace;
+        this(name, nameSpace, null);
     }
 
     public Element(String name, String nameSpace, Attributes attributes) {
+        this(name, nameSpace, attributes, false);
+    }
+    
+    Element(String name, String nameSpace, Attributes attributes, boolean selfClosing) {
         this.nodeName = name;
         this.namespaceURI = nameSpace;
         this.attributes = attributes;
+        this.selfClosing = selfClosing;
     }
 
     private void ensureAttributesPresence() {
