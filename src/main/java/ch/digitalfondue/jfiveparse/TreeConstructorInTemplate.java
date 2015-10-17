@@ -24,6 +24,13 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
 
 class TreeConstructorInTemplate {
 
+    private static void popPushSetAndDispatch(TreeConstructor treeConstructor, int insertionMode) {
+        treeConstructor.popFromStackTemplatesInsertionMode();
+        treeConstructor.pushInStackTemplatesInsertionMode(insertionMode);
+        treeConstructor.setInsertionMode(insertionMode);
+        treeConstructor.dispatch();
+    }
+
     static void inTemplate(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER || tokenType == COMMENT || tokenType == DOCTYPE) {
             TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
@@ -44,31 +51,16 @@ class TreeConstructorInTemplate {
                 "tbody".equals(tagName) || //
                 "tfoot".equals(tagName) || //
                 "thead".equals(tagName))) {
-            treeConstructor.popFromStackTemplatesInsertionMode();
-            treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
-            treeConstructor.dispatch();
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_TABLE);
         } else if (Common.isStartTagNamed(tokenType, "col", tagName)) {
-            treeConstructor.popFromStackTemplatesInsertionMode();
-            treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_COLUMN_GROUP);
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_COLUMN_GROUP);
-            treeConstructor.dispatch();
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_COLUMN_GROUP);
         } else if (Common.isStartTagNamed(tokenType, "tr", tagName)) {
-            treeConstructor.popFromStackTemplatesInsertionMode();
-            treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TABLE_BODY);
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE_BODY);
-            treeConstructor.dispatch();
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_TABLE_BODY);
         } else if (tokenType == START_TAG && ("td".equals(tagName) || //
                 "th".equals(tagName))) {
-            treeConstructor.popFromStackTemplatesInsertionMode();
-            treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_ROW);
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_ROW);
-            treeConstructor.dispatch();
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_ROW);
         } else if (tokenType == START_TAG) {
-            treeConstructor.popFromStackTemplatesInsertionMode();
-            treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_BODY);
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_BODY);
-            treeConstructor.dispatch();
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_BODY);
         } else if (tokenType == END_TAG) {
             treeConstructor.emitParseError();
             // ignore
