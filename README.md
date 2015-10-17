@@ -113,12 +113,12 @@ back in a string, pass the following parameters:
 
 
 ## TODO:
-- keep track of UpperCase tagname/attribute names with a BitSet (if the overhead is not too much, obviously) (TRACK_CASE_FOR_ATTRIBUTES_AND_TAG)
+- keep track of UpperCase tagname/attribute names with a BitSet(?) (if the overhead is not too much, obviously) (TRACK_CASE_FOR_ATTRIBUTES_AND_TAG)
 - add a typesafe matcher api
-  - expand NodeMatchers: add "AND" rule, expand tagName with NS support, add attribute matcher
+  - expand NodeMatchers: add "AND" rule 
+  - HasAttribute support attribute value matching type (~=, |=, ^=, $=, *=)
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
-  - $0.previousElementSibling, $0.nextElementSibling
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable 
 - parameters for parser

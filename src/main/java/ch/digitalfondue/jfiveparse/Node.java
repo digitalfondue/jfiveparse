@@ -161,6 +161,17 @@ public abstract class Node {
         return currentElemIdx == 0 ? null : siblings.get(currentElemIdx - 1);
     }
 
+    public Element getPreviousElementSibling() {
+
+        for (Node n = getPreviousSibling(); (n = n.getPreviousSibling()) != null;) {
+            if (n.getNodeType() == ELEMENT_NODE) {
+                return (Element) n;
+            }
+        }
+
+        return null;
+    }
+
     public Node getNextSibling() {
         if (parentNode == null) {
             return null;
@@ -170,6 +181,15 @@ public abstract class Node {
         int currentElemIdx = siblings.indexOf(this);
 
         return currentElemIdx == siblings.size() - 1 ? null : siblings.get(currentElemIdx + 1);
+    }
+
+    public Element getNextElementSibling() {
+        for (Node n = getNextSibling(); (n = n.getNextSibling()) != null;) {
+            if (n.getNodeType() == ELEMENT_NODE) {
+                return (Element) n;
+            }
+        }
+        return null;
     }
 
     public boolean hasChildNodes() {
@@ -203,7 +223,7 @@ public abstract class Node {
             }
         }
     }
-    
+
     public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher) {
         List<T> l = new ArrayList<>();
         traverse(new NodeMatchers<>(matcher, l));
@@ -213,7 +233,7 @@ public abstract class Node {
     public List<Element> getElementsByTagName(String name) {
         return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name));
     }
-    
+
     public List<Element> getElementsByTagNameNS(String name, String namespace) {
         return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name, namespace));
     }
