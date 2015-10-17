@@ -162,13 +162,13 @@ public abstract class Node {
     }
 
     public Element getPreviousElementSibling() {
-
-        for (Node n = getPreviousSibling(); (n = n.getPreviousSibling()) != null;) {
+        Node n = getPreviousSibling();
+        while (n != null) {
             if (n.getNodeType() == ELEMENT_NODE) {
                 return (Element) n;
             }
+            n = n.getPreviousSibling();
         }
-
         return null;
     }
 
@@ -184,10 +184,12 @@ public abstract class Node {
     }
 
     public Element getNextElementSibling() {
-        for (Node n = getNextSibling(); (n = n.getNextSibling()) != null;) {
+        Node n = getNextSibling();
+        while (n != null) {
             if (n.getNodeType() == ELEMENT_NODE) {
                 return (Element) n;
             }
+            n = n.getNextSibling();
         }
         return null;
     }
