@@ -93,7 +93,6 @@ public abstract class Node {
         }
 
         Node previousParent = node.parentNode;
-
         node.parentNode = this;
 
         if (position == childs.size()) {
@@ -106,13 +105,36 @@ public abstract class Node {
             previousParent.getMutableChildNodes().remove(node);
         }
     }
+    
+    public void insertBefore(Node toInsert, Node before) {
+        int idx = getChildNodes().indexOf(before);
+        if (idx >= 0) {
+            insertChildren(idx, toInsert);
+        }
+    }
+
+    public void replaceChild(Node node, Node oldChild) {
+        List<Node> childs = getMutableChildNodes();
+        if (childs == EMPTY_LIST) {
+            return;
+        }
+        int idx = childs.indexOf(oldChild);
+        if (idx >= 0) {
+            Node previousParent = node.parentNode;
+            node.parentNode = this;
+            childs.set(idx, node);
+            if (previousParent != null) {
+                previousParent.getMutableChildNodes().remove(node);
+            }
+            oldChild.parentNode = null;
+        }
+    }
 
     public void removeChild(Node node) {
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
         }
-
         childs.remove(node);
     }
 

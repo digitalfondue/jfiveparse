@@ -48,10 +48,10 @@ public class NodeTest {
         Assert.assertEquals(parent.getChildNodes().get(0), e.getPreviousElementSibling());
         Assert.assertEquals(parent.getChildNodes().get(2), e.getNextSibling());
         Assert.assertEquals(parent.getChildNodes().get(2), e.getNextElementSibling());
-        
+
         Assert.assertEquals(parent.getChildNodes().get(2), parent.getLastChild());
         Assert.assertEquals(parent.getChildNodes().get(2), parent.getLastElementChild());
-        
+
         Assert.assertEquals(parent.getChildNodes().get(0), parent.getFirstChild());
         Assert.assertEquals(parent.getChildNodes().get(0), parent.getFirstElementChild());
     }
@@ -64,18 +64,43 @@ public class NodeTest {
         Assert.assertEquals("<div id=\"myid\">2</div>", e.getOuterHTML());
         Assert.assertEquals("<div id=myid>2</div>", e.getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE)));
     }
-    
+
     @Test
     public void testGetElementsByTagName() {
         Document doc = parser.parse("<div>1</div><span id=myid>2</span><div>3</div>");
         Assert.assertEquals(2, doc.getElementsByTagName("div").size());
         Assert.assertEquals(1, doc.getElementsByTagName("span").size());
-        
+
         Assert.assertEquals(2, doc.getElementsByTagNameNS("div", Node.NAMESPACE_HTML).size());
         Assert.assertEquals(1, doc.getElementsByTagNameNS("span", Node.NAMESPACE_HTML).size());
-        
+
         Assert.assertEquals(0, doc.getElementsByTagNameNS("div", Node.NAMESPACE_SVG).size());
         Assert.assertEquals(0, doc.getElementsByTagNameNS("span", Node.NAMESPACE_SVG).size());
+    }
+
+    @Test
+    public void testReplaceChild() {
+        Document doc = parser.parse("<div id=myid>1<span>2</span><div>3</div></div>");
+        Element e = doc.getElementById("myid");
+        Node last = e.getChildNodes().get(2);
+        Node newNode = new Element("span");
+        e.replaceChild(newNode, last);
+
+        Assert.assertNull(last.getParentNode());
+        Assert.assertEquals(newNode, e.getChildNodes().get(2));
+    }
+    
+    @Test
+    public void testInsertBeforeChild() {
+        Document doc = parser.parse("<div id=myid>1<span>2</span><div>3</div></div>");
+        Element e = doc.getElementById("myid");
+        Node last = e.getChildNodes().get(2);
+        Node newNode = new Element("span");
+        e.insertBefore(newNode, last);
+
+        Assert.assertEquals(newNode, e.getChildNodes().get(2));
+        Assert.assertEquals(last, e.getChildNodes().get(3));
+        Assert.assertEquals(e, newNode.getParentNode());
     }
 
 }
