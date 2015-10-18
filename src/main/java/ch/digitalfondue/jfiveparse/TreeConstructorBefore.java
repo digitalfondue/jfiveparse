@@ -52,7 +52,7 @@ class TreeConstructorBefore {
 
     private static void handleStartTagHead(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "head", tagName)) {
             Element head = treeConstructor.insertHtmlElementToken();
             treeConstructor.setHead(head);

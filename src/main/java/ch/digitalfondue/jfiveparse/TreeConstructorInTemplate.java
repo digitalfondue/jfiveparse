@@ -33,7 +33,7 @@ class TreeConstructorInTemplate {
 
     static void inTemplate(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER || tokenType == COMMENT || tokenType == DOCTYPE) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if ((tokenType == START_TAG && ("base".equals(tagName) || //
                 "basefont".equals(tagName) || //
                 "bgsound".equals(tagName) || //

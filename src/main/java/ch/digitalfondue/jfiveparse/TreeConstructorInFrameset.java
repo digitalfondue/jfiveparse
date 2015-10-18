@@ -32,7 +32,7 @@ class TreeConstructorInFrameset {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "frameset", tagName)) {
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isEndTagNamed(tokenType, "frameset", tagName)) {

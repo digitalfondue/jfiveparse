@@ -143,7 +143,7 @@ class TreeConstructor {
             insertionModeInHtmlContent();
         } else {
             // -> foreign
-            TreeConstructorForeignContent.foreignContent(tokenType, tagName, this);
+            TreeConstructorInBodyAndForeignContent.foreignContent(tokenType, tagName, this);
         }
     }
 
@@ -169,7 +169,7 @@ class TreeConstructor {
             TreeConstructorText.text(tokenType, this);
             break;
         case TreeConstructionInsertionMode.IN_BODY:
-            TreeConstructorInBody.inBody(tokenType, tagName, this);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_CELL:
             TreeConstructorInTable.inCell(tokenType, tagName, this);
@@ -202,7 +202,7 @@ class TreeConstructor {
             TreeConstructorAfters.afterHead(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_BODY:
-            TreeConstructorInBody.inBody(tokenType, tagName, this);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.TEXT:
             TreeConstructorText.text(tokenType, this);
@@ -399,7 +399,7 @@ class TreeConstructor {
             // no such element
             if (formattingElementIdx == -1) {
                 // any other end tag
-                TreeConstructorInBody.anyOtherEndTag(this.tagName, this);
+                TreeConstructorInBodyAndForeignContent.anyOtherEndTag(this.tagName, this);
                 return;
             }
 

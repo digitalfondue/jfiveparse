@@ -33,7 +33,7 @@ class TreeConstructorAfters {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "body", tagName)) {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.framesetOkToFalse();
@@ -76,14 +76,14 @@ class TreeConstructorAfters {
 
     static void afterBody(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (tokenType == COMMENT) {
             treeConstructor.insertCommentToHtmlElement();
         } else if (tokenType == DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isEndTagNamed(tokenType, "html", tagName)) {
             if (treeConstructor.isHtmlFragmentParsing()) {
                 treeConstructor.emitParseError();
@@ -108,7 +108,7 @@ class TreeConstructorAfters {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isEndTagNamed(tokenType, "html", tagName)) {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_AFTER_FRAMESET);
         } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
@@ -127,7 +127,7 @@ class TreeConstructorAfters {
         } else if (tokenType == DOCTYPE || //
                 (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) || //
                 Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
             treeConstructor.stopParsing();
         } else {
@@ -143,7 +143,7 @@ class TreeConstructorAfters {
         } else if ((tokenType == DOCTYPE) || //
                 (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) || //
                 (Common.isStartTagNamed(tokenType, "html", tagName))) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
             treeConstructor.stopParsing();
         } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {

@@ -36,7 +36,7 @@ class TreeConstructorInSelect {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "option", tagName)) {
             if (treeConstructor.getCurrentNode().is("option", Node.NAMESPACE_HTML)) {
                 treeConstructor.popCurrentNode();
@@ -103,7 +103,7 @@ class TreeConstructorInSelect {
                 || Common.isEndTagNamed(tokenType, "template", tagName)) {
             TreeConstructorInHeads.inHead(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else {
             treeConstructor.emitParseError();
             // ignore

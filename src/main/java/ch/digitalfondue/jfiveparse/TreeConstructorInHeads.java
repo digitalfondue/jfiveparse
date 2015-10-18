@@ -36,7 +36,7 @@ class TreeConstructorInHeads {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (tokenType == START_TAG && ("base".equals(tagName) || //
                 "basefont".equals(tagName) || //
                 "bgsound".equals(tagName) || //
@@ -110,7 +110,7 @@ class TreeConstructorInHeads {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBody.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isEndTagNamed(tokenType, "noscript", tagName)) {
             treeConstructor.popCurrentNode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_HEAD);
