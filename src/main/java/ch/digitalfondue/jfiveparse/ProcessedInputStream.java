@@ -112,9 +112,8 @@ abstract class ProcessedInputStream {
     int peekNextInputCharacter(int offset) {
         if (buffer.length() < offset) {
             // fill buffer
-            for (int i = 0; i < offset; i++) {
-                int chr = readWithCRHandling(crFound, read());
-                buffer.add(chr);
+            for (int i = buffer.length(); i < offset; i++) {
+                buffer.add(readWithCRHandling(crFound, read()));
             }
         }
         return buffer.getCharAt(offset);
@@ -131,11 +130,7 @@ abstract class ProcessedInputStream {
     }
 
     int consume() {
-        if (buffer.isEmpty()) {
-            return readWithCRHandling(crFound, read());
-        } else {
-            return buffer.removeFirst();
-        }
+        return buffer.isEmpty() ? readWithCRHandling(crFound, read()) : buffer.removeFirst();
     }
 
     int getNextInputCharacter() {
