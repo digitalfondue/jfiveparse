@@ -141,7 +141,7 @@ class Tokenizer {
                     TokenizerPlainAndRawTextStates.handleRawtextState(this, processedInputStream);
                     break;
                 case TokenizerState.SCRIPT_DATA_STATE:
-                    TokenizerScriptStates.handleScriptDataState(this, processedInputStream);
+                    TokenizerRCDataAndScriptStates.handleScriptDataState(this, processedInputStream);
                     break;
                 case TokenizerState.TAG_OPEN_STATE:
                     TokenizerTagStates.handleTagOpenState(this, processedInputStream);
@@ -177,16 +177,16 @@ class Tokenizer {
             TokenizerCDataSectionAndDataState.handleCharacterReferenceInDataState(this, processedInputStream);
             break;
         case TokenizerState.RCDATA_STATE:
-            TokenizerRCDataStates.handleRCDataState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleRCDataState(this, processedInputStream);
             break;
         case TokenizerState.CHARACTER_REFERENCE_IN_RCDATA_STATE:
-            TokenizerRCDataStates.handleCharacterReferenceInRCDataState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleCharacterReferenceInRCDataState(this, processedInputStream);
             break;
         case TokenizerState.RAWTEXT_STATE:
             TokenizerPlainAndRawTextStates.handleRawtextState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_STATE:
-            TokenizerScriptStates.handleScriptDataState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataState(this, processedInputStream);
             break;
         case TokenizerState.PLAINTEXT_STATE:
             TokenizerPlainAndRawTextStates.handlePlainTextState(this, processedInputStream);
@@ -201,13 +201,13 @@ class Tokenizer {
             TokenizerTagStates.handleTagNameState(this, processedInputStream);
             break;
         case TokenizerState.RCDATA_LESS_THAN_SIGN_STATE:
-            TokenizerRCDataStates.handleRCDataLessThanSignState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleRCDataLessThanSignState(this, processedInputStream);
             break;
         case TokenizerState.RCDATA_END_TAG_OPEN_STATE:
-            TokenizerRCDataStates.handleRCDataEndTagOpenState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleRCDataEndTagOpenState(this, processedInputStream);
             break;
         case TokenizerState.RCDATA_END_TAG_NAME_STATE:
-            TokenizerRCDataStates.handleRCDataEndTagNameState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleRCDataEndTagNameState(this, processedInputStream);
             break;
         case TokenizerState.RAWTEXT_LESS_THAN_SIGN_STATE:
             TokenizerPlainAndRawTextStates.handleRawTextLessThanSignState(this, processedInputStream);
@@ -219,55 +219,55 @@ class Tokenizer {
             TokenizerPlainAndRawTextStates.handleRawTextEndTagNameState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_LESS_THAN_SIGN_STATE:
-            TokenizerScriptStates.handleScriptDataLessThanSignState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataLessThanSignState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_END_TAG_OPEN_STATE:
-            TokenizerScriptStates.handleScriptDataEndTagOpenState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEndTagOpenState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_END_TAG_NAME_STATE:
-            TokenizerScriptStates.handleScriptDataEndTagNameState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEndTagNameState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPE_START_STATE:
-            TokenizerScriptStates.handleScriptDataEscapeStartState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapeStartState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPE_START_DASH_STATE:
-            TokenizerScriptStates.handleScriptDataEscapeStartDashState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapeStartDashState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPED_STATE:
-            TokenizerScriptStates.handleScriptDataEscapedState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapedState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPED_DASH_STATE:
-            TokenizerScriptStates.handleScriptDataEscapedDashState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapedDashState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPED_DASH_DASH_STATE:
-            TokenizerScriptStates.handleScriptDataEscapedDashDashState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapedDashDashState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE:
-            TokenizerScriptStates.handleScriptDataEscapedLessThanSignState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapedLessThanSignState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPED_END_TAG_OPEN_STATE:
-            TokenizerScriptStates.handleScriptDataEscapedEndTagOpenState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapedEndTagOpenState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_ESCAPED_END_TAG_NAME_STATE:
-            TokenizerScriptStates.handleScriptDataEscapedEndTagNameState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataEscapedEndTagNameState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_START_STATE:
-            TokenizerScriptStates.handleScriptDataDoubleEscapeStartState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataDoubleEscapeStartState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE:
-            TokenizerScriptStates.handleScriptDataDoubleEscapedState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataDoubleEscapedState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_DASH_STATE:
-            TokenizerScriptStates.handleScriptDataDoubleEscapedDashState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataDoubleEscapedDashState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_STATE:
-            TokenizerScriptStates.handleScriptDataDoubleEscapedDashDashState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataDoubleEscapedDashDashState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE:
-            TokenizerScriptStates.handleScriptDataDoubleEscapedLessThanSignState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataDoubleEscapedLessThanSignState(this, processedInputStream);
             break;
         case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_END_STATE:
-            TokenizerScriptStates.handleScriptDataDoubleEscapedEndState(this, processedInputStream);
+            TokenizerRCDataAndScriptStates.handleScriptDataDoubleEscapedEndState(this, processedInputStream);
             break;
         case TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE:
             TokenizerAttributesState.handleBeforeAttributeNameState(this, processedInputStream);

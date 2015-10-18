@@ -243,8 +243,7 @@ class TreeConstructorActiveFormattingElements {
     }
 
     void replace(Element node, Element elem) {
-        int idx = activeFormattingElements.lastIndexOf(node);
-        activeFormattingElements.set(idx, elem);
+        activeFormattingElements.set(activeFormattingElements.lastIndexOf(node), elem);
     }
 
 }

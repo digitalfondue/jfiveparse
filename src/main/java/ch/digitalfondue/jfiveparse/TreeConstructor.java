@@ -187,10 +187,10 @@ class TreeConstructor {
             TreeConstructorInitial.initial(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.BEFORE_HTML:
-            TreeConstructorBefore.beforeHtml(tokenType, tagName, this);
+            TreeConstructorAftersAndBefore.beforeHtml(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.BEFORE_HEAD:
-            TreeConstructorBefore.beforeHead(tokenType, tagName, this);
+            TreeConstructorAftersAndBefore.beforeHead(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_HEAD:
             TreeConstructorInHeads.inHead(tokenType, tagName, this);
@@ -199,7 +199,7 @@ class TreeConstructor {
             TreeConstructorInHeads.inHeadNoScript(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.AFTER_HEAD:
-            TreeConstructorAfters.afterHead(tokenType, tagName, this);
+            TreeConstructorAftersAndBefore.afterHead(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_BODY:
             TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, this);
@@ -238,19 +238,19 @@ class TreeConstructor {
             TreeConstructorInTemplate.inTemplate(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.AFTER_BODY:
-            TreeConstructorAfters.afterBody(tokenType, tagName, this);
+            TreeConstructorAftersAndBefore.afterBody(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_FRAMESET:
             TreeConstructorInFrameset.inFrameset(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.AFTER_FRAMESET:
-            TreeConstructorAfters.afterFrameset(tokenType, tagName, this);
+            TreeConstructorAftersAndBefore.afterFrameset(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.AFTER_AFTER_BODY:
-            TreeConstructorAfters.afterAfterBody(tokenType, tagName, this);
+            TreeConstructorAftersAndBefore.afterAfterBody(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.AFTER_AFTER_FRAMESET:
-            TreeConstructorAfters.afterAfterFrameset(tokenType, tagName, this);
+            TreeConstructorAftersAndBefore.afterAfterFrameset(tokenType, tagName, this);
             break;
         }
     }
