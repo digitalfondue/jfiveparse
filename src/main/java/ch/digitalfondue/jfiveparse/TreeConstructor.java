@@ -21,10 +21,11 @@ import java.util.Set;
 
 class TreeConstructor {
 
-    // optimization when adding a new character, the node where the character
-    // has been appended is saved in this property: it can then be used in the
-    // tokenizer for appending directly, bypassing the dispatch logic
-    private Text insertCharacterPreviousTextNode;
+    // optimization: when adding a new character, the char builder where the
+    // character has been appended is saved in this property: it can then be
+    // used in the tokenizer for appending directly, bypassing the dispatch
+    // logic
+    private ResizableCharBuilder insertCharacterPreviousTextNode;
     //
 
     static final byte CHARACTER = 0;
@@ -122,10 +123,6 @@ class TreeConstructor {
     //
 
     void dispatch() {
-
-        //
-        // internalDispatcherCounter++;
-
         // handle textarea "skip LF" logic
         if (ignoreCharacterTokenLF) {
             ignoreCharacterTokenLF = false;
@@ -149,16 +146,17 @@ class TreeConstructor {
 
     private boolean checkIsInHtmlContent() {
         Element adjustedCurrentNode = getAdjustedCurrentNode();
-        return openElements.isEmpty() || //
-                (adjustedCurrentNode != null && (//
-                Node.NAMESPACE_HTML.equals(adjustedCurrentNode.getNamespaceURI())
-                        || //
-                        (Common.isMathMLIntegrationPoint(adjustedCurrentNode) && ((tokenType == START_TAG && (!"mglyph".equals(tagName) && !"malignmark".equals(tagName))) || tokenType == CHARACTER))
-                        || //
-                        (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML.equals(adjustedCurrentNode.getNamespaceURI()))
-                                && tokenType == START_TAG && "svg".equals(tagName)) || //
-                /*    */(Common.isHtmlIntegrationPoint(adjustedCurrentNode) && (tokenType == START_TAG || tokenType == CHARACTER)))) || //
-                tokenType == EOF;
+        return openElements.isEmpty()
+                || (adjustedCurrentNode != null && (Node.NAMESPACE_HTML.equals(adjustedCurrentNode.getNamespaceURI()) || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
+                || tokenType == EOF;
+    }
+
+    private boolean checkIsInHtmlContentSVGMathML(Element adjustedCurrentNode) {
+        return (Common.isMathMLIntegrationPoint(adjustedCurrentNode) && ((tokenType == START_TAG && (!"mglyph".equals(tagName) && !"malignmark".equals(tagName))) || tokenType == CHARACTER))
+                || //
+                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML.equals(adjustedCurrentNode.getNamespaceURI())) && tokenType == START_TAG && "svg"
+                        .equals(tagName)) || //
+                (Common.isHtmlIntegrationPoint(adjustedCurrentNode) && (tokenType == START_TAG || tokenType == CHARACTER));
     }
 
     void insertionModeInHtmlContent() {
@@ -703,7 +701,7 @@ class TreeConstructor {
             toInsert.insertChildren(position, t);
         }
         // optimization
-        insertCharacterPreviousTextNode = t;
+        insertCharacterPreviousTextNode = t.data;
         //
     }
 
@@ -951,12 +949,12 @@ class TreeConstructor {
         this.chr = chr;
     }
 
-    Text getInsertCharacterPreviousTextNode() {
+    ResizableCharBuilder getInsertCharacterPreviousTextNode() {
         return insertCharacterPreviousTextNode;
     }
 
-    void setInsertCharacterPreviousTextNode(Text insertCharacterPreviousTextNode) {
-        this.insertCharacterPreviousTextNode = insertCharacterPreviousTextNode;
+    void resetInsertCharacterPreviousTextNode() {
+        this.insertCharacterPreviousTextNode = null;
     }
 
     boolean isInHtmlContent() {

@@ -784,7 +784,6 @@ class TreeConstructorInBodyAndForeignContent {
         treeConstructor.emitParseError();
 
         treeConstructor.removeAttributes();
-        ;
 
         treeConstructor.reconstructActiveFormattingElements();
         treeConstructor.insertHtmlElementToken();
@@ -1000,9 +999,9 @@ class TreeConstructorInBodyAndForeignContent {
             node = treeConstructor.openElementAt(idx);
         }
     }
-    
-    //---------------------------
-    
+
+    // ---------------------------
+
     static void foreignContent(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && treeConstructor.getChr() == Characters.NULL) {
             treeConstructor.emitParseError();

@@ -583,12 +583,11 @@ class Tokenizer {
     }
 
     ResizableCharBuilder getTokenHandlerInsertCharacterPreviousTextNode() {
-        Text node = tokenHandler.getInsertCharacterPreviousTextNode();
-        return node == null ? null : node.data;
+        return tokenHandler.getInsertCharacterPreviousTextNode();
     }
 
     void resetTokenHandlerInsertCharacterPreviousTextNode() {
-        tokenHandler.setInsertCharacterPreviousTextNode(null);
+        tokenHandler.resetInsertCharacterPreviousTextNode();
     }
 
     void emitParseErrorAndSetState(int state) {
