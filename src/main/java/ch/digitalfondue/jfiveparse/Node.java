@@ -105,7 +105,7 @@ public abstract class Node {
             previousParent.getMutableChildNodes().remove(node);
         }
     }
-    
+
     public void insertBefore(Node toInsert, Node before) {
         int idx = getChildNodes().indexOf(before);
         if (idx >= 0) {
@@ -226,7 +226,7 @@ public abstract class Node {
      * >http://www.drdobbs.com/database/a-generic-iterator-for-tree-traversal/
      * 184404325</a> ...
      */
-    private void traverse(NodesVisitor visitor) {
+    public void traverse(NodesVisitor visitor) {
         Node node = getFirstChild();
         while (node != null) {
             visitor.start(node);
