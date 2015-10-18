@@ -20,64 +20,92 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * HTML5 parser.
+ * The parser. Instantiate for using the parser. The instance is thread-safe.
  */
 public class Parser {
 
     private final boolean scriptingFlag;
     private final boolean transformEntities;
 
+    /**
+     * Instantiate a parser with the default configuration.
+     * <ul>
+     * <li>The scripting flag is set to true</li>
+     * <li>The entities are parsed and transformed</li>
+     * </ul>
+     */
     public Parser() {
         scriptingFlag = true;
         transformEntities = true;
     }
 
+    /**
+     * Instantiate a parser. Currently, the following {@link Option} affect the
+     * behaviour of the parser:
+     * <ul>
+     * <li>{@link Option#SCRIPTING_DISABLED}</li>
+     * <li>{@link Option#DONT_TRANSFORM_ENTITIES}</li>
+     * </ul>
+     * 
+     * @param options
+     */
     public Parser(Set<Option> options) {
         this.scriptingFlag = !options.contains(Option.SCRIPTING_DISABLED);
         this.transformEntities = !options.contains(Option.DONT_TRANSFORM_ENTITIES);
     }
 
     /**
-     * Parse a document.
+     * Parse. This method is thread-safe.
      * 
      * @param input
-     * @return
+     *            the {@link String} to parse
+     * @return the parsed {@link Document}
      */
     public Document parse(String input) {
         return parse(new ProcessedInputStream.StringProcessedInputStream(input));
     }
 
     /**
-     * Parse a document.
-     * 
-     * Can launch a {@link ParserException} if the reader launch a IOException.
+     * Parse. Can launch a {@link ParserException} if the reader launch a
+     * IOException.
      * 
      * @param input
-     * @return
+     *            the {@link String} to parse
+     * @return the parsed {@link Document}
      */
     public Document parse(Reader input) {
         return parse(new ProcessedInputStream.ReaderProcessedInputStream(input));
     }
 
+    /***
+     * Parse a fragment.
+     * 
+     * Implement the steps described at <a
+     * href="https://html.spec.whatwg.org/multipage/syntax
+     * .html#html-fragment-parsing
+     * -algorithm">https://html.spec.whatwg.org/multipage/syntax
+     * .html#html-fragment-parsing-algorithm</a>
+     * 
+     * @param node
+     *            the context node
+     * @param input
+     * @return
+     */
     public List<Node> parseFragment(Element node, String input) {
         return parseFragment(new ProcessedInputStream.StringProcessedInputStream(input), node);
     }
 
-    public List<Node> parseFragment(Element node, Reader input) {
-        return parseFragment(new ProcessedInputStream.ReaderProcessedInputStream(input), node);
-    }
-
-    /***
-     * Parse a fragment.
-     * 
-     * Implement the steps described at
-     * https://html.spec.whatwg.org/multipage/syntax
-     * .html#html-fragment-parsing-algorithm
+    /**
+     * @see #parseFragment(Element, String)
      * 
      * @param node
      * @param input
      * @return
      */
+    public List<Node> parseFragment(Element node, Reader input) {
+        return parseFragment(new ProcessedInputStream.ReaderProcessedInputStream(input), node);
+    }
+
     private List<Node> parseFragment(ProcessedInputStream is, Element node) {
 
         // 1 when creating a tree constructor, a document is automatically

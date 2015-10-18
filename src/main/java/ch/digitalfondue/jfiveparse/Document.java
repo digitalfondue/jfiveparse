@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represent a document.
+ */
 public class Document extends Node {
     private final List<Node> childNodes = new ArrayList<>(2);
     private DocumentType doctype;
@@ -46,6 +49,9 @@ public class Document extends Node {
         return doctype;
     }
 
+    /**
+     * Return the {@link String} "#document".
+     */
     @Override
     public String getNodeName() {
         return "#document";

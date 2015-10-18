@@ -23,6 +23,9 @@ import java.util.Set;
 
 import ch.digitalfondue.jfiveparse.NodeMatchers.NodeMatcher;
 
+/**
+ * Base class for all the nodes.
+ */
 public abstract class Node {
 
     private static final List<Node> EMPTY_LIST = Collections.emptyList();
@@ -37,16 +40,46 @@ public abstract class Node {
     public static final String NAMESPACE_XML = "http://www.w3.org/XML/1998/namespace";
     public static final String NAMESPACE_XLINK = "http://www.w3.org/1999/xlink";
 
+    /**
+     * {@link Element} node type value:
+     */
     public static final byte ELEMENT_NODE = 1;
+
+    /**
+     * {@link Text} node type value:
+     */
     public static final byte TEXT_NODE = 3;
+
+    /**
+     * {@link Comment} node type value:
+     */
     public static final byte COMMENT_NODE = 8;
+
+    /**
+     * {@link Document} node type value:
+     */
     public static final byte DOCUMENT_NODE = 9;
+
+    /**
+     * {@link DocumentType} node type value:
+     */
     public static final byte DOCUMENT_TYPE_NODE = 10;
 
+    /**
+     * @return the node type. See {@link #ELEMENT_NODE}, {@link #TEXT_NODE},
+     *         {@link #COMMENT_NODE}, {@link #DOCUMENT_NODE} and
+     *         {@link #DOCUMENT_TYPE_NODE}.
+     */
     public abstract byte getNodeType();
 
+    /**
+     * @return the node name. Each concrete class will return a specific value.
+     */
     public abstract String getNodeName();
 
+    /**
+     * Get the parent node if present or else return null.
+     */
     public Node getParentNode() {
         return parentNode;
     }
@@ -55,6 +88,9 @@ public abstract class Node {
         return EMPTY_LIST;
     }
 
+    /**
+     * Remove all child nodes from this node.
+     */
     public void empty() {
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
@@ -68,10 +104,17 @@ public abstract class Node {
         childs.clear();
     }
 
+    /**
+     * Get the number of childs of the current node.
+     */
     public int getChildCount() {
         return getMutableChildNodes().size();
     }
 
+    /**
+     * Append the {@link Node} at the end of this node. If the node has a
+     * parentNode defined, it will be removed from the original parent.
+     */
     public void appendChild(Node node) {
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
@@ -86,6 +129,15 @@ public abstract class Node {
         insertChildren(childs.size(), node);
     }
 
+    /**
+     * Insert the {@link Node} at the given position. If the node has a
+     * parentNode defined, it will be removed from the original parent.
+     * 
+     * @param position
+     *            the index
+     * @param node
+     *            the node to be inserted
+     */
     public void insertChildren(int position, Node node) {
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
@@ -106,6 +158,15 @@ public abstract class Node {
         }
     }
 
+    /**
+     * Insert the {@link Node} before another {@link Node}.
+     * 
+     * @param toInsert
+     *            the node to be inserted
+     * @param before
+     *            if the node is not a child of this node, the insertion will
+     *            fail silently.
+     */
     public void insertBefore(Node toInsert, Node before) {
         int idx = getChildNodes().indexOf(before);
         if (idx >= 0) {
@@ -113,6 +174,14 @@ public abstract class Node {
         }
     }
 
+    /**
+     * Replace a node with another one.
+     * 
+     * @param node
+     *            the new node
+     * @param oldChild
+     *            the node to be replaced
+     */
     public void replaceChild(Node node, Node oldChild) {
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
@@ -130,23 +199,49 @@ public abstract class Node {
         }
     }
 
+    /**
+     * Remove a child node.
+     * 
+     * @param node
+     *            the node to be removed
+     */
     public void removeChild(Node node) {
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
         }
-        childs.remove(node);
+        if (childs.remove(node)) {
+            node.parentNode = null;
+        }
     }
 
+    /**
+     * Get the child nodes. The list is <strong>not</strong> modifiable.
+     */
     public List<Node> getChildNodes() {
         return EMPTY_LIST;
     }
 
+    /**
+     * Get the first child, if present or else null.
+     */
     public Node getFirstChild() {
         List<Node> childs = getChildNodes();
         return childs.isEmpty() ? null : childs.get(0);
     }
 
+    /**
+     * Get the last child, if present or else null.
+     */
+    public Node getLastChild() {
+        List<Node> childs = getChildNodes();
+        return childs.isEmpty() ? null : childs.get(childs.size() - 1);
+    }
+
+    /**
+     * Get the first <strong>{@link Element}</strong> child, if present or else
+     * null.
+     */
     public Element getFirstElementChild() {
         List<Node> childs = getChildNodes();
         for (Node n : childs) {
@@ -157,6 +252,10 @@ public abstract class Node {
         return null;
     }
 
+    /**
+     * Get the last <strong>{@link Element}</strong> child, if present or else
+     * null.
+     */
     public Element getLastElementChild() {
         List<Node> childs = getChildNodes();
         for (int i = childs.size() - 1; i >= 0; i--) {
@@ -168,11 +267,9 @@ public abstract class Node {
         return null;
     }
 
-    public Node getLastChild() {
-        List<Node> childs = getChildNodes();
-        return childs.isEmpty() ? null : childs.get(childs.size() - 1);
-    }
-
+    /**
+     * Get the previous sibling {@link Node} if present, or else null.
+     */
     public Node getPreviousSibling() {
         if (parentNode == null) {
             return null;
@@ -183,6 +280,10 @@ public abstract class Node {
         return currentElemIdx == 0 ? null : siblings.get(currentElemIdx - 1);
     }
 
+    /**
+     * Get the previous <strong>{@link Element}</strong> sibling if present, or
+     * else null.
+     */
     public Element getPreviousElementSibling() {
         Node n = getPreviousSibling();
         while (n != null) {
@@ -194,6 +295,9 @@ public abstract class Node {
         return null;
     }
 
+    /**
+     * Get the next sibling {@link Node} if present, or else null.
+     */
     public Node getNextSibling() {
         if (parentNode == null) {
             return null;
@@ -205,6 +309,10 @@ public abstract class Node {
         return currentElemIdx == siblings.size() - 1 ? null : siblings.get(currentElemIdx + 1);
     }
 
+    /**
+     * Get the next <strong>{@link Element}</strong> sibling if present, or else
+     * null.
+     */
     public Element getNextElementSibling() {
         Node n = getNextSibling();
         while (n != null) {
@@ -216,16 +324,20 @@ public abstract class Node {
         return null;
     }
 
+    /**
+     * @return true if this node has at least one child.
+     */
     public boolean hasChildNodes() {
         return !getChildNodes().isEmpty();
     }
 
     /**
-     * Traverse tree. As described in <a href=
-     * "http://www.drdobbs.com/database/a-generic-iterator-for-tree-traversal/184404325"
-     * >http://www.drdobbs.com/database/a-generic-iterator-for-tree-traversal/
-     * 184404325</a> ...
+     * Traverse the childs of this node in <a href=
+     * "https://html.spec.whatwg.org/multipage/infrastructure.html#tree-order"
+     * >"tree order"</a>.
      */
+    // As described in
+    // http://www.drdobbs.com/database/a-generic-iterator-for-tree-traversal/184404325
     public void traverse(NodesVisitor visitor) {
         Node node = getFirstChild();
         while (node != null) {
@@ -248,25 +360,55 @@ public abstract class Node {
         }
     }
 
+    /**
+     * Traverse this node and his child.
+     */
+    public void traverseWithCurrentNode(NodesVisitor visitor) {
+        visitor.start(this);
+        traverse(visitor);
+        visitor.end(this);
+    }
+
+    /**
+     * Get all the node matching the given matcher. The nodes will be returned
+     * in "tree order".
+     */
     public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher) {
         List<T> l = new ArrayList<>();
         traverse(new NodeMatchers<>(matcher, l));
         return l;
     }
 
+    /**
+     * Get all the {@link Element} that match the given name. The elements will
+     * be returned in "tree order". The name is case sensitive.
+     */
     public List<Element> getElementsByTagName(String name) {
         return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name));
     }
 
+    /**
+     * Get all the {@link Element} that match the given name and namespace. The
+     * elements will be returned in "tree order". The name and namespace are
+     * case sensitive.
+     */
     public List<Element> getElementsByTagNameNS(String name, String namespace) {
         return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name, namespace));
     }
 
+    /**
+     * Get the element with the given id. The id is case sensitive. If in the
+     * documents there are more than one element with the same id, the first
+     * element found during the traversal will be returned.
+     */
     public Element getElementById(String idValue) {
         List<Element> l = getAllNodesMatching(new NodeMatchers.HasAttribute("id", idValue));
         return l.isEmpty() ? null : l.get(0);
     }
 
+    /**
+     * Get the text content of the node.
+     */
     public String getTextContent() {
         List<Text> textNodes = getAllNodesMatching(NodeMatchers.text());
         StringBuilder sb = new StringBuilder();
@@ -276,29 +418,45 @@ public abstract class Node {
         return sb.toString();
     }
 
-    public void traverseWithCurrentNode(NodesVisitor visitor) {
-        visitor.start(this);
-        traverse(visitor);
-        visitor.end(this);
+    /**
+     * Get the html content of the child of this node.
+     */
+    public String getInnerHTML() {
+        return getInnerHTML(EnumSet.noneOf(Option.class));
     }
 
+    /**
+     * 
+     * Get the html content of the child of this node.
+     *
+     * @param options
+     *            serialization {@link Option}.
+     * @return
+     */
     public String getInnerHTML(Set<Option> options) {
         StringBuilder sb = new StringBuilder();
         traverse(new HtmlSerializer(sb, options));
         return sb.toString();
     }
 
+    /**
+     * Get the html content of the this node and his child.
+     */
+    public String getOuterHTML() {
+        return getOuterHTML(EnumSet.noneOf(Option.class));
+    }
+
+    /**
+     * Get the html content of the child of this node.
+     * 
+     * @param options
+     *            serialization {@link Option}.
+     * @return
+     */
     public String getOuterHTML(Set<Option> options) {
         StringBuilder sb = new StringBuilder();
         traverseWithCurrentNode(new HtmlSerializer(sb, options));
         return sb.toString();
     }
 
-    public String getInnerHTML() {
-        return getInnerHTML(EnumSet.noneOf(Option.class));
-    }
-
-    public String getOuterHTML() {
-        return getOuterHTML(EnumSet.noneOf(Option.class));
-    }
 }

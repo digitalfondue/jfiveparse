@@ -15,6 +15,9 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+/**
+ * Represent a document type.
+ */
 public class DocumentType extends Node {
 
     private String name;
@@ -44,6 +47,9 @@ public class DocumentType extends Node {
         return systemId;
     }
 
+    /**
+     * Return the {@link String} "#doctype".
+     */
     @Override
     public String getNodeName() {
         return "#doctype";

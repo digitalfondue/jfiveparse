@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Represent an Element (e.g. "&lt;div&gt;").
+ */
 public class Element extends Node {
 
     private String nodeName;
@@ -26,21 +29,40 @@ public class Element extends Node {
     private Attributes attributes;
 
     private List<Node> childNodes = null;
-    
+
     final boolean selfClosing;
 
+    /**
+     * Create an element in the {@link Node#NAMESPACE_HTML} namespace with no
+     * attributes.
+     * 
+     * @param name
+     */
     public Element(String name) {
         this(name, Node.NAMESPACE_HTML);
     }
 
+    /**
+     * Create an element in the given namespace with no attributes.
+     * 
+     * @param name
+     * @param nameSpace
+     */
     public Element(String name, String nameSpace) {
         this(name, nameSpace, null);
     }
 
+    /**
+     * Create an element in the given namespace with attributes.
+     * 
+     * @param name
+     * @param nameSpace
+     * @param attributes
+     */
     public Element(String name, String nameSpace, Attributes attributes) {
         this(name, nameSpace, attributes, false);
     }
-    
+
     Element(String name, String nameSpace, Attributes attributes, boolean selfClosing) {
         this.nodeName = name;
         this.namespaceURI = nameSpace;
@@ -54,14 +76,17 @@ public class Element extends Node {
         }
     }
 
+    /**
+     * @see Node#getChildNodes().
+     */
     @Override
     public List<Node> getChildNodes() {
-        return childNodes == null ? Collections.<Node>emptyList() : Collections.unmodifiableList(childNodes);
+        return childNodes == null ? Collections.<Node> emptyList() : Collections.unmodifiableList(childNodes);
     }
 
     @Override
     List<Node> getMutableChildNodes() {
-        if(childNodes == null) {
+        if (childNodes == null) {
             this.childNodes = new ArrayList<>(2);
         }
         return childNodes;
@@ -72,11 +97,18 @@ public class Element extends Node {
         return ELEMENT_NODE;
     }
 
+    /**
+     * Return the node name. If the {@link Element} is a "div" element, the
+     * {@link String} "div" will be returned.
+     */
     @Override
     public String getNodeName() {
         return nodeName;
     }
 
+    /**
+     * Return the namespace.
+     */
     public String getNamespaceURI() {
         return namespaceURI;
     }
@@ -85,11 +117,17 @@ public class Element extends Node {
         return this.nodeName.equals(name) && this.namespaceURI.equals(nameSpace);
     }
 
+    /**
+     * Get the {@link Attributes}.
+     */
     public Attributes getAttributes() {
         ensureAttributesPresence();
         return attributes;
     }
 
+    /**
+     * See {@link #getNodeName()}.
+     */
     @Override
     public String toString() {
         return nodeName;

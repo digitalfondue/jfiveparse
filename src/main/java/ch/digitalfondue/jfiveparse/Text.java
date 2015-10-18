@@ -15,6 +15,9 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+/**
+ * Represent a text node.
+ */
 public class Text extends Node {
 
     final ResizableCharBuilder data = new ResizableCharBuilder();
@@ -28,6 +31,9 @@ public class Text extends Node {
         return data.asString();
     }
 
+    /**
+     * Return the {@link String} "#text".
+     */
     @Override
     public String getNodeName() {
         return "#text";

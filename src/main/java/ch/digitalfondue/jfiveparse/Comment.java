@@ -15,6 +15,9 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+/**
+ * Represent a comment.
+ */
 public class Comment extends Node {
 
     private String data;
@@ -32,6 +35,9 @@ public class Comment extends Node {
         return data;
     }
 
+    /**
+     * Return the {@link String} "#comment".
+     */
     @Override
     public String getNodeName() {
         return "#comment";
