@@ -69,10 +69,9 @@ class TokenizerRCDataAndScriptStates {
 
     static void handleRCDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
-        boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-        if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
+        if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.RCDATA_END_TAG_NAME_STATE);
         } else {
@@ -113,9 +112,8 @@ class TokenizerRCDataAndScriptStates {
             }
             break;
         default:
-            boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendCurrentTagToken(chr);
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
                 anythingElseRCDataEndTagNameState(tokenizer, processedInputStream, chr);
@@ -205,11 +203,9 @@ class TokenizerRCDataAndScriptStates {
     static void handleScriptDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
-        final boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-
-        if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
+        if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.SCRIPT_DATA_END_TAG_NAME_STATE);
         } else {
@@ -250,9 +246,8 @@ class TokenizerRCDataAndScriptStates {
             }
             break;
         default:
-            final boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendCurrentTagToken(chr);
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
                 anythingElseScriptDataEndTagNameState(tokenizer, processedInputStream, chr);
@@ -396,11 +391,9 @@ class TokenizerRCDataAndScriptStates {
     static void handleScriptDataEscapedEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
-        final boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-
-        if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
+        if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_END_TAG_NAME_STATE);
         } else {
@@ -440,9 +433,8 @@ class TokenizerRCDataAndScriptStates {
             }
             break;
         default:
-            final boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendCurrentTagToken(chr);
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
                 anythingElseScriptDataEscapedEndTagNameState(tokenizer, processedInputStream, chr);

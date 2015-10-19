@@ -72,6 +72,8 @@ class TreeConstructor {
 
     // --- tag related ---
     private String tagName;
+    @SuppressWarnings("unused")
+    private String originalTagName;
     private boolean selfClosing;
     private Attributes attrs;
     // --- ---
@@ -102,7 +104,13 @@ class TreeConstructor {
         this.tokenizer = tokenizer;
     }
 
-    void setTagName(String tagName) {
+    private void setTagNameAndSaveOriginal(ResizableCharBuilder rawTagName) {
+        setTagName(rawTagName);
+        this.originalTagName = rawTagName.containsUpperCase ? rawTagName.asString() : this.tagName;
+    }
+    
+    void setTagName(ResizableCharBuilder rawTagName) {
+        String tagName = rawTagName.toLowerCase();
         String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
         this.tagName = maybeCached != null ? maybeCached : tagName;
     }
@@ -823,13 +831,13 @@ class TreeConstructor {
     }
 
     void emitEndTagToken(ResizableCharBuilder name) {
-        setTagName(name.asString());
+        setTagName(name);
         tokenType = END_TAG;
         dispatch();
     }
 
     void emitStartTagToken(ResizableCharBuilder name, Attributes attrs, boolean selfClosing) {
-        setTagName(name.asString());
+        setTagNameAndSaveOriginal(name);
         this.attrs = attrs;
         this.selfClosing = selfClosing;
         tokenType = START_TAG;

@@ -24,8 +24,8 @@ class ResizableCharBuilder {
 
     char[] buff = new char[16];
     int pos = 0;
-    
-    /* this field is accurate only after calling toLowerCase*/
+
+    /* this field is accurate only after calling toLowerCase */
     boolean containsUpperCase;
 
     ResizableCharBuilder() {
@@ -78,7 +78,15 @@ class ResizableCharBuilder {
         return asString();
     }
 
-    boolean same(ResizableCharBuilder cb) {
-        return pos == cb.pos && Arrays.equals(buff, cb.buff);
+    boolean equalsASCIICaseInsensitive(ResizableCharBuilder cb) {
+        if (pos != cb.pos) {
+            return false;
+        }
+        for (int i = 0; i < pos; i++) {
+            if (Common.toLowerCase(buff[i]) != Common.toLowerCase(cb.buff[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

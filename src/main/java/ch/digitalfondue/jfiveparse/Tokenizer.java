@@ -96,7 +96,7 @@ class Tokenizer {
     }
 
     boolean isTemporaryBufferEquals(ResizableCharBuilder s) {
-        return temporaryBuffer.same(s);
+        return temporaryBuffer.equalsASCIICaseInsensitive(s);
     }
 
     //
@@ -379,7 +379,7 @@ class Tokenizer {
     // ------------
 
     boolean isAppropriateEndTagToken() {
-        return tagName != null && lastEmittedStartTagName != null && tagName.same(lastEmittedStartTagName);
+        return tagName != null && lastEmittedStartTagName != null && tagName.equalsASCIICaseInsensitive(lastEmittedStartTagName);
     }
 
     // When the user agent leaves the attribute name state (and before emitting
@@ -429,16 +429,13 @@ class Tokenizer {
         currentAttributeValue = null;
     }
 
-    void appendCurrentTagToken(int chr, boolean isUpperCase) {
-        if (isUpperCase) {
-            chr += 0x0020;
-        }
+    void appendCurrentTagToken(int chr) {
         tagName.append((char) chr);
     }
 
-    void createNewStartTagToken(int chr, boolean isUpperCase) {
+    void createNewStartTagToken(int chr) {
         tagName = new ResizableCharBuilder();
-        appendCurrentTagToken(chr, isUpperCase);
+        appendCurrentTagToken(chr);
         isEndTagToken = false;
         attributes = new Attributes();
         currentAttributeName = null;

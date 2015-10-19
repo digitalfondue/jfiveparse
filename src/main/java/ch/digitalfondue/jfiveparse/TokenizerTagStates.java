@@ -36,9 +36,8 @@ class TokenizerTagStates {
             tokenizer.setState(TokenizerState.BOGUS_COMMENT_STATE);
             break;
         default:
-            boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (Common.isLowerCaseASCIILetter(chr) || isUpperCase) { //
-                tokenizer.createNewStartTagToken(chr, isUpperCase);
+            if (Common.isLowerCaseASCIILetter(chr) || Common.isUpperCaseASCIILetter(chr)) { //
+                tokenizer.createNewStartTagToken(chr);
                 tokenizer.setState(TokenizerState.TAG_NAME_STATE);
             } else { // default
                 handleTagOpenStateAnythingElse(tokenizer, processedInputStream, chr);
@@ -63,10 +62,9 @@ class TokenizerTagStates {
             handleEndTagOpenStateEOF(tokenizer, processedInputStream, chr);
             break;
         default:
-            boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (Common.isLowerCaseASCIILetter(chr) || isUpperCase) {
+            if (Common.isLowerCaseASCIILetter(chr) || Common.isUpperCaseASCIILetter(chr)) {
                 tokenizer.newEndTokenTag();
-                tokenizer.appendCurrentTagToken(chr, isUpperCase);
+                tokenizer.appendCurrentTagToken(chr);
                 tokenizer.setState(TokenizerState.TAG_NAME_STATE);
             } else {
                 tokenizer.emitParseError();
@@ -106,14 +104,14 @@ class TokenizerTagStates {
             break;
         case Characters.NULL:
             tokenizer.emitParseError();
-            tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER, false);
+            tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.EOF:
             tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
             processedInputStream.reconsume(chr);
             break;
         default:
-            tokenizer.appendCurrentTagToken(chr, Common.isUpperCaseASCIILetter(chr));
+            tokenizer.appendCurrentTagToken(chr);
             break;
         }
     }

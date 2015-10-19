@@ -100,10 +100,9 @@ class TokenizerPlainAndRawTextStates {
 
     static void handleRawTextEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
-        boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-        if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
+        if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
-            tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.RAWTEXT_END_TAG_NAME_STATE);
         } else {
@@ -144,9 +143,8 @@ class TokenizerPlainAndRawTextStates {
             }
             break;
         default:
-            boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendCurrentTagToken(chr, isUpperCase);
+            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendCurrentTagToken(chr);
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
                 anythingElseRawTextEndTagNameState(tokenizer, processedInputStream, chr);

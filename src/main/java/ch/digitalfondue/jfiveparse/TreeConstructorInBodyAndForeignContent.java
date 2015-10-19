@@ -400,7 +400,7 @@ class TreeConstructorInBodyAndForeignContent {
 
     private static void startImage(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();
-        treeConstructor.setTagName("img");
+        treeConstructor.setTagName(new ResizableCharBuilder("img"));
         treeConstructor.dispatch();
     }
 
