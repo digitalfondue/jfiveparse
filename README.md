@@ -112,7 +112,7 @@ back in a string, pass the following parameters:
 
 
 ## TODO:
-- keep track of UpperCase tagname/attribute names with a BitSet(?) (if the overhead is not too much, obviously) (TRACK_CASE_FOR_ATTRIBUTES_AND_TAG)
+- keep track of UpperCase tagname (if the overhead is not too much, obviously) (PRINT_ORIGINAL_TAG_CASE)
 - add a typesafe matcher api
   - expand NodeMatchers: add "AND" rule 
   - HasAttribute support attribute value matching type (~=, |=, ^=, $=, *=)
