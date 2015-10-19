@@ -15,9 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-
 class TokenizerRCDataAndScriptStates {
-    
+
     static void handleRCDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
@@ -131,8 +130,8 @@ class TokenizerRCDataAndScriptStates {
 
         processedInputStream.reconsume(chr);
     }
-    
-    //--------- script states 
+
+    // --------- script states
 
     static void handleScriptDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
@@ -369,15 +368,12 @@ class TokenizerRCDataAndScriptStates {
     static void handleScriptDataEscapedLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
-        final boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
             tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_END_TAG_OPEN_STATE);
-        } else if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
-            final int upperCaseCompensation = isUpperCase ? 0x0020 : 0;
+        } else if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
             tokenizer.createTemporaryBuffer();
-            tokenizer.appendToTemporaryBuffer(chr + upperCaseCompensation);
+            tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_START_STATE);
             tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(chr);
@@ -452,7 +448,7 @@ class TokenizerRCDataAndScriptStates {
 
         processedInputStream.reconsume(chr);
     }
-    
+
     private static final ResizableCharBuilder SCRIPT = new ResizableCharBuilder("script");
 
     static void handleScriptDataDoubleEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
@@ -472,9 +468,8 @@ class TokenizerRCDataAndScriptStates {
             tokenizer.emitCharacter(chr);
             break;
         default:
-            final boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendToTemporaryBuffer(chr + (isUpperCase ? 0x0020 : 0));
+            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendToTemporaryBuffer(chr);
                 tokenizer.emitCharacter(chr);
             } else {
                 tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
@@ -593,9 +588,8 @@ class TokenizerRCDataAndScriptStates {
             tokenizer.emitCharacter(chr);
             break;
         default:
-            final boolean isUpperCase = Common.isUpperCaseASCIILetter(chr);
-            if (isUpperCase || Common.isLowerCaseASCIILetter(chr)) {
-                tokenizer.appendToTemporaryBuffer(chr + (isUpperCase ? 0x0020 : 0));
+            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+                tokenizer.appendToTemporaryBuffer(chr);
                 tokenizer.emitCharacter(chr);
             } else {
                 tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);

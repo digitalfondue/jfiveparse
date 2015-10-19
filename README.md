@@ -109,6 +109,17 @@ back in a string, pass the following parameters:
    - Option.DONT_TRANSFORM_ENTITIES
    - Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE
    - Option.PRINT_ORIGINAL_ATTRIBUTES_CASE
+   
+### Uppercase handling in the tokenizer
+
+Note: this is a deviation from the specification in term of _implementation_ of
+the tokenizer, but globally, the end result is correct, as the attributes and
+tag names are then converted to lower case.
+
+In the tokenizer, instead of applying the toLowerCase function on each 
+character, the transformation is done in a single call in the TreeConstructor
+(see setTagName). This is used for saving the original case of the attributes 
+and tag names. 
 
 
 ## TODO:
