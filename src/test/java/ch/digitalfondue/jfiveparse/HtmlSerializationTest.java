@@ -27,6 +27,14 @@ public class HtmlSerializationTest {
     private static Parser parser(Option... options) {
         return new Parser(new HashSet<>(Arrays.asList(options)));
     }
+    
+    @Test
+    public void testTagNameCase() {
+        Parser p = parser();
+        Document d = p.parse("<DiV></dIV><sPaN></SPAN>");
+        Assert.assertEquals("<html><head></head><body><div></div><span></span></body></html>", d.getInnerHTML());
+        Assert.assertEquals("<html><head></head><body><DiV></DiV><sPaN></sPaN></body></html>", d.getInnerHTML(EnumSet.of(Option.PRINT_ORIGINAL_TAG_CASE)));
+    }
 
     @Test
     public void testAttributeCase() {

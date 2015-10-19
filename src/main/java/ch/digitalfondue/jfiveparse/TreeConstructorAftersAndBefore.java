@@ -154,8 +154,8 @@ class TreeConstructorAftersAndBefore {
             // ignore token
         }
     }
-    
-    //------------ before --------------
+
+    // ------------ before --------------
     static void beforeHead(byte tokenType, String tagName, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
@@ -237,14 +237,14 @@ class TreeConstructorAftersAndBefore {
             handleEndTagHtml(tagName, treeConstructor);
             break;
         case START_TAG:
-            handleStartTagHtml(tokenType, tagName, treeConstructor);
+            handleStartTagHtml(tagName, treeConstructor);
             break;
         }
     }
 
-    private static void handleStartTagHtml(byte tokenType, String tagName, TreeConstructor treeConstructor) {
-        if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            Element html = TreeConstructor.buildElement(tagName, Node.NAMESPACE_HTML, treeConstructor.getAttributes());
+    private static void handleStartTagHtml(String tagName, TreeConstructor treeConstructor) {
+        if ("html".equals(tagName)) {
+            Element html = TreeConstructor.buildElement(tagName, tagName, Node.NAMESPACE_HTML, treeConstructor.getAttributes());
             treeConstructor.addToOpenElements(html);
             treeConstructor.getDocument().appendChild(html);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);
@@ -272,7 +272,7 @@ class TreeConstructorAftersAndBefore {
     }
 
     private static void anythingElseHtml(TreeConstructor treeConstructor) {
-        Element html = TreeConstructor.buildElement("html", Node.NAMESPACE_HTML, emptyAttrs());
+        Element html = TreeConstructor.buildElement("html", "html", Node.NAMESPACE_HTML, emptyAttrs());
         treeConstructor.addToOpenElements(html);
         treeConstructor.getDocument().appendChild(html);
         treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);

@@ -53,11 +53,21 @@ public enum Option {
      * </p>
      * /!\ this will break the conformance of the serialization
      */
-    PRINT_ORIGINAL_ATTRIBUTES_CASE, //
+    PRINT_ORIGINAL_ATTRIBUTES_CASE,
     /**
-     * To be implemented.
+     * <p>
+     * Serialization parameter. Print the original case of the tag name (only
+     * the opening tag name will be considered, if you have
+     * &lt;DIV&gt;&lt;/div&gt; it will be rendered as &lt;DIV&gt;&lt;/DIV&gt;).
+     * By default, the tag name are converted in lowerCase, when passing this
+     * parameter, the original case will be printed.
+     * </p>
+     * <p>
+     * Note: it's possible that not all cases are covered.
+     * </p>
+     * /!\ this will break the conformance of the serialization
      */
-    PRINT_ORIGINAL_TAG_CASE, //
+    PRINT_ORIGINAL_TAG_CASE,
     /**
      * <p>
      * Serialization parameter. When serializing the document, the original

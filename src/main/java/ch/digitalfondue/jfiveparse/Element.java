@@ -25,6 +25,7 @@ import java.util.List;
 public class Element extends Node {
 
     private String nodeName;
+    String originalNodeName;
     private String namespaceURI;
     private Attributes attributes;
 
@@ -58,7 +59,12 @@ public class Element extends Node {
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
+        this(name, name, nameSpace, attributes);
+    }
+    
+    Element(String name, String originalName, String nameSpace, Attributes attributes) {
         this.nodeName = name;
+        this.originalNodeName = originalName;
         this.namespaceURI = nameSpace;
         this.attributes = attributes;
     }

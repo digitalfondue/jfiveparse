@@ -99,7 +99,8 @@ be applied:
  - the "/" character used in self closing tag will be ignored
  - some whitespace will be ignored
  
-Currently, jfiveparse can preserve the entities, the attribute quoting type and the case.
+Currently, jfiveparse can preserve the entities, the attribute quoting type and 
+the case and the tag name case.
  
 If you require to preserve as much as possible the document when serializing
 back in a string, pass the following parameters:
@@ -109,6 +110,7 @@ back in a string, pass the following parameters:
    - Option.DONT_TRANSFORM_ENTITIES
    - Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE
    - Option.PRINT_ORIGINAL_ATTRIBUTES_CASE
+   - Option.PRINT_ORIGINAL_TAG_CASE
    
 ### Uppercase handling in the tokenizer
 

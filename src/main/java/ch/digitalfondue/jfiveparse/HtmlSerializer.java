@@ -33,6 +33,7 @@ public class HtmlSerializer implements NodesVisitor {
     protected final boolean scriptingDisabled;
     protected final boolean printOriginalAttributeQuote;
     protected final boolean printOriginalAttributeCase;
+    protected final boolean printOriginalTagName;
 
     public HtmlSerializer(Appendable appendable, Set<Option> options) {
         this.appendable = appendable;
@@ -41,6 +42,7 @@ public class HtmlSerializer implements NodesVisitor {
         this.scriptingDisabled = options.contains(Option.SCRIPTING_DISABLED);
         this.printOriginalAttributeQuote = options.contains(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE);
         this.printOriginalAttributeCase = options.contains(Option.PRINT_ORIGINAL_ATTRIBUTES_CASE);
+        this.printOriginalTagName = options.contains(Option.PRINT_ORIGINAL_TAG_CASE);
     }
 
     protected String serializeAttributeName(Attribute attribute) {
@@ -71,7 +73,7 @@ public class HtmlSerializer implements NodesVisitor {
         }
         return "\"";
     }
-    
+
     protected String escapeAttributeValue(Attribute attribute) {
         String s = attribute.getValue();
         if (s != null) {
@@ -105,16 +107,17 @@ public class HtmlSerializer implements NodesVisitor {
                 Element e = (Element) node;
                 // TODO: for tag outside of html,mathml,svg namespace : use
                 // qualified name!
-                appendable.append('<').append(e.getNodeName());
+                appendable.append('<').append(getNodeName(e));
                 for (Attribute attr : e.getAttributes()) {
                     appendable.append(' ').append(serializeAttributeName(attr));//
 
-                    if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE)) && (attr.getValue() == null || "".equals(attr.getValue()))) {
+                    if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE))
+                            && (attr.getValue() == null || "".equals(attr.getValue()))) {
                         continue;
                     }
                     appendable.append("=").append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
                 }
-                
+
                 appendable.append('>');
 
                 if ((e.is("pre", Node.NAMESPACE_HTML) || e.is("textarea", Node.NAMESPACE_HTML) || e.is("listing", Node.NAMESPACE_HTML)) && //
@@ -151,13 +154,17 @@ public class HtmlSerializer implements NodesVisitor {
         }
     }
 
+    protected String getNodeName(Element e) {
+        return printOriginalTagName ? e.originalNodeName : e.getNodeName();
+    }
+
     @Override
     public void end(Node node) {
         try {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element e = (Element) node;
                 if (!skipEndTag(e)) {
-                    appendable.append("</").append(e.getNodeName()).append(">");
+                    appendable.append("</").append(getNodeName(e)).append(">");
                 }
             }
         } catch (IOException ioe) {

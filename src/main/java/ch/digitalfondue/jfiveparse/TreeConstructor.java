@@ -72,7 +72,6 @@ class TreeConstructor {
 
     // --- tag related ---
     private String tagName;
-    @SuppressWarnings("unused")
     private String originalTagName;
     private boolean selfClosing;
     private Attributes attrs;
@@ -487,7 +486,7 @@ class TreeConstructor {
                 }
 
                 // 13.7
-                Element newElement = buildElement(node.getNodeName(), node.getNamespaceURI(), node.getAttributes().copy());
+                Element newElement = buildElement(node.getNodeName(), node.originalNodeName, node.getNamespaceURI(), node.getAttributes().copy());
                 commonAncestor.appendChild(newElement);
                 activeFormattingElements.replace(node, newElement);
                 openElements.set(openElements.lastIndexOf(node), newElement);
@@ -522,7 +521,7 @@ class TreeConstructor {
             toInsert.insertChildren(position, lastNode);
 
             // 15
-            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.getNamespaceURI(), formattingElement.getAttributes().copy());
+            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.originalNodeName, formattingElement.getNamespaceURI(), formattingElement.getAttributes().copy());
 
             // 16
             List<Node> childs = new ArrayList<>(furthestBlock.getChildNodes());
@@ -601,22 +600,22 @@ class TreeConstructor {
         insertCharacter(chr);
     }
 
-    static Element buildElement(String name, String namespace, Attributes attrs) {
-        return new Element(name, namespace, attrs);
+    static Element buildElement(String name, String originalName, String namespace, Attributes attrs) {
+        return new Element(name, originalName, namespace, attrs);
     }
 
     Element insertElementToken(String name, String namespace, Attributes attrs) {
-        Element element = buildElement(name, namespace, attrs);
+        Element element = buildElement(name, name, namespace, attrs);
         return insertHtmlElementToken(element);
     }
 
     Element insertHtmlElementWithEmptyAttributes(String name) {
-        Element element = buildElement(name, Node.NAMESPACE_HTML, emptyAttrs());
+        Element element = buildElement(name, name, Node.NAMESPACE_HTML, emptyAttrs());
         return insertHtmlElementToken(element);
     }
 
     Element insertHtmlElementToken() {
-        Element element = buildElement(tagName, Node.NAMESPACE_HTML, attrs);
+        Element element = buildElement(tagName, originalTagName, Node.NAMESPACE_HTML, attrs);
         return insertHtmlElementToken(element);
     }
 
