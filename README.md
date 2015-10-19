@@ -125,10 +125,13 @@ and tag names.
 
 
 ## TODO:
-- keep track of UpperCase tagname (if the overhead is not too much, obviously) (PRINT_ORIGINAL_TAG_CASE)
-- add a typesafe matcher api
-  - expand NodeMatchers: add "AND" rule 
+- expand the typesafe matcher api
+  - expand NodeMatchers: add "AND" rule and "OR"
   - HasAttribute support attribute value matching type (~=, |=, ^=, $=, *=)
+  - Descendant selector https://developer.mozilla.org/en-US/docs/Web/CSS/Descendant_selectors
+  - Child selector https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors
+  - first-child
+  - last-child
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - Node.contains(Node)
