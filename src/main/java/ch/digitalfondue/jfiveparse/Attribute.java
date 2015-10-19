@@ -20,6 +20,7 @@ import java.util.Objects;
 public class Attribute {
 
     String name;
+    String originalName;
     String value;
 
     //
@@ -35,8 +36,9 @@ public class Attribute {
         this.value = value;
     }
 
-    Attribute(String name, String value, int attributeQuoteType) {
+    Attribute(String name, String originalName, String value, int attributeQuoteType) {
         this(name, value);
+        this.originalName = originalName;
         this.attributeQuoteType = attributeQuoteType;
     }
 

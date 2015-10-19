@@ -244,7 +244,7 @@ class TreeConstructorAftersAndBefore {
 
     private static void handleStartTagHtml(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            Element html = TreeConstructor.buildElement(tagName, Node.NAMESPACE_HTML, treeConstructor.getAttributes(), false);
+            Element html = TreeConstructor.buildElement(tagName, Node.NAMESPACE_HTML, treeConstructor.getAttributes());
             treeConstructor.addToOpenElements(html);
             treeConstructor.getDocument().appendChild(html);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);
@@ -272,7 +272,7 @@ class TreeConstructorAftersAndBefore {
     }
 
     private static void anythingElseHtml(TreeConstructor treeConstructor) {
-        Element html = TreeConstructor.buildElement("html", Node.NAMESPACE_HTML, emptyAttrs(), false);
+        Element html = TreeConstructor.buildElement("html", Node.NAMESPACE_HTML, emptyAttrs());
         treeConstructor.addToOpenElements(html);
         treeConstructor.getDocument().appendChild(html);
         treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);

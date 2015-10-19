@@ -70,9 +70,6 @@ class Tokenizer {
 
     //
     void appendCurrentAttributeName(int chr) {
-        if (Common.isUpperCaseASCIILetter(chr)) {
-            chr += 0x0020;
-        }
         currentAttributeName.append((char) chr);
     }
 
@@ -395,11 +392,11 @@ class Tokenizer {
     void addCurrentAttributeInAttributes() {
         try {
             if (currentAttributeName != null) {
-                String curAttrName = currentAttributeName.asString();
+                String curAttrName = currentAttributeName.toLowerCase();
                 if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
-                    attributes.put(new Attribute(curAttrName, currentAttributeValue.asString(), currentAttributeQuoteType));
+                    attributes.put(new Attribute(curAttrName, currentAttributeName.containsUpperCase ? currentAttributeName.asString() : curAttrName, currentAttributeValue.asString(), currentAttributeQuoteType));
                 }
             }
         } catch (NullPointerException npe) {
@@ -416,6 +413,7 @@ class Tokenizer {
         addCurrentAttributeInAttributes();
         currentAttributeName = new ResizableCharBuilder();
         currentAttributeValue = new ResizableCharBuilder();
+        currentAttributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE;
         appendCurrentAttributeName(chr);
     }
 

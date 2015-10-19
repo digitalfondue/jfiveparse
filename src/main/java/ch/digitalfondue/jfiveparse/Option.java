@@ -16,8 +16,8 @@
 package ch.digitalfondue.jfiveparse;
 
 /**
- * Configuration options for the {@link Parser}, when calling
- * {@link Node#getInnerHTML(java.util.Set)} and
+ * Configuration options for the {@link Parser} and when calling the
+ * serialization methods: {@link Node#getInnerHTML(java.util.Set)} and
  * {@link Node#getOuterHTML(java.util.Set)}.
  */
 public enum Option {
@@ -46,9 +46,18 @@ public enum Option {
      */
     HIDE_EMPTY_ATTRIBUTE_VALUE,
     /**
-     * Not implemented
+     * <p>
+     * Serialization parameter. Print the original case case of an attribute
+     * name. By default, the attribute names are converted in lowerCase, when
+     * passing this parameter, the original case will be printed.
+     * </p>
+     * /!\ this will break the conformance of the serialization
      */
-    TRACK_CASE_FOR_ATTRIBUTES_AND_TAG, //
+    PRINT_ORIGINAL_ATTRIBUTES_CASE, //
+    /**
+     * To be implemented.
+     */
+    PRINT_ORIGINAL_TAG_CASE, //
     /**
      * <p>
      * Serialization parameter. When serializing the document, the original
@@ -58,13 +67,5 @@ public enum Option {
      * </p>
      * /!\ this will break the conformance of the serialization
      */
-    PRINT_ORIGINAL_ATTRIBUTE_QUOTE,
-
-    /**
-     * Serialization parameter. Print the '/' on self closing tag.
-     * <p>
-     * /!\ this will break the conformance of the serialization
-     * </p>
-     */
-    PRINT_SELF_CLOSING_SOLIDUS;
+    PRINT_ORIGINAL_ATTRIBUTE_QUOTE
 }

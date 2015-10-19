@@ -18,18 +18,15 @@ package ch.digitalfondue.jfiveparse;
 import java.util.Arrays;
 
 /**
- * Resizable char buffer
- * <ul>
- * <li>only chars can be appended (avoid confusion with
- * StringBuilder.append(int))
- * <li>2 CharBuilders can be compared for equality: StringBuilder does not
- * provide an equality method
- * </ul>
+ * Resizable char buffer with some custom methods/properties.
  */
 class ResizableCharBuilder {
 
     char[] buff = new char[16];
     int pos = 0;
+    
+    /* this field is accurate only after calling toLowerCase*/
+    boolean containsUpperCase;
 
     ResizableCharBuilder() {
     }
@@ -45,6 +42,31 @@ class ResizableCharBuilder {
             buff = Arrays.copyOf(buff, buff.length * 2 + 2);
         }
         buff[pos++] = c;
+    }
+
+    String toLowerCase() {
+        containsUpperCase = false;
+        for (char c : buff) {
+            if (Common.isUpperCaseASCIILetter(c)) {
+                containsUpperCase = true;
+                break;
+            }
+        }
+        if (containsUpperCase) {
+            return lowerCaseInternal();
+        } else {
+            return asString();
+        }
+    }
+
+    private String lowerCaseInternal() {
+        char[] newBuff = Arrays.copyOf(buff, pos);
+        for (int i = 0; i < pos; i++) {
+            if (Common.isUpperCaseASCIILetter(newBuff[i])) {
+                newBuff[i] += 0x0020;
+            }
+        }
+        return new String(newBuff);
     }
 
     String asString() {

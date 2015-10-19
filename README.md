@@ -12,7 +12,7 @@ It provide both fragment and full document parsing. It can parse from String or 
 
 As far as I know, there is no pure java html5 parser that currently pass the html5-lib test suite (well, the more relevant tests :D).
 
-Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around 130kb. The target is to keep it under 200kb.
+Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~135kb. The target is to keep it under 200kb.
 
 Performance should be competitive with other java parsers.
 
@@ -94,13 +94,12 @@ By default, when parsing/serializing, the following transformations will
 be applied:
  
  - entities will be interpreted and converted
- - all the attributes values will be double quoted
+ - all the attribute values will be double quoted
  - tag and attribute names will be lower case
  - the "/" character used in self closing tag will be ignored
  - some whitespace will be ignored
  
-Currently, jfiveparse can preserve the entities, the attribute quoting type
-and the "/" in self closing tags.
+Currently, jfiveparse can preserve the entities, the attribute quoting type and the case.
  
 If you require to preserve as much as possible the document when serializing
 back in a string, pass the following parameters:
@@ -109,7 +108,7 @@ back in a string, pass the following parameters:
  - when calling Node.get{Inner,Outer}HTML(), pass the enums:
    - Option.DONT_TRANSFORM_ENTITIES
    - Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE
-   - Option.PRINT_SELF_CLOSING_SOLIDUS
+   - Option.PRINT_ORIGINAL_ATTRIBUTES_CASE
 
 
 ## TODO:

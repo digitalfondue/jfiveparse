@@ -30,8 +30,6 @@ public class Element extends Node {
 
     private List<Node> childNodes = null;
 
-    final boolean selfClosing;
-
     /**
      * Create an element in the {@link Node#NAMESPACE_HTML} namespace with no
      * attributes.
@@ -60,14 +58,9 @@ public class Element extends Node {
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
-        this(name, nameSpace, attributes, false);
-    }
-
-    Element(String name, String nameSpace, Attributes attributes, boolean selfClosing) {
         this.nodeName = name;
         this.namespaceURI = nameSpace;
         this.attributes = attributes;
-        this.selfClosing = selfClosing;
     }
 
     private void ensureAttributesPresence() {

@@ -32,7 +32,7 @@ public class HtmlSerializer implements NodesVisitor {
     protected final boolean hideEmptyAttributeValue;
     protected final boolean scriptingDisabled;
     protected final boolean printOriginalAttributeQuote;
-    protected final boolean printSelfClosing;
+    protected final boolean printOriginalAttributeCase;
 
     public HtmlSerializer(Appendable appendable, Set<Option> options) {
         this.appendable = appendable;
@@ -40,17 +40,18 @@ public class HtmlSerializer implements NodesVisitor {
         this.hideEmptyAttributeValue = options.contains(Option.HIDE_EMPTY_ATTRIBUTE_VALUE);
         this.scriptingDisabled = options.contains(Option.SCRIPTING_DISABLED);
         this.printOriginalAttributeQuote = options.contains(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE);
-        this.printSelfClosing = options.contains(Option.PRINT_SELF_CLOSING_SOLIDUS);
+        this.printOriginalAttributeCase = options.contains(Option.PRINT_ORIGINAL_ATTRIBUTES_CASE);
     }
 
-    protected static String serializeAttributeName(Attribute attribute) {
-        String name = attribute.getName();
+    protected String serializeAttributeName(Attribute attribute) {
+        String lowercaseName = attribute.getName();
+        String name = printOriginalAttributeCase ? attribute.originalName : lowercaseName;
         String namespace = attribute.getNamespace();
 
         if (Node.NAMESPACE_XML.equals(namespace)) {
             return "xml:" + name;
         } else if (Node.NAMESPACE_XMLNS.equals(namespace)) {
-            return "xmlns".equals(name) ? "xmlns" : ("xmlns:" + name);
+            return "xmlns".equals(lowercaseName) ? "xmlns" : ("xmlns:" + name);
         } else if (Node.NAMESPACE_XLINK.equals(namespace)) {
             return "xlink:" + name;
         } else if (namespace != null) {
@@ -71,10 +72,6 @@ public class HtmlSerializer implements NodesVisitor {
         return "\"";
     }
     
-    protected boolean isSelfClosing(Element e) {
-        return e.selfClosing;
-    }
-
     protected String escapeAttributeValue(Attribute attribute) {
         String s = attribute.getValue();
         if (s != null) {
@@ -112,14 +109,10 @@ public class HtmlSerializer implements NodesVisitor {
                 for (Attribute attr : e.getAttributes()) {
                     appendable.append(' ').append(serializeAttributeName(attr));//
 
-                    if (hideEmptyAttributeValue && (attr.getValue() == null || "".equals(attr.getValue()))) {
+                    if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE)) && (attr.getValue() == null || "".equals(attr.getValue()))) {
                         continue;
                     }
                     appendable.append("=").append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
-                }
-                
-                if(e.selfClosing && printSelfClosing) {
-                    appendable.append('/');
                 }
                 
                 appendable.append('>');

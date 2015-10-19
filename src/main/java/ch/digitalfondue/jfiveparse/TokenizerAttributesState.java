@@ -159,7 +159,6 @@ class TokenizerAttributesState {
             break;
         case Characters.AMPERSAND:
             tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
-            tokenizer.setAttributeQuoteType(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             processedInputStream.reconsume(chr);
             break;
         case Characters.APOSTROPHE:
@@ -168,7 +167,6 @@ class TokenizerAttributesState {
             break;
         case Characters.NULL:
             tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
-            tokenizer.setAttributeQuoteType(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
             break;
         case Characters.GREATERTHAN_SIGN:
@@ -179,7 +177,6 @@ class TokenizerAttributesState {
         case Characters.EQUALS_SIGN:
         case Characters.GRAVE_ACCENT:
             tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
-            tokenizer.setAttributeQuoteType(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             tokenizer.appendCurrentAttributeValue(chr);
             break;
         case Characters.EOF:
@@ -188,7 +185,6 @@ class TokenizerAttributesState {
             break;
         default:
             tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
-            tokenizer.setAttributeQuoteType(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             tokenizer.appendCurrentAttributeValue(chr);
             break;
         }
