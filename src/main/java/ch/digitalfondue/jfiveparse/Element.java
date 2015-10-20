@@ -61,7 +61,7 @@ public class Element extends Node {
     public Element(String name, String nameSpace, Attributes attributes) {
         this(name, name, nameSpace, attributes);
     }
-    
+
     Element(String name, String originalName, String nameSpace, Attributes attributes) {
         this.nodeName = name;
         this.originalNodeName = originalName;
@@ -122,6 +122,16 @@ public class Element extends Node {
     public Attributes getAttributes() {
         ensureAttributesPresence();
         return attributes;
+    }
+
+    /**
+     * Get the attribute value. Return null if the attribute is not present.
+     * 
+     * @param name
+     * @return
+     */
+    public String getAttribute(String name) {
+        return attributes != null ? attributes.getNamedItem(name) : null;
     }
 
     /**

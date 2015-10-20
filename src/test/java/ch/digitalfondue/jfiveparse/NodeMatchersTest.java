@@ -26,30 +26,45 @@ public class NodeMatchersTest {
 
     @Test
     public void firstChildTest() {
-        Document doc = parser.parse("<div>1</div><div id=myid>2</div><div>3</div>");
+        Document doc = parser.parse("<div></div><div id=myid></div><div></div>");
         List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsFirstChild());
+        Assert.assertEquals(1, div.size());
         Assert.assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(0), div.get(0));
     }
 
     @Test
     public void firstElementTest() {
-        Document doc = parser.parse("text<div>1</div><div id=myid>2</div><div>3</div>");
+        Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
         List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsFirstElementChild());
+        Assert.assertEquals(1, div.size());
         Assert.assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1), div.get(0));
     }
 
     @Test
     public void lastElementTest() {
-        Document doc = parser.parse("text<div>1</div><div id=myid>2</div><div>3</div>text");
+        Document doc = parser.parse("text<div></div><div id=myid></div><div></div>text");
         List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsLastElementChild());
+        Assert.assertEquals(1, div.size());
         Assert.assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
 
     }
 
     @Test
     public void lastChildTest() {
-        Document doc = parser.parse("text<div>1</div><div id=myid>2</div><div>3</div>");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsLastElementChild());
+        Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
+        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsLastChild());
+        Assert.assertEquals(1, div.size());
         Assert.assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
+    }
+    
+    @Test
+    public void hasAttributeTest() {
+        Document doc = parser.parse("text<div></div><div id=myid></div><div id=myid2></div>");
+        List<Element> divIdMyId = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id", "myid"));
+        List<Element> divId = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id"));
+        Assert.assertEquals(1, divIdMyId.size());
+        Assert.assertEquals(2, divId.size());
+        Assert.assertEquals("myid", divId.get(0).getAttribute("id"));
+        Assert.assertEquals("myid2", divId.get(1).getAttribute("id"));
     }
 }

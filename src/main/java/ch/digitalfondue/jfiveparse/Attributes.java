@@ -92,4 +92,8 @@ public class Attributes implements Iterable<Attribute> {
     public Iterator<Attribute> iterator() {
         return attributes == null ? Collections.<Attribute> emptyIterator() : attributes.values().iterator();
     }
+
+    public String getNamedItem(String name) {
+        return attributes != null && attributes.containsKey(name) ? attributes.get(name).value : null;
+    }
 }
