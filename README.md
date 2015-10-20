@@ -130,8 +130,6 @@ and tag names.
   - HasAttribute support attribute value matching type (~=, |=, ^=, $=, *=)
   - Descendant selector https://developer.mozilla.org/en-US/docs/Web/CSS/Descendant_selectors
   - Child selector https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors
-  - first-child
-  - last-child
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - Node.contains(Node)

@@ -89,7 +89,7 @@ public class NodeTest {
         Assert.assertNull(last.getParentNode());
         Assert.assertEquals(newNode, e.getChildNodes().get(2));
     }
-    
+
     @Test
     public void testInsertBeforeChild() {
         Document doc = parser.parse("<div id=myid>1<span>2</span><div>3</div></div>");

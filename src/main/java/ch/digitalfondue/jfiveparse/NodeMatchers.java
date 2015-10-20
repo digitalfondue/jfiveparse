@@ -99,6 +99,50 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     }
 
+    public static class IsLastChild implements NodeMatcher {
+        @Override
+        public boolean match(Node node) {
+            if (node.parentNode != null) {
+                return node.parentNode.getLastChild() == node;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public static class IsFirstChild implements NodeMatcher {
+        @Override
+        public boolean match(Node node) {
+            if (node.parentNode != null) {
+                return node.parentNode.getFirstChild() == node;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public static class IsFirstElementChild implements NodeMatcher {
+        @Override
+        public boolean match(Node node) {
+            if (node.parentNode != null) {
+                return node.parentNode.getFirstElementChild() == node;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public static class IsLastElementChild implements NodeMatcher {
+        @Override
+        public boolean match(Node node) {
+            if (node.parentNode != null) {
+                return node.parentNode.getLastElementChild() == node;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public static NodeMatcher element() {
         return new NodeHasType(Node.ELEMENT_NODE);
     }
