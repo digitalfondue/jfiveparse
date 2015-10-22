@@ -33,9 +33,9 @@ abstract class ProcessedInputStream {
     private boolean crFound;
     protected final ResizableIntBuffer buffer = new ResizableIntBuffer();
 
-    abstract int read();
+    protected abstract int read();
 
-    int getCharAt(int position) {
+    protected int getCharAt(int position) {
         throw new IllegalArgumentException();
     }
 
@@ -48,7 +48,7 @@ abstract class ProcessedInputStream {
         }
 
         @Override
-        int read() {
+        protected int read() {
             try {
                 return input[pos++];
             } catch (IndexOutOfBoundsException s) {
@@ -57,7 +57,7 @@ abstract class ProcessedInputStream {
         }
 
         @Override
-        int getCharAt(int position) {
+        protected int getCharAt(int position) {
             try {
                 return input[position];
             } catch (IndexOutOfBoundsException s) {
@@ -75,7 +75,7 @@ abstract class ProcessedInputStream {
         }
 
         @Override
-        int read() {
+        protected int read() {
             try {
                 return reader.read();
             } catch (IOException ioe) {
@@ -130,7 +130,7 @@ abstract class ProcessedInputStream {
     }
 
     int consume() {
-        return buffer.isEmpty() ? readWithCRHandling(crFound, read()) : buffer.removeFirst();
+        return buffer.isEmpty ? readWithCRHandling(crFound, read()) : buffer.removeFirst();
     }
 
     int getNextInputCharacter() {

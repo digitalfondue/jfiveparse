@@ -27,7 +27,7 @@ class ResizableIntBuffer {
     private int[] buff = new int[32];
     private int start = 15;
     private int pos = 15;
-    private boolean isEmpty = true;
+    boolean isEmpty = true;
 
     void addFirst(int c) {
         if (start == 0) {
@@ -72,13 +72,5 @@ class ResizableIntBuffer {
         int chr = buff[start++];
         isEmpty = length() == 0;
         return chr;
-    }
-
-    int getFirst() {
-        return buff[start];
-    }
-
-    boolean isEmpty() {
-        return isEmpty;
     }
 }
