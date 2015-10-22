@@ -35,6 +35,10 @@ public class Comment extends Node {
         return data;
     }
 
+    public void setData(String data) {
+        this.data = data;
+    }
+
     /**
      * Return the {@link String} "#comment".
      */

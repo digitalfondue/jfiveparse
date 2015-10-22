@@ -32,13 +32,14 @@ class ResizableCharBuilder {
     }
 
     ResizableCharBuilder(String s) {
+        //TODO: clean up, not optimized at all
         for (char c : s.toCharArray()) {
             append(c);
         }
     }
 
     void append(char c) {
-        if (pos >= buff.length) {
+        if (pos == buff.length) {
             buff = Arrays.copyOf(buff, buff.length * 2 + 2);
         }
         buff[pos++] = c;

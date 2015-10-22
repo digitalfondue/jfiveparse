@@ -72,7 +72,7 @@ class TreeConstructorInSelect {
                 // ignore
             }
         } else if (Common.isEndTagNamed(tokenType, "select", tagName)) {
-            if (!treeConstructor.hasElementInSelectScope("select", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInSelectScope("select")) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -81,7 +81,7 @@ class TreeConstructorInSelect {
             }
         } else if (Common.isStartTagNamed(tokenType, "select", tagName)) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInSelectScope("select", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInSelectScope("select")) {
                 // ignore
             } else {
                 treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);
@@ -91,7 +91,7 @@ class TreeConstructorInSelect {
                 "keygen".equals(tagName) || //
                 "textarea".equals(tagName))) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInSelectScope("select", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInSelectScope("select")) {
                 // ignore
             } else {
                 treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);
@@ -132,7 +132,7 @@ class TreeConstructorInSelect {
                 "td".equals(tagName) || //
                 "th".equals(tagName)) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInTableScope(tagName, Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope(tagName)) {
                 // ignore token
             } else {
                 treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);

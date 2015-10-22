@@ -107,7 +107,7 @@ class TreeConstructor {
         setTagName(rawTagName);
         this.originalTagName = rawTagName.containsUpperCase ? rawTagName.asString() : this.tagName;
     }
-    
+
     void setTagName(ResizableCharBuilder rawTagName) {
         String tagName = rawTagName.toLowerCase();
         String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
@@ -301,10 +301,12 @@ class TreeConstructor {
 
     // ------------
 
-    boolean hasElementInScope(String tagName, String namespace) {
+    boolean hasElementInScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (node.is(tagName, namespace)) {
+            String nodeName = node.getNodeName();
+            String nodeNameSpace = node.getNamespaceURI();
+            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
                 return true;
             } else if (Common.isInCommonInScope(node.getNodeName(), node.getNamespaceURI())) {
                 return false;
@@ -325,22 +327,26 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInButtonScope(String tagName, String namespace) {
+    boolean hasElementInButtonScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (node.is(tagName, namespace)) {
+            String nodeName = node.getNodeName();
+            String nodeNameSpace = node.getNamespaceURI();
+            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
                 return true;
-            } else if (Common.isInCommonInScope(node.getNodeName(), node.getNamespaceURI()) || (node.is("button", Node.NAMESPACE_HTML))) {
+            } else if (Common.isInCommonInScope(nodeName, nodeNameSpace) || (nodeName.equals("button") && nodeNameSpace.equals(Node.NAMESPACE_HTML))) {
                 return false;
             }
         }
         return false;
     }
 
-    boolean hasElementInListScope(String tagName, String namespace) {
+    boolean hasElementInListScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (node.is(tagName, namespace)) {
+            String nodeName = node.getNodeName();
+            String nodeNameSpace = node.getNamespaceURI();
+            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
                 return true;
             } else if (Common.isInCommonInScope(node.getNodeName(), node.getNamespaceURI()) || node.is("ol", Node.NAMESPACE_HTML) || node.is("ul", Node.NAMESPACE_HTML)) {
                 return false;
@@ -349,10 +355,12 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInTableScope(String tagName, String namespace) {
+    boolean hasElementInTableScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (node.is(tagName, namespace)) {
+            String nodeName = node.getNodeName();
+            String nodeNameSpace = node.getNamespaceURI();
+            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
                 return true;
             } else if ((node.is("html", Node.NAMESPACE_HTML) || node.is("table", Node.NAMESPACE_HTML) || node.is("template", Node.NAMESPACE_HTML))) {
                 return false;
@@ -361,10 +369,12 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInSelectScope(String tagName, String namespace) {
+    boolean hasElementInSelectScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (node.is(tagName, namespace)) {
+            String nodeName = node.getNodeName();
+            String nodeNameSpace = node.getNamespaceURI();
+            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
                 return true;
             }
 
@@ -521,7 +531,8 @@ class TreeConstructor {
             toInsert.insertChildren(position, lastNode);
 
             // 15
-            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.originalNodeName, formattingElement.getNamespaceURI(), formattingElement.getAttributes().copy());
+            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.originalNodeName, formattingElement.getNamespaceURI(), formattingElement.getAttributes()
+                    .copy());
 
             // 16
             List<Node> childs = new ArrayList<>(furthestBlock.getChildNodes());
@@ -701,14 +712,14 @@ class TreeConstructor {
 
         if (!nodes.isEmpty() && position > 0 && (last = nodes.get(position - 1)).getNodeType() == Node.TEXT_NODE) {
             t = (Text) last;
-            t.data.append(charToInsert);
+            t.dataBuilder.append(charToInsert);
         } else {
             t = new Text();
-            t.data.append(charToInsert);
+            t.dataBuilder.append(charToInsert);
             toInsert.insertChildren(position, t);
         }
         // optimization
-        insertCharacterPreviousTextNode = t.data;
+        insertCharacterPreviousTextNode = t.dataBuilder;
         //
     }
 

@@ -261,7 +261,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startRpRt(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInScope("ruby", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInScope("ruby")) {
             treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
         }
 
@@ -273,7 +273,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startRbRtc(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInScope("ruby", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInScope("ruby")) {
             treeConstructor.generateImpliedEndTag();
         }
 
@@ -324,7 +324,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startXmp(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         treeConstructor.reconstructActiveFormattingElements();
@@ -351,7 +351,7 @@ class TreeConstructorInBodyAndForeignContent {
         } else {
             treeConstructor.ackSelfClosingTagIfSet();
             treeConstructor.framesetOkToFalse();
-            if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+            if (treeConstructor.hasElementInButtonScope("p")) {
                 treeConstructor.closePElement();
             }
 
@@ -405,7 +405,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startHr(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -441,7 +441,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startTable(TreeConstructor treeConstructor) {
-        if (!treeConstructor.isQuirksMode() && treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.isQuirksMode() && treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -458,7 +458,7 @@ class TreeConstructorInBodyAndForeignContent {
 
     private static void startNobr(String tagName, TreeConstructor treeConstructor) {
         treeConstructor.reconstructActiveFormattingElements();
-        if (treeConstructor.hasElementInScope("nobr", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInScope("nobr")) {
             treeConstructor.emitParseError();
             treeConstructor.adoptionAgencyAlgorithm(tagName);
             treeConstructor.reconstructActiveFormattingElements();
@@ -489,7 +489,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startButton(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("button", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("button")) {
             treeConstructor.emitParseError();
             treeConstructor.generateImpliedEndTag();
             treeConstructor.popOpenElementsUntil("button", Node.NAMESPACE_HTML);
@@ -501,7 +501,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startPlaintext(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -540,7 +540,7 @@ class TreeConstructorInBodyAndForeignContent {
             idx = idx - 1;
             node = treeConstructor.openElementAt(idx);
         }
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
 
@@ -575,7 +575,7 @@ class TreeConstructorInBodyAndForeignContent {
 
         }
 
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
 
@@ -588,7 +588,7 @@ class TreeConstructorInBodyAndForeignContent {
             treeConstructor.emitParseError();
             // ignore the token
         } else {
-            if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+            if (treeConstructor.hasElementInButtonScope("p")) {
                 treeConstructor.closePElement();
             }
             Element formElement = treeConstructor.insertHtmlElementToken();
@@ -599,7 +599,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startPreListing(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -609,7 +609,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void startH1H6(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         Element e = treeConstructor.getCurrentNode();
@@ -623,7 +623,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     static void startAddressUl(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -793,7 +793,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endAppletObject(String tagName, TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope(tagName, Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.hasElementInScope(tagName)) {
             treeConstructor.emitParseError();
             // ignore
         } else {
@@ -807,11 +807,11 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endH1H6(String tagName, TreeConstructor treeConstructor) {
-        if (!(treeConstructor.hasElementInScope("h1", Node.NAMESPACE_HTML) || //
-                treeConstructor.hasElementInScope("h2", Node.NAMESPACE_HTML) || //
-                treeConstructor.hasElementInScope("h3", Node.NAMESPACE_HTML) || //
-                treeConstructor.hasElementInScope("h4", Node.NAMESPACE_HTML) || //
-                treeConstructor.hasElementInScope("h5", Node.NAMESPACE_HTML) || treeConstructor.hasElementInScope("h6", Node.NAMESPACE_HTML))) {
+        if (!(treeConstructor.hasElementInScope("h1") || //
+                treeConstructor.hasElementInScope("h2") || //
+                treeConstructor.hasElementInScope("h3") || //
+                treeConstructor.hasElementInScope("h4") || //
+                treeConstructor.hasElementInScope("h5") || treeConstructor.hasElementInScope("h6"))) {
             treeConstructor.emitParseError();
             // ignore token
         } else {
@@ -836,7 +836,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endDdDt(String tagName, TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope(tagName, Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.hasElementInScope(tagName)) {
             treeConstructor.emitParseError();
             // ignore
         } else {
@@ -849,7 +849,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endLi(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInListScope("li", Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.hasElementInListScope("li")) {
             treeConstructor.emitParseError();
             // ignore
         } else {
@@ -862,7 +862,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endP(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInButtonScope("p", Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.emitParseError();
             treeConstructor.insertHtmlElementWithEmptyAttributes("p");
         }
@@ -884,7 +884,7 @@ class TreeConstructorInBodyAndForeignContent {
                 treeConstructor.removeFromOpenElements(node);
             }
         } else {
-            if (!treeConstructor.hasElementInScope("form", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInScope("form")) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -898,7 +898,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endAddressUl(String tagName, TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope(tagName, Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.hasElementInScope(tagName)) {
             treeConstructor.emitParseError();
         } else {
             treeConstructor.generateImpliedEndTag();
@@ -912,7 +912,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endHtml(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope("body", Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.hasElementInScope("body")) {
             treeConstructor.emitParseError();
             // ignore token
         } else {
@@ -923,7 +923,7 @@ class TreeConstructorInBodyAndForeignContent {
     }
 
     private static void endBody(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope("body", Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.hasElementInScope("body")) {
             treeConstructor.emitParseError();
             // ignore token
         } else {

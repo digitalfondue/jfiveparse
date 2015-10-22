@@ -48,7 +48,7 @@ class ResizableIntBuffer {
     }
 
     void add(int c) {
-        if (pos >= buff.length) {
+        if (pos == buff.length) {
             resizeForEnd();
         }
         buff[pos++] = c;

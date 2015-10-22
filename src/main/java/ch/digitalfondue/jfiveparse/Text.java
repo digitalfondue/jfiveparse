@@ -20,7 +20,8 @@ package ch.digitalfondue.jfiveparse;
  */
 public class Text extends Node {
 
-    final ResizableCharBuilder data = new ResizableCharBuilder();
+    ResizableCharBuilder dataBuilder = new ResizableCharBuilder();
+    private String data;
 
     @Override
     public byte getNodeType() {
@@ -28,7 +29,16 @@ public class Text extends Node {
     }
 
     public String getData() {
-        return data.asString();
+        if (data == null) {
+            data = dataBuilder.asString();
+            dataBuilder = null;
+        }
+        return data;
+    }
+
+    public void setData(String data) {
+        this.dataBuilder = null;
+        this.data = data;
     }
 
     /**

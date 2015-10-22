@@ -410,7 +410,7 @@ public abstract class Node {
      * Get the text content of the node.
      */
     public String getTextContent() {
-        List<Text> textNodes = getAllNodesMatching(NodeMatchers.text());
+        List<Text> textNodes = getAllNodesMatching(new NodeMatchers.NodeHasType(TEXT_NODE));
         StringBuilder sb = new StringBuilder();
         for (Text n : textNodes) {
             sb.append(n.getData());

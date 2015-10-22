@@ -143,14 +143,6 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static NodeMatcher element() {
-        return new NodeHasType(Node.ELEMENT_NODE);
-    }
-
-    public static NodeMatcher text() {
-        return new NodeHasType(Node.TEXT_NODE);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void start(Node node) {

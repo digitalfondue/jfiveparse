@@ -70,7 +70,7 @@ class TreeConstructorInTable {
         } else if (Common.isStartTagNamed(tokenType, "table", tagName)) {
             treeConstructor.emitParseError();
 
-            if (!treeConstructor.hasElementInTableScope("table", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("table")) {
                 // ignore
             } else {
                 treeConstructor.popOpenElementsUntil("table", Node.NAMESPACE_HTML);
@@ -78,7 +78,7 @@ class TreeConstructorInTable {
                 treeConstructor.dispatch();
             }
         } else if (Common.isEndTagNamed(tokenType, "table", tagName)) {
-            if (!treeConstructor.hasElementInTableScope("table", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("table")) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -162,7 +162,7 @@ class TreeConstructorInTable {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_ROW);
             treeConstructor.dispatch();
         } else if (tokenType == END_TAG && ("tbody".equals(tagName) || "tfoot".equals(tagName) || "thead".equals(tagName))) {
-            if (!treeConstructor.hasElementInTableScope(tagName, Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope(tagName)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -175,8 +175,8 @@ class TreeConstructorInTable {
                 "thead".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, "table", tagName)) {
 
-            if (!treeConstructor.hasElementInTableScope("tbody", Node.NAMESPACE_HTML) && !treeConstructor.hasElementInTableScope("tfoot", Node.NAMESPACE_HTML)
-                    && !treeConstructor.hasElementInTableScope("thead", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("tbody") && !treeConstructor.hasElementInTableScope("tfoot")
+                    && !treeConstructor.hasElementInTableScope("thead")) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -279,7 +279,7 @@ class TreeConstructorInTable {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_CELL);
             treeConstructor.insertMarkerInActiveFormattingElements();
         } else if (Common.isEndTagNamed(tokenType, "tr", tagName)) {
-            if (!treeConstructor.hasElementInTableScope("tr", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("tr")) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -295,7 +295,7 @@ class TreeConstructorInTable {
                 "thead".equals(tagName) || //
                 "tr".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, "table", tagName)) {
-            if (!treeConstructor.hasElementInTableScope("tr", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("tr")) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -308,10 +308,10 @@ class TreeConstructorInTable {
                 "tfoot".equals(tagName) || //
                 "thead".equals(tagName))) {
 
-            if (!treeConstructor.hasElementInTableScope(tagName, Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope(tagName)) {
                 treeConstructor.emitParseError();
                 // ignore token
-            } else if (!treeConstructor.hasElementInTableScope("tr", Node.NAMESPACE_HTML)) {
+            } else if (!treeConstructor.hasElementInTableScope("tr")) {
                 // ignore token
             } else {
                 clearStackBackToTableRowContext(treeConstructor);
@@ -407,7 +407,7 @@ class TreeConstructorInTable {
 
     private static void inCellEndTag(String tagName, TreeConstructor treeConstructor) {
         if (("td".equals(tagName) || "th".equals(tagName))) {
-            if (!treeConstructor.hasElementInTableScope(tagName, Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope(tagName)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -430,7 +430,7 @@ class TreeConstructorInTable {
                 "tbody".equals(tagName) || //
                 "tfoot".equals(tagName) || //
                 "thead".equals(tagName) || "tr".equals(tagName))) {
-            if (!treeConstructor.hasElementInTableScope(tagName, Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope(tagName)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -452,7 +452,7 @@ class TreeConstructorInTable {
                 "th".equals(tagName) || //
                 "thead".equals(tagName) || "tr".equals(tagName))) {
 
-            if (!treeConstructor.hasElementInTableScope("td", Node.NAMESPACE_HTML) && !treeConstructor.hasElementInTableScope("th", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("td") && !treeConstructor.hasElementInTableScope("th")) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -486,7 +486,7 @@ class TreeConstructorInTable {
 
         if (Common.isEndTagNamed(tokenType, "caption", tagName)) {
 
-            if (!treeConstructor.hasElementInTableScope("caption", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("caption")) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -510,7 +510,7 @@ class TreeConstructorInTable {
                 "tr".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, "table", tagName)) {
 
-            if (!treeConstructor.hasElementInTableScope("caption", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.hasElementInTableScope("caption")) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
