@@ -139,7 +139,15 @@ public class NodeTest {
         Assert.assertEquals("my class abc", e2.getClassName());
         Assert.assertFalse(e2.getClassList().isEmpty());
         Assert.assertEquals(Arrays.asList("my", "class", "abc"), e2.getClassList());
+    }
 
+    @Test
+    public void testSetInnerHTML() {
+        Document doc = parser.parse("<div id=myid class=></div>");
+        Element e = doc.getElementById("myid");
+        Assert.assertEquals("", e.getInnerHTML());
+        e.setInnerHTML("<h1>test</h1>plop <p>test");
+        Assert.assertEquals("<h1>test</h1>plop <p>test</p>", e.getInnerHTML());
     }
 
 }

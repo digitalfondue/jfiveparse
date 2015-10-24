@@ -115,6 +115,17 @@ public class Element extends Node {
         return namespaceURI;
     }
 
+    public void setInnerHtml(List<Node> nodes) {
+        empty();
+        for (Node n : nodes) {
+            appendChild(n);
+        }
+    }
+
+    public void setInnerHTML(String html) {
+        setInnerHtml(new Parser().parseFragment(this, html));
+    }
+
     boolean is(String name, String nameSpace) {
         return this.nodeName.equals(name) && this.namespaceURI.equals(nameSpace);
     }
@@ -145,10 +156,17 @@ public class Element extends Node {
         return nodeName;
     }
 
+    /**
+     * Get a space separated list of class names.
+     */
     public String getClassName() {
         return Common.join(getClassList());
     }
 
+    /**
+     * Get a list of class names. Changes on this list is reflected on the class
+     * attribute.
+     */
     public DOMTokenList getClassList() {
         return new DOMTokenList(this, "class");
     }

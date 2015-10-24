@@ -134,7 +134,6 @@ and tag names.
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - Node.contains(Node)
   - Node.normalize
-  - Element.setInnerHTML(String)
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable
   - treeConstructor.insertHtmlElementToken();

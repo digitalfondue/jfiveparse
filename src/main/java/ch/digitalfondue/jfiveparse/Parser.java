@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -168,7 +169,7 @@ public class Parser {
         tokenizer.tokenize(is);
 
         // 14
-        return root.getChildNodes();
+        return new ArrayList<>(root.getChildNodes());
     }
 
     private static Element getFirstFormElementFrom(Node element) {
