@@ -33,7 +33,7 @@ import java.util.Map;
 
 class TreeConstructorInBodyForeignContentText {
 
-    static void handleInBodyCharacter(TreeConstructor treeConstructor) {
+    private static void handleInBodyCharacter(TreeConstructor treeConstructor) {
         int chr = treeConstructor.getChr();
         if (chr == Characters.NULL) {
             treeConstructor.emitParseError();
@@ -622,7 +622,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.insertHtmlElementToken();
     }
 
-    static void startAddressUl(TreeConstructor treeConstructor) {
+    private static void startAddressUl(TreeConstructor treeConstructor) {
         if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
@@ -1186,8 +1186,8 @@ class TreeConstructorInBodyForeignContentText {
         SVG_ELEMENT_CASE_CORRECTION.put("textpath", "textPath");
     }
 
-    //----------- text
-    
+    // ----------- text
+
     static void text(byte tokenType, TreeConstructor treeConstructor) {
         switch (tokenType) {
         case CHARACTER:
