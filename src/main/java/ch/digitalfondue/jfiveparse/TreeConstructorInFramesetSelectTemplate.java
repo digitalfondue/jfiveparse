@@ -22,8 +22,51 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.END_TAG;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.EOF;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
 
-class TreeConstructorInSelect {
+class TreeConstructorInFramesetSelectTemplate {
 
+    static void inFrameset(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+
+        if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
+            treeConstructor.insertCharacter();
+        } else if (tokenType == COMMENT) {
+            treeConstructor.insertComment();
+        } else if (tokenType == DOCTYPE) {
+            treeConstructor.emitParseError();
+            // ignore
+        } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+        } else if (Common.isStartTagNamed(tokenType, "frameset", tagName)) {
+            treeConstructor.insertHtmlElementToken();
+        } else if (Common.isEndTagNamed(tokenType, "frameset", tagName)) {
+
+            // TODO: should check if it's the root element and not only if it's
+            // a html element?
+            if (treeConstructor.getCurrentNode().is("html", Node.NAMESPACE_HTML)) {
+                treeConstructor.emitParseError();
+                // ignore
+            } else {
+                treeConstructor.popCurrentNode();
+                if (!treeConstructor.isHtmlFragmentParsing() && !treeConstructor.getCurrentNode().is("frameset", Node.NAMESPACE_HTML)) {
+                    treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_FRAMESET);
+                }
+            }
+        } else if (Common.isStartTagNamed(tokenType, "frame", tagName)) {
+            treeConstructor.insertHtmlElementToken();
+            treeConstructor.popCurrentNode();
+            treeConstructor.ackSelfClosingTagIfSet();
+        } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
+        } else if (tokenType == EOF) {
+            if (!treeConstructor.getCurrentNode().is("html", Node.NAMESPACE_HTML)) {
+                treeConstructor.emitParseError();
+            }
+            treeConstructor.stopParsing();
+        } else {
+            treeConstructor.emitParseError();
+            // ignore token
+        }
+    }
+    
     static void inSelect(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && treeConstructor.getChr() == Characters.NULL) {
             treeConstructor.emitParseError();
@@ -140,7 +183,62 @@ class TreeConstructorInSelect {
                 treeConstructor.dispatch();
             }
         } else {
-            TreeConstructorInSelect.inSelect(tokenType, tagName, treeConstructor);
+            inSelect(tokenType, tagName, treeConstructor);
+        }
+    }
+    
+    //-----------
+    private static void popPushSetAndDispatch(TreeConstructor treeConstructor, int insertionMode) {
+        treeConstructor.popFromStackTemplatesInsertionMode();
+        treeConstructor.pushInStackTemplatesInsertionMode(insertionMode);
+        treeConstructor.setInsertionMode(insertionMode);
+        treeConstructor.dispatch();
+    }
+
+    static void inTemplate(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+        if (tokenType == CHARACTER || tokenType == COMMENT || tokenType == DOCTYPE) {
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+        } else if ((tokenType == START_TAG && ("base".equals(tagName) || //
+                "basefont".equals(tagName) || //
+                "bgsound".equals(tagName) || //
+                "link".equals(tagName) || //
+                "meta".equals(tagName) || //
+                "noframes".equals(tagName) || //
+                "script".equals(tagName) || //
+                "style".equals(tagName) || //
+                "template".equals(tagName) || //
+                "title".equals(tagName)))
+                || Common.isEndTagNamed(tokenType, "template", tagName)) {
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
+        } else if (tokenType == START_TAG && ("caption".equals(tagName) || //
+                "colgroup".equals(tagName) || //
+                "tbody".equals(tagName) || //
+                "tfoot".equals(tagName) || //
+                "thead".equals(tagName))) {
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_TABLE);
+        } else if (Common.isStartTagNamed(tokenType, "col", tagName)) {
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_COLUMN_GROUP);
+        } else if (Common.isStartTagNamed(tokenType, "tr", tagName)) {
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_TABLE_BODY);
+        } else if (tokenType == START_TAG && ("td".equals(tagName) || //
+                "th".equals(tagName))) {
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_ROW);
+        } else if (tokenType == START_TAG) {
+            popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_BODY);
+        } else if (tokenType == END_TAG) {
+            treeConstructor.emitParseError();
+            // ignore
+        } else if (tokenType == EOF) {
+            if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML)) {
+                treeConstructor.stopParsing();
+            } else {
+                treeConstructor.emitParseError();
+                treeConstructor.popOpenElementsUntil("template", Node.NAMESPACE_HTML);
+                treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+                treeConstructor.popFromStackTemplatesInsertionMode();
+                treeConstructor.resetInsertionModeAppropriately();
+                treeConstructor.dispatch();
+            }
         }
     }
 }

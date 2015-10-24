@@ -957,7 +957,7 @@ class TreeConstructorInBodyForeignContentText {
 
     private static void inBodyEof(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (!treeConstructor.isStackTemplatesInsertionModeIsEmpty()) {
-            TreeConstructorInTemplate.inTemplate(tokenType, tagName, treeConstructor);
+            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, treeConstructor);
         } else {
             // FIXME add check:
             // If there is a node in the stack of open elements that is not

@@ -234,19 +234,19 @@ class TreeConstructor {
             TreeConstructorInTable.inCell(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_SELECT:
-            TreeConstructorInSelect.inSelect(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inSelect(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_SELECT_IN_TABLE:
-            TreeConstructorInSelect.inSelectTable(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inSelectTable(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_TEMPLATE:
-            TreeConstructorInTemplate.inTemplate(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.AFTER_BODY:
             TreeConstructorAftersBeforeInitialInHead.afterBody(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.IN_FRAMESET:
-            TreeConstructorInFrameset.inFrameset(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inFrameset(tokenType, tagName, this);
             break;
         case TreeConstructionInsertionMode.AFTER_FRAMESET:
             TreeConstructorAftersBeforeInitialInHead.afterFrameset(tokenType, tagName, this);
