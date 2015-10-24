@@ -31,7 +31,7 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRawTextElementP
 import java.util.HashMap;
 import java.util.Map;
 
-class TreeConstructorInBodyAndForeignContent {
+class TreeConstructorInBodyForeignContentText {
 
     static void handleInBodyCharacter(TreeConstructor treeConstructor) {
         int chr = treeConstructor.getChr();
@@ -64,7 +64,7 @@ class TreeConstructorInBodyAndForeignContent {
         case "style":
         case "template":
         case "title":
-            TreeConstructorInHeads.inHead(START_TAG, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(START_TAG, tagName, treeConstructor);
             break;
         case "body":
             startBody(treeConstructor);
@@ -693,7 +693,7 @@ class TreeConstructorInBodyAndForeignContent {
     private static void inBodyEndTag(String tagName, TreeConstructor treeConstructor) {
         switch (tagName) {
         case "template":
-            TreeConstructorInHeads.inHead(END_TAG, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(END_TAG, tagName, treeConstructor);
             break;
         case "body":
             endBody(treeConstructor);
@@ -1186,4 +1186,43 @@ class TreeConstructorInBodyAndForeignContent {
         SVG_ELEMENT_CASE_CORRECTION.put("textpath", "textPath");
     }
 
+    //----------- text
+    
+    static void text(byte tokenType, TreeConstructor treeConstructor) {
+        switch (tokenType) {
+        case CHARACTER:
+            treeConstructor.insertCharacter();
+            break;
+        case EOF:
+            textEof(treeConstructor);
+            break;
+        case END_TAG:
+            textEndTag(treeConstructor);
+            break;
+        }
+    }
+
+    private static void textEndTag(TreeConstructor treeConstructor) {
+        // if ("script".equals(tagName)) {
+        // // TODO check
+        // treeConstructor.popCurrentNode();
+        // treeConstructor.insertionMode =
+        // treeConstructor.originalInsertionMode;
+        // } else {
+        treeConstructor.popCurrentNode();
+        treeConstructor.switchToOriginalInsertionMode();
+
+        // }
+    }
+
+    private static void textEof(TreeConstructor treeConstructor) {
+        // Element currentNode = treeConstructor.getCurrentNode();
+        // if (currentNode != null &&
+        // "script".equals(currentNode.getNodeName())) {
+        // // "already started".TODO
+        // }
+        treeConstructor.popCurrentNode();
+        treeConstructor.switchToOriginalInsertionMode();
+        treeConstructor.dispatch();
+    }
 }

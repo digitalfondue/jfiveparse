@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -507,5 +508,16 @@ class Common {
 
     static {
         Arrays.sort(IMPLIED_TAGS_THOROUGHLY);
+    }
+
+    static String join(Collection<String> list) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : list) {
+            sb.append(s).append(' ');
+        }
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
     }
 }

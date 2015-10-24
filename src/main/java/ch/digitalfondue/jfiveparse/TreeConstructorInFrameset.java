@@ -32,7 +32,7 @@ class TreeConstructorInFrameset {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "frameset", tagName)) {
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isEndTagNamed(tokenType, "frameset", tagName)) {
@@ -53,7 +53,7 @@ class TreeConstructorInFrameset {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
         } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
-            TreeConstructorInHeads.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
             if (!treeConstructor.getCurrentNode().is("html", Node.NAMESPACE_HTML)) {
                 treeConstructor.emitParseError();

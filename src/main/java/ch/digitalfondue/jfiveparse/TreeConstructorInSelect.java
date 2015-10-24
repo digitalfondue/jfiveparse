@@ -36,7 +36,7 @@ class TreeConstructorInSelect {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "option", tagName)) {
             if (treeConstructor.getCurrentNode().is("option", Node.NAMESPACE_HTML)) {
                 treeConstructor.popCurrentNode();
@@ -101,9 +101,9 @@ class TreeConstructorInSelect {
         } else if ((tokenType == START_TAG && ("script".equals(tagName) || //
                 "template".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorInHeads.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else {
             treeConstructor.emitParseError();
             // ignore

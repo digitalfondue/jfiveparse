@@ -33,7 +33,7 @@ class TreeConstructorInTemplate {
 
     static void inTemplate(byte tokenType, String tagName, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER || tokenType == COMMENT || tokenType == DOCTYPE) {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else if ((tokenType == START_TAG && ("base".equals(tagName) || //
                 "basefont".equals(tagName) || //
                 "bgsound".equals(tagName) || //
@@ -45,7 +45,7 @@ class TreeConstructorInTemplate {
                 "template".equals(tagName) || //
                 "title".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorInHeads.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
         } else if (tokenType == START_TAG && ("caption".equals(tagName) || //
                 "colgroup".equals(tagName) || //
                 "tbody".equals(tagName) || //

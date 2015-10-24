@@ -15,6 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 
 import org.junit.Assert;
@@ -101,6 +102,44 @@ public class NodeTest {
         Assert.assertEquals(newNode, e.getChildNodes().get(2));
         Assert.assertEquals(last, e.getChildNodes().get(3));
         Assert.assertEquals(e, newNode.getParentNode());
+    }
+
+    @Test
+    public void testClass() {
+        Document doc = parser.parse("<div id=myid class=></div>");
+        Element e = doc.getElementById("myid");
+        Assert.assertEquals("", e.getClassName());
+        Assert.assertTrue(e.getClassList().isEmpty());
+
+        e.getClassList().add("plop");
+
+        Assert.assertEquals("plop", e.getClassName());
+        Assert.assertEquals(Arrays.asList("plop"), e.getClassList());
+
+        e.getClassList().remove("plop");
+        Assert.assertEquals("", e.getClassName());
+        Assert.assertTrue(e.getClassList().isEmpty());
+
+        e.getClassList().add("plop", "hurr");
+        Assert.assertEquals("plop hurr", e.getClassName());
+        Assert.assertEquals(Arrays.asList("plop", "hurr"), e.getClassList());
+
+        Assert.assertFalse(e.getClassList().toggle("plop"));
+        Assert.assertEquals(Arrays.asList("hurr"), e.getClassList());
+        Assert.assertTrue(e.getClassList().toggle("plop"));
+        Assert.assertEquals(Arrays.asList("hurr", "plop"), e.getClassList());
+
+        Assert.assertFalse(e.getClassList().toggle("plop", false));
+        Assert.assertEquals(Arrays.asList("hurr", "plop"), e.getClassList());
+        Assert.assertFalse(e.getClassList().toggle("plop", true));
+        Assert.assertEquals(Arrays.asList("hurr"), e.getClassList());
+
+        Document doc2 = parser.parse("<div id=myid class=' my class    \n abc '></div>");
+        Element e2 = doc2.getElementById("myid");
+        Assert.assertEquals("my class abc", e2.getClassName());
+        Assert.assertFalse(e2.getClassList().isEmpty());
+        Assert.assertEquals(Arrays.asList("my", "class", "abc"), e2.getClassList());
+
     }
 
 }

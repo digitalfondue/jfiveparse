@@ -102,14 +102,14 @@ class TreeConstructorInTable {
                 "script".equals(tagName) || //
                 "template".equals(tagName))//
                 || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorInHeads.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "input", tagName)) {
 
             boolean hasTypeKey = treeConstructor.hasAttribute("type");
             if (!hasTypeKey || (hasTypeKey && !"hidden".equalsIgnoreCase(treeConstructor.getAttribute("type").getValue()))) {
                 treeConstructor.emitParseError();
                 treeConstructor.enableFosterParenting();
-                TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+                TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
                 treeConstructor.disableFosterParenting();
             } else {
                 treeConstructor.emitParseError();
@@ -127,11 +127,11 @@ class TreeConstructorInTable {
                 treeConstructor.popCurrentNode();
             }
         } else if (tokenType == EOF) {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else {
             treeConstructor.emitParseError();
             treeConstructor.enableFosterParenting();
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
             treeConstructor.disableFosterParenting();
         }
     }
@@ -242,7 +242,7 @@ class TreeConstructorInTable {
                 treeConstructor.setTokenType(CHARACTER);
                 for (int i = 0; i < chars.pos; i++) {
                     treeConstructor.setChr(chars.buff[i]);
-                    TreeConstructorInBodyAndForeignContent.inBody(CHARACTER, tagName, treeConstructor);
+                    TreeConstructorInBodyForeignContentText.inBody(CHARACTER, tagName, treeConstructor);
                 }
 
                 //
@@ -357,7 +357,7 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "col", tagName)) {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.popCurrentNode();
@@ -374,9 +374,9 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "template", tagName) || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorInHeads.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else {
             if (!treeConstructor.getCurrentNode().is("colgroup", Node.NAMESPACE_HTML)) {
                 treeConstructor.emitParseError();
@@ -400,7 +400,7 @@ class TreeConstructorInTable {
             inCellStartTag(tagName, treeConstructor);
             break;
         default:
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
             break;
         }
     }
@@ -438,7 +438,7 @@ class TreeConstructorInTable {
                 treeConstructor.dispatch();
             }
         } else {
-            TreeConstructorInBodyAndForeignContent.inBody(END_TAG, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(END_TAG, tagName, treeConstructor);
         }
     }
 
@@ -460,7 +460,7 @@ class TreeConstructorInTable {
                 treeConstructor.dispatch();
             }
         } else {
-            TreeConstructorInBodyAndForeignContent.inBody(START_TAG, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(START_TAG, tagName, treeConstructor);
         }
     }
 
@@ -538,7 +538,7 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore
         } else {
-            TreeConstructorInBodyAndForeignContent.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         }
     }
 }
