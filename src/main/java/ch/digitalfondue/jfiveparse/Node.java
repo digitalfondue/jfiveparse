@@ -164,8 +164,11 @@ public abstract class Node {
      * @param toInsert
      *            the node to be inserted
      * @param before
-     *            if the node is not a child of this node, the insertion will
-     *            fail silently.
+     *            if the node is not a child of this node, the insertion
+     *            willpublic HasAttribute(String name) { this(name, null); }
+     * 
+     *            public HasAttribute(String name, String value) { this(name,
+     *            value, ATTRIBUTE_MATCH_VALUE_EQ); } fail silently.
      */
     public void insertBefore(Node toInsert, Node before) {
         int idx = getChildNodes().indexOf(before);
@@ -402,7 +405,7 @@ public abstract class Node {
      * element found during the traversal will be returned.
      */
     public Element getElementById(String idValue) {
-        List<Element> l = getAllNodesMatching(new NodeMatchers.HasAttribute("id", idValue));
+        List<Element> l = getAllNodesMatching(new NodeMatchers.HasAttribute("id", idValue, NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ));
         return l.isEmpty() ? null : l.get(0);
     }
 

@@ -67,17 +67,46 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     }
 
+    /**
+     * Equivalent of [attr=value]
+     */
+    public static final byte ATTRIBUTE_MATCH_VALUE_EQ = 0;
+
+    /**
+     * Equivalent of [attr~=value]
+     */
+    public static final byte ATTRIBUTE_MATCH_VALUE_IN_LIST = 1;
+
+    /**
+     * Equivalent of [attr^=value]
+     */
+    public static final byte ATTRIBUTE_MATCH_VALUE_START_WITH = 2;
+
+    /**
+     * Equivalent of [attr$=value]
+     */
+    public static final byte ATTRIBUTE_MATCH_VALUE_END_WITH = 3;
+
+    /**
+     * Equivalent of [attr*=value]
+     */
+    public static final byte ATTRIBUTE_MATCH_VALUE_CONTAINS = 4;
+
     public static class HasAttribute implements NodeMatcher {
+        private final byte matchType;
         private final String name;
         private final String value;
 
-        public HasAttribute(String name) {
-            this(name, null);
-        }
-
-        public HasAttribute(String name, String value) {
+        public HasAttribute(String name, String value, byte matchType) {
             this.name = name;
             this.value = value;
+            this.matchType = matchType;
+        }
+
+        public HasAttribute(String name) {
+            this.name = name;
+            this.value = null;
+            this.matchType = ATTRIBUTE_MATCH_VALUE_EQ;
         }
 
         @Override
@@ -90,10 +119,28 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
             if (!elem.getAttributes().containsKey(name)) {
                 return false;
-            } else if (value == null) {
-                return true;
             } else {
-                return value.equals(elem.getAttributes().get(name).getValue());
+                switch (matchType) {
+                case ATTRIBUTE_MATCH_VALUE_EQ:
+                    return value == null || value.equals(elem.getAttributes().get(name).getValue());
+                case ATTRIBUTE_MATCH_VALUE_IN_LIST:
+                    return new DOMTokenList(elem, name).contains(value);
+                case ATTRIBUTE_MATCH_VALUE_START_WITH: {
+                    String attrValue = elem.getAttribute(name);
+                    return attrValue != null && attrValue.startsWith(value);
+                }
+                case ATTRIBUTE_MATCH_VALUE_END_WITH: {
+                    String attrValue = elem.getAttribute(name);
+                    return attrValue != null && attrValue.endsWith(value);
+                }
+                case ATTRIBUTE_MATCH_VALUE_CONTAINS: {
+                    String attrValue = elem.getAttribute(name);
+                    return attrValue != null && attrValue.indexOf(value) >= 0;
+                }
+                default:
+                    return false;
+                }
+
             }
         }
 
