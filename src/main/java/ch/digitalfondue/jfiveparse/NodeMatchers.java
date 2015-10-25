@@ -120,23 +120,18 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
             if (!elem.getAttributes().containsKey(name)) {
                 return false;
             } else {
+                String attrValue = elem.getAttribute(name);
                 switch (matchType) {
                 case ATTRIBUTE_MATCH_VALUE_EQ:
-                    return value == null || value.equals(elem.getAttributes().get(name).getValue());
+                    return value == null || value.equals(attrValue);
                 case ATTRIBUTE_MATCH_VALUE_IN_LIST:
                     return new DOMTokenList(elem, name).contains(value);
-                case ATTRIBUTE_MATCH_VALUE_START_WITH: {
-                    String attrValue = elem.getAttribute(name);
+                case ATTRIBUTE_MATCH_VALUE_START_WITH:
                     return attrValue != null && attrValue.startsWith(value);
-                }
-                case ATTRIBUTE_MATCH_VALUE_END_WITH: {
-                    String attrValue = elem.getAttribute(name);
+                case ATTRIBUTE_MATCH_VALUE_END_WITH:
                     return attrValue != null && attrValue.endsWith(value);
-                }
-                case ATTRIBUTE_MATCH_VALUE_CONTAINS: {
-                    String attrValue = elem.getAttribute(name);
+                case ATTRIBUTE_MATCH_VALUE_CONTAINS:
                     return attrValue != null && attrValue.indexOf(value) >= 0;
-                }
                 default:
                     return false;
                 }
