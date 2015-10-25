@@ -150,4 +150,13 @@ public class NodeTest {
         Assert.assertEquals("<h1>test</h1>plop <p>test</p>", e.getInnerHTML());
     }
 
+    @Test
+    public void testContains() {
+        Document doc = parser.parse("<div id=cont> text<div> bla bla <div id=myid class=>blabla</div>plop</div></div>");
+        Element e = doc.getElementById("myid");
+        Element cont = doc.getElementById("cont");
+        Assert.assertTrue(cont.contains(e));
+        Assert.assertFalse(e.contains(cont));
+    }
+
 }

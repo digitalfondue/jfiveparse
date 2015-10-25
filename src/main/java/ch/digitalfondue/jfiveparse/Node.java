@@ -345,11 +345,17 @@ public abstract class Node {
         Node node = getFirstChild();
         while (node != null) {
             visitor.start(node);
+            if (visitor.complete()) {
+                return;
+            }
             if (node.hasChildNodes()) {
                 node = node.getFirstChild();
             } else {
                 while (node != this && node.getNextSibling() == null) {
                     visitor.end(node);
+                    if (visitor.complete()) {
+                        return;
+                    }
                     node = node.getParentNode();
                 }
 
@@ -357,6 +363,9 @@ public abstract class Node {
                     break;
                 }
                 visitor.end(node);
+                if (visitor.complete()) {
+                    return;
+                }
 
                 node = node.getNextSibling();
             }
@@ -373,12 +382,21 @@ public abstract class Node {
     }
 
     /**
-     * Get all the node matching the given matcher. The nodes will be returned
+     * Get all the nodes matching the given matcher. The nodes will be returned
      * in "tree order".
      */
     public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher) {
+        return getAllNodesMatching(matcher, false);
+    }
+
+    /**
+     * Get all the nodes matching the given matcher. The nodes will be returned
+     * in "tree order". If the second parameter is true, the traversal will stop
+     * on the first match.
+     */
+    public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
         List<T> l = new ArrayList<>();
-        traverse(new NodeMatchers<>(matcher, l));
+        traverse(new NodeMatchers<>(matcher, l, false));
         return l;
     }
 
@@ -405,8 +423,18 @@ public abstract class Node {
      * element found during the traversal will be returned.
      */
     public Element getElementById(String idValue) {
-        List<Element> l = getAllNodesMatching(new NodeMatchers.HasAttribute("id", idValue, NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ));
+        List<Element> l = getAllNodesMatching(new NodeMatchers.HasAttribute("id", idValue, NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ), true);
         return l.isEmpty() ? null : l.get(0);
+    }
+
+    /**
+     * Return true if node is descendant.
+     * 
+     * @param node
+     * @return
+     */
+    public boolean contains(Node node) {
+        return !getAllNodesMatching(new NodeMatchers.NodeIsEqualReference(node), true).isEmpty();
     }
 
     /**

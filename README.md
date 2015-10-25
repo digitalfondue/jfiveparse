@@ -131,7 +131,6 @@ and tag names.
   - Child selector https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
-  - Node.contains(Node)
   - Node.normalize
 - add some methods from jquery too
 - cleanup code: but beware, no measurable slowdown is acceptable

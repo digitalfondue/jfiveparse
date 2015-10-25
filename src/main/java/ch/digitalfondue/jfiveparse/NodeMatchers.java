@@ -21,14 +21,31 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     private final NodeMatcher matcher;
     private final List<T> toAdd;
+    private boolean completeOnFirstMatch;
 
-    public NodeMatchers(NodeMatcher matcher, List<T> toAdd) {
+    public NodeMatchers(NodeMatcher matcher, List<T> toAdd, boolean completeOnFirstMatch) {
         this.matcher = matcher;
         this.toAdd = toAdd;
+        this.completeOnFirstMatch = completeOnFirstMatch;
     }
 
     public interface NodeMatcher {
         boolean match(Node node);
+    }
+
+    public static class NodeIsEqualReference implements NodeMatcher {
+
+        private final Node node;
+
+        public NodeIsEqualReference(Node node) {
+            this.node = node;
+        }
+
+        @Override
+        public boolean match(Node node) {
+            return this.node == node;
+        }
+
     }
 
     public static class NodeHasType implements NodeMatcher {
@@ -195,5 +212,10 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     @Override
     public void end(Node node) {
+    }
+
+    @Override
+    public boolean complete() {
+        return completeOnFirstMatch ? !toAdd.isEmpty() : false;
     }
 }

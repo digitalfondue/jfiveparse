@@ -182,4 +182,9 @@ public class HtmlSerializer implements NodesVisitor {
 
     }
 
+    @Override
+    public boolean complete() {
+        return false;
+    }
+
 }

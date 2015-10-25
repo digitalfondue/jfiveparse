@@ -20,4 +20,6 @@ public interface NodesVisitor {
     void start(Node node);
 
     void end(Node node);
+    
+    boolean complete();
 }
