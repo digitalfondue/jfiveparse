@@ -146,7 +146,7 @@ public class NodeMatchersTest {
     @Test
     public void hasSelectorMatch() {
         // #depth1 > #depth2 > #depth3
-        Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
+        Document doc = parser.parse("<div id=depth1 class='a b c'><div id=depth2 class='a c'><div id=depth3 class='b c'></div></div></div>");
         List<Element> e1 = doc.getAllNodesMatching(Selector.select().id("depth1").withChild().id("depth2").withChild().id("depth3").toMatcher());
         Assert.assertEquals(1, e1.size());
         Assert.assertEquals("depth3", e1.get(0).getAttribute("id"));
@@ -156,5 +156,20 @@ public class NodeMatchersTest {
         Assert.assertEquals(2, e2.size());
         Assert.assertEquals("depth2", e2.get(0).getAttribute("id"));
         Assert.assertEquals("depth3", e2.get(1).getAttribute("id"));
+
+        // div.a.b
+        List<Element> e3 = doc.getAllNodesMatching(Selector.select().element("div").hasClass("a", "b").toMatcher());
+        Assert.assertEquals(1, e3.size());
+        Assert.assertEquals("depth1", e3.get(0).getAttribute("id"));
+
+        // .c
+        List<Element> e4 = doc.getAllNodesMatching(Selector.select().hasClass("c").toMatcher());
+        Assert.assertEquals(3, e4.size());
+        
+        // .b
+        List<Element> e5 = doc.getAllNodesMatching(Selector.select().hasClass("b").toMatcher());
+        Assert.assertEquals(2, e5.size());
+        Assert.assertEquals("depth1", e5.get(0).getAttribute("id"));
+        Assert.assertEquals("depth3", e5.get(1).getAttribute("id"));
     }
 }

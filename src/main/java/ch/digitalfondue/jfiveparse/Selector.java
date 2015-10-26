@@ -75,7 +75,7 @@ public class Selector {
      * @return
      */
     public Selector hasClass(String value) {
-        matchers.add(new NodeMatchers.HasAttribute("class", value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ));
+        matchers.add(new NodeMatchers.HasAttribute("class", value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_IN_LIST));
         return this;
     }
 
