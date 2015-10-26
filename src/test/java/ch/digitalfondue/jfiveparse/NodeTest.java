@@ -158,5 +158,12 @@ public class NodeTest {
         Assert.assertTrue(cont.contains(e));
         Assert.assertFalse(e.contains(cont));
     }
+    
+    @Test
+    public void testMatch() {
+        Document doc = parser.parse("<div id=cont> text<div> bla bla <div id=myid class=>blabla</div>plop</div></div>");
+        Assert.assertEquals(1, doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id"), true).size());
+        Assert.assertEquals(2, doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id"), false).size());
+    }
 
 }

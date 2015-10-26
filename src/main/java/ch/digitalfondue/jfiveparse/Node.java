@@ -396,7 +396,7 @@ public abstract class Node {
      */
     public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
         List<T> l = new ArrayList<>();
-        traverse(new NodeMatchers<>(matcher, l, false));
+        traverse(new NodeMatchers<>(matcher, l, onlyFirstMatch));
         return l;
     }
 
