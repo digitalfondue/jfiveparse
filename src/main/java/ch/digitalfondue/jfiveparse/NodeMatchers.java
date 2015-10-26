@@ -17,27 +17,23 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.List;
 
-public class NodeMatchers<T extends Node> implements NodesVisitor {
+class NodeMatchers<T extends Node> implements NodesVisitor {
 
     private final NodeMatcher matcher;
     private final List<T> toAdd;
     private boolean completeOnFirstMatch;
 
-    public NodeMatchers(NodeMatcher matcher, List<T> toAdd, boolean completeOnFirstMatch) {
+    NodeMatchers(NodeMatcher matcher, List<T> toAdd, boolean completeOnFirstMatch) {
         this.matcher = matcher;
         this.toAdd = toAdd;
         this.completeOnFirstMatch = completeOnFirstMatch;
     }
 
-    public interface NodeMatcher {
-        boolean match(Node node);
-    }
-
-    public static class NodeIsEqualReference implements NodeMatcher {
+    static class NodeIsEqualReference implements NodeMatcher {
 
         private final Node node;
 
-        public NodeIsEqualReference(Node node) {
+        NodeIsEqualReference(Node node) {
             this.node = node;
         }
 
@@ -48,11 +44,11 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     }
 
-    public static class NodeHasType implements NodeMatcher {
+    static class NodeHasType implements NodeMatcher {
 
         private final int type;
 
-        public NodeHasType(int type) {
+        NodeHasType(int type) {
             this.type = type;
         }
 
@@ -62,16 +58,16 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static class ElementHasTagName implements NodeMatcher {
+    static class ElementHasTagName implements NodeMatcher {
         private final String tagName;
         private final String nameSpace;
 
-        public ElementHasTagName(String tagName) {
+        ElementHasTagName(String tagName) {
             this.tagName = tagName;
             this.nameSpace = null;
         }
 
-        public ElementHasTagName(String tagName, String namespace) {
+        ElementHasTagName(String tagName, String namespace) {
             this.tagName = tagName;
             this.nameSpace = namespace;
         }
@@ -87,40 +83,40 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
     /**
      * Equivalent of [attr=value]
      */
-    public static final byte ATTRIBUTE_MATCH_VALUE_EQ = 0;
+    static final byte ATTRIBUTE_MATCH_VALUE_EQ = 0;
 
     /**
      * Equivalent of [attr~=value]
      */
-    public static final byte ATTRIBUTE_MATCH_VALUE_IN_LIST = 1;
+    static final byte ATTRIBUTE_MATCH_VALUE_IN_LIST = 1;
 
     /**
      * Equivalent of [attr^=value]
      */
-    public static final byte ATTRIBUTE_MATCH_VALUE_START_WITH = 2;
+    static final byte ATTRIBUTE_MATCH_VALUE_START_WITH = 2;
 
     /**
      * Equivalent of [attr$=value]
      */
-    public static final byte ATTRIBUTE_MATCH_VALUE_END_WITH = 3;
+    static final byte ATTRIBUTE_MATCH_VALUE_END_WITH = 3;
 
     /**
      * Equivalent of [attr*=value]
      */
-    public static final byte ATTRIBUTE_MATCH_VALUE_CONTAINS = 4;
+    static final byte ATTRIBUTE_MATCH_VALUE_CONTAINS = 4;
 
-    public static class HasAttribute implements NodeMatcher {
+    static class HasAttribute implements NodeMatcher {
         private final byte matchType;
         private final String name;
         private final String value;
 
-        public HasAttribute(String name, String value, byte matchType) {
+        HasAttribute(String name, String value, byte matchType) {
             this.name = name;
             this.value = value;
             this.matchType = matchType;
         }
 
-        public HasAttribute(String name) {
+        HasAttribute(String name) {
             this.name = name;
             this.value = null;
             this.matchType = ATTRIBUTE_MATCH_VALUE_EQ;
@@ -158,7 +154,7 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
 
     }
 
-    public static class IsLastChild implements NodeMatcher {
+    static class IsLastChild implements NodeMatcher {
         @Override
         public boolean match(Node node) {
             if (node.parentNode != null) {
@@ -169,7 +165,7 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static class IsFirstChild implements NodeMatcher {
+    static class IsFirstChild implements NodeMatcher {
         @Override
         public boolean match(Node node) {
             if (node.parentNode != null) {
@@ -180,7 +176,7 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static class IsFirstElementChild implements NodeMatcher {
+    static class IsFirstElementChild implements NodeMatcher {
         @Override
         public boolean match(Node node) {
             if (node.parentNode != null) {
@@ -191,7 +187,7 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static class IsLastElementChild implements NodeMatcher {
+    static class IsLastElementChild implements NodeMatcher {
         @Override
         public boolean match(Node node) {
             if (node.parentNode != null) {
@@ -202,10 +198,10 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static class AndMatcher implements NodeMatcher {
+    static class AndMatcher implements NodeMatcher {
         private final List<NodeMatcher> nodeMatchers;
 
-        public AndMatcher(List<NodeMatcher> nodeMatchers) {
+        AndMatcher(List<NodeMatcher> nodeMatchers) {
             this.nodeMatchers = nodeMatchers;
         }
 
@@ -220,11 +216,11 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static class HasParentMatching implements NodeMatcher {
+    static class HasParentMatching implements NodeMatcher {
 
         private final NodeMatcher parentMatcher;
 
-        public HasParentMatching(NodeMatcher parentMatcher) {
+        HasParentMatching(NodeMatcher parentMatcher) {
             this.parentMatcher = parentMatcher;
         }
 
@@ -234,10 +230,10 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
-    public static class HasAncestorMatching implements NodeMatcher {
+    static class HasAncestorMatching implements NodeMatcher {
         private final NodeMatcher ancestorMatcher;
 
-        public HasAncestorMatching(NodeMatcher ancestorMatcher) {
+        HasAncestorMatching(NodeMatcher ancestorMatcher) {
             this.ancestorMatcher = ancestorMatcher;
         }
 

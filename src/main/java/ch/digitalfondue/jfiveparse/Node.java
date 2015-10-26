@@ -21,8 +21,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import ch.digitalfondue.jfiveparse.NodeMatchers.NodeMatcher;
-
 /**
  * Base class for all the nodes.
  */
@@ -164,11 +162,8 @@ public abstract class Node {
      * @param toInsert
      *            the node to be inserted
      * @param before
-     *            if the node is not a child of this node, the insertion
-     *            willpublic HasAttribute(String name) { this(name, null); }
-     * 
-     *            public HasAttribute(String name, String value) { this(name,
-     *            value, ATTRIBUTE_MATCH_VALUE_EQ); } fail silently.
+     *            if the node is not a child of this node, the insertion will
+     *            fail silently.
      */
     public void insertBefore(Node toInsert, Node before) {
         int idx = getChildNodes().indexOf(before);
@@ -383,7 +378,7 @@ public abstract class Node {
 
     /**
      * Get all the nodes matching the given matcher. The nodes will be returned
-     * in "tree order".
+     * in "tree order". See {@link Selector}.
      */
     public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher) {
         return getAllNodesMatching(matcher, false);
@@ -392,7 +387,7 @@ public abstract class Node {
     /**
      * Get all the nodes matching the given matcher. The nodes will be returned
      * in "tree order". If the second parameter is true, the traversal will stop
-     * on the first match.
+     * on the first match. See {@link Selector}.
      */
     public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
         List<T> l = new ArrayList<>();

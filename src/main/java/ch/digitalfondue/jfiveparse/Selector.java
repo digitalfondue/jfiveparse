@@ -18,8 +18,6 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.digitalfondue.jfiveparse.NodeMatchers.NodeMatcher;
-
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
  * to CSS.
