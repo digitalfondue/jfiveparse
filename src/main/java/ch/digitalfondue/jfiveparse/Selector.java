@@ -23,6 +23,62 @@ import ch.digitalfondue.jfiveparse.NodeMatchers.NodeMatcher;
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
  * to CSS.
+ * 
+ * Some examples:
+ * 
+ * <table>
+ * <tr>
+ * <th>CSS</th>
+ * <th>Selector</th>
+ * </tr>
+ * <tr>
+ * <td>div</td>
+ * <td><code>Selector.select().element("div").toMatcher()</code></td>
+ * </tr>
+ * <tr>
+ * <td>.className</td>
+ * <td><code>Selector.select().hasClass("className").toMatcher()</code></td>
+ * </tr>
+ * <tr>
+ * <td>div.className</td>
+ * <td>
+ * <code>Selector.select().element("div").hasClass("className").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>div.className1.className2</td>
+ * <td>
+ * <code>Selector.select().element("div").hasClass("className1", "className2").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>#myId</td>
+ * <td><code>Selector.select().id("myId").toMatcher()</code></td>
+ * </tr>
+ * <tr>
+ * <td>#myId > span.className</td>
+ * <td>
+ * <code>Selector.select().id("myId").withChild().element("span").hasClass("className").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>#myId span.className</td>
+ * <td>
+ * <code>Selector.select().id("myId").withDescendant().element("span").hasClass("className").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>span[data-test]</td>
+ * <td>
+ * <code>Selector.select().element("span").attr("data-test").toMatcher()</code></td>
+ * </tr>
+ * <tr>
+ * <td>span[data-test=bla]</td>
+ * <td>
+ * <code>Selector.select().element("span").attrValEq("data-test", "bla").toMatcher()</code>
+ * </td>
+ * </tr>
+ * </table>
  *
  */
 public class Selector {

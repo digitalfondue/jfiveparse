@@ -165,11 +165,31 @@ public class NodeMatchersTest {
         // .c
         List<Element> e4 = doc.getAllNodesMatching(Selector.select().hasClass("c").toMatcher());
         Assert.assertEquals(3, e4.size());
-        
+
         // .b
         List<Element> e5 = doc.getAllNodesMatching(Selector.select().hasClass("b").toMatcher());
         Assert.assertEquals(2, e5.size());
         Assert.assertEquals("depth1", e5.get(0).getAttribute("id"));
         Assert.assertEquals("depth3", e5.get(1).getAttribute("id"));
+    }
+
+    @Test
+    public void selectorFirstLast() {
+        Document doc = parser.parse("text1<div></div><div id=myid></div><div></div>text2");
+        // div:first-child
+        Assert.assertTrue(doc.getAllNodesMatching(Selector.select().element("div").isFirstChild().toMatcher()).isEmpty());
+
+        // :first-child
+        List<Node> nodes = doc.getAllNodesMatching(Selector.select().isFirstChild().toMatcher());
+        Assert.assertEquals(3, nodes.size());
+        Assert.assertEquals("html", nodes.get(0).getNodeName());
+        Assert.assertEquals("head", nodes.get(1).getNodeName());
+        Assert.assertEquals("#text", nodes.get(2).getNodeName());
+        Assert.assertEquals("text1", ((Text) nodes.get(2)).getData());
+
+        // body :first-child
+        List<Text> txtNode = doc.getAllNodesMatching(Selector.select().element("body").withDescendant().isFirstChild().toMatcher());
+        Assert.assertEquals(1, txtNode.size());
+        Assert.assertEquals("text1", txtNode.get(0).getData());
     }
 }
