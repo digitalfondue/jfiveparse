@@ -126,11 +126,10 @@ and tag names.
 
 ## TODO:
 - expand the typesafe matcher api
-  - expand NodeMatchers: add "AND" rule and "OR"
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - Node.normalize
-- add some methods from jquery too
+- add some methods from jquery too 
 - cleanup code: but beware, no measurable slowdown is acceptable
   - treeConstructor.insertHtmlElementToken();
   - treeConstructor.popCurrentNode();

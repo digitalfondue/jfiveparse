@@ -142,4 +142,19 @@ public class NodeMatchersTest {
         List<Node> empty = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth0", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
         Assert.assertEquals(0, empty.size());
     }
+
+    @Test
+    public void hasSelectorMatch() {
+        // #depth1 > #depth2 > #depth3
+        Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
+        List<Element> e1 = doc.getAllNodesMatching(Selector.select().id("depth1").withChild().id("depth2").withChild().id("depth3").toMatcher());
+        Assert.assertEquals(1, e1.size());
+        Assert.assertEquals("depth3", e1.get(0).getAttribute("id"));
+
+        // div > [id]
+        List<Element> e2 = doc.getAllNodesMatching(Selector.select().element("div").withDescendant().attr("id").toMatcher());
+        Assert.assertEquals(2, e2.size());
+        Assert.assertEquals("depth2", e2.get(0).getAttribute("id"));
+        Assert.assertEquals("depth3", e2.get(1).getAttribute("id"));
+    }
 }

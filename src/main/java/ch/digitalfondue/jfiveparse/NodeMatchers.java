@@ -202,6 +202,24 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
+    public static class AndMatcher implements NodeMatcher {
+        private final List<NodeMatcher> nodeMatchers;
+
+        public AndMatcher(List<NodeMatcher> nodeMatchers) {
+            this.nodeMatchers = nodeMatchers;
+        }
+
+        @Override
+        public boolean match(Node node) {
+            for (NodeMatcher m : nodeMatchers) {
+                if (!m.match(node)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     public static class HasParentMatching implements NodeMatcher {
 
         private final NodeMatcher parentMatcher;
