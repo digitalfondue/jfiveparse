@@ -82,9 +82,10 @@ public static void main(String[] args) throws MalformedURLException, IOException
     Parser p = new Parser();
     Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8);
     Document doc = p.parse(reader);
+    // the Selector is "td.title > a"
     for (Node e : doc.getAllNodesMatching(Selector.select().element("td").hasClass("title").withChild().element("a").toMatcher())) {
         Element a = (Element) e;
-        if (!"nofollow".equals(a.getAttribute("rel"))) {
+        if (!"nofollow".equals(a.getAttribute("rel"))) { //the selector is not complete, we need to ignore some additional elements
             System.err.println(e.getTextContent() + " [" + a.getAttribute("href") + "]");
         }
     }
