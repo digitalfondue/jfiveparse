@@ -29,7 +29,7 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.1.1</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
@@ -72,6 +72,24 @@ It will print:
 <p><span>Hello world</span></p>
 <p><span>Hello world</span></p>
 ```
+
+## Examples:
+
+### Fetch all titles+links on the front page of HN
+
+```java
+public static void main(String[] args) throws MalformedURLException, IOException {
+    Parser p = new Parser();
+    Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8);
+    Document doc = p.parse(reader);
+    for (Node e : doc.getAllNodesMatching(Selector.select().element("td").hasClass("title").withChild().element("a").toMatcher())) {
+        Element a = (Element) e;
+        if (!"nofollow".equals(a.getAttribute("rel"))) {
+            System.err.println(e.getTextContent() + " [" + a.getAttribute("href") + "]");
+        }
+    }
+}
+```  
 
 ## Notes:
 
