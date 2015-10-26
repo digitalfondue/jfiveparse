@@ -202,6 +202,41 @@ public class NodeMatchers<T extends Node> implements NodesVisitor {
         }
     }
 
+    public static class HasParentMatching implements NodeMatcher {
+
+        private final NodeMatcher parentMatcher;
+
+        public HasParentMatching(NodeMatcher parentMatcher) {
+            this.parentMatcher = parentMatcher;
+        }
+
+        @Override
+        public boolean match(Node node) {
+            return node.parentNode != null && parentMatcher.match(node.parentNode);
+        }
+    }
+
+    public static class HasAncestorMatching implements NodeMatcher {
+        private final NodeMatcher ancestorMatcher;
+
+        public HasAncestorMatching(NodeMatcher ancestorMatcher) {
+            this.ancestorMatcher = ancestorMatcher;
+        }
+
+        @Override
+        public boolean match(Node node) {
+            while (node.parentNode != null) {
+                node = node.parentNode;
+                if (node == null) {
+                    return false;
+                } else if (ancestorMatcher.match(node)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void start(Node node) {

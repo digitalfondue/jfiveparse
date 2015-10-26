@@ -12,7 +12,7 @@ It provide both fragment and full document parsing. It can parse from String or 
 
 As far as I know, there is no pure java html5 parser that currently pass the html5-lib test suite (well, the more relevant tests :D).
 
-Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~135kb. The target is to keep it under 200kb.
+Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~140kb. The target is to keep it under 200kb.
 
 Performance should be competitive with other java parsers.
 
@@ -127,8 +127,6 @@ and tag names.
 ## TODO:
 - expand the typesafe matcher api
   - expand NodeMatchers: add "AND" rule and "OR"
-  - Descendant selector https://developer.mozilla.org/en-US/docs/Web/CSS/Descendant_selectors
-  - Child selector https://developer.mozilla.org/en-US/docs/Web/CSS/Child_selectors
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - Node.normalize

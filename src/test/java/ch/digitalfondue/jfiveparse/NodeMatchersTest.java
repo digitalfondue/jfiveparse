@@ -111,4 +111,35 @@ public class NodeMatchersTest {
         List<Element> divClasses = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "cl", NodeMatchers.ATTRIBUTE_MATCH_VALUE_CONTAINS));
         Assert.assertEquals(2, divClasses.size());
     }
+
+    @Test
+    public void hasParentMatch() {
+        Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
+        List<Element> e = doc.getAllNodesMatching(new NodeMatchers.HasParentMatching(new NodeMatchers.HasAttribute("id", "depth1", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        Assert.assertEquals(1, e.size());
+        Assert.assertEquals("depth2", e.get(0).getAttribute("id"));
+
+        List<Element> empty = doc.getAllNodesMatching(new NodeMatchers.HasParentMatching(new NodeMatchers.HasAttribute("id", "depth0", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        Assert.assertEquals(0, empty.size());
+    }
+
+    @Test
+    public void hasAncestorMatch() {
+        Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
+
+        List<Node> e0 = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth3", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        Assert.assertEquals(0, e0.size());
+
+        List<Element> e1 = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth2", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        Assert.assertEquals(1, e1.size());
+        Assert.assertEquals("depth3", e1.get(0).getAttribute("id"));
+
+        List<Element> e2 = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth1", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        Assert.assertEquals(2, e2.size());
+        Assert.assertEquals("depth2", e2.get(0).getAttribute("id"));
+        Assert.assertEquals("depth3", e2.get(1).getAttribute("id"));
+
+        List<Node> empty = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth0", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        Assert.assertEquals(0, empty.size());
+    }
 }
