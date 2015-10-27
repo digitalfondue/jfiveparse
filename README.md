@@ -6,7 +6,10 @@
 
 jfiveparse pass all the non scripted tests for the tokenizer and tree construction from the html5lib-tests suite.
 
-It provide both fragment and full document parsing. It can parse from String or Reader.
+It provide both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
+(note: the encoding must be known, currently the parser does not implement an autodetect feature).
+
+Requires java 7.
 
 ## Why?
 
@@ -81,14 +84,12 @@ It will print:
 public static void main(String[] args) throws MalformedURLException, IOException {
     Parser p = new Parser();
     Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8);
-    Document doc = p.parse(reader);
-    // the Selector is "td.title > a"
-    for (Node e : doc.getAllNodesMatching(Selector.select().element("td").hasClass("title").withChild().element("a").toMatcher())) {
-        Element a = (Element) e;
-        if (!"nofollow".equals(a.getAttribute("rel"))) { //the selector is not complete, we need to ignore some additional elements
-            System.err.println(e.getTextContent() + " [" + a.getAttribute("href") + "]");
-        }
-    }
+    // select td.title > a
+    NodeMatcher matcher = Selector.select().element("td").hasClass("title").withChild().element("a").toMatcher();
+    p.parse(reader).getAllNodesMatching(matcher).stream()
+        .map(Element.class::cast)
+        .filter(a -> !"nofollow".equals(a.getAttribute("rel"))) //remove some extraneous a elements
+        .forEach(a -> System.out.println(a.getTextContent() + " [" + a.getAttribute("href") + "]"));
 }
 ```  
 
