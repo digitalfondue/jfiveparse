@@ -9,7 +9,9 @@ jfiveparse pass all the non scripted tests for the tokenizer and tree constructi
 It provide both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
 
-Requires java 7.
+Requires java 7. 
+
+[Javadoc@javadoc.io](http://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/0.3.0).
 
 ## Why?
 
@@ -145,20 +147,18 @@ and tag names.
 
 
 ## TODO:
+- additional doc
 - expand the typesafe matcher api
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
   - Node.normalize
 - add some methods from jquery too 
-- cleanup code: but beware, no measurable slowdown is acceptable
-  - treeConstructor.insertHtmlElementToken();
-  - treeConstructor.popCurrentNode();
-  - treeConstructor.ackSelfClosingTagIfSet()
-  - this 3 calls can be made in a single one 
-- keep track of lines, eventually chars too (this has some issues with multibyte char :D)
+- cleanup code: but beware, no measurable slowdown is acceptable 
+- keep track of lines, eventually chars too
 - profile
   - various optimizations...
   - TokenizerRCDataStates.handleRCDataState could be optimized 
       - (textarea related)
-        
+
+
 mvn clean test jacoco:report
