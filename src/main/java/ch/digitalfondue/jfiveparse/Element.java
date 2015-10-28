@@ -167,4 +167,22 @@ public class Element extends Node {
     public DOMTokenList getClassList() {
         return new DOMTokenList(this, "class");
     }
+    
+    /**
+     * Get the element id, or null if not defined.
+     * 
+     * @return
+     */
+    public String getId() {
+        return getAttribute("id");
+    }
+    
+    /**
+     * Set the element id
+     * 
+     * @param id
+     */
+    public void setId(String id) {
+        getAttributes().put("id", id);
+    }
 }
