@@ -380,7 +380,7 @@ class TreeConstructorInBodyForeignContentText {
             attrs.remove("name");
             attrs.remove("action");
             attrs.remove("prompt");
-            attrs.put(new Attribute("name", "isindex"));
+            attrs.put(new AttributeNode("name", "isindex"));
 
             treeConstructor.insertElementToken("input", Node.NAMESPACE_HTML, attrs);
             treeConstructor.popCurrentNode();// input
@@ -1085,7 +1085,7 @@ class TreeConstructorInBodyForeignContentText {
         } else if (tokenType == END_TAG) {
 
             Element node = treeConstructor.getCurrentNode();
-            if (!tagName.equals(convertToAsciiLowerCase(node.getNodeName()))) {
+            if (!tagName.equals(Common.convertToAsciiLowerCase(node.getNodeName()))) {
                 treeConstructor.emitParseError();
             }
 
@@ -1096,7 +1096,7 @@ class TreeConstructorInBodyForeignContentText {
                     return;
                 }
 
-                if (tagName.equals(convertToAsciiLowerCase(node.getNodeName()))) {
+                if (tagName.equals(Common.convertToAsciiLowerCase(node.getNodeName()))) {
                     while (node != treeConstructor.popCurrentNode()) {
                     }
                     return;
@@ -1135,15 +1135,6 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    // TODO: not optimized at all
-    private static String convertToAsciiLowerCase(String s) {
-        StringBuilder sb = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            sb.append((char) Common.toLowerCase(c));
-        }
-
-        return sb.toString();
-    }
 
     private static final Map<String, String> SVG_ELEMENT_CASE_CORRECTION = new HashMap<>();
     static {

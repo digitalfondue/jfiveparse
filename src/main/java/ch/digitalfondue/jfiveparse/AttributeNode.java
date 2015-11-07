@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.Objects;
 
-public class Attribute {
+public class AttributeNode {
 
     String name;
     String originalName;
@@ -31,18 +31,18 @@ public class Attribute {
     // double/single/not quoted
     int attributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
 
-    public Attribute(String name, String value) {
+    public AttributeNode(String name, String value) {
         this.name = name;
         this.value = value;
     }
 
-    Attribute(String name, String originalName, String value, int attributeQuoteType) {
+    AttributeNode(String name, String originalName, String value, int attributeQuoteType) {
         this(name, value);
         this.originalName = originalName;
         this.attributeQuoteType = attributeQuoteType;
     }
 
-    public Attribute(String name, String value, String prefix, String namespace) {
+    public AttributeNode(String name, String value, String prefix, String namespace) {
         this(name, value);
         this.prefix = prefix;
         this.namespace = namespace;
@@ -50,6 +50,10 @@ public class Attribute {
 
     public String getValue() {
         return value;
+    }
+    
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getNamespace() {
@@ -75,8 +79,8 @@ public class Attribute {
             return true;
         }
 
-        if (obj instanceof Attribute) {
-            Attribute other = (Attribute) obj;
+        if (obj instanceof AttributeNode) {
+            AttributeNode other = (AttributeNode) obj;
             return name.equals(other.name) && //
                     value.equals(other.value) && //
                     Objects.equals(prefix, other.prefix) && //

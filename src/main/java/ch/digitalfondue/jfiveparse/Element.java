@@ -127,10 +127,7 @@ public class Element extends Node {
         return this.nodeName.equals(name) && this.namespaceURI.equals(nameSpace);
     }
 
-    /**
-     * Get the {@link Attributes}.
-     */
-    public Attributes getAttributes() {
+    Attributes getAttributes() {
         ensureAttributesPresence();
         return attributes;
     }
@@ -138,11 +135,49 @@ public class Element extends Node {
     /**
      * Get the attribute value. Return null if the attribute is not present.
      * 
+     * Case insensitive.
+     * 
      * @param name
      * @return
      */
     public String getAttribute(String name) {
-        return attributes != null ? attributes.getNamedItem(name) : null;
+        return attributes != null ? attributes.getNamedItem(Common.convertToAsciiLowerCase(name)) : null;
+    }
+
+    /**
+     * Get the attribute node.
+     * 
+     * @param name
+     * @return
+     */
+    public AttributeNode getAttributeNode(String name) {
+        return attributes != null ? attributes.get(Common.convertToAsciiLowerCase(name)) : null;
+    }
+
+    /**
+     * Set the attribute name to the given value.
+     * 
+     * The name will be converted to lowercase.
+     * 
+     * @param name
+     * @param value
+     */
+    public void setAttribute(String name, String value) {
+        ensureAttributesPresence();
+        attributes.put(Common.convertToAsciiLowerCase(name), value);
+    }
+
+    /**
+     * Remove the attributed with the given name.
+     * 
+     * Case insensitive.
+     * 
+     * @param name
+     */
+    public void removeAttribute(String name) {
+        if (attributes != null) {
+            attributes.remove(Common.convertToAsciiLowerCase(name));
+        }
     }
 
     /**
@@ -167,7 +202,7 @@ public class Element extends Node {
     public DOMTokenList getClassList() {
         return new DOMTokenList(this, "class");
     }
-    
+
     /**
      * Get the element id, or null if not defined.
      * 
@@ -176,7 +211,7 @@ public class Element extends Node {
     public String getId() {
         return getAttribute("id");
     }
-    
+
     /**
      * Set the element id
      * 
@@ -184,5 +219,25 @@ public class Element extends Node {
      */
     public void setId(String id) {
         getAttributes().put("id", id);
+    }
+
+    /**
+     * Return true if it has at least one attribute.
+     * 
+     * @return
+     */
+    public boolean hasAttributes() {
+        return attributes != null && !attributes.isEmpty();
+    }
+
+    /**
+     * Return true if the Element has an attribute with the name. The comparison
+     * is case insensitive.
+     * 
+     * @param name
+     * @return
+     */
+    public boolean hasAttribute(String name) {
+        return attributes != null && attributes.containsKey(Common.convertToAsciiLowerCase(name));
     }
 }

@@ -1141,7 +1141,7 @@ class TreeConstructor {
         return attrs.containsKey(key);
     }
 
-    Attribute getAttribute(String key) {
+    AttributeNode getAttribute(String key) {
         return attrs.get(key);
     }
 

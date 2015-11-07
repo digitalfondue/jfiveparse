@@ -188,7 +188,7 @@ public class TreeConstructionTest {
                 for (String k : attributesName) {
                     sb.append("|").append(StringUtils.repeat(' ', spaces + 2));
 
-                    Attribute attribute = elem.getAttributes().get(k);
+                    AttributeNode attribute = elem.getAttributes().get(k);
                     if (attribute.getNamespace() != null) {
                         if (Node.NAMESPACE_XLINK.equals(attribute.getNamespace())) {
                             sb.append("xlink ");

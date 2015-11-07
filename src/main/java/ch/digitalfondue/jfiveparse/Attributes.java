@@ -22,14 +22,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class Attributes implements Iterable<Attribute> {
+public class Attributes implements Iterable<AttributeNode> {
 
-    private Map<String, Attribute> attributes;
+    private Map<String, AttributeNode> attributes;
 
     public Attributes() {
     }
 
-    public Attributes(Map<String, Attribute> attributes) {
+    public Attributes(Map<String, AttributeNode> attributes) {
         this.attributes = attributes;
     }
 
@@ -54,7 +54,7 @@ public class Attributes implements Iterable<Attribute> {
         return attributes == null ? new Attributes() : new Attributes(new LinkedHashMap<>(attributes));
     }
 
-    public Attribute get(String key) {
+    public AttributeNode get(String key) {
         return attributes == null ? null : attributes.get(key);
     }
 
@@ -68,14 +68,14 @@ public class Attributes implements Iterable<Attribute> {
         }
     }
 
-    public void put(Attribute attribute) {
+    public void put(AttributeNode attribute) {
         ensureMap();
         attributes.put(attribute.getName(), attribute);
     }
 
     public void put(String key, String value) {
         ensureMap();
-        attributes.put(key, new Attribute(key, value));
+        attributes.put(key, new AttributeNode(key, value));
     }
 
     public void remove(String key) {
@@ -89,8 +89,8 @@ public class Attributes implements Iterable<Attribute> {
     }
 
     @Override
-    public Iterator<Attribute> iterator() {
-        return attributes == null ? Collections.<Attribute> emptyIterator() : attributes.values().iterator();
+    public Iterator<AttributeNode> iterator() {
+        return attributes == null ? Collections.<AttributeNode> emptyIterator() : attributes.values().iterator();
     }
 
     public String getNamedItem(String name) {

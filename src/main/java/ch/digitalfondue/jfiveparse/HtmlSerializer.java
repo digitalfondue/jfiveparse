@@ -45,7 +45,7 @@ public class HtmlSerializer implements NodesVisitor {
         this.printOriginalTagName = options.contains(Option.PRINT_ORIGINAL_TAG_CASE);
     }
 
-    protected String serializeAttributeName(Attribute attribute) {
+    protected String serializeAttributeName(AttributeNode attribute) {
         String lowercaseName = attribute.getName();
         String name = printOriginalAttributeCase ? attribute.originalName : lowercaseName;
         String namespace = attribute.getNamespace();
@@ -63,7 +63,7 @@ public class HtmlSerializer implements NodesVisitor {
         }
     }
 
-    protected String quoteCharacters(Attribute attribute) {
+    protected String quoteCharacters(AttributeNode attribute) {
         if (printOriginalAttributeQuote) {
             if (attribute.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE) {
                 return "";
@@ -74,7 +74,7 @@ public class HtmlSerializer implements NodesVisitor {
         return "\"";
     }
 
-    protected String escapeAttributeValue(Attribute attribute) {
+    protected String escapeAttributeValue(AttributeNode attribute) {
         String s = attribute.getValue();
         if (s != null) {
             if (transformEntities) {
@@ -108,7 +108,7 @@ public class HtmlSerializer implements NodesVisitor {
                 // TODO: for tag outside of html,mathml,svg namespace : use
                 // qualified name!
                 appendable.append('<').append(getNodeName(e));
-                for (Attribute attr : e.getAttributes()) {
+                for (AttributeNode attr : e.getAttributes()) {
                     appendable.append(' ').append(serializeAttributeName(attr));//
 
                     if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE))

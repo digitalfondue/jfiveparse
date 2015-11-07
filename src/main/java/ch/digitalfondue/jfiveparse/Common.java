@@ -33,6 +33,14 @@ class Common {
         }
     }
 
+    static String convertToAsciiLowerCase(String s) {
+        StringBuilder sb = new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            sb.append((char) toLowerCase(c));
+        }
+        return sb.toString();
+    }
+
     static boolean isUpperCaseASCIILetter(int chr) {
         return chr >= Characters.LATIN_CAPITAL_LETTER_A && chr <= Characters.LATIN_CAPITAL_LETTER_Z;
     }
@@ -84,7 +92,7 @@ class Common {
 
     static void adjustMathMLAttributes(Attributes attrs) {
         if (attrs.containsKey("definitionurl")) {
-            Attribute attr = attrs.get("definitionurl");
+            AttributeNode attr = attrs.get("definitionurl");
             attr.name = "definitionURL";
             attrs.put(attr);
             attrs.remove("definitionurl");
@@ -157,7 +165,7 @@ class Common {
     static void adjustSVGAttributes(Attributes attrs) {
         for (String key : SVG_ATTRIBUTES.keySet()) {
             if (attrs.containsKey(key)) {
-                Attribute attr = attrs.get(key);
+                AttributeNode attr = attrs.get(key);
                 attr.name = SVG_ATTRIBUTES.get(key);
                 attrs.put(attr);
                 attrs.remove(key);
@@ -181,7 +189,7 @@ class Common {
     static void adjustForeignAttributes(Attributes attrs) {
         for (String[] adj : FOREIGN_ATTRIBUTES_TO_ADJUST) {
             if (attrs.containsKey(adj[0])) {
-                Attribute attr = attrs.get(adj[0]);
+                AttributeNode attr = attrs.get(adj[0]);
                 attr.prefix = adj[1];
                 attr.name = adj[2];
                 attr.namespace = adj[3];
@@ -216,7 +224,7 @@ class Common {
     }
 
     // TODO: this code is horrible
-    private static boolean matchEncoding(Attribute target) {
+    private static boolean matchEncoding(AttributeNode target) {
         if (target == null) {
             return false;
         }

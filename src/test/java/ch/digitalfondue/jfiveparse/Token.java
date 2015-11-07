@@ -83,14 +83,14 @@ public interface Token {
     }
 
     class StartTagToken implements Token {
-        public StartTagToken(String name, Map<String, Attribute> attributes, boolean selfClosing) {
+        public StartTagToken(String name, Map<String, AttributeNode> attributes, boolean selfClosing) {
             this.name = name;
             this.attributes = attributes;
             this.selfClosing = selfClosing;
         }
 
         final String name;
-        final Map<String, Attribute> attributes;
+        final Map<String, AttributeNode> attributes;
         final boolean selfClosing;
 
         @Override
@@ -100,7 +100,7 @@ public interface Token {
             reprs.add(name.toString());
 
             Map<String, String> converted = new LinkedHashMap<String, String>();
-            for (Entry<String, Attribute> kv : attributes.entrySet()) {
+            for (Entry<String, AttributeNode> kv : attributes.entrySet()) {
                 converted.put(kv.getKey(), kv.getValue().getValue());
             }
 

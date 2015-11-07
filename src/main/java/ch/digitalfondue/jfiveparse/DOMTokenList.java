@@ -33,7 +33,7 @@ public class DOMTokenList extends AbstractList<String> {
     }
 
     private List<String> attributeValues() {
-        Attribute a = element.attributes != null ? element.attributes.get(attrName) : null;
+        AttributeNode a = element.attributes != null ? element.attributes.get(attrName) : null;
         if (a != null && a.getValue() != null) {
             List<String> vals = new ArrayList<>();
             for (String s : a.getValue().split("\\s+")) {
