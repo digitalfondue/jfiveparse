@@ -119,6 +119,42 @@ public class Element extends Node {
         }
     }
 
+    public void insertAdjacentHTML(String position, String text) {
+        List<Node> newNodeList = new Parser().parseFragment(this, text);
+
+        switch (position) {
+            case "beforebegin":
+                Node parentNode = this.getParentNode();
+                for (Node node : newNodeList) {
+                    parentNode.insertBefore(node, this);
+                }
+                break;
+            case "afterbegin":
+                Node firstChild = this.getFirstChild();
+                for (Node node : newNodeList) {
+                    this.insertBefore(node, firstChild);
+                }
+                break;
+            case "beforeend":
+                for (Node node: newNodeList) {
+                    node.parentNode = this;
+                }
+                getMutableChildNodes().addAll(newNodeList);
+                break;
+            case "afterend":
+                List<Node> nodes = this.getParentNode().getMutableChildNodes();
+                int myIndex = nodes.indexOf(this);
+                for (Node node: newNodeList) {
+                    node.parentNode = this;
+                }
+                nodes.addAll(myIndex + 1, newNodeList);
+                break;
+            default:
+                break;
+
+        }
+    }
+
     public void setInnerHTML(String html) {
         setInnerHtml(new Parser().parseFragment(this, html));
     }
