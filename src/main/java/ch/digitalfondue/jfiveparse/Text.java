@@ -23,6 +23,13 @@ public class Text extends Node {
     ResizableCharBuilder dataBuilder = new ResizableCharBuilder();
     private String data;
 
+
+    public Text() {}
+
+    public Text(String data) {
+        this.data = data;
+    }
+
     @Override
     public byte getNodeType() {
         return TEXT_NODE;

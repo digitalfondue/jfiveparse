@@ -166,4 +166,45 @@ public class NodeTest {
         Assert.assertEquals(2, doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id"), false).size());
     }
 
+    @Test
+    public void nomalize() {
+
+        //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
+
+        Element wrapper = new Element("div");
+        wrapper.appendChild(new Text("Part 1"));
+        wrapper.appendChild(new Text("Part 2"));
+
+        wrapper.normalize();
+
+        Assert.assertEquals(1,wrapper.getChildNodes().size());
+
+    }
+
+    @Test
+    public void nomalizeNested() {
+
+        //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
+
+        Element wrapper = new Element("div");
+        wrapper.appendChild(new Text("Part 1"));
+        wrapper.appendChild(new Text("Part 2"));
+        Element wrapper2 = new Element("div");
+        wrapper.appendChild(wrapper2);
+        Element wrapper3 = new Element("div");
+        wrapper2.appendChild(wrapper3);
+        wrapper3.appendChild(new Text("Part 3"));
+        wrapper3.appendChild(new Text("Part 4"));
+
+        wrapper.appendChild(new Text("Part 5"));
+        wrapper.appendChild(new Text("Part 6"));
+
+
+        wrapper.normalize();
+
+        Assert.assertEquals(3,wrapper.getChildNodes().size());
+        Assert.assertEquals(1,wrapper3.getChildNodes().size());
+
+    }
+
 }

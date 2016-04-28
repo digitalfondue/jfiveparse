@@ -15,11 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Base class for all the nodes.
@@ -484,5 +480,52 @@ public abstract class Node {
         traverseWithCurrentNode(new HtmlSerializer(sb, options));
         return sb.toString();
     }
+
+    /**
+     * The normalize() method removes empty Text nodes, and joins adjacent Text nodes.
+     */
+    public void normalize() {
+
+        //working auth
+        Node text = null;
+        List<Node> texts = new ArrayList<Node>();
+
+        List<Node> childs = new ArrayList<Node>(this.getChildNodes());
+
+        for (Node n: childs) {
+            // start accumulating texts node
+            if(text == null && n.getNodeType() == Node.TEXT_NODE) {
+                text = n;
+                texts = new LinkedList<Node>();
+                texts.add(n);
+            }
+            // continue accumulating texts node
+            else if(text != null && n.getNodeType() == Node.TEXT_NODE) {
+                texts.add(n);
+                this.removeChild(n);
+            }
+            // stop accumulating node and add current
+            else if(text != null) {
+                this.replaceChild(newTextNode(texts),new Text(text.getInnerHTML()));
+                text = null;
+            }
+            n.normalize();
+        }
+
+        if(texts.size() > 0) {
+            this.replaceChild(newTextNode(texts),text);
+        }
+
+        return;
+    }
+
+    private Text newTextNode(List<Node> texts) {
+        StringBuilder str = new StringBuilder();
+        for(Node tn: texts) {
+            str.append(tn.getInnerHTML());
+        }
+        return new Text(str.toString());
+    }
+
 
 }
