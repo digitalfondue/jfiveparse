@@ -432,6 +432,10 @@ public abstract class Node {
      * Get the text content of the node.
      */
     public String getTextContent() {
+		if (getNodeType() == TEXT_NODE) {
+			return ((Text) this).getData();
+		}
+    	
         List<Text> textNodes = getAllNodesMatching(new NodeMatchers.NodeHasType(TEXT_NODE));
         StringBuilder sb = new StringBuilder();
         for (Text n : textNodes) {
@@ -487,47 +491,55 @@ public abstract class Node {
     public void normalize() {
 
 
-        List<Node> childs = new ArrayList<Node>(this.getChildNodes());
+		List<Node> childs = new ArrayList<Node>(this.getChildNodes());
 
-        //iterator helpers
-        Node text = null;
-        List<Node> texts = new ArrayList<Node>();
-        for (Node n: childs) {
-            // start accumulating texts node
-            if(text == null && n.getNodeType() == Node.TEXT_NODE) {
-                text = n;
-                texts = new LinkedList<Node>();
-                texts.add(n);
-            }
-            // continue accumulating texts node
-            else if(text != null && n.getNodeType() == Node.TEXT_NODE) {
-                texts.add(n);
-                this.removeChild(n);
-            }
-            // stop accumulating node and add current
-            else if(text != null) {
-                this.replaceChild(newTextNode(texts),new Text(text.getInnerHTML()));
-                text = null;
-                n.normalize();
-            } else {
-                n.normalize();
-            }
+		// iterator helpers
+		Node text = null;
+		List<Text> texts = null;
+		for (Node n : childs) {
+			// start accumulating texts node
+			if (text == null && n.getNodeType() == Node.TEXT_NODE) {
+				text = n;
+				texts = new ArrayList<Text>();
+				texts.add((Text) n);
+			}
+			// continue accumulating texts node
+			else if (text != null && n.getNodeType() == Node.TEXT_NODE) {
+				texts.add((Text) n);
+				removeChild(n);
+			}
+			// stop accumulating node and add current
+			else if (text != null) {
+				replaceTextNodeWith(text, texts);
+				text = null;
+				n.normalize();
+			} else {
+				n.normalize();
+			}
 
-        }
+		}
 
-        if(texts.size() > 0) {
-            this.replaceChild(newTextNode(texts),text);
-        }
-
-        return;
+		if (texts != null && texts.size() > 0) {
+			replaceTextNodeWith(text, texts);
+			
+		}
     }
 
-    private Text newTextNode(List<Node> texts) {
+	private void replaceTextNodeWith(Node text, List<Text> texts) {
+		String concatenatedText = appendAll(texts);
+		if(concatenatedText.length() == 0) {
+			removeChild(text);
+		} else {
+			replaceChild(new Text(concatenatedText), text);	
+		}
+	}
+
+    private static String appendAll(List<Text> texts) {
         StringBuilder str = new StringBuilder();
-        for(Node tn: texts) {
-            str.append(tn.getInnerHTML());
+        for (Text tn: texts) {
+            str.append(tn.getData());
         }
-        return new Text(str.toString());
+        return str.toString();
     }
 
 

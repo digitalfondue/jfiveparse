@@ -24,6 +24,7 @@ import org.junit.Test;
 public class ElementTest {
     final Parser parser = new Parser();
 
+    //https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
     @Test
     public void testInsertAdjacentHTMLBeforeBegin() {
         Node startNode = parser.parseFragment(new Element("div"), "<div><div id=myid>1</div></div>").get(0);

@@ -177,7 +177,37 @@ public class NodeTest {
 
         wrapper.normalize();
 
-        Assert.assertEquals(1,wrapper.getChildNodes().size());
+        Assert.assertEquals(1, wrapper.getChildNodes().size());
+        Assert.assertEquals("Part 1Part 2", wrapper.getChildNodes().get(0).getTextContent());
+
+    }
+    
+    @Test
+    public void nomalizeEmpty1() {
+
+        //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
+
+        Element wrapper = new Element("div");
+        wrapper.appendChild(new Text(""));
+
+        wrapper.normalize();
+
+        Assert.assertEquals(0, wrapper.getChildNodes().size());
+
+    }
+    
+    @Test
+    public void nomalizeEmpty2() {
+
+        //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
+
+        Element wrapper = new Element("div");
+        wrapper.appendChild(new Text(""));
+        wrapper.appendChild(new Text(""));
+
+        wrapper.normalize();
+
+        Assert.assertEquals(0, wrapper.getChildNodes().size());
 
     }
 
@@ -203,7 +233,38 @@ public class NodeTest {
         wrapper.normalize();
 
         Assert.assertEquals(3,wrapper.getChildNodes().size());
-        Assert.assertEquals(1,wrapper3.getChildNodes().size());
+        Assert.assertEquals("Part 1Part 2", wrapper.getChildNodes().get(0).getTextContent());
+        Assert.assertEquals(1, wrapper3.getChildNodes().size());
+        Assert.assertEquals("Part 3Part 4", wrapper3.getChildNodes().get(0).getTextContent());
+        Assert.assertEquals("Part 5Part 6", wrapper.getChildNodes().get(2).getTextContent());
+
+    }
+    
+    @Test
+    public void nomalizeEmptyNested() {
+
+        //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
+
+        Element wrapper = new Element("div");
+        wrapper.appendChild(new Text(""));
+        wrapper.appendChild(new Text(""));
+        Element wrapper2 = new Element("div");
+        wrapper.appendChild(wrapper2);
+        Element wrapper3 = new Element("div");
+        wrapper2.appendChild(wrapper3);
+        wrapper3.appendChild(new Text(""));
+        wrapper3.appendChild(new Text(""));
+
+        wrapper.appendChild(new Text(""));
+        wrapper.appendChild(new Text(""));
+
+
+        wrapper.normalize();
+
+        Assert.assertEquals(1,wrapper.getChildNodes().size());
+        Assert.assertEquals("<div><div></div></div>", wrapper.getInnerHTML());
+        Assert.assertEquals(1, wrapper.getChildNodes().get(0).getChildCount());
+        Assert.assertEquals(0, wrapper.getChildNodes().get(0).getChildNodes().get(0).getChildCount());
 
     }
 
