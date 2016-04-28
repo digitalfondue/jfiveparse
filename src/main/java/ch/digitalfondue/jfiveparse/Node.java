@@ -486,12 +486,12 @@ public abstract class Node {
      */
     public void normalize() {
 
-        //working auth
-        Node text = null;
-        List<Node> texts = new ArrayList<Node>();
 
         List<Node> childs = new ArrayList<Node>(this.getChildNodes());
 
+        //iterator helpers
+        Node text = null;
+        List<Node> texts = new ArrayList<Node>();
         for (Node n: childs) {
             // start accumulating texts node
             if(text == null && n.getNodeType() == Node.TEXT_NODE) {
@@ -508,8 +508,11 @@ public abstract class Node {
             else if(text != null) {
                 this.replaceChild(newTextNode(texts),new Text(text.getInnerHTML()));
                 text = null;
+                n.normalize();
+            } else {
+                n.normalize();
             }
-            n.normalize();
+
         }
 
         if(texts.size() > 0) {
