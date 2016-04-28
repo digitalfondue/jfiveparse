@@ -495,22 +495,22 @@ public abstract class Node {
 
 		// iterator helpers
 		Node text = null;
-		List<Text> texts = null;
+		StringBuilder concatenatedText = null;
 		for (Node n : childs) {
 			// start accumulating texts node
 			if (text == null && n.getNodeType() == Node.TEXT_NODE) {
 				text = n;
-				texts = new ArrayList<Text>();
-				texts.add((Text) n);
+				concatenatedText = new StringBuilder();
+				concatenatedText.append(((Text) n).getData());
 			}
 			// continue accumulating texts node
 			else if (text != null && n.getNodeType() == Node.TEXT_NODE) {
-				texts.add((Text) n);
+				concatenatedText.append(((Text) n).getData());
 				removeChild(n);
 			}
 			// stop accumulating node and add current
 			else if (text != null) {
-				replaceTextNodeWith(text, texts);
+				replaceTextNodeWith(text, concatenatedText);
 				text = null;
 				n.normalize();
 			} else {
@@ -519,28 +519,17 @@ public abstract class Node {
 
 		}
 
-		if (texts != null && texts.size() > 0) {
-			replaceTextNodeWith(text, texts);
+		if (concatenatedText != null) {
+			replaceTextNodeWith(text, concatenatedText);
 			
 		}
     }
 
-	private void replaceTextNodeWith(Node text, List<Text> texts) {
-		String concatenatedText = appendAll(texts);
+	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
 		if(concatenatedText.length() == 0) {
 			removeChild(text);
 		} else {
-			replaceChild(new Text(concatenatedText), text);	
+			replaceChild(new Text(concatenatedText.toString()), text);	
 		}
 	}
-
-    private static String appendAll(List<Text> texts) {
-        StringBuilder str = new StringBuilder();
-        for (Text tn: texts) {
-            str.append(tn.getData());
-        }
-        return str.toString();
-    }
-
-
 }
