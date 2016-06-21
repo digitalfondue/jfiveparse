@@ -89,7 +89,6 @@ class TreeConstructorInBodyForeignContentText {
         case "header":
         case "hgroup":
         case "main":
-        case "menu":
         case "nav":
         case "ol":
         case "p":
@@ -98,6 +97,9 @@ class TreeConstructorInBodyForeignContentText {
         case "ul":
             startAddressUl(treeConstructor);
             break;
+        case "menu":
+        	startMenu(treeConstructor);
+        	break;
         case "h1":
         case "h2":
         case "h3":
@@ -166,19 +168,18 @@ class TreeConstructorInBodyForeignContentText {
             startInput(treeConstructor);
             break;
         case "menuitem":
+        	startMenuitem(treeConstructor);
+        	break;
         case "param":
         case "source":
         case "track":
-            startMenuitemTrack(treeConstructor);
+            startParamTrack(treeConstructor);
             break;
         case "hr":
             startHr(treeConstructor);
             break;
         case "image":
             startImage(treeConstructor);
-            break;
-        case "isindex":
-            startIsIndex(treeConstructor);
             break;
         case "textarea":
             startTextarea(treeConstructor);
@@ -234,7 +235,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void startSvg(String tagName, TreeConstructor treeConstructor) {
+	private static void startSvg(String tagName, TreeConstructor treeConstructor) {
         Attributes attrs = treeConstructor.getAttributes();
         Common.adjustSVGAttributes(attrs);
         Common.adjustForeignAttributes(attrs);
@@ -343,61 +344,6 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.ignoreCharacterTokenLF();
     }
 
-    private static void startIsIndex(TreeConstructor treeConstructor) {
-
-        treeConstructor.emitParseError();
-        if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML) && treeConstructor.getForm() != null) {
-            // ignore token
-        } else {
-            treeConstructor.ackSelfClosingTagIfSet();
-            treeConstructor.framesetOkToFalse();
-            if (treeConstructor.hasElementInButtonScope("p")) {
-                treeConstructor.closePElement();
-            }
-
-            Element form = treeConstructor.insertHtmlElementWithEmptyAttributes("form");
-
-            if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML)) {
-                treeConstructor.setForm(form);
-            }
-
-            if (treeConstructor.hasAttribute("action")) {
-                form.getAttributes().put(treeConstructor.getAttribute("action"));
-            }
-
-            treeConstructor.insertHtmlElementWithEmptyAttributes("hr");
-            treeConstructor.popCurrentNode();// hr
-            treeConstructor.insertHtmlElementWithEmptyAttributes("label");
-
-            String firstStream = "This is a searchable index. Enter search keywords: ";
-            if (treeConstructor.hasAttribute("prompt")) {
-                firstStream = treeConstructor.getAttribute("prompt").getValue();
-            }
-            char[] arr = firstStream.toCharArray();
-            treeConstructor.insertCharacters(arr, arr.length);
-
-            Attributes attrs = treeConstructor.getAttributes().copy();
-            attrs.remove("name");
-            attrs.remove("action");
-            attrs.remove("prompt");
-            attrs.put(new AttributeNode("name", "isindex"));
-
-            treeConstructor.insertElementToken("input", Node.NAMESPACE_HTML, attrs);
-            treeConstructor.popCurrentNode();// input
-
-            treeConstructor.popCurrentNode();// label
-
-            treeConstructor.insertHtmlElementWithEmptyAttributes("hr");
-            treeConstructor.popCurrentNode();// hr
-
-            treeConstructor.popCurrentNode();// form
-
-            if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML)) {
-                treeConstructor.setForm(null);
-            }
-        }
-    }
-
     private static void startImage(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();
         treeConstructor.setTagName(new ResizableCharBuilder("img"));
@@ -408,16 +354,31 @@ class TreeConstructorInBodyForeignContentText {
         if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
+        if (treeConstructor.getCurrentNode().is("menuitem", Node.NAMESPACE_HTML)) {
+        	treeConstructor.popCurrentNode();
+        }
         treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
         treeConstructor.framesetOkToFalse();
     }
 
-    private static void startMenuitemTrack(TreeConstructor treeConstructor) {
+    private static void startParamTrack(TreeConstructor treeConstructor) {
         treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
+    }
+    
+    private static void startMenuitem(TreeConstructor treeConstructor) {
+    	if (treeConstructor.getCurrentNode().is("menuitem", Node.NAMESPACE_HTML)) {
+    		treeConstructor.popCurrentNode();
+    	}
+    	//TODO: check specs: this fix the test case "<!DOCTYPE html><p><b></p><menuitem>", 
+    	// but the spec (A start tag whose tag name is "menuitem") does not
+    	// say to reconstruct active formatting elements
+    	treeConstructor.reconstructActiveFormattingElements();
+    	//
+    	treeConstructor.insertHtmlElementToken();
     }
 
     private static void startInput(TreeConstructor treeConstructor) {
@@ -623,11 +584,21 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startAddressUl(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p")) {
+    	if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
     }
+    
+    private static void startMenu(TreeConstructor treeConstructor) {
+    	if (treeConstructor.hasElementInButtonScope("p")) {
+            treeConstructor.closePElement();
+        }
+    	if (treeConstructor.getCurrentNode().is("menuitem", Node.NAMESPACE_HTML)) {
+    		treeConstructor.popCurrentNode();
+    	}
+        treeConstructor.insertHtmlElementToken();
+	}
 
     private static void startFrameset(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();

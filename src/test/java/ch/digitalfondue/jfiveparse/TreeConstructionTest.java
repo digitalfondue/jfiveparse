@@ -22,12 +22,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,6 +85,11 @@ public class TreeConstructionTest {
                 }
             }
         }
+        data.sort(new Comparator<Object[]>() {
+        	public int compare(Object[] o1, Object[] o2) {
+        		return new CompareToBuilder().append((String) o1[0], (String)o2[0]).append((boolean) o1[2], (boolean) o2[2]).toComparison();
+        	}
+		});
         return data;
     }
 
@@ -95,6 +102,12 @@ public class TreeConstructionTest {
         }
 
         int dataEnd = test.indexOf("\n#errors\n");
+        
+        int scriptOffEnd = test.indexOf("\n#script-off\n");
+        if(scriptOffEnd > -1) {
+        	dataEnd = Math.min(dataEnd, scriptOffEnd);
+        }
+        
         if (dataEnd == -1) {
             dataEnd = test.indexOf("#errors\n");
         }

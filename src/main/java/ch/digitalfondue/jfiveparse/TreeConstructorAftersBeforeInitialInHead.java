@@ -421,7 +421,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_HEAD);
         } else if ((tokenType == CHARACTER && (chr == Characters.TAB || //
                 chr == Characters.LF || //
-                chr == Characters.FF || chr == Characters.CR)) || //
+                chr == Characters.FF || chr == Characters.CR || chr == Characters.SPACE)) || //
                 tokenType == COMMENT || //
                 (tokenType == START_TAG && ("basefont".equals(tagName) || //
                         "bgsound".equals(tagName) || //

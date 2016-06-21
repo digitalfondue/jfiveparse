@@ -97,6 +97,11 @@ public static void main(String[] args) throws MalformedURLException, IOException
 
 ## Notes:
 
+### Specs/Doc:
+
+ - html by whatwg: https://html.spec.whatwg.org/multipage/syntax.html (of interest: tokenization, tree-construction)
+ - entities: https://html.spec.whatwg.org/entities.json
+
 ### template element handling
 
 The template element is a "normal" element, so the child nodes are _not_

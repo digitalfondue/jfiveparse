@@ -276,7 +276,11 @@ class Common {
 
         for (String s : new String[] { "address", "applet", "area", "article", "aside", "base", "basefont", "bgsound", "blockquote", "body", "br", "button", "caption", "center",
                 "col", "colgroup", "dd", "details", "dir", "div", "dl", "dt", "embed", "fieldset", "figcaption", "figure", "footer", "form", "frame", "frameset", "h1", "h2", "h3",
-                "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "iframe", "img", "input", "isindex", "li", "link", "listing", "main", "marquee", "menu", "menuitem",
+                "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "iframe", "img", "input", "li", "link", "listing", "main", "marquee", "menu", 
+                //FIXME: CHECK spec, to pass the test "<!DOCTYPE html><li><menuitem><li>",
+                // menuitem must be removed from the special elements list: it seems that 
+                // htmlkit does the same https://github.com/iabudiab/HTMLKit/commit/b0bad5068f239eed593c97cd64f44215194ed497
+                /*"menuitem",*/
                 "meta", "nav", "noembed", "noframes", "noscript", "object", "ol", "p", "param", "plaintext", "pre", "script", "section", "select", "source", "style", "summary",
                 "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "title", "tr", "track", "ul", "wbr", "xmp" }) {
             SPECIAL_ELEMENTS_HTML_SET_V2.add(s);
@@ -362,6 +366,7 @@ class Common {
         case "dd":
         case "dt":
         case "li":
+        case "menuitem":
         case "optgroup":
         case "option":
         case "p":
@@ -460,7 +465,6 @@ class Common {
                 "iframe",//
                 "img",//
                 "input",//
-                "isindex",//
                 "label",//
                 "li",//
                 "link",//
