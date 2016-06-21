@@ -120,38 +120,36 @@ public class Element extends Node {
     }
 
     public void insertAdjacentHTML(String position, String text) {
-        List<Node> newNodeList = new Parser().parseFragment(this, text);
+    	Parser parser = new Parser();
+    	Node parentNode = getParentNode();
 
         switch (position) {
             case "beforebegin":
-                Node parentNode = this.getParentNode();
-                for (Node node : newNodeList) {
+                for (Node node : parser.parseFragment((Element) parentNode, text)) {
                     parentNode.insertBefore(node, this);
                 }
                 break;
             case "afterbegin":
-                Node firstChild = this.getFirstChild();
-                for (Node node : newNodeList) {
-                    this.insertBefore(node, firstChild);
+                Node firstChild = getFirstChild();
+                for (Node node : parser.parseFragment(this, text)) {
+                    insertBefore(node, firstChild);
                 }
                 break;
             case "beforeend":
-                for (Node node: newNodeList) {
-                    node.parentNode = this;
+                for (Node node : parser.parseFragment(this, text)) {
+                	appendChild(node);
                 }
-                getMutableChildNodes().addAll(newNodeList);
                 break;
             case "afterend":
-                List<Node> nodes = this.getParentNode().getMutableChildNodes();
-                int myIndex = nodes.indexOf(this);
+                List<Node> parentChildNodes = parentNode.getMutableChildNodes();
+                List<Node> newNodeList = parser.parseFragment((Element) parentNode, text);
                 for (Node node: newNodeList) {
-                    node.parentNode = this;
+                    node.parentNode = parentNode;
                 }
-                nodes.addAll(myIndex + 1, newNodeList);
+                parentChildNodes.addAll(parentChildNodes.indexOf(this) + 1, newNodeList);
                 break;
             default:
                 break;
-
         }
     }
 
