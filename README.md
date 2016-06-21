@@ -11,7 +11,7 @@ It provide both fragment and full document parsing. It can parse directly from a
 
 Requires java 7. 
 
-[Javadoc@javadoc.io](http://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/0.4.0).
+[Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
 ## Why?
 
@@ -34,7 +34,7 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
