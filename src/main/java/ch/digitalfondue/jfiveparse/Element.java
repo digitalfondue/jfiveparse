@@ -141,11 +141,11 @@ public class Element extends Node {
                 }
                 break;
             case "afterend":
-                List<Node> parentChildNodes = parentNode.getMutableChildNodes();
                 List<Node> newNodeList = parser.parseFragment((Element) parentNode, text);
                 for (Node node: newNodeList) {
                     node.parentNode = parentNode;
                 }
+                List<Node> parentChildNodes = parentNode.getMutableChildNodes();
                 parentChildNodes.addAll(parentChildNodes.indexOf(this) + 1, newNodeList);
                 break;
             default:
