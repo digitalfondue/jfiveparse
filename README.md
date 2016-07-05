@@ -34,7 +34,7 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
 </dependency>
 ```
 
