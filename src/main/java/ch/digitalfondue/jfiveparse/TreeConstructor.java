@@ -272,7 +272,7 @@ class TreeConstructor {
             emitParseError();
         }
 
-        popOpenElementsUntil("p", Node.NAMESPACE_HTML);
+        popOpenElementsUntilWithHtmlNS("p");
     }
 
     Element getCurrentNode() {
@@ -328,11 +328,9 @@ class TreeConstructor {
     boolean hasElementInButtonScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            String nodeName = node.getNodeName();
-            String nodeNameSpace = node.getNamespaceURI();
             if (Common.isHtmlNS(node, tagName)) {
                 return true;
-            } else if (Common.isInCommonInScope(node) || (nodeName.equals("button") && nodeNameSpace.equals(Node.NAMESPACE_HTML))) {
+            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, "button")) {
                 return false;
             }
         }
@@ -570,10 +568,6 @@ class TreeConstructor {
         return null;
     }
 
-    static Attributes emptyAttrs() {
-        return null;
-    }
-
     static void genericRawTextElementParsing(TreeConstructor treeConstructor) {
         treeConstructor.insertHtmlElementToken();
         treeConstructor.tokenizer.setState(TokenizerState.RAWTEXT_STATE);
@@ -613,7 +607,7 @@ class TreeConstructor {
     }
 
     Element insertHtmlElementWithEmptyAttributes(String name) {
-        Element element = buildElement(name, name, Node.NAMESPACE_HTML, emptyAttrs());
+        Element element = buildElement(name, name, Node.NAMESPACE_HTML, null);
         return insertHtmlElementToken(element);
     }
 
@@ -778,10 +772,10 @@ class TreeConstructor {
         return openElements.remove(openElements.size() - 1);
     }
 
-    Element popOpenElementsUntil(String name, String nameSpace) {
+    Element popOpenElementsUntilWithHtmlNS(String name) {
         while (true) {
             Element e = popCurrentNode();
-            if (Common.is(e, name, nameSpace)) {
+            if (Common.isHtmlNS(e, name)) {
                 return e;
             }
         }

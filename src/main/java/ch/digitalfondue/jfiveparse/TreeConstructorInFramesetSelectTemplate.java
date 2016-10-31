@@ -119,7 +119,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
                 treeConstructor.resetInsertionModeAppropriately();
             }
         } else if (Common.isStartTagNamed(tokenType, "select", tagName)) {
@@ -127,7 +127,7 @@ class TreeConstructorInFramesetSelectTemplate {
             if (!treeConstructor.hasElementInSelectScope("select")) {
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
                 treeConstructor.resetInsertionModeAppropriately();
             }
         } else if (tokenType == START_TAG && ("input".equals(tagName) || //
@@ -137,7 +137,7 @@ class TreeConstructorInFramesetSelectTemplate {
             if (!treeConstructor.hasElementInSelectScope("select")) {
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();
             }
@@ -163,7 +163,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 "td".equals(tagName) || //
                 "th".equals(tagName)) {
             treeConstructor.emitParseError();
-            treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);
+            treeConstructor.popOpenElementsUntilWithHtmlNS("select");
             treeConstructor.resetInsertionModeAppropriately();
             treeConstructor.dispatch();
         } else if (tokenType == END_TAG && "caption".equals(tagName) || //
@@ -178,7 +178,7 @@ class TreeConstructorInFramesetSelectTemplate {
             if (!treeConstructor.hasElementInTableScope(tagName)) {
                 // ignore token
             } else {
-                treeConstructor.popOpenElementsUntil("select", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();
             }
@@ -233,7 +233,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.stopParsing();
             } else {
                 treeConstructor.emitParseError();
-                treeConstructor.popOpenElementsUntil("template", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("template");
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.popFromStackTemplatesInsertionMode();
                 treeConstructor.resetInsertionModeAppropriately();

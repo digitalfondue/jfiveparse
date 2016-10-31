@@ -21,7 +21,6 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.DOCTYPE;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.END_TAG;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.EOF;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.emptyAttrs;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRCDataParsing;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRawTextElementParsing;
 
@@ -276,7 +275,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     }
 
     private static void anythingElseHtml(TreeConstructor treeConstructor) {
-        Element html = TreeConstructor.buildElement("html", "html", Node.NAMESPACE_HTML, emptyAttrs());
+        Element html = TreeConstructor.buildElement("html", "html", Node.NAMESPACE_HTML, null);
         treeConstructor.addToOpenElements(html);
         treeConstructor.getDocument().appendChild(html);
         treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);
@@ -394,7 +393,7 @@ class TreeConstructorAftersBeforeInitialInHead {
                 if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "template")) {
                     treeConstructor.emitParseError();
                 }
-                treeConstructor.popOpenElementsUntil("template", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("template");
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.popFromStackTemplatesInsertionMode();
                 treeConstructor.resetInsertionModeAppropriately();

@@ -453,7 +453,7 @@ class TreeConstructorInBodyForeignContentText {
         if (treeConstructor.hasElementInButtonScope("button")) {
             treeConstructor.emitParseError();
             treeConstructor.generateImpliedEndTag();
-            treeConstructor.popOpenElementsUntil("button", Node.NAMESPACE_HTML);
+            treeConstructor.popOpenElementsUntilWithHtmlNS("button");
         }
 
         treeConstructor.reconstructActiveFormattingElements();
@@ -479,7 +479,7 @@ class TreeConstructorInBodyForeignContentText {
                 if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "dd")) {
                     treeConstructor.emitParseError();
                 }
-                treeConstructor.popOpenElementsUntil("dd", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("dd");
                 break;
             }
 
@@ -488,7 +488,7 @@ class TreeConstructorInBodyForeignContentText {
                 if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "dt")) {
                     // parser error
                 }
-                treeConstructor.popOpenElementsUntil("dt", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("dt");
                 break;
             }
 
@@ -520,7 +520,7 @@ class TreeConstructorInBodyForeignContentText {
                     treeConstructor.emitParseError();
                 }
 
-                treeConstructor.popOpenElementsUntil("li", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("li");
                 break;
             }
 
@@ -770,7 +770,7 @@ class TreeConstructorInBodyForeignContentText {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
                 treeConstructor.emitParseError();
             }
-            treeConstructor.popOpenElementsUntil(tagName, Node.NAMESPACE_HTML);
+            treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
             treeConstructor.clearUpToLastMarkerActiveFormattingElements();
         }
     }
@@ -813,7 +813,7 @@ class TreeConstructorInBodyForeignContentText {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
                 treeConstructor.emitParseError();
             }
-            treeConstructor.popOpenElementsUntil(tagName, Node.NAMESPACE_HTML);
+            treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
         }
     }
 
@@ -826,7 +826,7 @@ class TreeConstructorInBodyForeignContentText {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "li")) {
                 treeConstructor.emitParseError();
             }
-            treeConstructor.popOpenElementsUntil("li", Node.NAMESPACE_HTML);
+            treeConstructor.popOpenElementsUntilWithHtmlNS("li");
         }
     }
 
@@ -861,7 +861,7 @@ class TreeConstructorInBodyForeignContentText {
                 if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "form")) {
                     treeConstructor.emitParseError();
                 }
-                treeConstructor.popOpenElementsUntil("form", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("form");
             }
         }
     }
@@ -876,7 +876,7 @@ class TreeConstructorInBodyForeignContentText {
                 treeConstructor.emitParseError();
             }
 
-            treeConstructor.popOpenElementsUntil(tagName, Node.NAMESPACE_HTML);
+            treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
         }
     }
 

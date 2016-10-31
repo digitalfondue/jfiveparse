@@ -73,7 +73,7 @@ class TreeConstructorInTable {
             if (!treeConstructor.hasElementInTableScope("table")) {
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntil("table", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("table");
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();
             }
@@ -82,7 +82,7 @@ class TreeConstructorInTable {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntil("table", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("table");
                 treeConstructor.resetInsertionModeAppropriately();
             }
         } else if (tokenType == END_TAG && ("body".equals(tagName) || //
@@ -416,7 +416,7 @@ class TreeConstructorInTable {
                 if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
                     treeConstructor.emitParseError();
                 }
-                treeConstructor.popOpenElementsUntil(tagName, Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
 
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_ROW);
@@ -496,7 +496,7 @@ class TreeConstructorInTable {
                     treeConstructor.emitParseError();
                 }
 
-                treeConstructor.popOpenElementsUntil("caption", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("caption");
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
             }
@@ -520,7 +520,7 @@ class TreeConstructorInTable {
                     treeConstructor.emitParseError();
                 }
 
-                treeConstructor.popOpenElementsUntil("caption", Node.NAMESPACE_HTML);
+                treeConstructor.popOpenElementsUntilWithHtmlNS("caption");
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
 

@@ -55,7 +55,7 @@ public class TreeConstructionTest {
         }
         Parser parser = new Parser(options);
         if (treeTest.isDocumentFragment) {
-            List<Node> nodes = parser.parseFragment(new Element(treeTest.documentFragmentElement, treeTest.documentFragmentNamespace, TreeConstructor.emptyAttrs()), treeTest.data);
+            List<Node> nodes = parser.parseFragment(new Element(treeTest.documentFragmentElement, treeTest.documentFragmentNamespace, null), treeTest.data);
             String rendered = renderNodes(nodes);
             Assert.assertEquals(treeTest.document, rendered);
         } else {
