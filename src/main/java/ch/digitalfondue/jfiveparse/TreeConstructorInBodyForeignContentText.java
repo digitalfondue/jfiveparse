@@ -278,14 +278,14 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.generateImpliedEndTag();
         }
 
-        if (!treeConstructor.getCurrentNode().is("ruby", Node.NAMESPACE_HTML)) {
+        if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "ruby")) {
             treeConstructor.emitParseError();
         }
         treeConstructor.insertHtmlElementToken();
     }
 
     private static void startOptgroupOption(TreeConstructor treeConstructor) {
-        if (treeConstructor.getCurrentNode().is("option", Node.NAMESPACE_HTML)) {
+        if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
             treeConstructor.popCurrentNode();
         }
 
@@ -354,7 +354,7 @@ class TreeConstructorInBodyForeignContentText {
         if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
-        if (treeConstructor.getCurrentNode().is("menuitem", Node.NAMESPACE_HTML)) {
+        if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "menuitem")) {
         	treeConstructor.popCurrentNode();
         }
         treeConstructor.insertHtmlElementToken();
@@ -370,7 +370,7 @@ class TreeConstructorInBodyForeignContentText {
     }
     
     private static void startMenuitem(TreeConstructor treeConstructor) {
-    	if (treeConstructor.getCurrentNode().is("menuitem", Node.NAMESPACE_HTML)) {
+    	if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "menuitem")) {
     		treeConstructor.popCurrentNode();
     	}
     	//TODO: check specs: this fix the test case "<!DOCTYPE html><p><b></p><menuitem>", 
@@ -492,7 +492,7 @@ class TreeConstructorInBodyForeignContentText {
                 break;
             }
 
-            if (Common.isSpecialCategory(node.getNodeName(), node.getNamespaceURI()) && //
+            if (Common.isSpecialCategory(node) && //
                     !(node.is("address", Node.NAMESPACE_HTML) || //
                             node.is("div", Node.NAMESPACE_HTML) || node.is("p", Node.NAMESPACE_HTML))) {
                 break;
@@ -514,8 +514,8 @@ class TreeConstructorInBodyForeignContentText {
         int idx = treeConstructor.openElementsSize() - 1;
         Element node = treeConstructor.openElementAt(idx);
         while (true) {
-            String nodeName = node.getNodeName();
-            String nodeNameSpaceUri = node.getNamespaceURI();
+            String nodeName = node.nodeName;
+            String nodeNameSpaceUri = node.namespaceURI;
             if ("li".equals(nodeName) && Node.NAMESPACE_HTML.equals(nodeNameSpaceUri)) {
                 treeConstructor.generateImpliedEndTag("li", Node.NAMESPACE_HTML);
                 if (!treeConstructor.getCurrentNode().is("li", Node.NAMESPACE_HTML)) {
@@ -526,7 +526,7 @@ class TreeConstructorInBodyForeignContentText {
                 break;
             }
 
-            if (Common.isSpecialCategory(nodeName, nodeNameSpaceUri) && //
+            if (Common.isSpecialCategory(node) && //
                     !(node.is("address", Node.NAMESPACE_HTML) || //
                             node.is("div", Node.NAMESPACE_HTML) || node.is("p", Node.NAMESPACE_HTML))) {
                 break;
@@ -594,7 +594,7 @@ class TreeConstructorInBodyForeignContentText {
     	if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
-    	if (treeConstructor.getCurrentNode().is("menuitem", Node.NAMESPACE_HTML)) {
+    	if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "menuitem")) {
     		treeConstructor.popCurrentNode();
     	}
         treeConstructor.insertHtmlElementToken();
@@ -628,7 +628,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.emitParseError();
 
         if (treeConstructor.openElementsSize() == 1 || //
-                !treeConstructor.openElementAt(1).is("body", Node.NAMESPACE_HTML) || //
+                !Common.isHtmlNS(treeConstructor.openElementAt(1), "body") || //
                 treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML)) {
             // ignore
         } else {
@@ -769,7 +769,7 @@ class TreeConstructorInBodyForeignContentText {
             // ignore
         } else {
             treeConstructor.generateImpliedEndTag();
-            if (!treeConstructor.getCurrentNode().is(tagName, Node.NAMESPACE_HTML)) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
                 treeConstructor.emitParseError();
             }
             treeConstructor.popOpenElementsUntil(tagName, Node.NAMESPACE_HTML);
@@ -812,7 +812,7 @@ class TreeConstructorInBodyForeignContentText {
             // ignore
         } else {
             treeConstructor.generateImpliedEndTag(tagName, Node.NAMESPACE_HTML);
-            if (!treeConstructor.getCurrentNode().is(tagName, Node.NAMESPACE_HTML)) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
                 treeConstructor.emitParseError();
             }
             treeConstructor.popOpenElementsUntil(tagName, Node.NAMESPACE_HTML);
@@ -825,7 +825,7 @@ class TreeConstructorInBodyForeignContentText {
             // ignore
         } else {
             treeConstructor.generateImpliedEndTag("li", Node.NAMESPACE_HTML);
-            if (!treeConstructor.getCurrentNode().is("li", Node.NAMESPACE_HTML)) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "li")) {
                 treeConstructor.emitParseError();
             }
             treeConstructor.popOpenElementsUntil("li", Node.NAMESPACE_HTML);
@@ -860,7 +860,7 @@ class TreeConstructorInBodyForeignContentText {
                 // ignore token
             } else {
                 treeConstructor.generateImpliedEndTag();
-                if (!treeConstructor.getCurrentNode().is("form", Node.NAMESPACE_HTML)) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "form")) {
                     treeConstructor.emitParseError();
                 }
                 treeConstructor.popOpenElementsUntil("form", Node.NAMESPACE_HTML);
@@ -947,7 +947,7 @@ class TreeConstructorInBodyForeignContentText {
         Element node = treeConstructor.openElementAt(idx);
 
         while (true) {
-            if (node.is(tagName, Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, tagName)) {
                 treeConstructor.generateImpliedEndTag(tagName, Node.NAMESPACE_HTML);
                 if (node != treeConstructor.getCurrentNode()) {
                     treeConstructor.emitParseError();
@@ -961,7 +961,7 @@ class TreeConstructorInBodyForeignContentText {
                 }
 
                 break;
-            } else if (Common.isSpecialCategory(node.getNodeName(), node.getNamespaceURI())) {
+            } else if (Common.isSpecialCategory(node)) {
                 treeConstructor.emitParseError();
                 return;
             }
@@ -1050,7 +1050,7 @@ class TreeConstructorInBodyForeignContentText {
             }
         } else if (tokenType == START_TAG) {
             anyOtherStartTag(tagName, treeConstructor);
-        } else if (tokenType == END_TAG && treeConstructor.getCurrentNode().is("script", Node.NAMESPACE_SVG)) {
+        } else if (tokenType == END_TAG && Common.is(treeConstructor.getCurrentNode(), "script", Node.NAMESPACE_SVG)) {
             // we don't execute scripts
             treeConstructor.popCurrentNode();
         } else if (tokenType == END_TAG) {

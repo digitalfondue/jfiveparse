@@ -217,7 +217,7 @@ public class TreeConstructionTest {
                 sb.deleteCharAt(sb.length() - 1);
             }
 
-            if (elem.is("template", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(elem, "template")) {
                 sb.append("\n|").append(StringUtils.repeat(' ', spaces + 2)).append("content");
                 depthsForTemplatesChilds += 1;
             }

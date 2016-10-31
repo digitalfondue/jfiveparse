@@ -118,8 +118,8 @@ public class Parser {
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);
 
-        String namespace = node.getNamespaceURI();
-        String name = node.getNodeName();
+        String namespace = node.namespaceURI;
+        String name = node.nodeName;
 
         // 4
         if (Node.NAMESPACE_HTML.equals(namespace)) {
@@ -152,7 +152,7 @@ public class Parser {
         tokenHandler.addToOpenElements(root);
 
         // 8
-        if (node.is("template", Node.NAMESPACE_HTML)) {
+        if (Common.isHtmlNS(node, "template")) {
             tokenHandler.pushIntoStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
         }
 
@@ -174,7 +174,7 @@ public class Parser {
 
     private static Element getFirstFormElementFrom(Node element) {
         while (element != null) {
-            if (element instanceof Element && ((Element) element).is("form", Node.NAMESPACE_HTML)) {
+            if (element instanceof Element && Common.isHtmlNS((Element) element, "form")) {
                 return (Element) element;
             }
             element = element.parentNode;

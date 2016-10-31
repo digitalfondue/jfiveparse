@@ -304,11 +304,9 @@ class TreeConstructor {
     boolean hasElementInScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            String nodeName = node.getNodeName();
-            String nodeNameSpace = node.getNamespaceURI();
-            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, tagName)) {
                 return true;
-            } else if (Common.isInCommonInScope(node.getNodeName(), node.getNamespaceURI())) {
+            } else if (Common.isInCommonInScope(node)) {
                 return false;
             }
         }
@@ -320,7 +318,7 @@ class TreeConstructor {
             Element node = openElements.get(i);
             if (node == e) { // same reference
                 return true;
-            } else if (Common.isInCommonInScope(node.getNodeName(), node.getNamespaceURI())) {
+            } else if (Common.isInCommonInScope(node)) {
                 return false;
             }
         }
@@ -332,9 +330,9 @@ class TreeConstructor {
             Element node = openElements.get(i);
             String nodeName = node.getNodeName();
             String nodeNameSpace = node.getNamespaceURI();
-            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, tagName)) {
                 return true;
-            } else if (Common.isInCommonInScope(nodeName, nodeNameSpace) || (nodeName.equals("button") && nodeNameSpace.equals(Node.NAMESPACE_HTML))) {
+            } else if (Common.isInCommonInScope(node) || (nodeName.equals("button") && nodeNameSpace.equals(Node.NAMESPACE_HTML))) {
                 return false;
             }
         }
@@ -344,11 +342,9 @@ class TreeConstructor {
     boolean hasElementInListScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            String nodeName = node.getNodeName();
-            String nodeNameSpace = node.getNamespaceURI();
-            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, tagName)) {
                 return true;
-            } else if (Common.isInCommonInScope(node.getNodeName(), node.getNamespaceURI()) || node.is("ol", Node.NAMESPACE_HTML) || node.is("ul", Node.NAMESPACE_HTML)) {
+            } else if (Common.isInCommonInScope(node) || node.is("ol", Node.NAMESPACE_HTML) || node.is("ul", Node.NAMESPACE_HTML)) {
                 return false;
             }
         }
@@ -358,9 +354,7 @@ class TreeConstructor {
     boolean hasElementInTableScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            String nodeName = node.getNodeName();
-            String nodeNameSpace = node.getNamespaceURI();
-            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, tagName)) {
                 return true;
             } else if ((node.is("html", Node.NAMESPACE_HTML) || node.is("table", Node.NAMESPACE_HTML) || node.is("template", Node.NAMESPACE_HTML))) {
                 return false;
@@ -372,9 +366,7 @@ class TreeConstructor {
     boolean hasElementInSelectScope(String tagName) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            String nodeName = node.getNodeName();
-            String nodeNameSpace = node.getNamespaceURI();
-            if (nodeName.equals(tagName) && nodeNameSpace.equals(Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, tagName)) {
                 return true;
             }
 
@@ -390,7 +382,7 @@ class TreeConstructor {
     void adoptionAgencyAlgorithm(String subject) {
         Element current = getCurrentNode();
         // 1
-        if (current.is(subject, Node.NAMESPACE_HTML) && !activeFormattingElements.contains(current)) {
+        if (Common.isHtmlNS(current, subject) && !activeFormattingElements.contains(current)) {
             popCurrentNode();
             return;
         }
@@ -496,7 +488,7 @@ class TreeConstructor {
                 }
 
                 // 13.7
-                Element newElement = buildElement(node.getNodeName(), node.originalNodeName, node.getNamespaceURI(), node.getAttributes().copy());
+                Element newElement = buildElement(node.nodeName, node.originalNodeName, node.namespaceURI, node.getAttributes().copy());
                 commonAncestor.appendChild(newElement);
                 activeFormattingElements.replace(node, newElement);
                 openElements.set(openElements.lastIndexOf(node), newElement);
@@ -566,7 +558,7 @@ class TreeConstructor {
 
         for (int idx = openElements.size() - 1; idx >= 0; idx--) {
             Element currentOpenElement = openElements.get(idx);
-            if (Common.isSpecialCategory(currentOpenElement.getNodeName(), currentOpenElement.getNamespaceURI())) {
+            if (Common.isSpecialCategory(currentOpenElement)) {
                 furthestBlock = currentOpenElement;
             }
 
@@ -673,7 +665,7 @@ class TreeConstructor {
     private int findLastElementPositionMatching(String name, String nameSpace) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element e = openElements.get(i);
-            if (e.is(name, nameSpace)) {
+            if (Common.is(e, name, nameSpace)) {
                 return i;
             }
         }
@@ -789,7 +781,7 @@ class TreeConstructor {
     Element popOpenElementsUntil(String name, String nameSpace) {
         while (true) {
             Element e = popCurrentNode();
-            if (e.is(name, nameSpace)) {
+            if (Common.is(e, name, nameSpace)) {
                 return e;
             }
         }
@@ -878,7 +870,7 @@ class TreeConstructor {
                 node = context;
             }
 
-            if (node.is("select", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, "select")) {
                 if (last) {
                     insertionMode = TreeConstructionInsertionMode.IN_SELECT;
                     break;
@@ -891,9 +883,9 @@ class TreeConstructor {
                         }
                         ancestorIdx--;
                         ancestor = openElements.get(ancestorIdx);
-                        if (ancestor.is("template", Node.NAMESPACE_HTML)) {
+                        if (Common.isHtmlNS(ancestor, "template")) {
                             break;
-                        } else if (ancestor.is("table", Node.NAMESPACE_HTML)) {
+                        } else if (Common.isHtmlNS(ancestor, "table")) {
                             insertionMode = TreeConstructionInsertionMode.IN_SELECT_IN_TABLE;
                             return;
                         }
@@ -904,34 +896,34 @@ class TreeConstructor {
             } else if ((node.is("td", Node.NAMESPACE_HTML) || node.is("th", Node.NAMESPACE_HTML)) && !last) {
                 insertionMode = TreeConstructionInsertionMode.IN_CELL;
                 break;
-            } else if (node.is("tr", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "tr")) {
                 insertionMode = TreeConstructionInsertionMode.IN_ROW;
                 break;
             } else if (node.is("tbody", Node.NAMESPACE_HTML) || node.is("thead", Node.NAMESPACE_HTML) || node.is("tfoot", Node.NAMESPACE_HTML)) {
                 insertionMode = TreeConstructionInsertionMode.IN_TABLE_BODY;
                 break;
-            } else if (node.is("caption", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "caption")) {
                 insertionMode = TreeConstructionInsertionMode.IN_CAPTION;
                 break;
-            } else if (node.is("colgroup", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "colgroup")) {
                 insertionMode = TreeConstructionInsertionMode.IN_COLUMN_GROUP;
                 break;
-            } else if (node.is("table", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "table")) {
                 insertionMode = TreeConstructionInsertionMode.IN_TABLE;
                 break;
-            } else if (node.is("template", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "template")) {
                 insertionMode = stackTemplatesInsertionMode.get(stackTemplatesInsertionMode.size() - 1);
                 break;
-            } else if (node.is("head", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "head")) {
                 insertionMode = TreeConstructionInsertionMode.IN_HEAD;
                 break;
-            } else if (node.is("body", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "body")) {
                 insertionMode = TreeConstructionInsertionMode.IN_BODY;
                 break;
-            } else if (node.is("frameset", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "frameset")) {
                 insertionMode = TreeConstructionInsertionMode.IN_FRAMESET;
                 break;
-            } else if (node.is("html", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "html")) {
                 if (head == null) {
                     insertionMode = TreeConstructionInsertionMode.BEFORE_HEAD;
                 } else {

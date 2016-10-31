@@ -24,9 +24,9 @@ import java.util.List;
  */
 public class Element extends Node {
 
-    private String nodeName;
+    String nodeName;
     String originalNodeName;
-    private String namespaceURI;
+    String namespaceURI;
     Attributes attributes;
 
     private List<Node> childNodes = null;

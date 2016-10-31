@@ -202,7 +202,7 @@ class Common {
     // ----------------
 
     static boolean isMathMLIntegrationPoint(Element e) {
-        String nodeName = e.getNodeName();
+        String nodeName = e.nodeName;
         return Node.NAMESPACE_MATHML.equals(e.getNamespaceURI()) && ("mi".equals(nodeName) || //
                 "mo".equals(nodeName) || //
                 "mn".equals(nodeName) || //
@@ -211,8 +211,8 @@ class Common {
     }
 
     static boolean isHtmlIntegrationPoint(Element e) {
-        String nodeName = e.getNodeName();
-        String namespaceUri = e.getNamespaceURI();
+        String nodeName = e.nodeName;
+        String namespaceUri = e.namespaceURI;
 
         return (("annotation-xml".equals(nodeName) && Node.NAMESPACE_MATHML.equals(namespaceUri)) && //
                 matchEncoding(e.getAttributes().get("encoding")))
@@ -289,7 +289,9 @@ class Common {
         Arrays.sort(SPECIAL_ELEMENTS_SVG);
     }
 
-    static boolean isSpecialCategory(String nodeName, String nodeNameSpaceUri) {
+    static boolean isSpecialCategory(Element element) {
+    	String nodeName = element.nodeName;
+    	String nodeNameSpaceUri = element.namespaceURI;
         if (Node.NAMESPACE_HTML.equals(nodeNameSpaceUri)) {
             return SPECIAL_ELEMENTS_HTML_SET_V2.contains(nodeName);
         } else if (Node.NAMESPACE_MATHML.equals(nodeNameSpaceUri)) {
@@ -305,7 +307,9 @@ class Common {
 
     //
 
-    static boolean isInCommonInScope(String tagName, String namespace) {
+    static boolean isInCommonInScope(Element element) {
+    	String tagName = element.nodeName;
+    	String namespace = element.namespaceURI; 
         if (Node.NAMESPACE_HTML.equals(namespace)) {
             switch (tagName.length()) {
             case 2:
@@ -359,10 +363,10 @@ class Common {
     // ---------------
 
     static boolean isImpliedTag(Element e) {
-        if (!Node.NAMESPACE_HTML.equals(e.getNamespaceURI())) {
+        if (!Node.NAMESPACE_HTML.equals(e.namespaceURI)) {
             return false;
         }
-        switch (e.getNodeName()) {
+        switch (e.nodeName) {
         case "dd":
         case "dt":
         case "li":
@@ -531,5 +535,13 @@ class Common {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
+    }
+    
+    static boolean is(Element element, String name, String namespace) {
+    	return element.nodeName.equals(name) && element.namespaceURI.equals(namespace);
+    }
+    
+    static boolean isHtmlNS(Element element, String name) {
+    	return element.nodeName.equals(name) && element.namespaceURI.equals(Node.NAMESPACE_HTML);
     }
 }

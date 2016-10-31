@@ -198,12 +198,13 @@ class TreeConstructorInTable {
     private static void clearStackBackToTableBodyContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
+            String nodeName = e.nodeName;
             if (e.getNamespaceURI() == Node.NAMESPACE_HTML && //
-                    ("tbody".equals(e.getNodeName()) || //
-                            "tfoot".equals(e.getNodeName()) || //
-                            "thead".equals(e.getNodeName()) || //
-                            "template".equals(e.getNodeName()) || //
-                    "html".equals(e.getNodeName()))) {
+                    ("tbody".equals(nodeName) || //
+                            "tfoot".equals(nodeName) || //
+                            "thead".equals(nodeName) || //
+                            "template".equals(nodeName) || //
+                    "html".equals(nodeName))) {
                 break;
             }
             treeConstructor.popCurrentNode();
@@ -338,7 +339,7 @@ class TreeConstructorInTable {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
             if (e.getNamespaceURI() == Node.NAMESPACE_HTML && //
-                    ("tr".equals(e.getNodeName()) || "template".equals(e.getNodeName()) || "html".equals(e.getNodeName()))) {
+                    ("tr".equals(e.nodeName) || "template".equals(e.nodeName) || "html".equals(e.nodeName))) {
                 break;
             }
             treeConstructor.popCurrentNode();
@@ -412,7 +413,7 @@ class TreeConstructorInTable {
                 // ignore token
             } else {
                 treeConstructor.generateImpliedEndTag();
-                if (!treeConstructor.getCurrentNode().is(tagName, Node.NAMESPACE_HTML)) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
                     treeConstructor.emitParseError();
                 }
                 treeConstructor.popOpenElementsUntil(tagName, Node.NAMESPACE_HTML);
