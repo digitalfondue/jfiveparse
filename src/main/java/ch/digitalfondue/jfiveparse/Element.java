@@ -157,10 +157,6 @@ public class Element extends Node {
         setInnerHtml(new Parser().parseFragment(this, html));
     }
 
-    boolean is(String name, String nameSpace) {
-        return this.nodeName.equals(name) && this.namespaceURI.equals(nameSpace);
-    }
-
     Attributes getAttributes() {
         ensureAttributesPresence();
         return attributes;

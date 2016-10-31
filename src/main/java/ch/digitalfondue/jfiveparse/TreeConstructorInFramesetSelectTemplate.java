@@ -41,12 +41,12 @@ class TreeConstructorInFramesetSelectTemplate {
 
             // TODO: should check if it's the root element and not only if it's
             // a html element?
-            if (treeConstructor.getCurrentNode().is("html", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "html")) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
                 treeConstructor.popCurrentNode();
-                if (!treeConstructor.isHtmlFragmentParsing() && !treeConstructor.getCurrentNode().is("frameset", Node.NAMESPACE_HTML)) {
+                if (!treeConstructor.isHtmlFragmentParsing() && !Common.isHtmlNS(treeConstructor.getCurrentNode(), "frameset")) {
                     treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_FRAMESET);
                 }
             }
@@ -57,7 +57,7 @@ class TreeConstructorInFramesetSelectTemplate {
         } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
-            if (!treeConstructor.getCurrentNode().is("html", Node.NAMESPACE_HTML)) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "html")) {
                 treeConstructor.emitParseError();
             }
             treeConstructor.stopParsing();
@@ -81,26 +81,26 @@ class TreeConstructorInFramesetSelectTemplate {
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "option", tagName)) {
-            if (treeConstructor.getCurrentNode().is("option", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isStartTagNamed(tokenType, "optgroup", tagName)) {
-            if (treeConstructor.getCurrentNode().is("option", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
                 treeConstructor.popCurrentNode();
             }
-            if (treeConstructor.getCurrentNode().is("optgroup", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "optgroup")) {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isEndTagNamed(tokenType, "optgroup", tagName)) {
 
-            if (treeConstructor.getCurrentNode().is("option", Node.NAMESPACE_HTML)
-                    && treeConstructor.openElementAt(treeConstructor.openElementsSize() - 2).is("optgroup", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")
+                    && Common.isHtmlNS(treeConstructor.openElementAt(treeConstructor.openElementsSize() - 2), "optgroup")) {
                 treeConstructor.popCurrentNode();
             }
 
-            if (treeConstructor.getCurrentNode().is("optgroup", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "optgroup")) {
                 treeConstructor.popCurrentNode();
             } else {
                 treeConstructor.emitParseError();
@@ -108,7 +108,7 @@ class TreeConstructorInFramesetSelectTemplate {
             }
 
         } else if (Common.isEndTagNamed(tokenType, "option", tagName)) {
-            if (treeConstructor.getCurrentNode().is("option", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
                 treeConstructor.popCurrentNode();
             } else {
                 treeConstructor.emitParseError();

@@ -212,7 +212,7 @@ class TreeConstructorActiveFormattingElements {
             Element e = activeFormattingElements.get(i);
             if (e instanceof Marker) {
                 return -1;
-            } else if (e.is(tagName, namespace)) {
+            } else if (Common.is(e, tagName, namespace)) {
                 return i;
             }
         }

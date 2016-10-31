@@ -266,7 +266,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
         }
 
-        if (!(treeConstructor.getCurrentNode().is("ruby", Node.NAMESPACE_HTML) || treeConstructor.getCurrentNode().is("rtc", Node.NAMESPACE_HTML))) {
+        if (!(Common.isHtmlNS(treeConstructor.getCurrentNode(), "ruby") || Common.isHtmlNS(treeConstructor.getCurrentNode(), "rtc"))) {
             treeConstructor.emitParseError();
         }
 
@@ -474,18 +474,18 @@ class TreeConstructorInBodyForeignContentText {
         int idx = treeConstructor.openElementsSize() - 1;
         Element node = treeConstructor.openElementAt(idx);
         while (true) {
-            if (node.is("dd", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, "dd")) {
                 treeConstructor.generateImpliedEndTag("dd", Node.NAMESPACE_HTML);
-                if (treeConstructor.getCurrentNode().is("dd", Node.NAMESPACE_HTML)) {
+                if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "dd")) {
                     treeConstructor.emitParseError();
                 }
                 treeConstructor.popOpenElementsUntil("dd", Node.NAMESPACE_HTML);
                 break;
             }
 
-            if (node.is("dt", Node.NAMESPACE_HTML)) {
+            if (Common.isHtmlNS(node, "dt")) {
                 treeConstructor.generateImpliedEndTag("dt", Node.NAMESPACE_HTML);
-                if (treeConstructor.getCurrentNode().is("dt", Node.NAMESPACE_HTML)) {
+                if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "dt")) {
                     // parser error
                 }
                 treeConstructor.popOpenElementsUntil("dt", Node.NAMESPACE_HTML);
@@ -493,8 +493,8 @@ class TreeConstructorInBodyForeignContentText {
             }
 
             if (Common.isSpecialCategory(node) && //
-                    !(node.is("address", Node.NAMESPACE_HTML) || //
-                            node.is("div", Node.NAMESPACE_HTML) || node.is("p", Node.NAMESPACE_HTML))) {
+                    !(Common.isHtmlNS(node, "address") || //
+                            Common.isHtmlNS(node, "div") || Common.isHtmlNS(node, "p"))) {
                 break;
             }
 
@@ -514,11 +514,9 @@ class TreeConstructorInBodyForeignContentText {
         int idx = treeConstructor.openElementsSize() - 1;
         Element node = treeConstructor.openElementAt(idx);
         while (true) {
-            String nodeName = node.nodeName;
-            String nodeNameSpaceUri = node.namespaceURI;
-            if ("li".equals(nodeName) && Node.NAMESPACE_HTML.equals(nodeNameSpaceUri)) {
+            if (Common.isHtmlNS(node, "li")) {
                 treeConstructor.generateImpliedEndTag("li", Node.NAMESPACE_HTML);
-                if (!treeConstructor.getCurrentNode().is("li", Node.NAMESPACE_HTML)) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "li")) {
                     treeConstructor.emitParseError();
                 }
 
@@ -527,8 +525,8 @@ class TreeConstructorInBodyForeignContentText {
             }
 
             if (Common.isSpecialCategory(node) && //
-                    !(node.is("address", Node.NAMESPACE_HTML) || //
-                            node.is("div", Node.NAMESPACE_HTML) || node.is("p", Node.NAMESPACE_HTML))) {
+                    !(Common.isHtmlNS(node, "address") || //
+                            Common.isHtmlNS(node, "div") || Common.isHtmlNS(node, "p"))) {
                 break;
             }
             idx = idx - 1;
@@ -602,7 +600,7 @@ class TreeConstructorInBodyForeignContentText {
 
     private static void startFrameset(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();
-        if (treeConstructor.openElementsSize() == 1 || !treeConstructor.openElementAt(1).is("body", Node.NAMESPACE_HTML)) {
+        if (treeConstructor.openElementsSize() == 1 || !Common.isHtmlNS(treeConstructor.openElementAt(1), "body")) {
             // ignore
         } else if (Boolean.FALSE.equals(treeConstructor.getFramesetOk())) {
             // ignore
@@ -614,7 +612,7 @@ class TreeConstructorInBodyForeignContentText {
             }
 
             //
-            while (!treeConstructor.getCurrentNode().is("html", Node.NAMESPACE_HTML)) {
+            while (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "html")) {
                 treeConstructor.popCurrentNode();
             }
             //
@@ -788,18 +786,18 @@ class TreeConstructorInBodyForeignContentText {
         } else {
             treeConstructor.generateImpliedEndTag();
 
-            if (!treeConstructor.getCurrentNode().is(tagName, Node.NAMESPACE_HTML)) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
                 treeConstructor.emitParseError();
             }
 
             while (true) {
                 Element e = treeConstructor.popCurrentNode();
-                if (e.is("h1", Node.NAMESPACE_HTML) || //
-                        e.is("h2", Node.NAMESPACE_HTML) || //
-                        e.is("h3", Node.NAMESPACE_HTML) || //
-                        e.is("h4", Node.NAMESPACE_HTML) || //
-                        e.is("h5", Node.NAMESPACE_HTML) || //
-                        e.is("h6", Node.NAMESPACE_HTML)) {
+                if (Common.isHtmlNS(e, "h1") || //
+                        Common.isHtmlNS(e, "h2") || //
+                        Common.isHtmlNS(e, "h3") || //
+                        Common.isHtmlNS(e, "h4") || //
+                        Common.isHtmlNS(e, "h5") || //
+                        Common.isHtmlNS(e, "h6")) {
                     break;
                 }
             }

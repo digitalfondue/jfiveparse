@@ -344,7 +344,7 @@ class TreeConstructor {
             Element node = openElements.get(i);
             if (Common.isHtmlNS(node, tagName)) {
                 return true;
-            } else if (Common.isInCommonInScope(node) || node.is("ol", Node.NAMESPACE_HTML) || node.is("ul", Node.NAMESPACE_HTML)) {
+            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, "ol") || Common.isHtmlNS(node, "ul")) {
                 return false;
             }
         }
@@ -356,7 +356,7 @@ class TreeConstructor {
             Element node = openElements.get(i);
             if (Common.isHtmlNS(node, tagName)) {
                 return true;
-            } else if ((node.is("html", Node.NAMESPACE_HTML) || node.is("table", Node.NAMESPACE_HTML) || node.is("template", Node.NAMESPACE_HTML))) {
+            } else if ((Common.isHtmlNS(node, "html") || Common.isHtmlNS(node, "table") || Common.isHtmlNS(node, "template"))) {
                 return false;
             }
         }
@@ -370,7 +370,7 @@ class TreeConstructor {
                 return true;
             }
 
-            if (!node.is("option", Node.NAMESPACE_HTML) && !node.is("optgroup", Node.NAMESPACE_HTML)) {
+            if (!Common.isHtmlNS(node, "option") && !Common.isHtmlNS(node, "optgroup")) {
                 return false;
             }
         }
@@ -893,13 +893,13 @@ class TreeConstructor {
                     insertionMode = TreeConstructionInsertionMode.IN_SELECT;
                     break;
                 }
-            } else if ((node.is("td", Node.NAMESPACE_HTML) || node.is("th", Node.NAMESPACE_HTML)) && !last) {
+            } else if ((Common.isHtmlNS(node, "td") || Common.isHtmlNS(node, "th")) && !last) {
                 insertionMode = TreeConstructionInsertionMode.IN_CELL;
                 break;
             } else if (Common.isHtmlNS(node, "tr")) {
                 insertionMode = TreeConstructionInsertionMode.IN_ROW;
                 break;
-            } else if (node.is("tbody", Node.NAMESPACE_HTML) || node.is("thead", Node.NAMESPACE_HTML) || node.is("tfoot", Node.NAMESPACE_HTML)) {
+            } else if (Common.isHtmlNS(node, "tbody") || Common.isHtmlNS(node, "thead") || Common.isHtmlNS(node, "tfoot")) {
                 insertionMode = TreeConstructionInsertionMode.IN_TABLE_BODY;
                 break;
             } else if (Common.isHtmlNS(node, "caption")) {
