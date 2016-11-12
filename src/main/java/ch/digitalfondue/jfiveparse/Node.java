@@ -490,7 +490,6 @@ public abstract class Node {
      */
     public void normalize() {
 
-
 		List<Node> childs = new ArrayList<Node>(this.getChildNodes());
 
 		// iterator helpers
@@ -516,14 +515,31 @@ public abstract class Node {
 			} else {
 				n.normalize();
 			}
-
 		}
 
 		if (concatenatedText != null) {
 			replaceTextNodeWith(text, concatenatedText);
-			
 		}
     }
+    
+    /**
+     * Clone only the node.
+     * 
+     * @return
+     */
+    public Node cloneNode() {
+    	return cloneNode(false);
+    }
+    
+    /**
+     * Clone the node. If the deep parameter is true, the copy will include the children.
+     * 
+     * @param deep
+     * @return
+     */
+    public abstract Node cloneNode(boolean deep);
+    
+    
 
 	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
 		if(concatenatedText.length() == 0) {

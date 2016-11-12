@@ -54,4 +54,9 @@ public class DocumentType extends Node {
     public String getNodeName() {
         return "#doctype";
     }
+
+	@Override
+	public Node cloneNode(boolean deep) {
+		return new DocumentType(getName(), getPublicId(), getSystemId());
+	}
 }

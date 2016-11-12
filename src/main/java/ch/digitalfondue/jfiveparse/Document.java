@@ -56,4 +56,10 @@ public class Document extends Node {
     public String getNodeName() {
         return "#document";
     }
+
+	@Override
+	public Node cloneNode(boolean deep) {
+		//FIXME implement
+		throw new IllegalStateException("not implemented");
+	}
 }
