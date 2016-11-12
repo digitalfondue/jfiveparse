@@ -38,6 +38,10 @@ import java.util.List;
  * <td><code>Selector.select().hasClass("className").toMatcher()</code></td>
  * </tr>
  * <tr>
+ * <td>.className1 .className2</td>
+ * <td><code>Selector.select().hasClass("className1").withDescendant().hasClass("className2").toMatcher()</code></td>
+ * </tr>
+ * <tr>
  * <td>div.className</td>
  * <td>
  * <code>Selector.select().element("div").hasClass("className").toMatcher()</code>
@@ -76,8 +80,43 @@ import java.util.List;
  * <code>Selector.select().element("span").attrValEq("data-test", "bla").toMatcher()</code>
  * </td>
  * </tr>
+ * <tr>
+ * <td>span[data-test*=bla]</td>
+ * <td>
+ * <code>Selector.select().element("span").attrValContains("data-test", "bla").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>span[data-test$=bla]</td>
+ * <td>
+ * <code>Selector.select().element("span").attrValEndWith("data-test", "bla").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>span[data-test~=bla]</td>
+ * <td>
+ * <code>Selector.select().element("span").attrValInList("data-test", "bla").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>span[data-test^=bla]</td>
+ * <td>
+ * <code>Selector.select().element("span").attrValStartWith("data-test", "bla").toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>span:first-child</td>
+ * <td>
+ * <code>Selector.select().element("span").isFirstChild().toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>span:last-child</td>
+ * <td>
+ * <code>Selector.select().element("span").isLastChild().toMatcher()</code>
+ * </td>
+ * </tr>
  * </table>
- *
  */
 public class Selector {
 
