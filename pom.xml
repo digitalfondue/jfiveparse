@@ -115,12 +115,12 @@
                     </execution>
                 </executions>
             </plugin>
+		<!-- http://stackoverflow.com/a/29796988 -->
             <plugin>
-                <!-- http://stackoverflow.com/a/29796988 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.4.0</version>
-                <inherited>false</inherited> <!-- only execute these in the parent -->
+                <inherited>false</inherited>
                 <executions>
                     <execution>
                         <id>git submodule update</id>
