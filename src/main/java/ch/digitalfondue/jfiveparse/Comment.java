@@ -46,4 +46,9 @@ public class Comment extends Node {
     public String getNodeName() {
         return "#comment";
     }
+
+	@Override
+	public Node cloneNode(boolean deep) {
+		return new Comment(getData());
+	}
 }

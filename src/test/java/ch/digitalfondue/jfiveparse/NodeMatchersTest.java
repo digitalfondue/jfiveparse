@@ -171,6 +171,17 @@ public class NodeMatchersTest {
         Assert.assertEquals(2, e5.size());
         Assert.assertEquals("depth1", e5.get(0).getAttribute("id"));
         Assert.assertEquals("depth3", e5.get(1).getAttribute("id"));
+        
+        // .a .c
+        List<Element> e6 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("c").toMatcher());
+        Assert.assertEquals(2, e6.size());
+        Assert.assertEquals("depth2", e6.get(0).getAttribute("id"));
+        Assert.assertEquals("depth3", e6.get(1).getAttribute("id"));
+        
+        // .a .a
+        List<Element> e7 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("a").toMatcher());
+        Assert.assertEquals(1, e7.size());
+        Assert.assertEquals("depth2", e7.get(0).getAttribute("id"));
     }
 
     @Test

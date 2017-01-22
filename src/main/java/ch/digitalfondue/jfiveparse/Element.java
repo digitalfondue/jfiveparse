@@ -270,4 +270,10 @@ public class Element extends Node {
     public boolean hasAttribute(String name) {
         return attributes != null && attributes.containsKey(Common.convertToAsciiLowerCase(name));
     }
+
+	@Override
+	public Node cloneNode(boolean deep) {
+		//FIXME implement
+		throw new IllegalStateException("not impleted");
+	}
 }

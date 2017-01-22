@@ -55,4 +55,9 @@ public class Text extends Node {
     public String getNodeName() {
         return "#text";
     }
+
+	@Override
+	public Node cloneNode(boolean deep) {
+		return new Text(getData());
+	}
 }
