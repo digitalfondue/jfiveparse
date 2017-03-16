@@ -167,9 +167,6 @@ class TreeConstructorInBodyForeignContentText {
         case "input":
             startInput(treeConstructor);
             break;
-        case "menuitem":
-        	startMenuitem(treeConstructor);
-        	break;
         case "param":
         case "source":
         case "track":
@@ -354,9 +351,6 @@ class TreeConstructorInBodyForeignContentText {
         if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
-        if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "menuitem")) {
-        	treeConstructor.popCurrentNode();
-        }
         treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
@@ -367,18 +361,6 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
-    }
-    
-    private static void startMenuitem(TreeConstructor treeConstructor) {
-    	if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "menuitem")) {
-    		treeConstructor.popCurrentNode();
-    	}
-    	//TODO: check specs: this fix the test case "<!DOCTYPE html><p><b></p><menuitem>", 
-    	// but the spec (A start tag whose tag name is "menuitem") does not
-    	// say to reconstruct active formatting elements
-    	treeConstructor.reconstructActiveFormattingElements();
-    	//
-    	treeConstructor.insertHtmlElementToken();
     }
 
     private static void startInput(TreeConstructor treeConstructor) {
@@ -592,9 +574,6 @@ class TreeConstructorInBodyForeignContentText {
     	if (treeConstructor.hasElementInButtonScope("p")) {
             treeConstructor.closePElement();
         }
-    	if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "menuitem")) {
-    		treeConstructor.popCurrentNode();
-    	}
         treeConstructor.insertHtmlElementToken();
 	}
 
