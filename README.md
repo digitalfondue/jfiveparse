@@ -1,5 +1,6 @@
 # jfiveparse: a java html5 parser
 
+[![Maven Central](https://img.shields.io/maven-central/v/ch.digitalfondue.jfiveparse/jfiveparse.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jfiveparse%22)
 [![Build Status](https://travis-ci.org/digitalfondue/jfiveparse.png?branch=master)](https://travis-ci.org/digitalfondue/jfiveparse)
 [![Coverage Status](https://coveralls.io/repos/digitalfondue/jfiveparse/badge.svg?branch=master)](https://coveralls.io/r/digitalfondue/jfiveparse?branch=master)
 
@@ -34,7 +35,7 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
 </dependency>
 ```
 
