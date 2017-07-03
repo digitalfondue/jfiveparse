@@ -122,10 +122,11 @@ public class TokenizerTest {
 
         tokenizer.tokenize(is);
 
-        tokens = mergeCharacter(tokenSaver.getTokens());
+        tokens = removeParseErrors(tokenSaver.getTokens());
+        tokens = mergeCharacter(tokens);
 
-        Assert.assertEquals(desc.output.toString(), tokens.toString());
-
+        //flatten/merge adjacent characters in test suite too: see https://github.com/html5lib/html5lib-tests/issues/96
+        Assert.assertEquals(mergeCharacterFromTest(desc.output).toString(), tokens.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -156,7 +157,7 @@ public class TokenizerTest {
         return false;
     }
 
-    private List<Token> mergeCharacter(List<Token> tokens) {
+    private static List<Token> mergeCharacter(List<Token> tokens) {
 
         List<Token> res = new ArrayList<>();
 
@@ -173,6 +174,42 @@ public class TokenizerTest {
             }
         }
 
+        return res;
+    }
+
+    private static List<Object> mergeCharacterFromTest(List<Object> tokens) {
+        List<Object> res = new ArrayList<>();
+        for (Object t : tokens) {
+            Object lastRes = res.isEmpty() ? null : res.get(res.size() - 1);
+            if (t != null && lastRes != null && isCharacter(t) && isCharacter(lastRes)) {
+                List<String> lastResChar = (List<String>) lastRes;
+                List<String> currentChar = (List<String>) t;
+                String concatenate = lastResChar.get(1) + currentChar.get(1);
+                lastResChar.set(1, concatenate);
+            } else {
+                res.add(t);
+            }
+        }
+        return res;
+    }
+
+    private static boolean isCharacter(Object o) {
+        if(o!= null && o instanceof List) {
+            List<Object> l = (List<Object>) o;
+            return !l.isEmpty() && l.get(0).equals("Character");
+        }
+        return false;
+    }
+
+
+
+    private static List<Token> removeParseErrors(List<Token> tokens) {
+        List<Token> res = new ArrayList<>();
+        for(Token t : tokens) {
+            if(!(t instanceof Token.ParseErrorToken)) {
+                res.add(t);
+            }
+        }
         return res;
     }
 

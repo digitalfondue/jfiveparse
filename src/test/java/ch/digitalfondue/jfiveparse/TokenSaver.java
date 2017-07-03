@@ -26,6 +26,7 @@ public class TokenSaver extends TreeConstructor {
 
     @Override
     public void emitParseError() {
+        //see https://github.com/html5lib/html5lib-tests/commit/71bd617c411e84ac0a48250b018157ce56894d04 new error format handling
         tokens.add(Token.PARSE_ERROR_TOKEN);
     }
 
