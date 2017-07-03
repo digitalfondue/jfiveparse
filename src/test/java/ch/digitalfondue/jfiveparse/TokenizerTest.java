@@ -122,6 +122,7 @@ public class TokenizerTest {
 
         tokenizer.tokenize(is);
 
+        //see https://github.com/html5lib/html5lib-tests/commit/71bd617c411e84ac0a48250b018157ce56894d04 new error format handling
         tokens = removeParseErrors(tokenSaver.getTokens());
         tokens = mergeCharacter(tokens);
 
