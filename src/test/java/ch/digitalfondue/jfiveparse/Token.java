@@ -24,18 +24,6 @@ import java.util.Map.Entry;
 
 public interface Token {
 
-    final Token PARSE_ERROR_TOKEN = new ParseErrorToken();
-
-    class ParseErrorToken implements Token {
-        private ParseErrorToken() {
-        }
-
-        @Override
-        public String toString() {
-            return TokenType.parseError;
-        }
-    }
-
     class CharacterToken implements Token {
         final ResizableCharBuilder chr;
 

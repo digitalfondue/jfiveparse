@@ -122,9 +122,7 @@ public class TokenizerTest {
 
         tokenizer.tokenize(is);
 
-        //see https://github.com/html5lib/html5lib-tests/commit/71bd617c411e84ac0a48250b018157ce56894d04 new error format handling
-        tokens = removeParseErrors(tokenSaver.getTokens());
-        tokens = mergeCharacter(tokens);
+        tokens = mergeCharacter(tokenSaver.getTokens());
 
         //flatten/merge adjacent characters in test suite too: see https://github.com/html5lib/html5lib-tests/issues/96
         Assert.assertEquals(mergeCharacterFromTest(desc.output).toString(), tokens.toString());
@@ -200,18 +198,6 @@ public class TokenizerTest {
             return !l.isEmpty() && l.get(0).equals("Character");
         }
         return false;
-    }
-
-
-
-    private static List<Token> removeParseErrors(List<Token> tokens) {
-        List<Token> res = new ArrayList<>();
-        for(Token t : tokens) {
-            if(!(t instanceof Token.ParseErrorToken)) {
-                res.add(t);
-            }
-        }
-        return res;
     }
 
     public static class TokenizerTestSuite {

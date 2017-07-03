@@ -26,7 +26,6 @@ public class TokenSaver extends TreeConstructor {
 
     @Override
     public void emitParseError() {
-        tokens.add(Token.PARSE_ERROR_TOKEN);
     }
 
     @Override
