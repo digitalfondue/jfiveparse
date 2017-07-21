@@ -118,14 +118,11 @@ public class TokenizerTest {
 
         ProcessedInputStream is = new ProcessedInputStreamWithParseError(desc.input, tokenSaver);
 
-        List<Token> tokens = new ArrayList<>();
-
         tokenizer.tokenize(is);
 
-        tokens = mergeCharacter(tokenSaver.getTokens());
+        List<Token> tokens = mergeCharacter(tokenSaver.getTokens());
 
-        //flatten/merge adjacent characters in test suite too: see https://github.com/html5lib/html5lib-tests/issues/96
-        Assert.assertEquals(mergeCharacterFromTest(desc.output).toString(), tokens.toString());
+        Assert.assertEquals(desc.output.toString(), tokens.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -173,22 +170,6 @@ public class TokenizerTest {
             }
         }
 
-        return res;
-    }
-
-    private static List<Object> mergeCharacterFromTest(List<Object> tokens) {
-        List<Object> res = new ArrayList<>();
-        for (Object t : tokens) {
-            Object lastRes = res.isEmpty() ? null : res.get(res.size() - 1);
-            if (t != null && lastRes != null && isCharacter(t) && isCharacter(lastRes)) {
-                List<String> lastResChar = (List<String>) lastRes;
-                List<String> currentChar = (List<String>) t;
-                String concatenate = lastResChar.get(1) + currentChar.get(1);
-                lastResChar.set(1, concatenate);
-            } else {
-                res.add(t);
-            }
-        }
         return res;
     }
 
