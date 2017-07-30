@@ -1,11 +1,11 @@
 /**
- * Copyright (C) 2015 digitalfondue (info@digitalfondue.ch)
+ * Copyright © 2015 digitalfondue (info@digitalfondue.ch)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -178,22 +178,7 @@ class TokenizerCharacterReference {
                 tokenHandler.emitParseError();
             }
             try {
-                int parsedInt = Integer.parseInt(sb.asString(), 10);
-
-                final int characterReferenceInSobstitutionTable = isCharacterReferenceSobstitutionTable(parsedInt);
-
-                if (characterReferenceInSobstitutionTable != -1) {
-                    tokenHandler.emitParseError();
-                    return Character.toChars(characterReferenceInSobstitutionTable);
-                } else if ((parsedInt >= 0xD800 && parsedInt <= 0xDFFF) || parsedInt > 0x10FFFF) {
-                    tokenHandler.emitParseError();
-                    return Character.toChars(Characters.REPLACEMENT_CHARACTER);
-                } else {
-                    if (isCharacterReferenceInvalid(parsedInt)) {
-                        tokenHandler.emitParseError();
-                    }
-                    return Character.toChars(parsedInt);
-                }
+                return numberToChars(tokenHandler, sb, 10);
             } catch (NumberFormatException nfe) {
                 // greater than Int
                 tokenHandler.emitParseError();
@@ -232,27 +217,31 @@ class TokenizerCharacterReference {
                 tokenHandler.emitParseError();
             }
             try {
-                int parsedInt = Integer.parseInt(sb.asString(), 16);
-
-                final int characterReferenceInSobstitutionTable = isCharacterReferenceSobstitutionTable(parsedInt);
-
-                if (characterReferenceInSobstitutionTable != -1) {
-                    tokenHandler.emitParseError();
-                    return Character.toChars(characterReferenceInSobstitutionTable);
-                } else if ((parsedInt >= 0xD800 && parsedInt <= 0xDFFF) || parsedInt > 0x10FFFF) {
-                    tokenHandler.emitParseError();
-                    return Character.toChars(Characters.REPLACEMENT_CHARACTER);
-                } else {
-                    if (isCharacterReferenceInvalid(parsedInt)) {
-                        tokenHandler.emitParseError();
-                    }
-                    return Character.toChars(parsedInt);
-                }
+                return numberToChars(tokenHandler, sb, 16);
             } catch (NumberFormatException nfe) {
                 // greater than Int
                 tokenHandler.emitParseError();
                 return Character.toChars(Characters.REPLACEMENT_CHARACTER);
             }
+        }
+    }
+
+    private static char[] numberToChars(Tokenizer tokenHandler, ResizableCharBuilder sb, int radix) {
+        int parsedInt = Integer.parseInt(sb.asString(), radix);
+
+        final int characterReferenceInSubstitutionTable = isCharacterReferenceSubstitutionTable(parsedInt);
+
+        if (characterReferenceInSubstitutionTable != -1) {
+            tokenHandler.emitParseError();
+            return Character.toChars(characterReferenceInSubstitutionTable);
+        } else if ((parsedInt >= 0xD800 && parsedInt <= 0xDFFF) || parsedInt > 0x10FFFF) {
+            tokenHandler.emitParseError();
+            return Character.toChars(Characters.REPLACEMENT_CHARACTER);
+        } else {
+            if (isCharacterReferenceInvalid(parsedInt)) {
+                tokenHandler.emitParseError();
+            }
+            return Character.toChars(parsedInt);
         }
     }
 
@@ -272,7 +261,7 @@ class TokenizerCharacterReference {
     /*
      * Return -1 if it's not in the table, else the new value
      */
-    private static int isCharacterReferenceSobstitutionTable(int chr) {
+    private static int isCharacterReferenceSubstitutionTable(int chr) {
 
         if (chr == 0x00) {
             return Characters.REPLACEMENT_CHARACTER;

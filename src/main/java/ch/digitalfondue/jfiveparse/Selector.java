@@ -1,11 +1,11 @@
 /**
- * Copyright (C) 2015 digitalfondue (info@digitalfondue.ch)
+ * Copyright © 2015 digitalfondue (info@digitalfondue.ch)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -164,7 +164,7 @@ public class Selector {
      * CSS equivalent: <code>.value</code>
      * </p>
      * 
-     * @param name
+     * @param value
      * @return
      */
     public Selector hasClass(String value) {
@@ -178,7 +178,7 @@ public class Selector {
      * CSS equivalent: <code>.value.other1.other2</code>
      * </p>
      * 
-     * @param name
+     * @param value
      * @param others
      * @return
      */
@@ -198,8 +198,7 @@ public class Selector {
      * CSS equivalent: <code>#value</code>
      * </p>
      * 
-     * @param name
-     * @param others
+     * @param value
      * @return
      */
     public Selector id(String value) {
