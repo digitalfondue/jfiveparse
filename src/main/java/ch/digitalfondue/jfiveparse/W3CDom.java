@@ -72,7 +72,7 @@ public class W3CDom {
 
         protected org.w3c.dom.Element toElement(Element elem) {
             org.w3c.dom.Element e = document.createElementNS(elem.getNamespaceURI(), elem.getNodeName());
-            for(String attrName : elem.getAttributes().keySet()) {
+            for (String attrName : elem.getAttributes().keySet()) {
                 AttributeNode attr = elem.getAttributeNode(attrName);
                 Attr copiedAttr = document.createAttributeNS(attr.getNamespace(), attr.getName());
                 copiedAttr.setValue(attr.getValue());
@@ -84,14 +84,13 @@ public class W3CDom {
 
         @Override
         public void end(Node node) {
-            if(node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
                 currentNode = currentNode.getParentNode();
             }
         }
 
         @Override
         public boolean complete() {
-            //FIXME
             return false;
         }
     }
