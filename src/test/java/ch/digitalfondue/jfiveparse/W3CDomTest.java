@@ -74,6 +74,21 @@ public class W3CDomTest {
 
         Assert.assertEquals("1", p1.getFirstChild().getFirstChild().getTextContent());
         Assert.assertEquals("2", p2.getFirstChild().getFirstChild().getTextContent());
+    }
 
+    @Test
+    public void checkSVG() {
+        Parser parser = new Parser();
+
+        Document document = W3CDom.toW3CDocument(parser.parse("<body><svg><circle cx=50 cy=50 r=40 stroke=black stroke-width=3 fill=red /></svg>"));
+        Node body = document.getFirstChild().getLastChild();
+        Node svg = body.getFirstChild();
+
+        Assert.assertEquals("svg", svg.getNodeName());
+        Assert.assertEquals("http://www.w3.org/2000/svg", svg.getNamespaceURI());
+
+        Assert.assertEquals("circle", svg.getFirstChild().getNodeName());
+        Assert.assertEquals(6, svg.getFirstChild().getAttributes().getLength());
+        Assert.assertEquals("http://www.w3.org/2000/svg", svg.getFirstChild().getNamespaceURI());
     }
 }
