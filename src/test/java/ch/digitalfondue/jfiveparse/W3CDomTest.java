@@ -26,7 +26,7 @@ public class W3CDomTest {
     public void checkSimpleDomConversion() {
         Parser parser = new Parser();
 
-        Document document = W3CDom.toW3CDocument(parser.parse("<body><p>hello world"));
+        Document document = W3CDom.toW3CDocument(parser.parse("<body><p id=42>hello world"));
 
         Node html = document.getFirstChild();
 
@@ -44,6 +44,7 @@ public class W3CDomTest {
         Node p = body.getLastChild();
 
         Assert.assertEquals("p", p.getNodeName());
+        Assert.assertEquals("42", p.getAttributes().getNamedItem("id").getNodeValue());
 
         Assert.assertEquals(1, p.getChildNodes().getLength());
 
@@ -51,5 +52,28 @@ public class W3CDomTest {
 
         Assert.assertEquals(Node.TEXT_NODE, text.getNodeType());
         Assert.assertEquals("hello world", text.getTextContent());
+    }
+
+    @Test
+    public void checkSiblingAndNested() {
+        Parser parser = new Parser();
+
+        Document document = W3CDom.toW3CDocument(parser.parse("<body><p><span>1</span></p><p><span>2</span></p>"));
+
+        Node body = document.getFirstChild().getLastChild();
+        Assert.assertEquals(2, body.getChildNodes().getLength());
+
+        Node p1 = body.getFirstChild();
+        Node p2 = p1.getNextSibling();
+
+        Assert.assertEquals("p", p1.getNodeName());
+        Assert.assertEquals("p", p2.getNodeName());
+
+        Assert.assertEquals("span", p1.getFirstChild().getNodeName());
+        Assert.assertEquals("span", p2.getFirstChild().getNodeName());
+
+        Assert.assertEquals("1", p1.getFirstChild().getFirstChild().getTextContent());
+        Assert.assertEquals("2", p2.getFirstChild().getFirstChild().getTextContent());
+
     }
 }
