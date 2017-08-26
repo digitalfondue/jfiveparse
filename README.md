@@ -5,7 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/digitalfondue/jfiveparse/badge.svg?branch=master)](https://coveralls.io/r/digitalfondue/jfiveparse?branch=master)
 
 
-jfiveparse pass all the non scripted tests for the tokenizer and tree construction from the html5lib-tests suite.
+jfiveparse pass all the non scripted tests for the tokenizer and tree construction from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
 
 It provide both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
@@ -16,7 +16,7 @@ Requires java 7.
 
 ## Why?
 
-As far as I know, there is no pure java html5 parser that currently pass the [html5-lib test suite](https://github.com/html5lib/html5lib-tests) (well, the more relevant tests :D).
+As far as I know, there is no pure java html5 parser that currently pass the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests) (well, the more relevant tests :D).
 
 Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~140kb. The target is to keep it under 200kb.
 
