@@ -72,7 +72,7 @@ public class MyTest {
 
 It will print:
 
-```
+```html
 <html><head></head><body>Hello world!</body></html>
 <html><head></head><body>Hello world!</body></html>
 <p><span>Hello world</span></p>
@@ -84,17 +84,31 @@ It will print:
 ### Fetch all titles+links on the front page of HN
 
 ```java
-public static void main(String[] args) throws MalformedURLException, IOException {
-    Parser p = new Parser();
-    Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8);
-    // select td.title > a
-    NodeMatcher matcher = Selector.select().element("td").hasClass("title").withChild().element("a").toMatcher();
-    p.parse(reader).getAllNodesMatching(matcher).stream()
-        .map(Element.class::cast)
-        .filter(a -> !"nofollow".equals(a.getAttribute("rel"))) //remove some extraneous a elements
-        .forEach(a -> System.out.println(a.getTextContent() + " [" + a.getAttribute("href") + "]"));
+import ch.digitalfondue.jfiveparse.Element;
+import ch.digitalfondue.jfiveparse.NodeMatcher;
+import ch.digitalfondue.jfiveparse.Parser;
+import ch.digitalfondue.jfiveparse.Selector;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
+public class LoadHNTitle {
+
+    public static void main(String[] args) throws IOException {
+        Parser p = new Parser();
+        Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8);
+        // select td.title > a
+        NodeMatcher matcher = Selector.select().element("td").hasClass("title").withChild().element("a").toMatcher();
+        p.parse(reader).getAllNodesMatching(matcher).stream()
+                .map(Element.class::cast)
+                .filter(a -> !"nofollow".equals(a.getAttribute("rel"))) //remove some extraneous a elements
+                .forEach(a -> System.out.println(a.getTextContent() + " [" + a.getAttribute("href") + "]"));
+    }
 }
-```  
+```
 
 ## Notes:
 
