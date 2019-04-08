@@ -31,9 +31,7 @@ class Entities {
 
     static {
 
-        try {
-
-            DataInputStream dais = new DataInputStream(new GZIPInputStream(Entities.class.getResourceAsStream("/ch/digitalfondue/jfiveparse/entities-with-1-2-codepoint")));
+        try (DataInputStream dais = new DataInputStream(new GZIPInputStream(Entities.class.getResourceAsStream("/ch/digitalfondue/jfiveparse/entities-with-1-2-codepoint")));) {
 
             // number of entities with only one codepoint
             for (int i = 0; i < 2138; i++) {
