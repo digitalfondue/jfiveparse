@@ -59,7 +59,19 @@ public class Document extends Node {
 
 	@Override
 	public Node cloneNode(boolean deep) {
-		//FIXME implement
-		throw new IllegalStateException("not implemented");
+        if (!deep) {
+            throw new IllegalArgumentException("Shallow clone is not supported");
+        }
+        Document cloned = new Document();
+        if (doctype != null) {
+            cloned.doctype = (DocumentType) doctype.cloneNode(true);
+            cloned.doctype.parentNode = this;
+        }
+        for (Node child : childNodes) {
+            Node clonedChild = child.cloneNode(true);
+            clonedChild.parentNode = cloned;
+            cloned.childNodes.add(clonedChild);
+        }
+        return cloned;
 	}
 }

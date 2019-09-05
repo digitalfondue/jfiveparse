@@ -273,7 +273,18 @@ public class Element extends Node {
 
 	@Override
 	public Node cloneNode(boolean deep) {
-		//FIXME implement
-		throw new IllegalStateException("not impleted");
+        if (!deep) {
+            throw new IllegalArgumentException("Shallow clone is not supported");
+        }
+        Element clone = new Element(nodeName, originalNodeName, namespaceURI, attributes == null ? null : attributes.copy());
+        if (childNodes != null) {
+            clone.childNodes = new ArrayList<>(childNodes.size());
+            for (Node node : childNodes) {
+                Node clonedChild = node.cloneNode(true);
+                clonedChild.parentNode = clone;
+                clone.childNodes.add(clonedChild);
+            }
+        }
+        return clone;
 	}
 }
