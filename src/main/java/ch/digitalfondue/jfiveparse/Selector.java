@@ -58,7 +58,7 @@ import java.util.List;
  * <td><code>Selector.select().id("myId").toMatcher()</code></td>
  * </tr>
  * <tr>
- * <td>#myId > span.className</td>
+ * <td>#myId &gt; span.className</td>
  * <td>
  * <code>Selector.select().id("myId").withChild().element("span").hasClass("className").toMatcher()</code>
  * </td>
