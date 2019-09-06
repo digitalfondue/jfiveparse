@@ -59,13 +59,13 @@ public class Document extends Node {
 
 	@Override
 	public Node cloneNode(boolean deep) {
-        if (!deep) {
-            throw new IllegalArgumentException("Shallow clone is not supported");
-        }
         Document cloned = new Document();
         if (doctype != null) {
             cloned.doctype = (DocumentType) doctype.cloneNode(true);
             cloned.doctype.parentNode = this;
+        }
+        if (!deep) {
+            return cloned;
         }
         for (Node child : childNodes) {
             Node clonedChild = child.cloneNode(true);

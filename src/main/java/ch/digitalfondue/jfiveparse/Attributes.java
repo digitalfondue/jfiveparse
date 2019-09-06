@@ -51,7 +51,12 @@ public class Attributes implements Iterable<AttributeNode> {
     }
 
     public Attributes copy() {
-        return attributes == null ? new Attributes() : new Attributes(new LinkedHashMap<>(attributes));
+        Attributes a = new Attributes();
+        if (attributes != null) {
+            attributes.values().forEach(v -> a.put(new AttributeNode(v)));
+            return a;
+        }
+        return a;
     }
 
     public AttributeNode get(String key) {

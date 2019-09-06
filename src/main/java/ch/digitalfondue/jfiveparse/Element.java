@@ -273,10 +273,10 @@ public class Element extends Node {
 
 	@Override
 	public Node cloneNode(boolean deep) {
-        if (!deep) {
-            throw new IllegalArgumentException("Shallow clone is not supported");
-        }
         Element clone = new Element(nodeName, originalNodeName, namespaceURI, attributes == null ? null : attributes.copy());
+        if (!deep) {
+            return clone;
+        }
         if (childNodes != null) {
             clone.childNodes = new ArrayList<>(childNodes.size());
             for (Node node : childNodes) {

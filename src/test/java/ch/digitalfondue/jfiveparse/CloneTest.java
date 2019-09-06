@@ -33,9 +33,17 @@ public class CloneTest {
         Assert.assertEquals("<html><head></head><body><div><p>Hello World!</p></div></body></html>", cloned.getOuterHTML());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void cloneShallowError() {
+
+    @Test
+    public void cloneShallow() {
         Document document = new Parser().parse("<div><p>Hello World</p></div>");
         Document cloned = (Document) document.cloneNode(false);
+        Assert.assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getOuterHTML());
+        Assert.assertEquals("", cloned.getOuterHTML());
+
+        Element div = document.getElementsByTagName("div").get(0);
+        Element divCloned = (Element) div.cloneNode(false);
+        Assert.assertEquals("<div><p>Hello World</p></div>", div.getOuterHTML());
+        Assert.assertEquals("<div></div>", divCloned.getOuterHTML());
     }
 }

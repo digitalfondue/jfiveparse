@@ -42,6 +42,15 @@ public class AttributeNode {
         this.attributeQuoteType = attributeQuoteType;
     }
 
+    AttributeNode(AttributeNode a) {
+        this.name = a.name;
+        this.originalName = a.originalName;
+        this.value = a.value;
+        this.prefix = a.prefix;
+        this.namespace = a.namespace;
+        this.attributeQuoteType = a.attributeQuoteType;
+    }
+
     public AttributeNode(String name, String value, String prefix, String namespace) {
         this(name, value);
         this.prefix = prefix;
