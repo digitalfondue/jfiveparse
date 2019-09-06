@@ -177,7 +177,6 @@ and tag names.
 - expand the typesafe matcher api
 - expand the Node api
   - https://developer.mozilla.org/en/docs/Web/API/Node
-  - Node.normalize
 - add some methods from jquery too 
 - cleanup code: but beware, no measurable slowdown is acceptable 
 - keep track of lines, eventually chars too
