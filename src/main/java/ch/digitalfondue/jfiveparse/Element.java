@@ -112,7 +112,7 @@ public class Element extends Node {
         return namespaceURI;
     }
 
-    public void setInnerHtml(List<Node> nodes) {
+    void setInnerHtml(List<Node> nodes) {
         empty();
         for (Node n : nodes) {
             appendChild(n);
