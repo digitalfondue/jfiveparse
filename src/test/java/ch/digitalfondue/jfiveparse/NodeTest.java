@@ -32,6 +32,7 @@ public class NodeTest {
         Assert.assertEquals("2", doc.getElementById("myid").getTextContent());
     }
 
+
     @Test
     public void testGetElementByIdNotFound() {
         Document doc = parser.parse("<div>1</div><div id=myid>2</div><div>3</div>");
@@ -266,6 +267,16 @@ public class NodeTest {
         Assert.assertEquals(1, wrapper.getChildNodes().get(0).getChildCount());
         Assert.assertEquals(0, wrapper.getChildNodes().get(0).getChildNodes().get(0).getChildCount());
 
+    }
+
+    @Test
+    public void testSameNode() {
+        Node a = new Element("div");
+        Node b = new Element("div");
+        Assert.assertFalse(a.isSameNode(b));
+        Assert.assertFalse(a.isSameNode(null));
+        Assert.assertTrue(a.isSameNode(a));
+        Assert.assertTrue(b.isSameNode(b));
     }
 
 }

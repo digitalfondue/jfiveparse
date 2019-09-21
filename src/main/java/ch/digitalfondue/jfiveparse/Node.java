@@ -530,6 +530,18 @@ public abstract class Node {
     public Node cloneNode() {
     	return cloneNode(false);
     }
+
+    /**
+     * Tests whether two nodes are the same, that is if they reference the same object.
+     *
+     * See https://developer.mozilla.org/en-US/docs/Web/API/Node/isSameNode
+     *
+     * @param other
+     * @return
+     */
+    public boolean isSameNode(Node other) {
+        return this == other;
+    }
     
     /**
      * Clone the node. If the deep parameter is true, the copy will include the children.
