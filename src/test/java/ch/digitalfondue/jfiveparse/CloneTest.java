@@ -24,13 +24,13 @@ public class CloneTest {
     public void cloneDeep() {
         Document document = new Parser().parse("<div><p>Hello World</p></div>");
         Document cloned = (Document) document.cloneNode(true);
-        Assert.assertEquals(document.getOuterHTML(), cloned.getOuterHTML());
+        Assert.assertEquals(document.getFirstElementChild().getOuterHTML(), cloned.getFirstElementChild().getOuterHTML());
 
         ((Text) cloned.getElementsByTagName("p").get(0).getChildNodes().get(0)).setData("Hello World!");
 
-        Assert.assertNotEquals(document.getOuterHTML(), cloned.getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><div><p>Hello World!</p></div></body></html>", cloned.getOuterHTML());
+        Assert.assertNotEquals(document.getFirstElementChild().getOuterHTML(), cloned.getFirstElementChild().getOuterHTML());
+        Assert.assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getFirstElementChild().getOuterHTML());
+        Assert.assertEquals("<html><head></head><body><div><p>Hello World!</p></div></body></html>", cloned.getFirstElementChild().getOuterHTML());
     }
 
 
@@ -38,8 +38,8 @@ public class CloneTest {
     public void cloneShallow() {
         Document document = new Parser().parse("<div><p>Hello World</p></div>");
         Document cloned = (Document) document.cloneNode(false);
-        Assert.assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getOuterHTML());
-        Assert.assertEquals("", cloned.getOuterHTML());
+        Assert.assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getFirstElementChild().getOuterHTML());
+        Assert.assertEquals(null, cloned.getFirstElementChild());
 
         Element div = document.getElementsByTagName("div").get(0);
         Element divCloned = (Element) div.cloneNode(false);

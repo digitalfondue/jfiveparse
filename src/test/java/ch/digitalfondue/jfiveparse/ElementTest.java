@@ -27,7 +27,7 @@ public class ElementTest {
     //https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
     @Test
     public void testInsertAdjacentHTMLBeforeBegin() {
-        Node startNode = parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         Element myIdElement = startNode.getElementById("myid");
         myIdElement.insertAdjacentHTML("beforebegin", "<!-- beforebegin -->");
         Assert.assertEquals("<div><!-- beforebegin --><p id=\"myid\">foo</p></div>", startNode.getOuterHTML());
@@ -35,7 +35,7 @@ public class ElementTest {
 
     @Test
     public void testInsertAdjacentHTMLAfterBegin() {
-    	Node startNode = parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         Element myIdElement = startNode.getElementById("myid");
         myIdElement.insertAdjacentHTML("afterbegin", "<!-- afterbegin -->");
         Assert.assertEquals("<div><p id=\"myid\"><!-- afterbegin -->foo</p></div>", startNode.getOuterHTML());
@@ -43,7 +43,7 @@ public class ElementTest {
 
     @Test
     public void testInsertAdjacentHTMLBeforeEnd() {
-    	Node startNode = parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         Element myIdElement = startNode.getElementById("myid");
         myIdElement.insertAdjacentHTML("beforeend", "<!-- beforeend -->");
         Assert.assertEquals("<div><p id=\"myid\">foo<!-- beforeend --></p></div>", startNode.getOuterHTML());
@@ -51,7 +51,7 @@ public class ElementTest {
 
     @Test
     public void testInsertAdjacentHTMLAfterEnd() {
-    	Node startNode = parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         Element myIdElement = startNode.getElementById("myid");
         myIdElement.insertAdjacentHTML("afterend", "<!-- afterend -->");
         Assert.assertEquals("<div><p id=\"myid\">foo</p><!-- afterend --></div>", startNode.getOuterHTML());
@@ -59,7 +59,7 @@ public class ElementTest {
     
     @Test
     public void testAll() {
-    	Node startNode = parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         Element myIdElement = startNode.getElementById("myid");
         myIdElement.insertAdjacentHTML("beforebegin", "<!-- beforebegin -->");
         myIdElement.insertAdjacentHTML("afterbegin", "<!-- afterbegin -->");

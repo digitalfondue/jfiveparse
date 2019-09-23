@@ -445,47 +445,6 @@ public abstract class Node {
     }
 
     /**
-     * Get the html content of the child of this node.
-     */
-    public String getInnerHTML() {
-        return getInnerHTML(EnumSet.noneOf(Option.class));
-    }
-
-    /**
-     * 
-     * Get the html content of the child of this node.
-     *
-     * @param options
-     *            serialization {@link Option}.
-     * @return
-     */
-    public String getInnerHTML(Set<Option> options) {
-        StringBuilder sb = new StringBuilder();
-        traverse(new HtmlSerializer(sb, options));
-        return sb.toString();
-    }
-
-    /**
-     * Get the html content of the this node and his child.
-     */
-    public String getOuterHTML() {
-        return getOuterHTML(EnumSet.noneOf(Option.class));
-    }
-
-    /**
-     * Get the html content of the child of this node.
-     * 
-     * @param options
-     *            serialization {@link Option}.
-     * @return
-     */
-    public String getOuterHTML(Set<Option> options) {
-        StringBuilder sb = new StringBuilder();
-        traverseWithCurrentNode(new HtmlSerializer(sb, options));
-        return sb.toString();
-    }
-
-    /**
      * The normalize() method removes empty Text nodes, and joins adjacent Text nodes.
      */
     public void normalize() {
