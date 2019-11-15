@@ -35,14 +35,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.6.0'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.6.1'
 ```
 
 ## Use:
@@ -115,6 +115,11 @@ public class LoadHNTitle {
     }
 }
 ```
+
+### Convert to the java DOM representation
+
+If you need to generate a `org.w3c.dom.Document` from the `ch.digitalfondue.jfiveparse.Document` representation, there is a
+static method in the helper class: `W3CDom.toW3CDocument`.
 
 ## Notes:
 
