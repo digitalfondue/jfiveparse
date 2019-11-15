@@ -28,12 +28,28 @@ public class W3CDom {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
+            //
+            setFeature(factory, "http://apache.org/xml/features/disallow-doctype-decl", true);
+            setFeature(factory,"http://xml.org/sax/features/external-general-entities", false);
+            setFeature(factory,"http://xml.org/sax/features/external-parameter-entities", false);
+            setFeature(factory,"http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setXIncludeAware(false);
+            factory.setExpandEntityReferences(false);
+            //
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document d = builder.newDocument();
             doc.traverse(new W3CDNodeVisitor(d));
             return d;
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+
+    private static void setFeature(DocumentBuilderFactory dbFactory, String feature, boolean value) {
+        try {
+            dbFactory.setFeature(feature, value);
+        } catch (ParserConfigurationException e) {
         }
     }
 
