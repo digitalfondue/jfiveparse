@@ -168,7 +168,7 @@ public class NodeTest {
     }
 
     @Test
-    public void nomalize() {
+    public void normalize() {
 
         //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
 
@@ -184,7 +184,7 @@ public class NodeTest {
     }
     
     @Test
-    public void nomalizeEmpty1() {
+    public void normalizeEmpty1() {
 
         //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
 
@@ -198,7 +198,7 @@ public class NodeTest {
     }
     
     @Test
-    public void nomalizeEmpty2() {
+    public void normalizeEmpty2() {
 
         //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
 
@@ -213,7 +213,7 @@ public class NodeTest {
     }
 
     @Test
-    public void nomalizeNested() {
+    public void normalizeNested() {
 
         //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
 
@@ -242,7 +242,7 @@ public class NodeTest {
     }
     
     @Test
-    public void nomalizeEmptyNested() {
+    public void normalizeEmptyNested() {
 
         //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
 

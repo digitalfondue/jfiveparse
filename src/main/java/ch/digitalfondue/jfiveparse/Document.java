@@ -23,7 +23,7 @@ import java.util.List;
  * Represent a document.
  */
 public class Document extends Node {
-    private final List<Node> childNodes = new ArrayList<>(2);
+    private final List<Node> childNodes = new ArrayList<>(1);
     private DocumentType doctype;
 
     @Override
@@ -47,6 +47,10 @@ public class Document extends Node {
 
     public DocumentType getDoctype() {
         return doctype;
+    }
+
+    public Element getDocumentElement() {
+        return getFirstElementChild();
     }
 
     /**
