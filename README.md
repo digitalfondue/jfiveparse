@@ -35,23 +35,20 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.6.1</version>
+    <version>0.6.2</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.6.1'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.6.2'
 ```
 
 ## Use:
 
 ```java
-import ch.digitalfondue.jfiveparse.Document;
-import ch.digitalfondue.jfiveparse.Element;
-import ch.digitalfondue.jfiveparse.Node;
-import ch.digitalfondue.jfiveparse.Parser;
+import ch.digitalfondue.jfiveparse.*;
 
 public class MyTest {
 
@@ -59,19 +56,19 @@ public class MyTest {
         // directly from String
         Parser p = new Parser();
         Document doc = p.parse("<html><body>Hello world!</body></html>");
-        System.out.println(doc.getOuterHTML());
+        System.out.println(HtmlSerializer.serialize(doc));
 
         // from reader
         Document doc2 = p.parse(new StringReader("<html><body>Hello world!</body></html>"));
-        System.out.println(doc2.getOuterHTML());
+        System.out.println(HtmlSerializer.serialize(doc2));
 
         // parse fragment
         List<Node> fragment = p.parseFragment(new Element("div"), "<p><span>Hello world</span></p>");
-        System.out.println(fragment.get(0).getOuterHTML());
+        System.out.println(HtmlSerializer.serialize(fragment.get(0)));
 
         // parse fragment from reader
         List<Node> fragment2 = p.parseFragment(new Element("div"), new StringReader("<p><span>Hello world</span></p>"));
-        System.out.println(fragment2.get(0).getOuterHTML());
+        System.out.println(HtmlSerializer.serialize(fragment2.get(0)));
     }
 }
 ```
