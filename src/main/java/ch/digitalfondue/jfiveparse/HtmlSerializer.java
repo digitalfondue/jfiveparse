@@ -16,6 +16,8 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
@@ -87,7 +89,6 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     protected String escapeTextData(String s) {
-
         if (s != null) {
             if (transformEntities) {
                 s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
@@ -116,7 +117,7 @@ public class HtmlSerializer implements NodesVisitor {
                             && (attr.getValue() == null || "".equals(attr.getValue()))) {
                         continue;
                     }
-                    appendable.append("=").append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
+                    appendable.append('=').append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
                 }
 
                 appendable.append('>');
@@ -148,7 +149,7 @@ public class HtmlSerializer implements NodesVisitor {
                 appendable.append("<!--").append(((Comment) node).getData()).append("-->");
             } else if (node.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
                 // TODO: should append the rest of the attributes if present
-                appendable.append("<!DOCTYPE ").append(((DocumentType) node).getName()).append(">");
+                appendable.append("<!DOCTYPE ").append(((DocumentType) node).getName()).append('>');
             }
         } catch (IOException ioe) {
             throw new SerializationException(ioe);
@@ -183,6 +184,14 @@ public class HtmlSerializer implements NodesVisitor {
 
     }
 
+    public static void serialize(Node node, Writer writer) throws IOException {
+        serialize(node, EnumSet.noneOf(Option.class), writer);
+    }
+
+    public static void serialize(Node node, Set<Option> options, Writer writer) throws IOException {
+        node.traverse(new HtmlSerializer(writer, options));
+        writer.flush();
+    }
 
     public static String serialize(Node node) {
         return serialize(node, EnumSet.noneOf(Option.class));

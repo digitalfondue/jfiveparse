@@ -15,6 +15,11 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -60,5 +65,15 @@ public class HtmlSerializationTest {
         Assert.assertEquals("<html><head></head><body><div attr=\"\" attr2=\"\" attr3=\"\"></div></body></html>", d.getFirstElementChild().getOuterHTML());
         Assert.assertEquals("<html><head></head><body><div attr attr2='' attr3=\"\"></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE)));
         Assert.assertEquals("<html><head></head><body><div attr attr2 attr3></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.HIDE_EMPTY_ATTRIBUTE_VALUE)));
+    }
+
+    @Test
+    public void testSerializeToByteArray() throws IOException {
+        Parser p = parser();
+        Document d = p.parse("<DiV></dIV><sPaN></SPAN>");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Writer osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
+        HtmlSerializer.serialize(d, osw);
+        Assert.assertEquals("<html><head></head><body><div></div><span></span></body></html>", new String(baos.toByteArray(), StandardCharsets.UTF_8));
     }
 }
