@@ -18,6 +18,8 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Represent a document.
@@ -51,6 +53,26 @@ public class Document extends Node {
 
     public Element getDocumentElement() {
         return getFirstElementChild();
+    }
+
+    private Element getChildOfDocumentElementMatching(Predicate<String> nodeNameMatcher) {
+        Element e = getFirstElementChild();
+        if (e != null) {
+            for (Node c : e.getChildNodes()) {
+                if (c instanceof Element && nodeNameMatcher.test(c.getNodeName()) && NAMESPACE_HTML.equals(((Element) c).getNamespaceURI())) {
+                    return (Element) c;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Element getHead() {
+        return getChildOfDocumentElementMatching(n -> "head".equals(n));
+    }
+
+    public Element getBody() {
+        return getChildOfDocumentElementMatching(n -> "body".equals(n) || "frameset".equals(n));
     }
 
     /**

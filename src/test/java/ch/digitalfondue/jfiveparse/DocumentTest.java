@@ -23,8 +23,12 @@ public class DocumentTest {
 
 
     @Test
-    public void checkDoctypes() {
+    public void checkDocumentRelatedMethods() {
         Document d1 = new Parser().parse("<!DOCTYPE html><div>Hello World</div>");
         Assert.assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", HtmlSerializer.serialize(d1));
+
+        Assert.assertEquals("html", d1.getDocumentElement().getNodeName());
+        Assert.assertEquals("<head></head>", d1.getHead().getOuterHTML());
+        Assert.assertEquals("<body><div>Hello World</div></body>", d1.getBody().getOuterHTML());
     }
 }
