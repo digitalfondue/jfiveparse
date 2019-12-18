@@ -67,12 +67,30 @@ public class Document extends Node {
         return null;
     }
 
+    /**
+     * @return the "head" element if present
+     */
     public Element getHead() {
         return getChildOfDocumentElementMatching(n -> "head".equals(n));
     }
 
+    /**
+     * @return return the "body" or "frameset" element if present
+     */
     public Element getBody() {
         return getChildOfDocumentElementMatching(n -> "body".equals(n) || "frameset".equals(n));
+    }
+
+    /**
+     * Replace the current body. TODO: need to check if it's a body|frameset element in html namespace, handle the case when there is no body too
+     *
+     * @param element
+     */
+    public void setBody(Element element) {
+        Element e = getBody();
+        if (element != null && e != null && e.parentNode != null) {
+            e.parentNode.replaceChild(element, e);
+        }
     }
 
     /**

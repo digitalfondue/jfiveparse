@@ -30,5 +30,12 @@ public class DocumentTest {
         Assert.assertEquals("html", d1.getDocumentElement().getNodeName());
         Assert.assertEquals("<head></head>", d1.getHead().getOuterHTML());
         Assert.assertEquals("<body><div>Hello World</div></body>", d1.getBody().getOuterHTML());
+
+        Element body = new Element("body");
+        body.setId("newBody");
+
+        d1.setBody(body);
+
+        Assert.assertEquals("<body id=\"newBody\"></body>", d1.getBody().getOuterHTML());
     }
 }
