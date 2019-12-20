@@ -81,11 +81,7 @@ public class Parser {
     /***
      * Parse a fragment.
      * 
-     * Implement the steps described at <a
-     * href="https://html.spec.whatwg.org/multipage/syntax
-     * .html#html-fragment-parsing
-     * -algorithm">https://html.spec.whatwg.org/multipage/syntax
-     * .html#html-fragment-parsing-algorithm</a>
+     * Implement the steps described at <a href="https://html.spec.whatwg.org/multipage/syntax.html#html-fragment-parsing-algorithm">https://html.spec.whatwg.org/multipage/syntax.html#html-fragment-parsing-algorithm</a>
      * 
      * @param node
      *            the context node

@@ -117,12 +117,57 @@ public class Element extends Node {
         }
     }
 
+    private Node insertAdjacentNode(String position, Node node) {
+        Objects.requireNonNull(position, "position must be not null");
+        position = position.toLowerCase(Locale.ENGLISH);
+        Node parentNode = getParentNode();
+        switch (position) {
+            case "beforebegin":
+                if (parentNode == null) {
+                    throw new IllegalStateException("The element has no parent. Cannot use beforebegin.");
+                }
+                parentNode.insertBefore(node, this);
+                break;
+            case "afterbegin":
+                Node firstChild = getFirstChild();
+                insertBefore(node, firstChild);
+                break;
+            case "beforeend":
+                appendChild(node);
+                break;
+            case "afterend":
+                if (parentNode == null) {
+                    throw new IllegalStateException("The element has no parent. Cannot use afterend.");
+                }
+                node.parentNode = parentNode;
+                List<Node> parentChildNodes = parentNode.getMutableChildNodes();
+                parentChildNodes.addAll(parentChildNodes.indexOf(this) + 1, Collections.singletonList(node));
+                break;
+            default:
+                throw new IllegalStateException("The position provided ('" + position + "') is not one of 'beforeBegin', 'afterBegin', 'beforeEnd', or 'afterEnd'.");
+        }
+        return node;
+    }
+
+    public Element insertAdjacentElement(String position, Element element) {
+        return (Element) insertAdjacentNode(position, element);
+    }
+
+    public void insertAdjacentText(String position, String text) {
+        insertAdjacentNode(position, new Text(text));
+    }
+
     public void insertAdjacentHTML(String position, String text) {
+        Objects.requireNonNull(position, "position must be not null");
+        position = position.toLowerCase(Locale.ENGLISH);
     	Parser parser = new Parser();
     	Node parentNode = getParentNode();
 
         switch (position) {
             case "beforebegin":
+                if (parentNode == null) {
+                    throw new IllegalStateException("The element has no parent. Cannot use beforebegin.");
+                }
                 for (Node node : parser.parseFragment((Element) parentNode, text)) {
                     parentNode.insertBefore(node, this);
                 }
@@ -139,6 +184,9 @@ public class Element extends Node {
                 }
                 break;
             case "afterend":
+                if (parentNode == null) {
+                    throw new IllegalStateException("The element has no parent. Cannot use afterend.");
+                }
                 List<Node> newNodeList = parser.parseFragment((Element) parentNode, text);
                 for (Node node: newNodeList) {
                     node.parentNode = parentNode;
@@ -147,7 +195,7 @@ public class Element extends Node {
                 parentChildNodes.addAll(parentChildNodes.indexOf(this) + 1, newNodeList);
                 break;
             default:
-                break;
+                throw new IllegalStateException("The position provided ('" + position + "') is not one of 'beforeBegin', 'afterBegin', 'beforeEnd', or 'afterEnd'.");
         }
     }
 

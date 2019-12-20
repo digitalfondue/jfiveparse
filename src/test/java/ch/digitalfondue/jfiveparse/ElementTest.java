@@ -34,6 +34,21 @@ public class ElementTest {
     }
 
     @Test
+    public void testInsertAdjacentHTMLAfterBeginMultiple() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element myIdElement = startNode.getElementById("myid");
+        myIdElement.insertAdjacentHTML("afterbegin", "<h1>1</h1><h2>2</h2>");
+        Assert.assertEquals("<div><p id=\"myid\"><h1>1</h1><h2>2</h2>foo</p></div>", startNode.getOuterHTML());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testBeforeBeginWithoutParent() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        startNode.parentNode = null;
+        startNode.insertAdjacentHTML("beforebegin", "<!-- beforebegin -->");
+    }
+
+    @Test
     public void testInsertAdjacentHTMLAfterBegin() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         Element myIdElement = startNode.getElementById("myid");
@@ -50,11 +65,32 @@ public class ElementTest {
     }
 
     @Test
+    public void testInsertAdjacentHTMLBeforeEndMultiple() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element myIdElement = startNode.getElementById("myid");
+        myIdElement.insertAdjacentHTML("beforeend", "<h1>1</h1><h2>2</h2>");
+        Assert.assertEquals("<div><p id=\"myid\">foo<h1>1</h1><h2>2</h2></p></div>", startNode.getOuterHTML());
+    }
+
+    @Test
     public void testInsertAdjacentHTMLAfterEnd() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         Element myIdElement = startNode.getElementById("myid");
         myIdElement.insertAdjacentHTML("afterend", "<!-- afterend -->");
         Assert.assertEquals("<div><p id=\"myid\">foo</p><!-- afterend --></div>", startNode.getOuterHTML());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAfterEndWithoutParent() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        startNode.parentNode = null;
+        startNode.insertAdjacentHTML("afterend", "<!-- beforebegin -->");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWrongPosition() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        startNode.insertAdjacentHTML("plop", "<!-- plop -->");
     }
     
     @Test
@@ -66,6 +102,40 @@ public class ElementTest {
         myIdElement.insertAdjacentHTML("beforeend", "<!-- beforeend -->");
         myIdElement.insertAdjacentHTML("afterend", "<!-- afterend -->");
         Assert.assertEquals("<div><!-- beforebegin --><p id=\"myid\"><!-- afterbegin -->foo<!-- beforeend --></p><!-- afterend --></div>", startNode.getOuterHTML());
+    }
+
+    @Test
+    public void testInsertAdjacentElementAll() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element myIdElement = startNode.getElementById("myid");
+        myIdElement.insertAdjacentElement("beforebegin", new Element("beforebegin"));
+        myIdElement.insertAdjacentElement("afterbegin", new Element("afterbegin"));
+        myIdElement.insertAdjacentElement("beforeend", new Element("beforeend"));
+        myIdElement.insertAdjacentElement("afterend", new Element("afterend"));
+        Assert.assertEquals("<div><beforebegin></beforebegin><p id=\"myid\"><afterbegin></afterbegin>foo<beforeend></beforeend></p><afterend></afterend></div>", startNode.getOuterHTML());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWrongElementPosition() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        startNode.insertAdjacentElement("plop", new Element("plop"));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testWrongTextPosition() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        startNode.insertAdjacentText("plop", "plop");
+    }
+
+    @Test
+    public void testInsertAdjacentTextAll() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Element myIdElement = startNode.getElementById("myid");
+        myIdElement.insertAdjacentText("beforebegin", "beforebegin");
+        myIdElement.insertAdjacentText("afterbegin", "afterbegin");
+        myIdElement.insertAdjacentText("beforeend", "beforeend");
+        myIdElement.insertAdjacentText("afterend", "afterend");
+        Assert.assertEquals("<div>beforebegin<p id=\"myid\">afterbeginfoobeforeend</p>afterend</div>", startNode.getOuterHTML());
     }
 
     @Test
