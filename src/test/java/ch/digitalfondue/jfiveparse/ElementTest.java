@@ -67,4 +67,15 @@ public class ElementTest {
         myIdElement.insertAdjacentHTML("afterend", "<!-- afterend -->");
         Assert.assertEquals("<div><!-- beforebegin --><p id=\"myid\"><!-- afterbegin -->foo<!-- beforeend --></p><!-- afterend --></div>", startNode.getOuterHTML());
     }
+
+    @Test
+    public void testGetTagName() {
+        Element div = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
+        Assert.assertEquals("DIV", div.getTagName());
+
+
+        Element svg = (Element) parser.parseFragment(new Element("div"), "<svg><path id=myid>foo</path></svg>").get(0);
+        Assert.assertEquals("svg", svg.getTagName());
+        Assert.assertEquals("path", svg.getFirstElementChild().getTagName());
+    }
 }

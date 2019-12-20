@@ -326,4 +326,18 @@ public class Element extends Node {
         traverseWithCurrentNode(new HtmlSerializer(sb, options));
         return sb.toString();
     }
+
+
+    /**
+     * Return the tag name. See https://developer.mozilla.org/en-US/docs/Web/API/Element/tagName.
+     *
+     * @return
+     */
+    public String getTagName() {
+        if (Node.NAMESPACE_HTML.equals(namespaceURI)) {
+            return nodeName.toUpperCase(Locale.ENGLISH);
+        } else {
+            return originalNodeName;
+        }
+    }
 }
