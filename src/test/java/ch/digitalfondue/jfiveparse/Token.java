@@ -85,9 +85,9 @@ public interface Token {
         public String toString() {
             List<Object> reprs = new ArrayList<>();
             reprs.add(TokenType.startTag);
-            reprs.add(name.toString());
+            reprs.add(name);
 
-            Map<String, String> converted = new LinkedHashMap<String, String>();
+            Map<String, String> converted = new LinkedHashMap<>();
             for (Entry<String, AttributeNode> kv : attributes.entrySet()) {
                 converted.put(kv.getKey(), kv.getValue().getValue());
             }

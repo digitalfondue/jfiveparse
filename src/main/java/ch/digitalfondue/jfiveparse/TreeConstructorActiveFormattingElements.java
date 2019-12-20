@@ -112,7 +112,7 @@ class TreeConstructorActiveFormattingElements {
         final int lastIndex = activeFormattingElements.size() - 1;
         Element last = activeFormattingElements.get(lastIndex);
         final boolean lastIsMarker = last instanceof Marker;
-        if (lastIsMarker || (!lastIsMarker && treeConstructor.openElementsIndexOf(last) != -1)) {
+        if (lastIsMarker || (treeConstructor.openElementsIndexOf(last) != -1)) {
             return;
         }
 

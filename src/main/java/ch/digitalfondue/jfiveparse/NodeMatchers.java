@@ -74,8 +74,8 @@ class NodeMatchers<T extends Node> implements NodesVisitor {
 
         @Override
         public boolean match(Node node) {
-            return node.getNodeType() == Node.ELEMENT_NODE && tagName.equals(((Element) node).getNodeName())
-                    && (nameSpace == null ? true : nameSpace.equals(((Element) node).getNamespaceURI()));
+            return node.getNodeType() == Node.ELEMENT_NODE && tagName.equals(node.getNodeName())
+                    && (nameSpace == null || nameSpace.equals(((Element) node).getNamespaceURI()));
         }
 
     }
@@ -144,7 +144,7 @@ class NodeMatchers<T extends Node> implements NodesVisitor {
                 case ATTRIBUTE_MATCH_VALUE_END_WITH:
                     return attrValue != null && attrValue.endsWith(value);
                 case ATTRIBUTE_MATCH_VALUE_CONTAINS:
-                    return attrValue != null && attrValue.indexOf(value) >= 0;
+                    return attrValue != null && attrValue.contains(value);
                 default:
                     return false;
                 }
@@ -265,6 +265,6 @@ class NodeMatchers<T extends Node> implements NodesVisitor {
 
     @Override
     public boolean complete() {
-        return completeOnFirstMatch ? !toAdd.isEmpty() : false;
+        return completeOnFirstMatch && !toAdd.isEmpty();
     }
 }

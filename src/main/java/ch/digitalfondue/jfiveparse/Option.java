@@ -17,8 +17,8 @@ package ch.digitalfondue.jfiveparse;
 
 /**
  * Configuration options for the {@link Parser} and when calling the
- * serialization methods: {@link Node#getInnerHTML(java.util.Set)} and
- * {@link Node#getOuterHTML(java.util.Set)}.
+ * serialization methods: {@link Element#getInnerHTML(java.util.Set)} and
+ * {@link Element#getOuterHTML(java.util.Set)}.
  */
 public enum Option {
     /**

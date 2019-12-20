@@ -106,7 +106,7 @@ class TreeConstructorInTable {
         } else if (Common.isStartTagNamed(tokenType, "input", tagName)) {
 
             boolean hasTypeKey = treeConstructor.hasAttribute("type");
-            if (!hasTypeKey || (hasTypeKey && !"hidden".equalsIgnoreCase(treeConstructor.getAttribute("type").getValue()))) {
+            if (!hasTypeKey || (!"hidden".equalsIgnoreCase(treeConstructor.getAttribute("type").getValue()))) {
                 treeConstructor.emitParseError();
                 treeConstructor.enableFosterParenting();
                 TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);

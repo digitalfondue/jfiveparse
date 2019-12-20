@@ -78,7 +78,7 @@ public class Element extends Node {
      */
     @Override
     public List<Node> getChildNodes() {
-        return childNodes == null ? Collections.<Node> emptyList() : Collections.unmodifiableList(childNodes);
+        return childNodes == null ? Collections.emptyList() : Collections.unmodifiableList(childNodes);
     }
 
     @Override

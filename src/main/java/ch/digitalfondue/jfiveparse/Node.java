@@ -449,7 +449,7 @@ public abstract class Node {
      */
     public void normalize() {
 
-		List<Node> childs = new ArrayList<Node>(this.getChildNodes());
+		List<Node> childs = new ArrayList<>(this.getChildNodes());
 
 		// iterator helpers
 		Node text = null;

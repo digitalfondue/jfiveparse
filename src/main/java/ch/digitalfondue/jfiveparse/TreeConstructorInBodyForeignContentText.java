@@ -370,7 +370,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
         boolean hasTypeAttr = element.getAttributes().containsKey("type");
-        if (!hasTypeAttr || (hasTypeAttr && !"hidden".equalsIgnoreCase(element.getAttributes().get("type").getValue()))) {
+        if (!hasTypeAttr || (!"hidden".equalsIgnoreCase(element.getAttributes().get("type").getValue()))) {
             treeConstructor.framesetOkToFalse();
         }
     }
@@ -545,7 +545,6 @@ class TreeConstructorInBodyForeignContentText {
         }
         treeConstructor.insertHtmlElementToken();
         treeConstructor.ignoreCharacterTokenLF();
-        ;
         treeConstructor.framesetOkToFalse();
     }
 

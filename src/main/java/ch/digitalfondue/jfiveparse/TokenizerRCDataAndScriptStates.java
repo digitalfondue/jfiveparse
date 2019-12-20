@@ -53,16 +53,13 @@ class TokenizerRCDataAndScriptStates {
 
     static void handleRCDataLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
-        switch (chr) {
-        case Characters.SOLIDUS:
+        if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
             tokenizer.setState(TokenizerState.RCDATA_END_TAG_OPEN_STATE);
-            break;
-        default:
+        } else {
             tokenizer.setState(TokenizerState.RCDATA_STATE);
             tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
             processedInputStream.reconsume(chr);
-            break;
         }
     }
 

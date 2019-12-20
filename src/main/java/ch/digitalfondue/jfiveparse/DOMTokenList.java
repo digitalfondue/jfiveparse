@@ -108,7 +108,7 @@ public class DOMTokenList extends AbstractList<String> {
     }
 
     public boolean toggle(String name, boolean condition) {
-        return condition ? toggle(name) : false;
+        return condition && toggle(name);
     }
 
     public String item(int index) {

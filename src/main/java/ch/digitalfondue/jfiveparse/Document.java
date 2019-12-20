@@ -18,7 +18,6 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -71,7 +70,7 @@ public class Document extends Node {
      * @return the "head" element if present
      */
     public Element getHead() {
-        return getChildOfDocumentElementMatching(n -> "head".equals(n));
+        return getChildOfDocumentElementMatching("head"::equals);
     }
 
     /**

@@ -15,10 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Dumping ground for static functions and constants.
@@ -273,14 +270,11 @@ class Common {
     private static final HashSet<String> SPECIAL_ELEMENTS_HTML_SET_V2 = new HashSet<>();
 
     static {
-
-        for (String s : new String[] { "address", "applet", "area", "article", "aside", "base", "basefont", "bgsound", "blockquote", "body", "br", "button", "caption", "center",
+        Collections.addAll(SPECIAL_ELEMENTS_HTML_SET_V2, "address", "applet", "area", "article", "aside", "base", "basefont", "bgsound", "blockquote", "body", "br", "button", "caption", "center",
                 "col", "colgroup", "dd", "details", "dir", "div", "dl", "dt", "embed", "fieldset", "figcaption", "figure", "footer", "form", "frame", "frameset", "h1", "h2", "h3",
                 "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "iframe", "img", "input", "li", "link", "listing", "main", "marquee", "menu",
                 "meta", "nav", "noembed", "noframes", "noscript", "object", "ol", "p", "param", "plaintext", "pre", "script", "section", "select", "source", "style", "summary",
-                "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "title", "tr", "track", "ul", "wbr", "xmp" }) {
-            SPECIAL_ELEMENTS_HTML_SET_V2.add(s);
-        }
+                "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "title", "tr", "track", "ul", "wbr", "xmp");
         Arrays.sort(SPECIAL_ELEMENTS_MATHML);
         Arrays.sort(SPECIAL_ELEMENTS_SVG);
     }

@@ -154,26 +154,20 @@ class TreeConstructorInFramesetSelectTemplate {
     }
 
     static void inSelectTable(byte tokenType, String tagName, TreeConstructor treeConstructor) {
-        if (tokenType == START_TAG && "caption".equals(tagName) || //
+        boolean isCaptionOrRelatedTags = "caption".equals(tagName) || //
                 "table".equals(tagName) || //
                 "tbody".equals(tagName) || //
                 "tfoot".equals(tagName) || //
                 "thead".equals(tagName) || //
                 "tr".equals(tagName) || //
                 "td".equals(tagName) || //
-                "th".equals(tagName)) {
+                "th".equals(tagName);
+        if (tokenType == START_TAG && isCaptionOrRelatedTags) {
             treeConstructor.emitParseError();
             treeConstructor.popOpenElementsUntilWithHtmlNS("select");
             treeConstructor.resetInsertionModeAppropriately();
             treeConstructor.dispatch();
-        } else if (tokenType == END_TAG && "caption".equals(tagName) || //
-                "table".equals(tagName) || //
-                "tbody".equals(tagName) || //
-                "tfoot".equals(tagName) || //
-                "thead".equals(tagName) || //
-                "tr".equals(tagName) || //
-                "td".equals(tagName) || //
-                "th".equals(tagName)) {
+        } else if (tokenType == END_TAG && isCaptionOrRelatedTags) {
             treeConstructor.emitParseError();
             if (!treeConstructor.hasElementInTableScope(tagName)) {
                 // ignore token

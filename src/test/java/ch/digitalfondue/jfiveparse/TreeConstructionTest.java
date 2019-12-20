@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -85,11 +84,7 @@ public class TreeConstructionTest {
                 }
             }
         }
-        data.sort(new Comparator<Object[]>() {
-        	public int compare(Object[] o1, Object[] o2) {
-        		return new CompareToBuilder().append((String) o1[0], (String)o2[0]).append((boolean) o1[2], (boolean) o2[2]).toComparison();
-        	}
-		});
+        data.sort((o1, o2) -> new CompareToBuilder().append(o1[0], o2[0]).append((boolean) o1[2], (boolean) o2[2]).toComparison());
         return data;
     }
 
@@ -122,7 +117,7 @@ public class TreeConstructionTest {
         t.data = data;
         t.document = document;
 
-        if (test.indexOf("\n#document-fragment\n") != -1) {
+        if (test.contains("\n#document-fragment\n")) {
             t.isDocumentFragment = true;
 
             String startFragment = test.substring(test.indexOf("\n#document-fragment\n") + "\n#document-fragment\n".length());
@@ -138,10 +133,10 @@ public class TreeConstructionTest {
             }
         }
 
-        if (test.indexOf("\n#script-on\n") != -1) {
+        if (test.contains("\n#script-on\n")) {
             t.scriptingFlag = true;
         }
-        if (test.indexOf("\n#script-off\n") != -1) {
+        if (test.contains("\n#script-off\n")) {
             t.scriptingFlag = false;
         }
 

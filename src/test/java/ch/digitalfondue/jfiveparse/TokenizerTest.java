@@ -87,12 +87,9 @@ public class TokenizerTest {
         // unescape
         if (desc.doubleEscaped != null && desc.doubleEscaped) {
 
-            Replacer doubleEscapedUnicode = new Replacer() {
-                @Override
-                public String apply(MatchResult result) {
-                    int val = Integer.parseInt(result.group(1), 16);
-                    return new String(new char[] { ((char) val) });
-                }
+            Replacer doubleEscapedUnicode = result -> {
+                int val = Integer.parseInt(result.group(1), 16);
+                return new String(new char[] { ((char) val) });
             };
             String newInput = replaceAll(desc.input, "\\\\u([\\d\\w]{4})", doubleEscapedUnicode);
             desc.input = newInput;

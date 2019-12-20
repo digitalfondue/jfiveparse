@@ -34,7 +34,7 @@ public class Attributes implements Iterable<AttributeNode> {
     }
 
     public boolean containsKey(String key) {
-        return attributes == null ? false : attributes.containsKey(key);
+        return attributes != null && attributes.containsKey(key);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class Attributes implements Iterable<AttributeNode> {
     }
 
     Set<String> keySet() {
-        return attributes == null ? Collections.<String> emptySet() : attributes.keySet();
+        return attributes == null ? Collections.emptySet() : attributes.keySet();
     }
 
     private void ensureMap() {
@@ -90,12 +90,12 @@ public class Attributes implements Iterable<AttributeNode> {
     }
 
     public boolean isEmpty() {
-        return attributes == null ? true : attributes.isEmpty();
+        return attributes == null || attributes.isEmpty();
     }
 
     @Override
     public Iterator<AttributeNode> iterator() {
-        return attributes == null ? Collections.<AttributeNode> emptyIterator() : attributes.values().iterator();
+        return attributes == null ? Collections.emptyIterator() : attributes.values().iterator();
     }
 
     public String getNamedItem(String name) {
