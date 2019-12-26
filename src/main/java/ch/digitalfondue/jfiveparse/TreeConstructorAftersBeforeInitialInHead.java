@@ -447,7 +447,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     private static void generateImpliedEndTagThoroughly(TreeConstructor treeConstructor) {
         for (;;) {
             Element current = treeConstructor.getCurrentNode();
-            if (Node.NAMESPACE_HTML.equals(current.getNamespaceURI()) && Arrays.binarySearch(Common.IMPLIED_TAGS_THOROUGHLY, current.getNodeName()) >= 0) {
+            if (Node.NAMESPACE_HTML.equals(current.getNamespaceURI()) && Common.isImpliedTagsThoroughly(current.getNodeName())) {
                 treeConstructor.popCurrentNode();
                 continue;
             } else {

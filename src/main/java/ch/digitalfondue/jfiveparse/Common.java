@@ -158,43 +158,55 @@ class Common {
         SVG_ATTRIBUTES.put("zoomandpan", "zoomAndPan");
     }
 
-    // TODO cleanup, not optimal at all :D
     static void adjustSVGAttributes(Attributes attrs) {
-        for (String key : SVG_ATTRIBUTES.keySet()) {
-            if (attrs.containsKey(key)) {
-                AttributeNode attr = attrs.get(key);
-                attr.name = SVG_ATTRIBUTES.get(key);
+        if (attrs.isEmpty()) {
+            return;
+        }
+
+        for (String lowerCaseAttr : new ArrayList<>(attrs.keySet())) {
+            if (SVG_ATTRIBUTES.containsKey(lowerCaseAttr)) {
+                AttributeNode attr = attrs.get(lowerCaseAttr);
+                attr.name = SVG_ATTRIBUTES.get(lowerCaseAttr);
                 attrs.put(attr);
-                attrs.remove(key);
+                attrs.remove(lowerCaseAttr);
             }
         }
     }
 
-    private static final String[][] FOREIGN_ATTRIBUTES_TO_ADJUST = new String[][] { new String[] { "xlink:actuate", "xlink", "actuate", Node.NAMESPACE_XLINK },//
-            new String[] { "xlink:arcrole", "xlink", "arcrole", Node.NAMESPACE_XLINK },//
-            new String[] { "xlink:href", "xlink", "href", Node.NAMESPACE_XLINK },//
-            new String[] { "xlink:role", "xlink", "role", Node.NAMESPACE_XLINK },//
-            new String[] { "xlink:show", "xlink", "show", Node.NAMESPACE_XLINK },//
-            new String[] { "xlink:title", "xlink", "title", Node.NAMESPACE_XLINK },//
-            new String[] { "xlink:type", "xlink", "type", Node.NAMESPACE_XLINK },//
-            new String[] { "xml:lang", "xml", "lang", Node.NAMESPACE_XML },//
-            new String[] { "xml:space", "xml", "space", Node.NAMESPACE_XML },//
-            new String[] { "xmlns", null, "xmlns", Node.NAMESPACE_XMLNS },//
-            new String[] { "xmlns:xlink", "xmlns", "xlink", Node.NAMESPACE_XMLNS },//
-    };
+    private static final Map<String, String[]> FOREIGN_ATTRIBUTES_TO_ADJUST = new HashMap<>();
+    static {
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:actuate",   new String[] { "xlink", "actuate", Node.NAMESPACE_XLINK });
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:arcrole",   new String[] {"xlink", "arcrole", Node.NAMESPACE_XLINK });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:href",      new String[] { "xlink", "href", Node.NAMESPACE_XLINK });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:role",      new String[] { "xlink", "role", Node.NAMESPACE_XLINK });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:show",      new String[] { "xlink", "show", Node.NAMESPACE_XLINK });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:title",     new String[] { "xlink", "title", Node.NAMESPACE_XLINK });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:type",      new String[] { "xlink", "type", Node.NAMESPACE_XLINK });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xml:lang",        new String[] { "xml", "lang", Node.NAMESPACE_XML });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xml:space",       new String[] { "xml", "space", Node.NAMESPACE_XML });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xmlns",           new String[] { null, "xmlns", Node.NAMESPACE_XMLNS });//
+        FOREIGN_ATTRIBUTES_TO_ADJUST.put("xmlns:xlink",     new String[] { "xmlns", "xlink", Node.NAMESPACE_XMLNS });
+    }
 
     static void adjustForeignAttributes(Attributes attrs) {
-        for (String[] adj : FOREIGN_ATTRIBUTES_TO_ADJUST) {
-            if (attrs.containsKey(adj[0])) {
-                AttributeNode attr = attrs.get(adj[0]);
-                attr.prefix = adj[1];
-                attr.name = adj[2];
-                attr.namespace = adj[3];
+
+        if (attrs.isEmpty()) {
+            return;
+        }
+
+        for (String lowerCaseAttr: new ArrayList<>(attrs.keySet())) {
+            if (FOREIGN_ATTRIBUTES_TO_ADJUST.containsKey(lowerCaseAttr)) {
+                String[] adj = FOREIGN_ATTRIBUTES_TO_ADJUST.get(lowerCaseAttr);
+                AttributeNode attr = attrs.get(lowerCaseAttr);
+                attr.prefix = adj[0];
+                attr.name = adj[1];
+                attr.namespace = adj[2];
                 attrs.put(attr);
-                attrs.remove(adj[0]);
+                attrs.remove(lowerCaseAttr);
             }
         }
     }
+
 
     // ----------------
 
@@ -263,10 +275,6 @@ class Common {
         return tokenType == TreeConstructor.END_TAG && named.equals(tagName);
     }
 
-    private static final String[] SPECIAL_ELEMENTS_MATHML = new String[] { "mi", "mo", "mn", "ms", "mtext", "annotation-xml" };
-
-    private static final String[] SPECIAL_ELEMENTS_SVG = new String[] { "foreignObject", "desc", "title" };
-
     private static final HashSet<String> SPECIAL_ELEMENTS_HTML_SET_V2 = new HashSet<>();
 
     static {
@@ -275,8 +283,6 @@ class Common {
                 "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "iframe", "img", "input", "li", "link", "listing", "main", "marquee", "menu",
                 "meta", "nav", "noembed", "noframes", "noscript", "object", "ol", "p", "param", "plaintext", "pre", "script", "section", "select", "source", "style", "summary",
                 "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "title", "tr", "track", "ul", "wbr", "xmp");
-        Arrays.sort(SPECIAL_ELEMENTS_MATHML);
-        Arrays.sort(SPECIAL_ELEMENTS_SVG);
     }
 
     static boolean isSpecialCategory(Element element) {
@@ -285,9 +291,9 @@ class Common {
         if (Node.NAMESPACE_HTML.equals(nodeNameSpaceUri)) {
             return SPECIAL_ELEMENTS_HTML_SET_V2.contains(nodeName);
         } else if (Node.NAMESPACE_MATHML.equals(nodeNameSpaceUri)) {
-            return Arrays.binarySearch(SPECIAL_ELEMENTS_MATHML, nodeName) >= 0;
+            return isSpecialElementsMathML(nodeName);
         } else if (Node.NAMESPACE_SVG.equals(nodeNameSpaceUri)) {
-            return Arrays.binarySearch(SPECIAL_ELEMENTS_SVG, nodeName) >= 0;
+            return isSpecialElementsSVG(nodeName);
         } else {
             return false;
         }
@@ -301,21 +307,19 @@ class Common {
     	String tagName = element.nodeName;
     	String namespace = element.namespaceURI; 
         if (Node.NAMESPACE_HTML.equals(namespace)) {
-            switch (tagName.length()) {
-            case 2:
-                return "td".equals(tagName) || "th".equals(tagName);
-            case 4:
-                return "html".equals(tagName);
-            case 5:
-                return "table".equals(tagName);
-            case 6:
-                return "applet".equals(tagName) || "object".equals(tagName);
-            case 7:
-                return "caption".equals(tagName) || "marquee".equals(tagName);
-            case 8:
-                return "template".equals(tagName);
-            default:
-                return false;
+            switch (tagName) {
+                case "td":
+                case "th":
+                case "html":
+                case "table":
+                case "applet":
+                case "object":
+                case "caption":
+                case "marquee":
+                case "template":
+                    return true;
+                default:
+                    return false;
             }
         } else if (Node.NAMESPACE_MATHML.equals(namespace)) {
             return isInCommonInScopeMathMl(tagName);
@@ -323,6 +327,11 @@ class Common {
             return isInCommonInScopeSVG(tagName);
         }
         return false;
+    }
+
+    // "foreignObject", "desc", "title"
+    private static boolean isSpecialElementsSVG(String tagName) {
+        return isInCommonInScopeSVG(tagName);
     }
 
     private static boolean isInCommonInScopeSVG(String tagName) {
@@ -334,6 +343,11 @@ class Common {
         default:
             return false;
         }
+    }
+
+    // "mi", "mo", "mn", "ms", "mtext", "annotation-xml"
+    private static boolean isSpecialElementsMathML(String tagName) {
+        return isInCommonInScopeMathMl(tagName);
     }
 
     private static boolean isInCommonInScopeMathMl(String tagName) {
@@ -374,12 +388,46 @@ class Common {
     }
 
     // SERIALIZATION
-    static final String[] NO_END_TAG = new String[] { "area", "base", "basefont", "bgsound", "br", "col", "embed", "frame", "hr", "img", "input", "keygen", "link",
-            "meta", "param", "source", "track", "wbr" };
-    static final String[] TEXT_NODE_PARENT = new String[] { "style", "script", "xmp", "iframe", "noembed", "noframes", "plaintext" };
-    static {
-        Arrays.sort(NO_END_TAG);
-        Arrays.sort(TEXT_NODE_PARENT);
+
+    static boolean isNoEndTag(String nodeName) {
+        switch (nodeName) {
+            case "area":
+            case "base":
+            case "basefont":
+            case "bgsound":
+            case "br":
+            case "col":
+            case "embed":
+            case "frame":
+            case "hr":
+            case "img":
+            case "input":
+            case "keygen":
+            case "link":
+            case "meta":
+            case "param":
+            case "source":
+            case "track":
+            case "wbr":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    static boolean isTextNodeParent(String nodeName) {
+        switch (nodeName) {
+            case "style":
+            case "script":
+            case "xmp":
+            case "iframe":
+            case "noembed":
+            case "noframes":
+            case "plaintext":
+                return true;
+            default:
+                return false;
+        }
     }
     //
 
@@ -506,21 +554,40 @@ class Common {
         }
     }
 
-    static final String[] IMPLIED_TAGS_THOROUGHLY = new String[] { "caption", "colgroup",//
-            "dd", "dt", "li", "optgroup", "option", "p", "rb", "rp", "rt", "rtc", "tbody", "td",//
-            "tfoot", "th", "thead", "tr", };
-
-    static {
-        Arrays.sort(IMPLIED_TAGS_THOROUGHLY);
+    static boolean isImpliedTagsThoroughly(String nodeName) {
+        switch (nodeName) {
+            case "caption":
+            case "colgroup":
+            case "dd":
+            case "dt":
+            case "li":
+            case "optgroup":
+            case "option":
+            case "p":
+            case "rb":
+            case "rp":
+            case "rt":
+            case "rtc":
+            case "tbody":
+            case "td":
+            case "tfoot":
+            case "th":
+            case "thead":
+            case "tr":
+                return true;
+            default:
+                return false;
+        }
     }
 
-    static String join(Collection<String> list) {
+    static String join(Iterator<String> l) {
         StringBuilder sb = new StringBuilder();
-        for (String s : list) {
-            sb.append(s).append(' ');
-        }
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
+        while (l.hasNext()) {
+            sb.append(l.next());
+            if (l.hasNext()) {
+                sb.append(' ');
+            }
+
         }
         return sb.toString();
     }

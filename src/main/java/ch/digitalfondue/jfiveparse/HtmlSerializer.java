@@ -98,7 +98,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     protected static boolean skipEndTag(Element e) {
-        return Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && Arrays.binarySearch(Common.NO_END_TAG, e.getNodeName()) >= 0;
+        return Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && Common.isNoEndTag(e.getNodeName());
     }
 
     @Override
@@ -139,7 +139,7 @@ public class HtmlSerializer implements NodesVisitor {
                 if (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
                     Element p = (Element) parent;
                     literalAppend = Node.NAMESPACE_HTML.equals(p.getNamespaceURI())
-                            && (Arrays.binarySearch(Common.TEXT_NODE_PARENT, p.getNodeName()) >= 0 || ("noscript".equals(p.getNodeName()) && !scriptingDisabled));
+                            && (Common.isTextNodeParent(p.getNodeName()) || ("noscript".equals(p.getNodeName()) && !scriptingDisabled));
                 }
                 Text t = (Text) node;
                 appendable.append(literalAppend ? t.getData() : escapeTextData(t.getData()));

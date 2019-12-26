@@ -268,7 +268,7 @@ public class Element extends Node {
      * Get a space separated list of class names.
      */
     public String getClassName() {
-        return Common.join(getClassList());
+        return Common.join(getClassList().listIterator());
     }
 
     /**
