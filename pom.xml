@@ -13,6 +13,8 @@
     <packaging>jar</packaging>
     <inceptionYear>2015</inceptionYear>
 
+    <description>jfiveparse is a 0 dependencies compact html 5 parser. It pass all the non scripted tests for the tokenizer and tree construction from the html5lib-tests suite.</description>
+
     <name>jfiveparse</name>
     <url>https://github.com/digitalfondue/jfiveparse</url>
 

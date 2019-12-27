@@ -60,9 +60,9 @@ class Common {
         return isLowerCaseASCIILetter(chr) || isUpperCaseASCIILetter(chr) || isASCIIDigit(chr);
     }
 
-    private static final char[] SYSTEM = "system".toCharArray();
-    private static final char[] PUBLIC = "public".toCharArray();
-    private static final char[] DOCTYPE = "doctype".toCharArray();
+    private static final char[] SYSTEM = new char[] {'s', 'y', 's', 't', 'e', 'm'}; //system
+    private static final char[] PUBLIC = new char[] {'p', 'u', 'b', 'l', 'i', 'c'}; //public
+    private static final char[] DOCTYPE = new char[] {'d', 'o', 'c', 't', 'y', 'p', 'e'}; //doctype
 
     static boolean matchCharCaseInsensitiveSystem(int[] chars) {
         return matchCharsCaseInsensitive(SYSTEM, chars);
