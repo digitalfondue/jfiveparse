@@ -189,7 +189,7 @@ class TreeConstructor {
     private void insertionModeInHtmlContentAll() {
         switch (insertionMode) {
         case TreeConstructionInsertionMode.INITIAL:
-            TreeConstructorAftersBeforeInitialInHead.initial(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.initial(tokenType, this);
             break;
         case TreeConstructionInsertionMode.BEFORE_HTML:
             TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, this);
@@ -337,10 +337,10 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInListScope(String tagName) {
+    boolean hasLiElementInListScope() {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, "li")) {
                 return true;
             } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, "ol") || Common.isHtmlNS(node, "ul")) {
                 return false;
@@ -586,13 +586,6 @@ class TreeConstructor {
         // TODO: check if useful
     }
 
-    //
-    void insertCharacters(char[] chars, int pos) {
-        for (int i = 0; i < pos; i++) {
-            insertCharacter(chars[i]);
-        }
-    }
-
     void insertCharacter() {
         insertCharacter(chr);
     }
@@ -772,11 +765,11 @@ class TreeConstructor {
         return openElements.remove(openElements.size() - 1);
     }
 
-    Element popOpenElementsUntilWithHtmlNS(String name) {
+    void popOpenElementsUntilWithHtmlNS(String name) {
         while (true) {
             Element e = popCurrentNode();
             if (Common.isHtmlNS(e, name)) {
-                return e;
+                return;
             }
         }
     }

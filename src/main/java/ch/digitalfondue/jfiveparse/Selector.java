@@ -120,7 +120,7 @@ import java.util.List;
  */
 public class Selector {
 
-    private List<NodeMatcher> matchers = new ArrayList<>();
+    private final List<NodeMatcher> matchers = new ArrayList<>();
 
     /**
      * Static factory method. Build a selector builder.

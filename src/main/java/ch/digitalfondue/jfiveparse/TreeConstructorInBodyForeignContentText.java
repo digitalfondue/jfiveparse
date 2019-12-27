@@ -796,7 +796,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void endLi(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInListScope("li")) {
+        if (!treeConstructor.hasLiElementInListScope()) {
             treeConstructor.emitParseError();
             // ignore
         } else {

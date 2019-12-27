@@ -90,8 +90,9 @@ class Tokenizer {
     }
 
     void emitTemporaryBufferAsCharacters() {
-        for (int i = 0; i < temporaryBuffer.pos; i++) {
-            tokenHandler.emitCharacter(temporaryBuffer.buff[i]);
+        int pos = temporaryBuffer.pos();
+        for (int i = 0; i < pos; i++) {
+            tokenHandler.emitCharacter(temporaryBuffer.at(i));
         }
     }
 

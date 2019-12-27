@@ -24,8 +24,6 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRCDataParsing;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRawTextElementParsing;
 
-import java.util.Arrays;
-
 class TreeConstructorAftersBeforeInitialInHead {
 
     static void afterHead(byte tokenType, String tagName, TreeConstructor treeConstructor) {
@@ -283,7 +281,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     }
 
     // ----------- initial
-    static void initial(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void initial(byte tokenType, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
         case CHARACTER:
@@ -296,11 +294,11 @@ class TreeConstructorAftersBeforeInitialInHead {
             handleDoctype(treeConstructor);
             break;
         case EOF:
-            initialOthers(treeConstructor);
-            break;
+            /*initialOthers(treeConstructor);
+            break;*/
         case END_TAG:
-            initialOthers(treeConstructor);
-            break;
+            /*initialOthers(treeConstructor);
+            break;*/
         case START_TAG:
             initialOthers(treeConstructor);
             break;

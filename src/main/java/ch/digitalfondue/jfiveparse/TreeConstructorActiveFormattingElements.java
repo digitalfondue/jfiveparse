@@ -223,9 +223,9 @@ class TreeConstructorActiveFormattingElements {
         return activeFormattingElements.lastIndexOf(e);
     }
 
-    void set(int idx, Element element) {
+    /*void set(int idx, Element element) {
         activeFormattingElements.set(idx, element);
-    }
+    }*/
 
     boolean contains(Element e) {
         return activeFormattingElements.lastIndexOf(e) != -1;

@@ -55,7 +55,7 @@ public class W3CDom {
 
     public static class W3CDNodeVisitor implements NodesVisitor {
 
-        protected Document document;
+        protected final Document document;
         protected org.w3c.dom.Node currentNode;
 
         public W3CDNodeVisitor(Document document) {
@@ -79,8 +79,8 @@ public class W3CDom {
                 case Node.COMMENT_NODE:
                     currentNode.appendChild(document.createComment(((Comment) node).getData()));
                     break;
-                case Node.DOCUMENT_TYPE_NODE:
-                    break;
+                /*case Node.DOCUMENT_TYPE_NODE:
+                    break;*/
                 default:
                     break;
             }

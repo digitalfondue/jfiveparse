@@ -159,8 +159,8 @@ public class TokenizerTest {
             if (t != null && lastRes != null && t instanceof Token.CharacterToken && lastRes instanceof Token.CharacterToken) {
                 Token.CharacterToken lastResChar = (Token.CharacterToken) lastRes;
                 Token.CharacterToken currentChar = (Token.CharacterToken) t;
-                for (int i = 0; i < currentChar.chr.pos; i++) {
-                    lastResChar.chr.append(currentChar.chr.buff[i]);
+                for (int i = 0; i < currentChar.chr.pos(); i++) {
+                    lastResChar.chr.append(currentChar.chr.at(i));
                 }
             } else {
                 res.add(t);

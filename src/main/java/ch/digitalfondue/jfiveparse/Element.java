@@ -22,9 +22,9 @@ import java.util.*;
  */
 public class Element extends Node {
 
-    String nodeName;
-    String originalNodeName;
-    String namespaceURI;
+    final String nodeName;
+    final String originalNodeName;
+    final String namespaceURI;
     Attributes attributes;
 
     private List<Node> childNodes = null;

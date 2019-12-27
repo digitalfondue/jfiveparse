@@ -21,7 +21,7 @@ class NodeMatchers<T extends Node> implements NodesVisitor {
 
     private final NodeMatcher matcher;
     private final List<T> toAdd;
-    private boolean completeOnFirstMatch;
+    private final boolean completeOnFirstMatch;
 
     NodeMatchers(NodeMatcher matcher, List<T> toAdd, boolean completeOnFirstMatch) {
         this.matcher = matcher;
@@ -140,11 +140,11 @@ class NodeMatchers<T extends Node> implements NodesVisitor {
                 case ATTRIBUTE_MATCH_VALUE_IN_LIST:
                     return new DOMTokenList(elem, name).contains(value);
                 case ATTRIBUTE_MATCH_VALUE_START_WITH:
-                    return attrValue != null && attrValue.startsWith(value);
+                    return attrValue != null && value != null && attrValue.startsWith(value);
                 case ATTRIBUTE_MATCH_VALUE_END_WITH:
-                    return attrValue != null && attrValue.endsWith(value);
+                    return attrValue != null && value != null && attrValue.endsWith(value);
                 case ATTRIBUTE_MATCH_VALUE_CONTAINS:
-                    return attrValue != null && attrValue.contains(value);
+                    return attrValue != null && value != null && attrValue.contains(value);
                 default:
                     return false;
                 }

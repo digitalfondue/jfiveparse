@@ -22,20 +22,27 @@ import java.util.Arrays;
  */
 class ResizableCharBuilder {
 
-    char[] buff = new char[16];
-    int pos = 0;
+    private char[] buff;
+    private int pos = 0;
 
     /* this field is accurate only after calling toLowerCase */
     boolean containsUpperCase;
 
     ResizableCharBuilder() {
+        buff = new char[16];
     }
 
     ResizableCharBuilder(String s) {
-        //TODO: clean up, not optimized at all
-        for (char c : s.toCharArray()) {
-            append(c);
-        }
+        buff = s.toCharArray();
+        pos = buff.length;
+    }
+
+    char at(int i) {
+        return buff[i];
+    }
+
+    int pos() {
+        return pos;
     }
 
     void append(char c) {

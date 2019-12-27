@@ -139,7 +139,7 @@ class TreeConstructorInTable {
     private static void cleanStackBackToTableContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            if (e.getNamespaceURI() == Node.NAMESPACE_HTML && //
+            if (Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && //
                     ("table".equals(e.getNodeName()) || "template".equals(e.getNodeName()) || "html".equals(e.getNodeName()))) {
                 break;
             }
@@ -199,7 +199,7 @@ class TreeConstructorInTable {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
             String nodeName = e.nodeName;
-            if (e.getNamespaceURI() == Node.NAMESPACE_HTML && //
+            if (Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && //
                     ("tbody".equals(nodeName) || //
                             "tfoot".equals(nodeName) || //
                             "thead".equals(nodeName) || //
@@ -241,8 +241,9 @@ class TreeConstructorInTable {
                 treeConstructor.enableFosterParenting();
                 //
                 treeConstructor.setTokenType(CHARACTER);
-                for (int i = 0; i < chars.pos; i++) {
-                    treeConstructor.setChr(chars.buff[i]);
+                int pos = chars.pos();
+                for (int i = 0; i < pos; i++) {
+                    treeConstructor.setChr(chars.at(i));
                     TreeConstructorInBodyForeignContentText.inBody(CHARACTER, tagName, treeConstructor);
                 }
 
@@ -253,7 +254,10 @@ class TreeConstructorInTable {
                 treeConstructor.setTokenType(currentTokenType);
                 treeConstructor.setChr((char) currentChar);
             } else {
-                treeConstructor.insertCharacters(chars.buff, chars.pos);
+                int pos = chars.pos();
+                for (int i = 0; i < pos; i++) {
+                    treeConstructor.insertCharacter(chars.at(i));
+                }
             }
 
             treeConstructor.switchToOriginalInsertionMode();
@@ -262,8 +266,9 @@ class TreeConstructorInTable {
     }
 
     private static boolean isAllSpaceCharacters(ResizableCharBuilder chars) {
-        for(int i = 0; i < chars.pos; i++) {
-            if (!Common.isTabLfFfCrOrSpace(chars.buff[i])) {
+        int pos = chars.pos();
+        for(int i = 0; i < pos; i++) {
+            if (!Common.isTabLfFfCrOrSpace(chars.at(i))) {
                 return false;
             }
         }
@@ -338,7 +343,7 @@ class TreeConstructorInTable {
     private static void clearStackBackToTableRowContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            if (e.getNamespaceURI() == Node.NAMESPACE_HTML && //
+            if (Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && //
                     ("tr".equals(e.nodeName) || "template".equals(e.nodeName) || "html".equals(e.nodeName))) {
                 break;
             }

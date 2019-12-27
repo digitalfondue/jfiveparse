@@ -20,9 +20,9 @@ package ch.digitalfondue.jfiveparse;
  */
 public class DocumentType extends Node {
 
-    private String name;
-    private String publicId;
-    private String systemId;
+    private final String name;
+    private final String publicId;
+    private final String systemId;
 
     public DocumentType(String name, String publicId, String systemId) {
         this.name = name;
