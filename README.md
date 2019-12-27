@@ -35,14 +35,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.6.2</version>
+    <version>0.7.0</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.6.2'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.7.0'
 ```
 
 ## Use:
