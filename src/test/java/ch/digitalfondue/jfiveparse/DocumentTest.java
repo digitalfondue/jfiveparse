@@ -18,6 +18,8 @@ package ch.digitalfondue.jfiveparse;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.StringReader;
+
 
 public class DocumentTest {
 
@@ -26,6 +28,9 @@ public class DocumentTest {
     public void checkDocumentRelatedMethods() {
         Document d1 = new Parser().parse("<!DOCTYPE html><div>Hello World</div>");
         Assert.assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", HtmlSerializer.serialize(d1));
+
+        Assert.assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", JFiveParse.serialize(JFiveParse.parse("<!DOCTYPE html><div>Hello World</div>")));
+        Assert.assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", JFiveParse.serialize(JFiveParse.parse(new StringReader("<!DOCTYPE html><div>Hello World</div>"))));
 
         Assert.assertEquals("html", d1.getDocumentElement().getNodeName());
         Assert.assertEquals("<head></head>", d1.getHead().getOuterHTML());
