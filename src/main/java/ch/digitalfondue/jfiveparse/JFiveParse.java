@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,20 +27,64 @@ import java.util.Set;
  */
 public class JFiveParse {
 
+    /**
+     * Parse a full html document with the default options.
+     *
+     * @param input
+     * @return a {@link Document}
+     */
     public static Document parse(String input) {
         return parse(input, EnumSet.noneOf(Option.class));
     }
 
+    /**
+     * Parse a full html document with the given options
+     *
+     * @param input
+     * @param options
+     * @return a {@link Document}
+     */
     public static Document parse(String input, Set<Option> options) {
         return new Parser(options).parse(input);
     }
 
+    /**
+     * Parse a full html document using a {@link Reader} as a input with the default options.
+     *
+     * @param input
+     * @return
+     */
     public static Document parse(Reader input) {
         return parse(input, EnumSet.noneOf(Option.class));
     }
 
     public static Document parse(Reader input, Set<Option> options) {
         return new Parser(options).parse(input);
+    }
+
+    /**
+     * Parse a html fragment, with a "div" element as a parent node.
+     *
+     * @param input
+     * @return
+     */
+    public static List<Node> parseFragment(String input) {
+        return parseFragment(input, EnumSet.noneOf(Option.class));
+    }
+
+    /**
+     * Parse a html fragment, with a "div" element as a parent node.
+     *
+     * @param input
+     * @param options
+     * @return
+     */
+    public static List<Node> parseFragment(String input, Set<Option> options) {
+        return parseFragment(new Element("div", Node.NAMESPACE_HTML), input, options);
+    }
+
+    public static List<Node> parseFragment(Element parent, String input, Set<Option> options) {
+        return new Parser(options).parseFragment(parent, input);
     }
 
     public static String serialize(Node node) {
