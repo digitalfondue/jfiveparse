@@ -72,6 +72,18 @@ public class JFiveParse {
         return parseFragment(input, EnumSet.noneOf(Option.class));
     }
 
+    public static List<Node> parseFragment(Reader input) {
+        return parseFragment(input, EnumSet.noneOf(Option.class));
+    }
+
+    public static List<Node> parseFragment(Reader input, Set<Option> options) {
+        return parseFragment(new Element("div", Node.NAMESPACE_HTML), input, options);
+    }
+
+    public static List<Node> parseFragment(Element parent, Reader input, Set<Option> options) {
+        return new Parser(options).parseFragment(parent, input);
+    }
+
     /**
      * Parse a html fragment, with a "div" element as a parent node.
      *

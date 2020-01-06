@@ -35,7 +35,7 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>0.7.0</version>
+    <version>0.7.1</version>
 </dependency>
 ```
 
@@ -48,27 +48,31 @@ compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.7.0'
 ## Use:
 
 ```java
-import ch.digitalfondue.jfiveparse.*;
+import ch.digitalfondue.jfiveparse.Document;
+import ch.digitalfondue.jfiveparse.JFiveParse;
+import ch.digitalfondue.jfiveparse.Node;
 
-public class MyTest {
+import java.io.StringReader;
+import java.util.List;
+
+public class Example {
 
     public static void main(String[] args) {
         // directly from String
-        Parser p = new Parser();
-        Document doc = p.parse("<html><body>Hello world!</body></html>");
-        System.out.println(HtmlSerializer.serialize(doc));
+        Document doc = JFiveParse.parse("<html><body>Hello world!</body></html>");
+        System.out.println(JFiveParse.serialize(doc));
 
         // from reader
-        Document doc2 = p.parse(new StringReader("<html><body>Hello world!</body></html>"));
-        System.out.println(HtmlSerializer.serialize(doc2));
+        Document doc2 = JFiveParse.parse(new StringReader("<html><body>Hello world!</body></html>"));
+        System.out.println(JFiveParse.serialize(doc2));
 
         // parse fragment
-        List<Node> fragment = p.parseFragment(new Element("div"), "<p><span>Hello world</span></p>");
-        System.out.println(HtmlSerializer.serialize(fragment.get(0)));
+        List<Node> fragment = JFiveParse.parseFragment("<p><span>Hello world</span></p>");
+        System.out.println(JFiveParse.serialize(fragment.get(0)));
 
         // parse fragment from reader
-        List<Node> fragment2 = p.parseFragment(new Element("div"), new StringReader("<p><span>Hello world</span></p>"));
-        System.out.println(HtmlSerializer.serialize(fragment2.get(0)));
+        List<Node> fragment2 = JFiveParse.parseFragment(new StringReader("<p><span>Hello world</span></p>"));
+        System.out.println(JFiveParse.serialize(fragment2.get(0)));
     }
 }
 ```
@@ -84,12 +88,14 @@ It will print:
 
 ## Examples:
 
+See directory: https://github.com/digitalfondue/jfiveparse/tree/master/src/test/java/ch/digitalfondue/jfiveparse/example
+
 ### Fetch all titles+links on the front page of HN
 
 ```java
 import ch.digitalfondue.jfiveparse.Element;
+import ch.digitalfondue.jfiveparse.JFiveParse;
 import ch.digitalfondue.jfiveparse.NodeMatcher;
-import ch.digitalfondue.jfiveparse.Parser;
 import ch.digitalfondue.jfiveparse.Selector;
 
 import java.io.IOException;
@@ -101,14 +107,13 @@ import java.nio.charset.StandardCharsets;
 public class LoadHNTitle {
 
     public static void main(String[] args) throws IOException {
-        Parser p = new Parser();
-        Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8);
-        // select td.title > a
-        NodeMatcher matcher = Selector.select().element("td").hasClass("title").withChild().element("a").toMatcher();
-        p.parse(reader).getAllNodesMatching(matcher).stream()
-                .map(Element.class::cast)
-                .filter(a -> !"nofollow".equals(a.getAttribute("rel"))) //remove some extraneous a elements
-                .forEach(a -> System.out.println(a.getTextContent() + " [" + a.getAttribute("href") + "]"));
+        try (Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8)) {
+            // select td.title > a.storylink
+            NodeMatcher matcher = Selector.select().element("td").hasClass("title").withChild().element("a").hasClass("storylink").toMatcher();
+            JFiveParse.parse(reader).getAllNodesMatching(matcher).stream()
+                    .map(Element.class::cast)
+                    .forEach(a -> System.out.println(a.getTextContent() + " [" + a.getAttribute("href") + "]"));
+        }
     }
 }
 ```
