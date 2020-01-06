@@ -18,7 +18,7 @@ Requires java 8.
 
 As far as I know, there is no pure java html5 parser that currently pass the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests) (well, the more relevant tests :D).
 
-Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~140kb. The target is to keep it under 200kb.
+Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~150kb. The target is to keep it under 200kb.
 
 Performance should be competitive with other java parsers.
 
