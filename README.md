@@ -42,7 +42,7 @@ maven:
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.7.0'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:0.7.1'
 ```
 
 ## Use:
