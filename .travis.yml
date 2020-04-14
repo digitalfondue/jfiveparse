@@ -4,5 +4,7 @@ jdk:
   - openjdk8
   - openjdk11
   - openjdk12
+  - openjdk13
+  - openjdk14
 after_success:
   - mvn jacoco:report coveralls:report
