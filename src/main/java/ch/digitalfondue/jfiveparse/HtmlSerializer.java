@@ -187,7 +187,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     public static void serialize(Node node, Set<Option> options, Writer writer) throws IOException {
-        node.traverse(new HtmlSerializer(writer, options));
+        node.traverseWithCurrentNode(new HtmlSerializer(writer, options));
         writer.flush();
     }
 
@@ -197,7 +197,7 @@ public class HtmlSerializer implements NodesVisitor {
 
     public static String serialize(Node node, Set<Option> options) {
         StringBuilder sb = new StringBuilder();
-        node.traverse(new HtmlSerializer(sb, options));
+        node.traverseWithCurrentNode(new HtmlSerializer(sb, options));
         return sb.toString();
     }
 

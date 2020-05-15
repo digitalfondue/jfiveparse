@@ -15,14 +15,12 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -75,5 +73,25 @@ public class HtmlSerializationTest {
         Writer osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
         HtmlSerializer.serialize(d, osw);
         Assert.assertEquals("<html><head></head><body><div></div><span></span></body></html>", new String(baos.toByteArray(), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void testSimpleApi() {
+        Document doc = JFiveParse.parse("<html><body>Hello world!</body></html>");
+        Assert.assertEquals("<html><head></head><body>Hello world!</body></html>", JFiveParse.serialize(doc));
+
+
+        // from reader
+        Document doc2 = JFiveParse.parse(new StringReader("<html><body>Hello world!</body></html>"));
+        Assert.assertEquals("<html><head></head><body>Hello world!</body></html>", JFiveParse.serialize(doc2));
+
+
+        // parse fragment
+        List<Node> fragment = JFiveParse.parseFragment("<p><span>Hello world</span></p>");
+        Assert.assertEquals("<p><span>Hello world</span></p>", JFiveParse.serialize(fragment.get(0)));
+
+        // parse fragment from reader
+        List<Node> fragment2 = JFiveParse.parseFragment(new StringReader("<p><span>Hello world</span></p>"));
+        Assert.assertEquals("<p><span>Hello world</span></p>", JFiveParse.serialize(fragment2.get(0)));
     }
 }
