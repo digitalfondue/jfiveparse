@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 class TreeConstructor {
-
     // optimization: when adding a new character, the char builder where the
     // character has been appended is saved in this property: it can then be
     // used in the tokenizer for appending directly, bypassing the dispatch
@@ -50,6 +49,8 @@ class TreeConstructor {
     private final ArrayList<Integer> stackTemplatesInsertionMode = new ArrayList<>();
 
     private final Document document = new Document();
+
+    final boolean disableIgnoreTokenInBodyStartTag;
 
     // ----
     private byte tokenType;
@@ -101,6 +102,10 @@ class TreeConstructor {
 
     void setTokenizer(Tokenizer tokenizer) {
         this.tokenizer = tokenizer;
+    }
+
+    TreeConstructor(boolean disableIgnoreTokenInBodyStartTag) {
+        this.disableIgnoreTokenInBodyStartTag = disableIgnoreTokenInBodyStartTag;
     }
 
     private void setTagNameAndSaveOriginal(ResizableCharBuilder rawTagName) {

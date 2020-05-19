@@ -224,7 +224,11 @@ class TreeConstructorInBodyForeignContentText {
         case "thead":
         case "tr":
             // ignore token
-            treeConstructor.emitParseError();
+            if (treeConstructor.disableIgnoreTokenInBodyStartTag) {
+                inBodyStartTagAnythingElse(treeConstructor);
+            } else {
+                treeConstructor.emitParseError();
+            }
             break;
         default:
             inBodyStartTagAnythingElse(treeConstructor);

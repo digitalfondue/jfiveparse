@@ -27,6 +27,7 @@ public class Parser {
 
     private final boolean scriptingFlag;
     private final boolean transformEntities;
+    private final boolean disableIgnoreTokenInBodyStartTag;
 
     /**
      * Instantiate a parser with the default configuration.
@@ -38,6 +39,7 @@ public class Parser {
     public Parser() {
         scriptingFlag = true;
         transformEntities = true;
+        disableIgnoreTokenInBodyStartTag = false;
     }
 
     /**
@@ -53,6 +55,7 @@ public class Parser {
     public Parser(Set<Option> options) {
         this.scriptingFlag = !options.contains(Option.SCRIPTING_DISABLED);
         this.transformEntities = !options.contains(Option.DONT_TRANSFORM_ENTITIES);
+        this.disableIgnoreTokenInBodyStartTag = options.contains(Option.DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG);
     }
 
     /**
@@ -107,7 +110,7 @@ public class Parser {
 
         // 1 when creating a tree constructor, a document is automatically
         // created (good idea? y/n?)
-        TreeConstructor tokenHandler = new TreeConstructor();
+        TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag);
         //
         tokenHandler.setHtmlFragmentParsing(true);
         tokenHandler.setScriptingFlag(scriptingFlag);
@@ -179,7 +182,7 @@ public class Parser {
     }
 
     private Document parse(ProcessedInputStream is) {
-        TreeConstructor tokenHandler = new TreeConstructor();
+        TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag);
         tokenHandler.setScriptingFlag(scriptingFlag);
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);

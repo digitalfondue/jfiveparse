@@ -77,5 +77,15 @@ public enum Option {
      * </p>
      * /!\ this will break the conformance of the serialization
      */
-    PRINT_ORIGINAL_ATTRIBUTE_QUOTE
+    PRINT_ORIGINAL_ATTRIBUTE_QUOTE,
+
+    /**
+     * <p>
+     * Don't ignore start tag: "caption", "col", "colgroup", "frame", "head", "tbody", "td", "tfoot", "th", "thead", "tr"
+     * when the parser is in the 'IN BODY' insertion mode.
+     *
+     * This allow to have for example "tr" tag without the containing table/tbody.
+     * </p>
+     */
+    DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG;
 }

@@ -30,11 +30,6 @@ class ProcessedInputStreamWithParseError extends StringProcessedInputStream {
 
     private int previousCharacter = -1;
 
-    ProcessedInputStreamWithParseError(String input, TreeConstructor tokenHandler) {
-        super(input);
-        this.tokenHandler = tokenHandler;
-    }
-
     @Override
     void reconsume(int chr) {
         super.reconsume(chr);
