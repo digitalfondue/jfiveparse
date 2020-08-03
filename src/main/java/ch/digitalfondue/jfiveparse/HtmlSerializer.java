@@ -112,7 +112,7 @@ public class HtmlSerializer implements NodesVisitor {
                     appendable.append(' ').append(serializeAttributeName(attr));//
 
                     if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE))
-                            && (attr.getValue() == null || "".equals(attr.getValue()))) {
+                            && (attr.getValue() == null || attr.getValue().isEmpty())) {
                         continue;
                     }
                     appendable.append('=').append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
