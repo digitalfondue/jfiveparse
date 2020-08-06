@@ -67,6 +67,7 @@ public class W3CDomTest {
         Node p2 = p1.getNextSibling();
 
         Assert.assertEquals("p", p1.getNodeName());
+        Assert.assertEquals("http://www.w3.org/1999/xhtml", p1.getNamespaceURI());
         Assert.assertEquals("p", p2.getNodeName());
 
         Assert.assertEquals("span", p1.getFirstChild().getNodeName());
@@ -90,5 +91,22 @@ public class W3CDomTest {
         Assert.assertEquals("circle", svg.getFirstChild().getNodeName());
         Assert.assertEquals(6, svg.getFirstChild().getAttributes().getLength());
         Assert.assertEquals("http://www.w3.org/2000/svg", svg.getFirstChild().getNamespaceURI());
+    }
+
+    @Test
+    public void checkCustomNamespaces() {
+        String s = "<html xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:x=\"urn:schemas-microsoft-com:office:excel\" xmlns=\"http://www.w3.org/TR/REC-html40\">"+
+                "<body><p>hello world</p><o:bla o:foo=test f=test>plop</o:bla></body></html>";
+
+        Parser parser = new Parser();
+
+        Document document = W3CDom.toW3CDocument(parser.parse(s));
+        Node p = document.getElementsByTagName("p").item(0);
+        Assert.assertEquals("p", p.getNodeName());
+        Node oBla = p.getNextSibling();
+        Assert.assertEquals("bla", oBla.getNodeName());
+        Assert.assertEquals("urn:schemas-microsoft-com:office:office", oBla.getNamespaceURI());
+        Assert.assertEquals("urn:schemas-microsoft-com:office:office", oBla.getAttributes().getNamedItem("foo").getNamespaceURI());
+        Assert.assertEquals(null, oBla.getAttributes().getNamedItem("f").getNamespaceURI());
     }
 }

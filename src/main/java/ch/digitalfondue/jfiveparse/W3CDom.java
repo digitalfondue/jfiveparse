@@ -21,6 +21,7 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.util.*;
 
 public class W3CDom {
 
@@ -55,12 +56,23 @@ public class W3CDom {
 
     public static class W3CDNodeVisitor implements NodesVisitor {
 
+        private static final Set<String> INTERNAL_NAMESPACES = new HashSet<>(
+                Arrays.asList(Node.NAMESPACE_HTML,
+                        Node.NAMESPACE_SVG,
+                        Node.NAMESPACE_MATHML,
+                        Node.NAMESPACE_XLINK,
+                        Node.NAMESPACE_XMLNS,
+                        Node.NAMESPACE_XML
+                        ));
+
         protected final Document document;
         protected org.w3c.dom.Node currentNode;
+        protected Deque<Map<String, String>> xmlNamespaces = new ArrayDeque<>();
 
         public W3CDNodeVisitor(Document document) {
             this.document = document;
             this.currentNode = document;
+            this.xmlNamespaces.push(new HashMap<>());
         }
 
         @Override
@@ -69,6 +81,7 @@ public class W3CDom {
             switch (node.getNodeType()) {
                 case Node.ELEMENT_NODE:
                     Element elem = (Element) node;
+                    this.xmlNamespaces.push(new HashMap<>(this.xmlNamespaces.peek()));
                     org.w3c.dom.Element e = toElement(elem);
                     currentNode.appendChild(e);
                     currentNode = e;
@@ -86,14 +99,53 @@ public class W3CDom {
             }
         }
 
+        private static String extractXmlnsPrefix(String xmlns) {
+            int idx = xmlns.indexOf(':');
+            return idx == -1 ? "" : xmlns.substring(idx + 1);
+        }
+
+        private static String extractXmlnsPrefixFromAttrOrElem(String elemOrAttr) {
+            int idx = elemOrAttr.indexOf(':');
+            return idx == -1 ? "" : elemOrAttr.substring(0, idx);
+        }
+
+        private static String extractElementOrAttributeName(String elemOrAttr) {
+            int idx = elemOrAttr.indexOf(':');
+            return idx == -1 ? elemOrAttr : elemOrAttr.substring(idx + 1);
+        }
+
+        protected org.w3c.dom.Element buildNamespacedElement(Element element) {
+            String elemPrefix = extractXmlnsPrefixFromAttrOrElem(element.getNodeName());
+            String elemName = extractElementOrAttributeName(element.getNodeName());
+            String ns = element.getNamespaceURI();
+            if (!elemPrefix.isEmpty() && xmlNamespaces.peek().containsKey(elemPrefix)) {
+                ns = xmlNamespaces.peek().get(elemPrefix);
+            }
+
+            return document.createElementNS(ns, elemName);
+        }
+
         protected org.w3c.dom.Element toElement(Element elem) {
-            org.w3c.dom.Element e = document.createElementNS(elem.getNamespaceURI(), elem.getNodeName());
             for (String attrName : elem.getAttributes().keySet()) {
                 AttributeNode attr = elem.getAttributeNode(attrName);
-                Attr copiedAttr = document.createAttributeNS(attr.getNamespace(), attr.getName());
-                copiedAttr.setValue(attr.getValue());
-                copiedAttr.setPrefix(attr.getPrefix());
-                e.setAttributeNodeNS(copiedAttr);
+                if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
+                    xmlNamespaces.peek().put(extractXmlnsPrefix(attr.getName()), attr.getValue());
+                }
+            }
+
+            org.w3c.dom.Element e = buildNamespacedElement(elem);
+
+            for (String attrName : elem.getAttributes().keySet()) {
+                AttributeNode attr = elem.getAttributeNode(attrName);
+                if (!("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:"))) {
+                    String prefix = extractXmlnsPrefixFromAttrOrElem(attr.getName());
+                    String name = extractElementOrAttributeName(attr.getName());
+                    String attrNs = prefix.isEmpty() ? attr.getNamespace() : xmlNamespaces.peek().getOrDefault(prefix, attr.getNamespace());
+                    Attr copiedAttr = document.createAttributeNS(attrNs, name);
+                    copiedAttr.setValue(attr.getValue());
+                    copiedAttr.setPrefix(attr.getPrefix());
+                    e.setAttributeNodeNS(copiedAttr);
+                }
             }
             return e;
         }
@@ -101,6 +153,7 @@ public class W3CDom {
         @Override
         public void end(Node node) {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
+                this.xmlNamespaces.pop();
                 currentNode = currentNode.getParentNode();
             }
         }
