@@ -15,7 +15,6 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -109,20 +108,13 @@ public class W3CDom {
             return idx == -1 ? "" : elemOrAttr.substring(0, idx);
         }
 
-        private static String extractElementOrAttributeName(String elemOrAttr) {
-            int idx = elemOrAttr.indexOf(':');
-            return idx == -1 ? elemOrAttr : elemOrAttr.substring(idx + 1);
-        }
-
         protected org.w3c.dom.Element buildNamespacedElement(Element element) {
             String elemPrefix = extractXmlnsPrefixFromAttrOrElem(element.getNodeName());
-            String elemName = extractElementOrAttributeName(element.getNodeName());
             String ns = element.getNamespaceURI();
             if (!elemPrefix.isEmpty() && xmlNamespaces.peek().containsKey(elemPrefix)) {
                 ns = xmlNamespaces.peek().get(elemPrefix);
             }
-
-            return document.createElementNS(ns, elemName);
+            return document.createElementNS(ns, element.getNodeName());
         }
 
         protected org.w3c.dom.Element toElement(Element elem) {
@@ -137,14 +129,12 @@ public class W3CDom {
 
             for (String attrName : elem.getAttributes().keySet()) {
                 AttributeNode attr = elem.getAttributeNode(attrName);
-                if (!("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:"))) {
+                if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
+                    e.setAttributeNS("http://www.w3.org/2000/xmlns/", attr.getName(), attr.getValue());
+                } else {
                     String prefix = extractXmlnsPrefixFromAttrOrElem(attr.getName());
-                    String name = extractElementOrAttributeName(attr.getName());
                     String attrNs = prefix.isEmpty() ? attr.getNamespace() : xmlNamespaces.peek().getOrDefault(prefix, attr.getNamespace());
-                    Attr copiedAttr = document.createAttributeNS(attrNs, name);
-                    copiedAttr.setValue(attr.getValue());
-                    copiedAttr.setPrefix(attr.getPrefix());
-                    e.setAttributeNodeNS(copiedAttr);
+                    e.setAttributeNS(attrNs, attr.getName(), attr.getValue());
                 }
             }
             return e;
