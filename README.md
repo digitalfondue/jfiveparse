@@ -1,8 +1,8 @@
 # jfiveparse: a java html5 parser
 
 [![Maven Central](https://img.shields.io/maven-central/v/ch.digitalfondue.jfiveparse/jfiveparse.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jfiveparse%22)
-[![Build Status](https://travis-ci.org/digitalfondue/jfiveparse.png?branch=master)](https://travis-ci.org/digitalfondue/jfiveparse)
-[![Coverage Status](https://coveralls.io/repos/digitalfondue/jfiveparse/badge.svg?branch=master)](https://coveralls.io/r/digitalfondue/jfiveparse?branch=master)
+[![Build Status](https://img.shields.io/github/workflow/status/digitalfondue/jfiveparse/Java%20CI%20with%20Maven)](https://github.com/digitalfondue/jfiveparse/actions?query=workflow%3A%22Java+CI+with+Maven%22)
+
 
 
 jfiveparse pass all the non scripted tests for the tokenizer and tree construction from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
