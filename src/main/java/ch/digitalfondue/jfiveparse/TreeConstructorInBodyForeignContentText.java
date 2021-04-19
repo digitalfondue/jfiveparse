@@ -1015,19 +1015,15 @@ class TreeConstructorInBodyForeignContentText {
                         treeConstructor.hasAttribute("face") || //
                 /*    */treeConstructor.hasAttribute("size"))))) {
             treeConstructor.emitParseError();
-            if (treeConstructor.isHtmlFragmentParsing()) {
-                anyOtherStartTag(tagName, treeConstructor);
-            } else {
-                treeConstructor.popCurrentNode();
-                while (true) {
-                    Element cur = treeConstructor.getCurrentNode();
-                    if (Node.NAMESPACE_HTML.equals(cur.getNamespaceURI()) || isMathMLIntegrationPoint(cur) || isHtmlIntegrationPoint(cur)) {
-                        break;
-                    }
-                    treeConstructor.popCurrentNode();
+
+            while (true) {
+                Element cur = treeConstructor.getCurrentNode();
+                if (Node.NAMESPACE_HTML.equals(cur.getNamespaceURI()) || isMathMLIntegrationPoint(cur) || isHtmlIntegrationPoint(cur)) {
+                    break;
                 }
-                treeConstructor.dispatch();
+                treeConstructor.popCurrentNode();
             }
+            treeConstructor.insertionModeInHtmlContent();
         } else if (tokenType == START_TAG) {
             anyOtherStartTag(tagName, treeConstructor);
         } else if (tokenType == END_TAG && Common.is(treeConstructor.getCurrentNode(), "script", Node.NAMESPACE_SVG)) {
