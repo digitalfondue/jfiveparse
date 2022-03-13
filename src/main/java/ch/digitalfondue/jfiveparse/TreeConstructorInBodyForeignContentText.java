@@ -1015,7 +1015,8 @@ class TreeConstructorInBodyForeignContentText {
                 "var".equals(tagName)) || //
                 ("font".equals(tagName) && (treeConstructor.hasAttribute("color") || //
                         treeConstructor.hasAttribute("face") || //
-                /*    */treeConstructor.hasAttribute("size"))))) {
+                /*    */treeConstructor.hasAttribute("size")))) ||
+                (tokenType == END_TAG && ("br".equals(tagName) || "p".equals(tagName)))) {
             treeConstructor.emitParseError();
 
             while (true) {
