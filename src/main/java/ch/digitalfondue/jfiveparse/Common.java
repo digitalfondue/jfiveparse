@@ -526,6 +526,7 @@ class Common {
                 "param",//
                 "plaintext",//
                 "pre",//
+                "search",//
                 "script",//
                 "section",//
                 "select",//

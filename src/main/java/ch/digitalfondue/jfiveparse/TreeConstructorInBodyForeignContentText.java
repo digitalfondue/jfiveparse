@@ -92,6 +92,7 @@ class TreeConstructorInBodyForeignContentText {
         case "nav":
         case "ol":
         case "p":
+        case "search":
         case "section":
         case "summary":
         case "ul":
@@ -675,6 +676,7 @@ class TreeConstructorInBodyForeignContentText {
         case "nav":
         case "ol":
         case "pre":
+        case "search":
         case "section":
         case "summary":
         case "ul":
