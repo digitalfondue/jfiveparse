@@ -102,6 +102,11 @@ public class TreeConstructionTest {
         if(scriptOffEnd > -1) {
         	dataEnd = Math.min(dataEnd, scriptOffEnd);
         }
+
+        int documentFragmentEnd = test.indexOf("\n#document-fragment\n");
+        if (documentFragmentEnd > -1) {
+            dataEnd = Math.min(dataEnd, documentFragmentEnd);
+        }
         
         if (dataEnd == -1) {
             dataEnd = test.indexOf("#errors\n");
