@@ -9,7 +9,7 @@
 
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <inceptionYear>2015</inceptionYear>
 
@@ -29,7 +29,7 @@
         <connection>scm:git:git@github.com:digitalfondue/jfiveparse.git</connection>
         <developerConnection>scm:git:git@github.com:digitalfondue/jfiveparse.git</developerConnection>
         <url>https://github.com/digitalfondue/jfiveparse.git</url>
-        <tag>jfiveparse-1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
