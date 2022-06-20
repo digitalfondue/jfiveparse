@@ -135,8 +135,8 @@
                             <arguments>
                                 <argument>submodule</argument>
                                 <argument>update</argument>
-                                <argument>- -init</argument>
-                                <argument>- -recursive</argument>
+                                <argument>--init</argument>
+                                <argument>--recursive</argument>
                             </arguments>
                         </configuration>
                         <goals>
