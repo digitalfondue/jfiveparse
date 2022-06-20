@@ -87,5 +87,5 @@ public enum Option {
      * This allow to have for example "tr" tag without the containing table/tbody.
      * </p>
      */
-    DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG;
+    DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG
 }

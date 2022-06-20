@@ -55,18 +55,9 @@ public class W3CDom {
 
     public static class W3CDNodeVisitor implements NodesVisitor {
 
-        private static final Set<String> INTERNAL_NAMESPACES = new HashSet<>(
-                Arrays.asList(Node.NAMESPACE_HTML,
-                        Node.NAMESPACE_SVG,
-                        Node.NAMESPACE_MATHML,
-                        Node.NAMESPACE_XLINK,
-                        Node.NAMESPACE_XMLNS,
-                        Node.NAMESPACE_XML
-                        ));
-
         protected final Document document;
         protected org.w3c.dom.Node currentNode;
-        protected Deque<Map<String, String>> xmlNamespaces = new ArrayDeque<>();
+        protected final Deque<Map<String, String>> xmlNamespaces = new ArrayDeque<>();
 
         public W3CDNodeVisitor(Document document) {
             this.document = document;

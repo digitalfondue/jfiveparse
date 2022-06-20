@@ -10,7 +10,7 @@ jfiveparse pass all the non scripted tests for the tokenizer and tree constructi
 It provide both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
 
-Requires java 8.
+Requires java 11.
 
 [Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
