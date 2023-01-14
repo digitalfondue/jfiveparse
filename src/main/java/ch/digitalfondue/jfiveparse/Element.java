@@ -203,7 +203,7 @@ public class Element extends Node {
         setInnerHtml(new Parser().parseFragment(this, html));
     }
 
-    Attributes getAttributes() {
+    public Attributes getAttributes() {
         ensureAttributesPresence();
         return attributes;
     }

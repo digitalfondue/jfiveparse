@@ -1,7 +1,7 @@
 # jfiveparse: a java html5 parser
 
 [![Maven Central](https://img.shields.io/maven-central/v/ch.digitalfondue.jfiveparse/jfiveparse.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jfiveparse%22)
-[![Build Status](https://img.shields.io/github/workflow/status/digitalfondue/jfiveparse/Java%20CI%20with%20Maven)](https://github.com/digitalfondue/jfiveparse/actions?query=workflow%3A%22Java+CI+with+Maven%22)
+[![Build Status](https://img.shields.io/github/workflow/status/digitalfondue/jfiveparse/.github/workflows/maven.yml)](https://github.com/digitalfondue/jfiveparse/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 
 
 
