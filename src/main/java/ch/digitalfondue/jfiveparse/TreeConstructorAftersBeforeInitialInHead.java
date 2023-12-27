@@ -1,12 +1,12 @@
 /**
  * Copyright © 2015 digitalfondue (info@digitalfondue.ch)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,14 +15,11 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import static ch.digitalfondue.jfiveparse.TreeConstructor.CHARACTER;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.COMMENT;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.DOCTYPE;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.END_TAG;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.EOF;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRCDataParsing;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRawTextElementParsing;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
 class TreeConstructorAftersBeforeInitialInHead {
 
@@ -160,25 +157,25 @@ class TreeConstructorAftersBeforeInitialInHead {
     static void beforeHead(byte tokenType, String tagName, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
-        case CHARACTER:
-            handleCharacterHead(treeConstructor);
-            break;
-        case COMMENT:
-            treeConstructor.insertComment();
-            break;
-        case DOCTYPE:
-            treeConstructor.emitParseError();
-            // ignore
-            break;
-        case EOF:
-            anythingElseHead(treeConstructor);
-            break;
-        case END_TAG:
-            handleEndTagHead(tagName, treeConstructor);
-            break;
-        case START_TAG:
-            handleStartTagHead(tokenType, tagName, treeConstructor);
-            break;
+            case CHARACTER:
+                handleCharacterHead(treeConstructor);
+                break;
+            case COMMENT:
+                treeConstructor.insertComment();
+                break;
+            case DOCTYPE:
+                treeConstructor.emitParseError();
+                // ignore
+                break;
+            case EOF:
+                anythingElseHead(treeConstructor);
+                break;
+            case END_TAG:
+                handleEndTagHead(tagName, treeConstructor);
+                break;
+            case START_TAG:
+                handleStartTagHead(tokenType, tagName, treeConstructor);
+                break;
         }
     }
 
@@ -222,24 +219,24 @@ class TreeConstructorAftersBeforeInitialInHead {
     static void beforeHtml(byte tokenType, String tagName, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
-        case CHARACTER:
-            handleCharacterHtml(treeConstructor);
-            break;
-        case COMMENT:
-            treeConstructor.insertCommentToDocument();
-            break;
-        case DOCTYPE:
-            treeConstructor.emitParseError();
-            break;
-        case EOF:
-            anythingElseHtml(treeConstructor);
-            break;
-        case END_TAG:
-            handleEndTagHtml(tagName, treeConstructor);
-            break;
-        case START_TAG:
-            handleStartTagHtml(tagName, treeConstructor);
-            break;
+            case CHARACTER:
+                handleCharacterHtml(treeConstructor);
+                break;
+            case COMMENT:
+                treeConstructor.insertCommentToDocument();
+                break;
+            case DOCTYPE:
+                treeConstructor.emitParseError();
+                break;
+            case EOF:
+                anythingElseHtml(treeConstructor);
+                break;
+            case END_TAG:
+                handleEndTagHtml(tagName, treeConstructor);
+                break;
+            case START_TAG:
+                handleStartTagHtml(tagName, treeConstructor);
+                break;
         }
     }
 
@@ -284,25 +281,115 @@ class TreeConstructorAftersBeforeInitialInHead {
     static void initial(byte tokenType, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
-        case CHARACTER:
-            handleCharacters(treeConstructor);
-            break;
-        case COMMENT:
-            treeConstructor.insertCommentToDocument();
-            break;
-        case DOCTYPE:
-            handleDoctype(treeConstructor);
-            break;
-        case EOF:
+            case CHARACTER:
+                handleCharacters(treeConstructor);
+                break;
+            case COMMENT:
+                treeConstructor.insertCommentToDocument();
+                break;
+            case DOCTYPE:
+                handleDoctype(treeConstructor);
+                break;
+            case EOF:
             /*initialOthers(treeConstructor);
             break;*/
-        case END_TAG:
+            case END_TAG:
             /*initialOthers(treeConstructor);
             break;*/
-        case START_TAG:
-            initialOthers(treeConstructor);
-            break;
+            case START_TAG:
+                initialOthers(treeConstructor);
+                break;
         }
+    }
+
+    private static final List<String> PUBLIC_ID_PREFIXES = List.of(
+            "+//silmaril//dtd html pro v0r11 19970101//",
+            "-//as//dtd html 3.0 aswedit + extensions//",
+            "-//advasoft ltd//dtd html 3.0 aswedit + extensions//",
+            "-//ietf//dtd html 2.0 level 1//",
+            "-//ietf//dtd html 2.0 level 2//",
+            "-//ietf//dtd html 2.0 strict level 1//",
+            "-//ietf//dtd html 2.0 strict level 2//",
+            "-//ietf//dtd html 2.0 strict//",
+            "-//ietf//dtd html 2.0//",
+            "-//ietf//dtd html 2.1e//",
+            "-//ietf//dtd html 3.0//",
+            "-//ietf//dtd html 3.2 final//",
+            "-//ietf//dtd html 3.2//",
+            "-//ietf//dtd html 3//",
+            "-//ietf//dtd html level 0//",
+            "-//ietf//dtd html level 1//",
+            "-//ietf//dtd html level 2//",
+            "-//ietf//dtd html level 3//",
+            "-//ietf//dtd html strict level 0//",
+            "-//ietf//dtd html strict level 1//",
+            "-//ietf//dtd html strict level 2//",
+            "-//ietf//dtd html strict level 3//",
+            "-//ietf//dtd html strict//",
+            "-//ietf//dtd html//",
+            "-//metrius//dtd metrius presentational//",
+            "-//microsoft//dtd internet explorer 2.0 html strict//",
+            "-//microsoft//dtd internet explorer 2.0 html//",
+            "-//microsoft//dtd internet explorer 2.0 tables//",
+            "-//microsoft//dtd internet explorer 3.0 html strict//",
+            "-//microsoft//dtd internet explorer 3.0 html//",
+            "-//microsoft//dtd internet explorer 3.0 tables//",
+            "-//netscape comm. corp.//dtd html//",
+            "-//netscape comm. corp.//dtd strict html//",
+            "-//o'reilly and associates//dtd html 2.0//",
+            "-//o'reilly and associates//dtd html extended 1.0//",
+            "-//o'reilly and associates//dtd html extended relaxed 1.0//",
+            "-//sq//dtd html 2.0 hotmetal + extensions//",
+            "-//softquad software//dtd hotmetal pro 6.0::19990601::extensions to html 4.0//",
+            "-//softquad//dtd hotmetal pro 4.0::19971010::extensions to html 4.0//",
+            "-//spyglass//dtd html 2.0 extended//",
+            "-//sun microsystems corp.//dtd hotjava html//",
+            "-//sun microsystems corp.//dtd hotjava strict html//",
+            "-//w3c//dtd html 3 1995-03-24//",
+            "-//w3c//dtd html 3.2 draft//", "-//w3c//dtd html 3.2 final//",
+            "-//w3c//dtd html 3.2//",
+            "-//w3c//dtd html 3.2s draft//",
+            "-//w3c//dtd html 4.0 frameset//",
+            "-//w3c//dtd html 4.0 transitional//",
+            "-//w3c//dtd html experimental 19960712//",
+            "-//w3c//dtd html experimental 970421//",
+            "-//w3c//dtd w3 html//",
+            "-//w3o//dtd w3 html 3.0//",
+            "-//webtechs//dtd mozilla html 2.0//",
+            "-//webtechs//dtd mozilla html//");
+
+    // 0 = no-quirks-mode, 1 =  limited-quirks mode, 2 = quirks-mode
+    private static byte quirksType(DocumentType documentType) {
+        if (!"html".equals(documentType.getName())) {
+            return 2;
+        }
+        var publicId = documentType.getPublicId();
+        if (publicId != null) {
+            publicId = publicId.toLowerCase(Locale.ROOT);
+        }
+        var systemId = documentType.getSystemId();
+        if (systemId != null) {
+            systemId = systemId.toLowerCase(Locale.ROOT);
+        }
+        if (Set.of("-//w3o//dtd w3 html strict 3.0//en//", "-/w3c/dtd html 4.0 transitional/en", "html").contains(publicId)) {
+            return 2;
+        }
+        if ("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd".equals(systemId)) {
+            return 2;
+        }
+
+        for (var prefix : PUBLIC_ID_PREFIXES) {
+            if (publicId != null && publicId.startsWith(prefix)) {
+                return 2;
+            }
+        }
+        if ((systemId == null || "".equals(systemId)) && (
+                publicId.startsWith("-//w3c//dtd html 4.01 frameset//") || publicId.startsWith("-//w3c//dtd html 4.01 transitional//")
+        )) {
+            return 2;
+        }
+        // we skip the iframe srcdoc section
+        return 0;
     }
 
     // see https://html.spec.whatwg.org/#the-initial-insertion-mode "A DOCTYPE token"
@@ -312,7 +399,9 @@ class TreeConstructorAftersBeforeInitialInHead {
         doc.appendChild(doctype);
         doc.setDoctype(doctype);
 
-        // FIXME add check for setting quirks mode (we don't handle "limited quirks mode"
+        if (quirksType(doctype) == 2) {
+            treeConstructor.setQuirksMode(true);
+        }
 
         treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HTML);
     }
@@ -358,7 +447,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             genericRCDataParsing(treeConstructor);
         } else if (tokenType == START_TAG && (//
                 ("noscript".equals(tagName) && treeConstructor.isScriptingFlag()) || //
-                ("noframes".equals(tagName) || "style".equals(tagName)))) {
+                        ("noframes".equals(tagName) || "style".equals(tagName)))) {
             genericRawTextElementParsing(treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "noscript", tagName) && !treeConstructor.isScriptingFlag()) {
             treeConstructor.insertHtmlElementToken();
@@ -447,7 +536,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     }
 
     private static void generateImpliedEndTagThoroughly(TreeConstructor treeConstructor) {
-        for (;;) {
+        for (; ; ) {
             Element current = treeConstructor.getCurrentNode();
             if (Node.NAMESPACE_HTML.equals(current.getNamespaceURI()) && Common.isImpliedTagsThoroughly(current.getNodeName())) {
                 treeConstructor.popCurrentNode();
