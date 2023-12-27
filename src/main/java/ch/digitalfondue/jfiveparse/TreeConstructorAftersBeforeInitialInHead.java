@@ -305,11 +305,15 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
+    // see https://html.spec.whatwg.org/#the-initial-insertion-mode "A DOCTYPE token"
     private static void handleDoctype(TreeConstructor treeConstructor) {
         DocumentType doctype = treeConstructor.buildDocumentType();
         Document doc = treeConstructor.getDocument();
         doc.appendChild(doctype);
         doc.setDoctype(doctype);
+
+        // FIXME add check for setting quirks mode (we don't handle "limited quirks mode"
+
         treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HTML);
     }
 
