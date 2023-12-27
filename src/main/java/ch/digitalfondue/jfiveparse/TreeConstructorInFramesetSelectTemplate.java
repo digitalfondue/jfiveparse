@@ -93,6 +93,17 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
+        } else if (Common.isStartTagNamed(tokenType, "hr", tagName)) {
+            // see https://github.com/html5lib/html5lib-tests/commit/55aa183097fa52bb1328cd93633be6f88159d4b8
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
+                treeConstructor.popCurrentNode();
+            }
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "optgroup")) {
+                treeConstructor.popCurrentNode();
+            }
+            treeConstructor.insertHtmlElementToken();
+            treeConstructor.popCurrentNode();
+            treeConstructor.ackSelfClosingTagIfSet();
         } else if (Common.isEndTagNamed(tokenType, "optgroup", tagName)) {
 
             if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")
