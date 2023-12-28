@@ -16,7 +16,7 @@ Requires java 11.
 
 ## Why?
 
-As far as I know, there is no pure java html5 parser that currently pass the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests) (well, the more relevant tests :D).
+As far as I know, there is no pure java html5 parser that currently pass the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests) (well, the more relevant tests :D, note: this project was published in october 2015).
 
 Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~150kb. The target is to keep it under 200kb.
 
@@ -35,14 +35,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.0.0'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.0.1'
 ```
 
 ## Use:
