@@ -28,6 +28,7 @@ public class Parser {
     private final boolean scriptingFlag;
     private final boolean transformEntities;
     private final boolean disableIgnoreTokenInBodyStartTag;
+    private final boolean interpretSelfClosingAnythingElse;
 
     /**
      * Instantiate a parser with the default configuration.
@@ -40,6 +41,7 @@ public class Parser {
         scriptingFlag = true;
         transformEntities = true;
         disableIgnoreTokenInBodyStartTag = false;
+        interpretSelfClosingAnythingElse = false;
     }
 
     /**
@@ -48,6 +50,8 @@ public class Parser {
      * <ul>
      * <li>{@link Option#SCRIPTING_DISABLED}</li>
      * <li>{@link Option#DONT_TRANSFORM_ENTITIES}</li>
+     * <li>{@link Option#DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG}</li>
+     * <li>{@link Option#INTERPRET_SELF_CLOSING_ANYTHING_ELSE}</li>
      * </ul>
      * 
      * @param options
@@ -56,6 +60,7 @@ public class Parser {
         this.scriptingFlag = !options.contains(Option.SCRIPTING_DISABLED);
         this.transformEntities = !options.contains(Option.DONT_TRANSFORM_ENTITIES);
         this.disableIgnoreTokenInBodyStartTag = options.contains(Option.DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG);
+        this.interpretSelfClosingAnythingElse = options.contains(Option.INTERPRET_SELF_CLOSING_ANYTHING_ELSE);
     }
 
     /**
@@ -110,7 +115,7 @@ public class Parser {
 
         // 1 when creating a tree constructor, a document is automatically
         // created (good idea? y/n?)
-        TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag);
+        TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag, interpretSelfClosingAnythingElse);
         //
         tokenHandler.setHtmlFragmentParsing(true);
         tokenHandler.setScriptingFlag(scriptingFlag);
@@ -182,7 +187,7 @@ public class Parser {
     }
 
     private Document parse(ProcessedInputStream is) {
-        TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag);
+        TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag, interpretSelfClosingAnythingElse);
         tokenHandler.setScriptingFlag(scriptingFlag);
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);

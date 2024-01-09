@@ -51,6 +51,7 @@ class TreeConstructor {
     private final Document document = new Document();
 
     final boolean disableIgnoreTokenInBodyStartTag;
+    final boolean interpretSelfClosingAnythingElse;
 
     // ----
     private byte tokenType;
@@ -104,8 +105,9 @@ class TreeConstructor {
         this.tokenizer = tokenizer;
     }
 
-    TreeConstructor(boolean disableIgnoreTokenInBodyStartTag) {
+    TreeConstructor(boolean disableIgnoreTokenInBodyStartTag, boolean interpretSelfClosingAnythingElse) {
         this.disableIgnoreTokenInBodyStartTag = disableIgnoreTokenInBodyStartTag;
+        this.interpretSelfClosingAnythingElse = interpretSelfClosingAnythingElse;
     }
 
     private void setTagNameAndSaveOriginal(ResizableCharBuilder rawTagName) {

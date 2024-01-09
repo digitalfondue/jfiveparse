@@ -20,13 +20,26 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class DisableIgnoreTokenInBodyStartHandlingTest {
+public class OptionParseTest {
 
 
     @Test
     public void testRawTableHanding() {
         List<Node> l = JFiveParse.parseFragment("<tr><td>a</td></tr>", Collections.singleton(Option.DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG));
         Assert.assertEquals("<tr><td>a</td></tr>", JFiveParse.serialize(l.get(0)));
+    }
+
+    @Test
+    public void testOptionInterpretSelfClosing() {
+        var res = JFiveParse.parseFragment("<hr /><sj-test /><sj-a><sj-b /></mj-a>");
+        var html = res.stream().map(s -> ((Element) s).getOuterHTML()).collect(Collectors.joining());
+        Assert.assertEquals("<hr><sj-test><sj-a><sj-b></sj-b></sj-a></sj-test>", html);
+
+        //
+        var selfClosing = JFiveParse.parseFragment("<hr /><sj-test /><sj-a><sj-b /></mj-a>", Collections.singleton(Option.INTERPRET_SELF_CLOSING_ANYTHING_ELSE));
+        var selfClosingHtml = selfClosing.stream().map(s -> ((Element) s).getOuterHTML()).collect(Collectors.joining());
+        Assert.assertEquals("<hr><sj-test></sj-test><sj-a><sj-b></sj-b></sj-a>", selfClosingHtml);
     }
 }

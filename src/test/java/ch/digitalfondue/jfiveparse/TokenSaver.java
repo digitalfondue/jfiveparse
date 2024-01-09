@@ -25,7 +25,7 @@ public class TokenSaver extends TreeConstructor {
     List<Token> tokens = new ArrayList<>();
 
     public TokenSaver() {
-        super(false);
+        super(false, false);
     }
 
     @Override

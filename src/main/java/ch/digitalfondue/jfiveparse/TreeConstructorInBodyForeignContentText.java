@@ -638,8 +638,14 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void inBodyStartTagAnythingElse(TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements();
-        treeConstructor.insertHtmlElementToken();
+        if (treeConstructor.interpretSelfClosingAnythingElse && treeConstructor.isSelfClosing()) {
+            treeConstructor.insertHtmlElementToken();
+            treeConstructor.popCurrentNode();
+            treeConstructor.ackSelfClosingTagIfSet();
+        } else {
+            treeConstructor.reconstructActiveFormattingElements();
+            treeConstructor.insertHtmlElementToken();
+        }
     }
 
     private static void inBodyEndTag(String tagName, TreeConstructor treeConstructor) {
