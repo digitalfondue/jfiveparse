@@ -35,17 +35,19 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.0.2'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.0.3'
 ```
 
 ## Use:
+
+If you use it as a module, remember to add `requires ch.digitalfondue.jfiveparse;` in your module-info.
 
 ```java
 import ch.digitalfondue.jfiveparse.Document;
