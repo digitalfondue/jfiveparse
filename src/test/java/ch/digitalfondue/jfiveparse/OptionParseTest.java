@@ -19,25 +19,30 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class OptionParseTest {
 
 
     @Test
-    public void testRawTableHanding() {
-        List<Node> l = JFiveParse.parseFragment("<tr><td>a</td></tr>", Collections.singleton(Option.DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG));
-        Assert.assertEquals("<tr><td>a</td></tr>", JFiveParse.serialize(l.get(0)));
+    public void testRawTableHandling() {
+        // without option
+        Document dw = JFiveParse.parse("<html><body><tr><td>a</td></tr></body>");
+        Assert.assertEquals("<html><head></head><body>a</body></html>", JFiveParse.serialize(dw));
+
+        // with option
+        Document l = JFiveParse.parse("<html><body><tr><td>a</td></tr></body>", Collections.singleton(Option.DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG));
+        Assert.assertEquals("<html><head></head><body><tr><td>a</td></tr></body></html>", JFiveParse.serialize(l));
     }
 
     @Test
     public void testOptionInterpretSelfClosing() {
+        // without option
         var res = JFiveParse.parseFragment("<hr /><sj-test /><sj-a><sj-b /></mj-a>");
         var html = res.stream().map(s -> ((Element) s).getOuterHTML()).collect(Collectors.joining());
         Assert.assertEquals("<hr><sj-test><sj-a><sj-b></sj-b></sj-a></sj-test>", html);
 
-        //
+        // with option
         var selfClosing = JFiveParse.parseFragment("<hr /><sj-test /><sj-a><sj-b /></mj-a>", Collections.singleton(Option.INTERPRET_SELF_CLOSING_ANYTHING_ELSE));
         var selfClosingHtml = selfClosing.stream().map(s -> ((Element) s).getOuterHTML()).collect(Collectors.joining());
         Assert.assertEquals("<hr><sj-test></sj-test><sj-a><sj-b></sj-b></sj-a>", selfClosingHtml);

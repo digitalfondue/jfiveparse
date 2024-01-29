@@ -130,10 +130,18 @@ static method in the helper class: `W3CDom.toW3CDocument`.
  - html by whatwg: https://html.spec.whatwg.org/multipage/syntax.html (of interest: tokenization, tree-construction)
  - entities: https://html.spec.whatwg.org/entities.json
 
-### template element handling
+### Template element handling
 
 The template element is a "normal" element, so the child nodes are _not_
 placed inside a documentFragment. This will be fixed.
+
+### Special parsing options
+
+The parser can be customized to allow some non-standard behaviour, you can see the following tests: https://github.com/digitalfondue/jfiveparse/blob/master/src/test/java/ch/digitalfondue/jfiveparse/OptionParseTest.java
+
+ - DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG : allow to have for example "tr" tag without the containing table/tbody.
+ - INTERPRET_SELF_CLOSING_ANYTHING_ELSE :  When encountering unknown self-closing tag, they will be interpreted 
+   as it is and not as open tag only, thus creating a non-intuitive DOM.    
 
 ### Entities
 The &ntities; are by default (and by specification) parsed and interpreted. 
