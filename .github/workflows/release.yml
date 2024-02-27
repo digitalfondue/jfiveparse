@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - jfiveparse-*
-  pull_request:
-    branches: [ main ]
 jobs:
   publish:
     runs-on: ubuntu-latest
