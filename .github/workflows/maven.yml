@@ -22,7 +22,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: ${{matrix.java}}
-        distribution: oracle
+        distribution: corretto
     - name: Maven -v
       run: ./mvnw -v
     - name: Cache Maven packages
