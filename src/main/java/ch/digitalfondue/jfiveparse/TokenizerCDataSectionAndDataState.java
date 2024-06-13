@@ -35,7 +35,6 @@ class TokenizerCDataSectionAndDataState {
             tokenizer.setState(TokenizerState.TAG_OPEN_STATE);
             break;
         default:
-
             int previousInsertionMode = tokenizer.getTokenHandlerInsertionMode(); // optim
             tokenizer.emitCharacter(chr);
             // vvv optimization vvv

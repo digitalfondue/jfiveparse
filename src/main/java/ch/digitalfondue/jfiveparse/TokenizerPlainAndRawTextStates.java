@@ -61,21 +61,20 @@ class TokenizerPlainAndRawTextStates {
                 for (;;) {
                     int internalChr = processedInputStream.getNextInputCharacterAndConsume();
                     switch (internalChr) {
-                    case Characters.LESSTHAN_SIGN:
-                        tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
-                        tokenizer.setState(TokenizerState.RAWTEXT_LESS_THAN_SIGN_STATE);
-                        return;
-                    case Characters.NULL:
-                        tokenizer.emitParseError();
-                        tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
-                        return;
-                    case Characters.EOF:
-                        tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
-                        tokenizer.emitEOF();
-                        return;
-                    default:
-                        textNode.append((char) internalChr);
-                        break;
+                        case Characters.LESSTHAN_SIGN:
+                            tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
+                            tokenizer.setState(TokenizerState.RAWTEXT_LESS_THAN_SIGN_STATE);
+                            return;
+                        case Characters.NULL:
+                            tokenizer.emitParseError();
+                            tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
+                            return;
+                        case Characters.EOF:
+                            tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
+                            tokenizer.emitEOF();
+                            return;
+                        default:
+                            textNode.append((char) internalChr);
                     }
                 }
             }
