@@ -221,12 +221,12 @@ class Common {
 
     static boolean isHtmlIntegrationPoint(Element e) {
         String nodeName = e.nodeName;
-        String namespaceUri = e.namespaceURI;
+        byte namespaceID = e.namespaceID;
 
-        return (("annotation-xml".equals(nodeName) && Node.NAMESPACE_MATHML.equals(namespaceUri)) && //
+        return ((Node.NAMESPACE_MATHML_ID == namespaceID && "annotation-xml".equals(nodeName)) && //
                 matchEncoding(e.getAttributes().get("encoding")))
                 || //
-                (Node.NAMESPACE_SVG.equals(namespaceUri) && (//
+                (Node.NAMESPACE_SVG_ID == namespaceID && (//
                 "foreignObject".equals(nodeName) || //
                         "desc".equals(nodeName) || //
                 "title".equals(nodeName)));

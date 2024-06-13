@@ -41,7 +41,7 @@ public abstract class Node {
     static final byte NAMESPACE_XLINK_ID = 6;
 
 
-    static final byte toNameSpaceId(String s) {
+    static byte toNameSpaceId(String s) {
         if (s == null) {
             return 0;
         }

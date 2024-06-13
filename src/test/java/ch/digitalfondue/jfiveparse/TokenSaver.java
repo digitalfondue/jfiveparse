@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TokenSaver extends TreeConstructor {
+class TokenSaver extends TreeConstructor {
 
     List<Token> tokens = new ArrayList<>();
 
