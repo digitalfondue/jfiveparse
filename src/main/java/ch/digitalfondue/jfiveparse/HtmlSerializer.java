@@ -120,7 +120,7 @@ public class HtmlSerializer implements NodesVisitor {
 
                 appendable.append('>');
 
-                if ((Common.isHtmlNS(e, "pre") || Common.isHtmlNS(e, "textarea") || Common.isHtmlNS(e, "listing")) && //
+                if ((Common.isHtmlNS(e, Common.ELEMENT_PRE_ID) || Common.isHtmlNS(e, Common.ELEMENT_TEXTAREA_ID) || Common.isHtmlNS(e, Common.ELEMENT_LISTING_ID)) && //
                         e.hasChildNodes() && //
                         e.getFirstChild().getNodeType() == Node.TEXT_NODE) {
                     String text = ((Text) e.getFirstChild()).getData();

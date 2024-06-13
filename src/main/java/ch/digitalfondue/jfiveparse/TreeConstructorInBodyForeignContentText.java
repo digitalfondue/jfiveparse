@@ -15,11 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import static ch.digitalfondue.jfiveparse.Common.adjustForeignAttributes;
-import static ch.digitalfondue.jfiveparse.Common.adjustMathMLAttributes;
-import static ch.digitalfondue.jfiveparse.Common.adjustSVGAttributes;
-import static ch.digitalfondue.jfiveparse.Common.isHtmlIntegrationPoint;
-import static ch.digitalfondue.jfiveparse.Common.isMathMLIntegrationPoint;
+import static ch.digitalfondue.jfiveparse.Common.*;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.CHARACTER;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.COMMENT;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.DOCTYPE;
@@ -327,7 +323,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startXmp(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.reconstructActiveFormattingElements();
@@ -353,7 +349,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startHr(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -389,7 +385,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startTable(TreeConstructor treeConstructor) {
-        if (!treeConstructor.isQuirksMode() && treeConstructor.hasElementInButtonScope("p")) {
+        if (!treeConstructor.isQuirksMode() && treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -437,7 +433,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startButton(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("button")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_BUTTON_ID)) {
             treeConstructor.emitParseError();
             treeConstructor.generateImpliedEndTag();
             treeConstructor.popOpenElementsUntilWithHtmlNS("button");
@@ -449,7 +445,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startPlaintext(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -461,18 +457,18 @@ class TreeConstructorInBodyForeignContentText {
         int idx = treeConstructor.openElementsSize() - 1;
         Element node = treeConstructor.openElementAt(idx);
         while (true) {
-            if (Common.isHtmlNS(node, "dd")) {
+            if (Common.isHtmlNS(node, ELEMENT_DD_ID)) {
                 treeConstructor.generateImpliedEndTag("dd", Node.NAMESPACE_HTML);
-                if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "dd")) {
+                if (Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_DD_ID)) {
                     treeConstructor.emitParseError();
                 }
                 treeConstructor.popOpenElementsUntilWithHtmlNS("dd");
                 break;
             }
 
-            if (Common.isHtmlNS(node, "dt")) {
+            if (Common.isHtmlNS(node, ELEMENT_DT_ID)) {
                 treeConstructor.generateImpliedEndTag("dt", Node.NAMESPACE_HTML);
-                if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "dt")) {
+                if (Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_DT_ID)) {
                     // parser error
                 }
                 treeConstructor.popOpenElementsUntilWithHtmlNS("dt");
@@ -480,15 +476,15 @@ class TreeConstructorInBodyForeignContentText {
             }
 
             if (Common.isSpecialCategory(node) && //
-                    !(Common.isHtmlNS(node, "address") || //
-                            Common.isHtmlNS(node, "div") || Common.isHtmlNS(node, "p"))) {
+                    !(Common.isHtmlNS(node, ELEMENT_ADDRESS_ID) || //
+                            Common.isHtmlNS(node, ELEMENT_DIV_ID) || Common.isHtmlNS(node, ELEMENT_P_ID))) {
                 break;
             }
 
             idx = idx - 1;
             node = treeConstructor.openElementAt(idx);
         }
-        if (treeConstructor.hasElementInButtonScope("p")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
 
@@ -501,9 +497,9 @@ class TreeConstructorInBodyForeignContentText {
         int idx = treeConstructor.openElementsSize() - 1;
         Element node = treeConstructor.openElementAt(idx);
         while (true) {
-            if (Common.isHtmlNS(node, "li")) {
+            if (Common.isHtmlNS(node, Common.ELEMENT_LI_ID)) {
                 treeConstructor.generateImpliedEndTag("li", Node.NAMESPACE_HTML);
-                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "li")) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_LI_ID)) {
                     treeConstructor.emitParseError();
                 }
 
@@ -512,8 +508,8 @@ class TreeConstructorInBodyForeignContentText {
             }
 
             if (Common.isSpecialCategory(node) && //
-                    !(Common.isHtmlNS(node, "address") || //
-                            Common.isHtmlNS(node, "div") || Common.isHtmlNS(node, "p"))) {
+                    !(Common.isHtmlNS(node, ELEMENT_ADDRESS_ID) || //
+                            Common.isHtmlNS(node, ELEMENT_DIV_ID) || Common.isHtmlNS(node, ELEMENT_P_ID))) {
                 break;
             }
             idx = idx - 1;
@@ -521,7 +517,7 @@ class TreeConstructorInBodyForeignContentText {
 
         }
 
-        if (treeConstructor.hasElementInButtonScope("p")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
 
@@ -534,7 +530,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.emitParseError();
             // ignore the token
         } else {
-            if (treeConstructor.hasElementInButtonScope("p")) {
+            if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
                 treeConstructor.closePElement();
             }
             Element formElement = treeConstructor.insertHtmlElementToken();
@@ -545,7 +541,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startPreListing(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -554,7 +550,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startH1H6(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInButtonScope("p")) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         Element e = treeConstructor.getCurrentNode();
@@ -568,14 +564,14 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startAddressUl(TreeConstructor treeConstructor) {
-    	if (treeConstructor.hasElementInButtonScope("p")) {
+    	if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
     }
     
     private static void startMenu(TreeConstructor treeConstructor) {
-    	if (treeConstructor.hasElementInButtonScope("p")) {
+    	if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
@@ -583,7 +579,7 @@ class TreeConstructorInBodyForeignContentText {
 
     private static void startFrameset(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();
-        if (treeConstructor.openElementsSize() == 1 || !Common.isHtmlNS(treeConstructor.openElementAt(1), "body")) {
+        if (treeConstructor.openElementsSize() == 1 || !Common.isHtmlNS(treeConstructor.openElementAt(1), ELEMENT_BODY_ID)) {
             // ignore
         } else if (Boolean.FALSE.equals(treeConstructor.getFramesetOk())) {
             // ignore
@@ -595,7 +591,7 @@ class TreeConstructorInBodyForeignContentText {
             }
 
             //
-            while (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "html")) {
+            while (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_HTML_ID)) {
                 treeConstructor.popCurrentNode();
             }
             //
@@ -609,7 +605,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.emitParseError();
 
         if (treeConstructor.openElementsSize() == 1 || //
-                !Common.isHtmlNS(treeConstructor.openElementAt(1), "body") || //
+                !Common.isHtmlNS(treeConstructor.openElementAt(1), ELEMENT_BODY_ID) || //
                 treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
             // ignore
         } else {
@@ -782,12 +778,7 @@ class TreeConstructorInBodyForeignContentText {
 
             while (true) {
                 Element e = treeConstructor.popCurrentNode();
-                if (Common.isHtmlNS(e, "h1") || //
-                        Common.isHtmlNS(e, "h2") || //
-                        Common.isHtmlNS(e, "h3") || //
-                        Common.isHtmlNS(e, "h4") || //
-                        Common.isHtmlNS(e, "h5") || //
-                        Common.isHtmlNS(e, "h6")) {
+                if (Common.isHtmlNSBetween(e, ELEMENT_H1_ID, ELEMENT_H6_ID)) {
                     break;
                 }
             }
@@ -813,7 +804,7 @@ class TreeConstructorInBodyForeignContentText {
             // ignore
         } else {
             treeConstructor.generateImpliedEndTag("li", Node.NAMESPACE_HTML);
-            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "li")) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_LI_ID)) {
                 treeConstructor.emitParseError();
             }
             treeConstructor.popOpenElementsUntilWithHtmlNS("li");
@@ -821,7 +812,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void endP(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInButtonScope("p")) {
+        if (!treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.emitParseError();
             treeConstructor.insertHtmlElementWithEmptyAttributes("p");
         }
@@ -848,7 +839,7 @@ class TreeConstructorInBodyForeignContentText {
                 // ignore token
             } else {
                 treeConstructor.generateImpliedEndTag();
-                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "form")) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_FORM_ID)) {
                     treeConstructor.emitParseError();
                 }
                 treeConstructor.popOpenElementsUntilWithHtmlNS("form");

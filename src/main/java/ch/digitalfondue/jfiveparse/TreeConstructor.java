@@ -117,8 +117,8 @@ class TreeConstructor {
 
     void setTagName(ResizableCharBuilder rawTagName) {
         String tagName = rawTagName.toLowerCase();
-        //String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
-        this.tagName = tagName;
+        String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
+        this.tagName = maybeCached != null ? maybeCached : tagName;
     }
 
     //
@@ -333,12 +333,12 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInButtonScope(String tagName) {
+    boolean hasElementInButtonScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
-            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, "button")) {
+            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, Common.ELEMENT_BUTTON_ID)) {
                 return false;
             }
         }
@@ -348,9 +348,9 @@ class TreeConstructor {
     boolean hasLiElementInListScope() {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, "li")) {
+            if (Common.isHtmlNS(node, Common.ELEMENT_LI_ID)) {
                 return true;
-            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, "ol") || Common.isHtmlNS(node, "ul")) {
+            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, Common.ELEMENT_OL_ID) || Common.isHtmlNS(node, Common.ELEMENT_UL_ID)) {
                 return false;
             }
         }
@@ -362,7 +362,7 @@ class TreeConstructor {
             Element node = openElements.get(i);
             if (Common.isHtmlNS(node, tagName)) {
                 return true;
-            } else if ((Common.isHtmlNS(node, "html") || Common.isHtmlNS(node, "table") || Common.isHtmlNS(node, "template"))) {
+            } else if ((Common.isHtmlNS(node, Common.ELEMENT_HTML_ID) || Common.isHtmlNS(node, Common.ELEMENT_TABLE_ID) || Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID))) {
                 return false;
             }
         }
@@ -865,7 +865,7 @@ class TreeConstructor {
                 node = context;
             }
 
-            if (Common.isHtmlNS(node, "select")) {
+            if (Common.isHtmlNS(node, Common.ELEMENT_SELECT_ID)) {
                 if (last) {
                     insertionMode = TreeConstructionInsertionMode.IN_SELECT;
                     break;
@@ -878,9 +878,9 @@ class TreeConstructor {
                         }
                         ancestorIdx--;
                         ancestor = openElements.get(ancestorIdx);
-                        if (Common.isHtmlNS(ancestor, "template")) {
+                        if (Common.isHtmlNS(ancestor, Common.ELEMENT_TEMPLATE_ID)) {
                             break;
-                        } else if (Common.isHtmlNS(ancestor, "table")) {
+                        } else if (Common.isHtmlNS(ancestor, Common.ELEMENT_TABLE_ID)) {
                             insertionMode = TreeConstructionInsertionMode.IN_SELECT_IN_TABLE;
                             return;
                         }
@@ -888,37 +888,37 @@ class TreeConstructor {
                     insertionMode = TreeConstructionInsertionMode.IN_SELECT;
                     break;
                 }
-            } else if ((Common.isHtmlNS(node, "td") || Common.isHtmlNS(node, "th")) && !last) {
+            } else if ((Common.isHtmlNS(node, Common.ELEMENT_TD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TH_ID)) && !last) {
                 insertionMode = TreeConstructionInsertionMode.IN_CELL;
                 break;
-            } else if (Common.isHtmlNS(node, "tr")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TR_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_ROW;
                 break;
-            } else if (Common.isHtmlNS(node, "tbody") || Common.isHtmlNS(node, "thead") || Common.isHtmlNS(node, "tfoot")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TBODY_ID) || Common.isHtmlNS(node, Common.ELEMENT_THEAD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TFOOT_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_TABLE_BODY;
                 break;
-            } else if (Common.isHtmlNS(node, "caption")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_CAPTION_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_CAPTION;
                 break;
-            } else if (Common.isHtmlNS(node, "colgroup")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_COLGROUP_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_COLUMN_GROUP;
                 break;
-            } else if (Common.isHtmlNS(node, "table")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TABLE_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_TABLE;
                 break;
-            } else if (Common.isHtmlNS(node, "template")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID)) {
                 insertionMode = stackTemplatesInsertionMode.get(stackTemplatesInsertionMode.size() - 1);
                 break;
-            } else if (Common.isHtmlNS(node, "head")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_HEAD_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_HEAD;
                 break;
-            } else if (Common.isHtmlNS(node, "body")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_BODY_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_BODY;
                 break;
-            } else if (Common.isHtmlNS(node, "frameset")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_FRAMESET_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_FRAMESET;
                 break;
-            } else if (Common.isHtmlNS(node, "html")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_HTML_ID)) {
                 if (head == null) {
                     insertionMode = TreeConstructionInsertionMode.BEFORE_HEAD;
                 } else {

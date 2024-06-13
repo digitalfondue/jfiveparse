@@ -481,7 +481,7 @@ class TreeConstructorAftersBeforeInitialInHead {
                 // ignore
             } else {
                 TreeConstructorAftersBeforeInitialInHead.generateImpliedEndTagThoroughly(treeConstructor);
-                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "template")) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_TEMPLATE_ID)) {
                     treeConstructor.emitParseError();
                 }
                 treeConstructor.popOpenElementsUntilWithHtmlNS("template");

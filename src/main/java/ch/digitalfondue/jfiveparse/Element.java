@@ -26,6 +26,7 @@ public class Element extends Node {
     final String originalNodeName;
     final String namespaceURI;
     final byte namespaceID;
+    final byte nodeNameID;
     Attributes attributes;
 
     private List<Node> childNodes = null;
@@ -63,6 +64,7 @@ public class Element extends Node {
 
     Element(String name, String originalName, String nameSpace, Attributes attributes) {
         this.nodeName = name;
+        this.nodeNameID = Common.tagNameToID(name);
         this.originalNodeName = originalName;
         this.namespaceURI = nameSpace;
         this.namespaceID = Node.toNameSpaceId(nameSpace);

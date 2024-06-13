@@ -156,7 +156,7 @@ public class Parser {
         tokenHandler.addToOpenElements(root);
 
         // 8
-        if (Common.isHtmlNS(node, "template")) {
+        if (Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID)) {
             tokenHandler.pushIntoStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
         }
 
@@ -178,7 +178,7 @@ public class Parser {
 
     private static Element getFirstFormElementFrom(Node element) {
         while (element != null) {
-            if (element instanceof Element && Common.isHtmlNS((Element) element, "form")) {
+            if (element instanceof Element && Common.isHtmlNS((Element) element, Common.ELEMENT_FORM_ID)) {
                 return (Element) element;
             }
             element = element.parentNode;

@@ -41,12 +41,12 @@ class TreeConstructorInFramesetSelectTemplate {
 
             // TODO: should check if it's the root element and not only if it's
             // a html element?
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "html")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_HTML_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
                 treeConstructor.popCurrentNode();
-                if (!treeConstructor.isHtmlFragmentParsing() && !Common.isHtmlNS(treeConstructor.getCurrentNode(), "frameset")) {
+                if (!treeConstructor.isHtmlFragmentParsing() && !Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_FRAMESET_ID)) {
                     treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_FRAMESET);
                 }
             }
@@ -57,7 +57,7 @@ class TreeConstructorInFramesetSelectTemplate {
         } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
         } else if (tokenType == EOF) {
-            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "html")) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_HTML_ID)) {
                 treeConstructor.emitParseError();
             }
             treeConstructor.stopParsing();

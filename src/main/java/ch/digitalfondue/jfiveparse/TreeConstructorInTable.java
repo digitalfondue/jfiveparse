@@ -28,11 +28,11 @@ class TreeConstructorInTable {
 
         Element currentNodeTop = treeConstructor.getCurrentNode();
 
-        if (tokenType == CHARACTER && (Common.isHtmlNS(currentNodeTop, "table") || //
-                Common.isHtmlNS(currentNodeTop, "tbody") || //
-                Common.isHtmlNS(currentNodeTop, "tfoot") || //
-                Common.isHtmlNS(currentNodeTop, "thead") || //
-                Common.isHtmlNS(currentNodeTop, "tr"))) {
+        if (tokenType == CHARACTER && (Common.isHtmlNS(currentNodeTop, Common.ELEMENT_TABLE_ID) || //
+                Common.isHtmlNS(currentNodeTop, Common.ELEMENT_TBODY_ID) || //
+                Common.isHtmlNS(currentNodeTop, Common.ELEMENT_TFOOT_ID) || //
+                Common.isHtmlNS(currentNodeTop, Common.ELEMENT_THEAD_ID) || //
+                Common.isHtmlNS(currentNodeTop, Common.ELEMENT_TR_ID))) {
             treeConstructor.createPendingTableCharactersToken();
             treeConstructor.saveInsertionMode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE_TEXT);
@@ -369,7 +369,7 @@ class TreeConstructorInTable {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
         } else if (Common.isEndTagNamed(tokenType, "colgroup", tagName)) {
-            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "colgroup")) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_COLGROUP_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -384,7 +384,7 @@ class TreeConstructorInTable {
         } else if (tokenType == EOF) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else {
-            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "colgroup")) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_COLGROUP_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -473,12 +473,12 @@ class TreeConstructorInTable {
     private static void closeCell(TreeConstructor treeConstructor) {
         treeConstructor.generateImpliedEndTag();
         Element currentNode = treeConstructor.getCurrentNode();
-        if (!(Common.isHtmlNS(currentNode, "td") || Common.isHtmlNS(currentNode, "th"))) {
+        if (!(Common.isHtmlNS(currentNode, Common.ELEMENT_TD_ID) || Common.isHtmlNS(currentNode, Common.ELEMENT_TH_ID))) {
             treeConstructor.emitParseError();
         }
         while (true) {
             Element e = treeConstructor.popCurrentNode();
-            if (Common.isHtmlNS(e, "td") || Common.isHtmlNS(e, "th")) {
+            if (Common.isHtmlNS(e, Common.ELEMENT_TD_ID) || Common.isHtmlNS(e, Common.ELEMENT_TH_ID)) {
                 break;
             }
         }
@@ -497,7 +497,7 @@ class TreeConstructorInTable {
                 // ignore
             } else {
                 treeConstructor.generateImpliedEndTag();
-                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "caption")) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_CAPTION_ID)) {
                     treeConstructor.emitParseError();
                 }
 
@@ -521,7 +521,7 @@ class TreeConstructorInTable {
                 // ignore
             } else {
                 treeConstructor.generateImpliedEndTag();
-                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "caption")) {
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_CAPTION_ID)) {
                     treeConstructor.emitParseError();
                 }
 
