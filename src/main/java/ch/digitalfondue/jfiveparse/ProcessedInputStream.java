@@ -66,7 +66,7 @@ abstract class ProcessedInputStream {
         }
     }
 
-    static class ReaderProcessedInputStream extends ProcessedInputStream {
+    static final class ReaderProcessedInputStream extends ProcessedInputStream {
 
         private final Reader reader;
 

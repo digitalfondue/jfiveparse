@@ -456,6 +456,7 @@ class Common {
                 "keygen", //
                 "dialog",//
                 "a",//
+                "abbr",
                 "address", //
                 "applet", //
                 "area",//

@@ -117,17 +117,18 @@ class TreeConstructor {
 
     void setTagName(ResizableCharBuilder rawTagName) {
         String tagName = rawTagName.toLowerCase();
-        String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
-        this.tagName = maybeCached != null ? maybeCached : tagName;
+        //String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
+        this.tagName = tagName;
     }
 
     //
 
     Element getAdjustedCurrentNode() {
-        final int size = openElements.size();
-        if (size == 0) {
+        if (openElements.isEmpty()) {
             return null;
-        } else if (isHtmlFragmentParsing && size == 1) {
+        }
+        final int size = openElements.size();
+        if (isHtmlFragmentParsing && size == 1) {
             return context;
         } else {
             return openElements.get(size - 1);
