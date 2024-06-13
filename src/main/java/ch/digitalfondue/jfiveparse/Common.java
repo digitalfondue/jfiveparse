@@ -212,7 +212,7 @@ class Common {
 
     static boolean isMathMLIntegrationPoint(Element e) {
         String nodeName = e.nodeName;
-        return Node.NAMESPACE_MATHML.equals(e.getNamespaceURI()) && ("mi".equals(nodeName) || //
+        return Node.NAMESPACE_MATHML_ID == e.namespaceID && ("mi".equals(nodeName) || //
                 "mo".equals(nodeName) || //
                 "mn".equals(nodeName) || //
                 "ms".equals(nodeName) || //
@@ -287,12 +287,12 @@ class Common {
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;
-    	String nodeNameSpaceUri = element.namespaceURI;
-        if (Node.NAMESPACE_HTML.equals(nodeNameSpaceUri)) {
+    	byte nodeNameSpaceId = element.namespaceID;
+        if (Node.NAMESPACE_HTML_ID == nodeNameSpaceId) {
             return SPECIAL_ELEMENTS_HTML_SET_V2.contains(nodeName);
-        } else if (Node.NAMESPACE_MATHML.equals(nodeNameSpaceUri)) {
+        } else if (Node.NAMESPACE_MATHML_ID == nodeNameSpaceId) {
             return isSpecialElementsMathML(nodeName);
-        } else if (Node.NAMESPACE_SVG.equals(nodeNameSpaceUri)) {
+        } else if (Node.NAMESPACE_SVG_ID == nodeNameSpaceId) {
             return isSpecialElementsSVG(nodeName);
         } else {
             return false;
@@ -305,8 +305,8 @@ class Common {
 
     static boolean isInCommonInScope(Element element) {
     	String tagName = element.nodeName;
-    	String namespace = element.namespaceURI; 
-        if (Node.NAMESPACE_HTML.equals(namespace)) {
+    	byte namespaceID = element.namespaceID;
+        if (Node.NAMESPACE_HTML_ID == namespaceID) {
             switch (tagName) {
                 case "td":
                 case "th":
@@ -321,9 +321,9 @@ class Common {
                 default:
                     return false;
             }
-        } else if (Node.NAMESPACE_MATHML.equals(namespace)) {
+        } else if (Node.NAMESPACE_MATHML_ID == namespaceID) {
             return isInCommonInScopeMathMl(tagName);
-        } else if (Node.NAMESPACE_SVG.equals(namespace)) {
+        } else if (Node.NAMESPACE_SVG_ID == namespaceID) {
             return isInCommonInScopeSVG(tagName);
         }
         return false;
@@ -367,7 +367,7 @@ class Common {
     // ---------------
 
     static boolean isImpliedTag(Element e) {
-        if (!Node.NAMESPACE_HTML.equals(e.namespaceURI)) {
+        if (Node.NAMESPACE_HTML_ID != e.namespaceID) {
             return false;
         }
         switch (e.nodeName) {
@@ -592,12 +592,12 @@ class Common {
         }
         return sb.toString();
     }
-    
-    static boolean is(Element element, String name, String namespace) {
-    	return element.nodeName.equals(name) && element.namespaceURI.equals(namespace);
+
+    static boolean is(Element element, String name, byte namespaceID) {
+        return element.namespaceID == namespaceID && element.nodeName.equals(name);
     }
     
     static boolean isHtmlNS(Element element, String name) {
-    	return element.nodeName.equals(name) && element.namespaceURI.equals(Node.NAMESPACE_HTML);
+    	return element.namespaceID == Node.NAMESPACE_HTML_ID && element.nodeName.equals(name);
     }
 }

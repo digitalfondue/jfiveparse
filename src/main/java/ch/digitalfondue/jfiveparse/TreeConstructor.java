@@ -161,14 +161,14 @@ class TreeConstructor {
     private boolean checkIsInHtmlContent() {
         Element adjustedCurrentNode = getAdjustedCurrentNode();
         return openElements.isEmpty()
-                || (adjustedCurrentNode != null && (Node.NAMESPACE_HTML.equals(adjustedCurrentNode.getNamespaceURI()) || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
+                || (adjustedCurrentNode != null && (Node.NAMESPACE_HTML_ID == adjustedCurrentNode.namespaceID || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
                 || tokenType == EOF;
     }
 
     private boolean checkIsInHtmlContentSVGMathML(Element adjustedCurrentNode) {
         return (Common.isMathMLIntegrationPoint(adjustedCurrentNode) && ((tokenType == START_TAG && (!"mglyph".equals(tagName) && !"malignmark".equals(tagName))) || tokenType == CHARACTER))
                 || //
-                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML.equals(adjustedCurrentNode.getNamespaceURI())) && tokenType == START_TAG && "svg"
+                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML_ID == adjustedCurrentNode.namespaceID) && tokenType == START_TAG && "svg"
                         .equals(tagName)) || //
                 (Common.isHtmlIntegrationPoint(adjustedCurrentNode) && (tokenType == START_TAG || tokenType == CHARACTER));
     }
@@ -275,7 +275,7 @@ class TreeConstructor {
         generateImpliedEndTag("p", Node.NAMESPACE_HTML);
 
         Element e = getCurrentNode();
-        if (!("p".equals(e.getNodeName()) && Node.NAMESPACE_HTML.equals(e.getNamespaceURI()))) {
+        if (!("p".equals(e.getNodeName()) && Node.NAMESPACE_HTML_ID == e.namespaceID)) {
             emitParseError();
         }
 
@@ -623,16 +623,16 @@ class TreeConstructor {
 
         Element target = overrideTarget != null ? overrideTarget : getCurrentNode();
         String targetName = target.getNodeName();
-        if (fosterParentingEnabled && (Node.NAMESPACE_HTML.equals(target.getNamespaceURI()) && ("table".equals(targetName) || //
+        if (fosterParentingEnabled && (Node.NAMESPACE_HTML_ID == target.namespaceID && ("table".equals(targetName) || //
                 "tbody".equals(targetName) || //
                 "tfoot".equals(targetName) || //
                 "thead".equals(targetName) || //
                 "tr".equals(targetName)))) {
 
             // 1
-            int lastTemplatePos = findLastElementPositionMatching("template", Node.NAMESPACE_HTML);
+            int lastTemplatePos = findLastElementPositionMatching("template", Node.NAMESPACE_HTML_ID);
             // 2
-            int lastTablePos = findLastElementPositionMatching("table", Node.NAMESPACE_HTML);
+            int lastTablePos = findLastElementPositionMatching("table", Node.NAMESPACE_HTML_ID);
             // 3
             if (lastTemplatePos != -1 && ((lastTablePos == -1) || (lastTemplatePos > lastTablePos))) {
                 // inside the template
@@ -656,18 +656,18 @@ class TreeConstructor {
         }
     }
 
-    private int findLastElementPositionMatching(String name, String nameSpace) {
+    private int findLastElementPositionMatching(String name, byte namespaceID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element e = openElements.get(i);
-            if (Common.is(e, name, nameSpace)) {
+            if (Common.is(e, name, namespaceID)) {
                 return i;
             }
         }
         return -1;
     }
 
-    boolean stackOfOpenElementsContains(String name, String namespace) {
-        return findLastElementPositionMatching(name, namespace) != -1;
+    boolean stackOfOpenElementsContains(String name, byte namespaceID) {
+        return findLastElementPositionMatching(name, namespaceID) != -1;
     }
 
     // FIXME optimize(?)
@@ -1049,7 +1049,7 @@ class TreeConstructor {
     }
 
     void framesetOkToFalse() {
-        framesetOk = false;
+        framesetOk = Boolean.FALSE;
     }
 
     //
@@ -1077,8 +1077,8 @@ class TreeConstructor {
         return activeFormattingElements.getElementAtIndex(idx);
     }
 
-    int getIndexInActiveFormattingElementsBetween(String name, String namespace) {
-        return activeFormattingElements.getBetweenLastElementAndMarkerIndex(name, namespace);
+    int getIndexInActiveFormattingElementsBetween(String name, byte namespaceID) {
+        return activeFormattingElements.getBetweenLastElementAndMarkerIndex(name, namespaceID);
     }
 
     //

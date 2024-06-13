@@ -423,7 +423,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startA(TreeConstructor treeConstructor) {
-        final int aIdx = treeConstructor.getIndexInActiveFormattingElementsBetween("a", Node.NAMESPACE_HTML);
+        final int aIdx = treeConstructor.getIndexInActiveFormattingElementsBetween("a", Node.NAMESPACE_HTML_ID);
         if (aIdx != -1) {
             Element a = treeConstructor.getActiveFormattingElementAt(aIdx);
             treeConstructor.emitParseError();
@@ -529,7 +529,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML);
+        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID);
         if (treeConstructor.getForm() != null && templateIsNotPresent) {
             treeConstructor.emitParseError();
             // ignore the token
@@ -558,7 +558,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.closePElement();
         }
         Element e = treeConstructor.getCurrentNode();
-        if (Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && e.getNodeName().length() == 2 && //
+        if (Node.NAMESPACE_HTML_ID == e.namespaceID && e.getNodeName().length() == 2 && //
                 e.getNodeName().charAt(0) == 'h' && //
                 (e.getNodeName().charAt(1) >= '1' && e.getNodeName().charAt(1) <= '6')) {
             treeConstructor.emitParseError();
@@ -610,7 +610,7 @@ class TreeConstructorInBodyForeignContentText {
 
         if (treeConstructor.openElementsSize() == 1 || //
                 !Common.isHtmlNS(treeConstructor.openElementAt(1), "body") || //
-                treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML)) {
+                treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
             // ignore
         } else {
             treeConstructor.framesetOkToFalse();
@@ -627,7 +627,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.emitParseError();
 
         // we ignore the token if template is present
-        if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML)) {
+        if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
             Element firstInserted = treeConstructor.openElementAt(0);
             for (String attr : treeConstructor.getKeySetOfAttributes()) {
                 if (!firstInserted.getAttributes().containsKey(attr)) {
@@ -829,7 +829,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void endForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML);
+        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID);
         if (templateIsNotPresent) {
             Element node = treeConstructor.getForm();
             treeConstructor.setForm(null);
@@ -862,7 +862,7 @@ class TreeConstructorInBodyForeignContentText {
         } else {
             treeConstructor.generateImpliedEndTag();
             Element currentNode = treeConstructor.getCurrentNode();
-            if (!currentNode.getNamespaceURI().equals(Node.NAMESPACE_HTML) || !currentNode.getNodeName().equals(tagName)) {
+            if (currentNode.namespaceID != Node.NAMESPACE_HTML_ID || !currentNode.getNodeName().equals(tagName)) {
                 treeConstructor.emitParseError();
             }
 
@@ -1027,7 +1027,7 @@ class TreeConstructorInBodyForeignContentText {
 
             while (true) {
                 Element cur = treeConstructor.getCurrentNode();
-                if (Node.NAMESPACE_HTML.equals(cur.getNamespaceURI()) || isMathMLIntegrationPoint(cur) || isHtmlIntegrationPoint(cur)) {
+                if (Node.NAMESPACE_HTML_ID == cur.namespaceID || isMathMLIntegrationPoint(cur) || isHtmlIntegrationPoint(cur)) {
                     break;
                 }
                 treeConstructor.popCurrentNode();
@@ -1035,7 +1035,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.insertionModeInHtmlContent();
         } else if (tokenType == START_TAG) {
             anyOtherStartTag(tagName, treeConstructor);
-        } else if (tokenType == END_TAG && Common.is(treeConstructor.getCurrentNode(), "script", Node.NAMESPACE_SVG)) {
+        } else if (tokenType == END_TAG && Common.is(treeConstructor.getCurrentNode(), "script", Node.NAMESPACE_SVG_ID)) {
             // we don't execute scripts
             treeConstructor.popCurrentNode();
         } else if (tokenType == END_TAG) {
@@ -1060,7 +1060,7 @@ class TreeConstructorInBodyForeignContentText {
 
                 idx--;
                 node = treeConstructor.openElementAt(idx);
-                if (Node.NAMESPACE_HTML.equals(node.getNamespaceURI())) {
+                if (Node.NAMESPACE_HTML_ID == node.namespaceID) {
                     treeConstructor.insertionModeInHtmlContent();
                     return;
                 }
@@ -1070,10 +1070,10 @@ class TreeConstructorInBodyForeignContentText {
 
     private static void anyOtherStartTag(String tagName, TreeConstructor treeConstructor) {
         Element currentNode = treeConstructor.getAdjustedCurrentNode();
-        if (Node.NAMESPACE_MATHML.equals(currentNode.getNamespaceURI())) {
+        if (Node.NAMESPACE_MATHML_ID == currentNode.namespaceID) {
             adjustMathMLAttributes(treeConstructor.getAttributes());
         }
-        if (Node.NAMESPACE_SVG.equals(currentNode.getNamespaceURI())) {
+        if (Node.NAMESPACE_SVG_ID == currentNode.namespaceID) {
 
             if (SVG_ELEMENT_CASE_CORRECTION.containsKey(tagName)) {
                 tagName = SVG_ELEMENT_CASE_CORRECTION.get(tagName);

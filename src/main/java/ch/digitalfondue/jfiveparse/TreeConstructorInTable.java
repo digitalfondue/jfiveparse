@@ -119,7 +119,7 @@ class TreeConstructorInTable {
             }
         } else if (Common.isStartTagNamed(tokenType, "form", tagName)) {
             treeConstructor.emitParseError();
-            if (treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML) || treeConstructor.getForm() != null) {
+            if (treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID) || treeConstructor.getForm() != null) {
                 // ignore
             } else {
                 Element form = treeConstructor.insertHtmlElementToken();
@@ -139,7 +139,7 @@ class TreeConstructorInTable {
     private static void cleanStackBackToTableContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            if (Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && //
+            if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
                     ("table".equals(e.getNodeName()) || "template".equals(e.getNodeName()) || "html".equals(e.getNodeName()))) {
                 break;
             }
@@ -199,7 +199,7 @@ class TreeConstructorInTable {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
             String nodeName = e.nodeName;
-            if (Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && //
+            if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
                     ("tbody".equals(nodeName) || //
                             "tfoot".equals(nodeName) || //
                             "thead".equals(nodeName) || //
@@ -343,7 +343,7 @@ class TreeConstructorInTable {
     private static void clearStackBackToTableRowContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            if (Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && //
+            if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
                     ("tr".equals(e.nodeName) || "template".equals(e.nodeName) || "html".equals(e.nodeName))) {
                 break;
             }

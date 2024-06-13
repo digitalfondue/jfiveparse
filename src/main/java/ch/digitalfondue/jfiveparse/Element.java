@@ -25,6 +25,7 @@ public class Element extends Node {
     final String nodeName;
     final String originalNodeName;
     final String namespaceURI;
+    final byte namespaceID;
     Attributes attributes;
 
     private List<Node> childNodes = null;
@@ -64,6 +65,7 @@ public class Element extends Node {
         this.nodeName = name;
         this.originalNodeName = originalName;
         this.namespaceURI = nameSpace;
+        this.namespaceID = Node.toNameSpaceId(nameSpace);
         this.attributes = attributes;
     }
 
@@ -382,7 +384,7 @@ public class Element extends Node {
      * @return
      */
     public String getTagName() {
-        if (Node.NAMESPACE_HTML.equals(namespaceURI)) {
+        if (Node.NAMESPACE_HTML_ID == namespaceID) {
             return nodeName.toUpperCase(Locale.ENGLISH);
         } else {
             return originalNodeName;

@@ -122,11 +122,11 @@ public class Parser {
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);
 
-        String namespace = node.namespaceURI;
+        byte namespaceID = node.namespaceID;
         String name = node.nodeName;
 
         // 4
-        if (Node.NAMESPACE_HTML.equals(namespace)) {
+        if (Node.NAMESPACE_HTML_ID == namespaceID) {
 
             if ("title".equals(name) || "textarea".equals(name)) {
                 tokenizer.setState(TokenizerState.RCDATA_STATE);

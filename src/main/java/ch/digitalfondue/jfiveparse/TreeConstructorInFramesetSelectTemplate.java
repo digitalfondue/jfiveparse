@@ -234,7 +234,7 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.emitParseError();
             // ignore
         } else if (tokenType == EOF) {
-            if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML)) {
+            if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
                 treeConstructor.stopParsing();
             } else {
                 treeConstructor.emitParseError();
