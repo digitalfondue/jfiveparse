@@ -1,12 +1,12 @@
 /**
  * Copyright © 2015 digitalfondue (info@digitalfondue.ch)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,17 +15,11 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import static ch.digitalfondue.jfiveparse.Common.*;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.CHARACTER;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.COMMENT;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.DOCTYPE;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.END_TAG;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.EOF;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.genericRawTextElementParsing;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import static ch.digitalfondue.jfiveparse.Common.*;
+import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
 class TreeConstructorInBodyForeignContentText {
 
@@ -45,195 +39,195 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void inBodyStartTag(String tagName, TreeConstructor treeConstructor) {
-        switch (tagName) {
-        case "html":
-            startHtml(treeConstructor);
-            break;
-        case "base":
-        case "basefont":
-        case "bgsound":
-        case "link":
-        case "meta":
-        case "noframes":
-        case "script":
-        case "style":
-        case "template":
-        case "title":
-            TreeConstructorAftersBeforeInitialInHead.inHead(START_TAG, tagName, treeConstructor);
-            break;
-        case "body":
-            startBody(treeConstructor);
-            break;
-        case "frameset":
-            startFrameset(treeConstructor);
-            break;
-        case "address":
-        case "article":
-        case "aside":
-        case "blockquote":
-        case "center":
-        case "details":
-        case "dialog":
-        case "dir":
-        case "div":
-        case "dl":
-        case "fieldset":
-        case "figcaption":
-        case "figure":
-        case "footer":
-        case "header":
-        case "hgroup":
-        case "main":
-        case "nav":
-        case "ol":
-        case "p":
-        case "search":
-        case "section":
-        case "summary":
-        case "ul":
-            startAddressUl(treeConstructor);
-            break;
-        case "menu":
-        	startMenu(treeConstructor);
-        	break;
-        case "h1":
-        case "h2":
-        case "h3":
-        case "h4":
-        case "h5":
-        case "h6":
-            startH1H6(treeConstructor);
-            break;
-        case "pre":
-        case "listing":
-            startPreListing(treeConstructor);
-            break;
-        case "form":
-            startForm(treeConstructor);
-            break;
-        case "li":
-            startLi(treeConstructor);
-            break;
-        case "dd":
-        case "dt":
-            startDdDt(treeConstructor);
-            break;
-        case "plaintext":
-            startPlaintext(treeConstructor);
-            break;
-        case "button":
-            startButton(treeConstructor);
-            break;
-        case "a":
-            startA(treeConstructor);
-            break;
-        case "b":
-        case "big":
-        case "code":
-        case "em":
-        case "font":
-        case "i":
-        case "s":
-        case "small":
-        case "strike":
-        case "strong":
-        case "tt":
-        case "u":
-            startBU(treeConstructor);
-            break;
-        case "nobr":
-            startNobr(tagName, treeConstructor);
-            break;
-        case "applet":
-        case "marquee":
-        case "object":
-            startAppletObject(treeConstructor);
-            break;
-        case "table":
-            startTable(treeConstructor);
-            break;
-        case "area":
-        case "br":
-        case "embed":
-        case "img":
-        case "keygen":
-        case "wbr":
-            startAreaWbr(treeConstructor);
-            break;
-        case "input":
-            startInput(treeConstructor);
-            break;
-        case "param":
-        case "source":
-        case "track":
-            startParamTrack(treeConstructor);
-            break;
-        case "hr":
-            startHr(treeConstructor);
-            break;
-        case "image":
-            startImage(treeConstructor);
-            break;
-        case "textarea":
-            startTextarea(treeConstructor);
-            break;
-        case "xmp":
-            startXmp(treeConstructor);
-            break;
-        case "iframe":
-            startIframe(treeConstructor);
-            break;
-        case "noembed":
-        case "noscript":
-            startNoembedNoscript(tagName, treeConstructor);
-            break;
-        case "select":
-            startSelect(treeConstructor);
-            break;
-        case "optgroup":
-        case "option":
-            startOptgroupOption(treeConstructor);
-            break;
-        case "rb":
-        case "rtc":
-            startRbRtc(treeConstructor);
-            break;
-        case "rp":
-        case "rt":
-            startRpRt(treeConstructor);
-            break;
-        case "math":
-            startMath(tagName, treeConstructor);
-            break;
-        case "svg":
-            startSvg(tagName, treeConstructor);
-            break;
-        case "caption":
-        case "col":
-        case "colgroup":
-        case "frame":
-        case "head":
-        case "tbody":
-        case "td":
-        case "tfoot":
-        case "th":
-        case "thead":
-        case "tr":
-            // ignore token
-            if (treeConstructor.disableIgnoreTokenInBodyStartTag) {
+    private static void inBodyStartTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+        switch (tagNameID) {
+            case ELEMENT_HTML_ID:
+                startHtml(treeConstructor);
+                break;
+            case ELEMENT_BASE_ID:
+            case ELEMENT_BASEFONT_ID:
+            case ELEMENT_BGSOUND_ID:
+            case ELEMENT_LINK_ID:
+            case ELEMENT_META_ID:
+            case ELEMENT_NOFRAMES_ID:
+            case ELEMENT_SCRIPT_ID:
+            case ELEMENT_STYLE_ID:
+            case ELEMENT_TEMPLATE_ID:
+            case ELEMENT_TITLE_ID:
+                TreeConstructorAftersBeforeInitialInHead.inHead(START_TAG, tagName, tagNameID, treeConstructor);
+                break;
+            case ELEMENT_BODY_ID:
+                startBody(treeConstructor);
+                break;
+            case ELEMENT_FRAMESET_ID:
+                startFrameset(treeConstructor);
+                break;
+            case ELEMENT_ADDRESS_ID:
+            case ELEMENT_ARTICLE_ID:
+            case ELEMENT_ASIDE_ID:
+            case ELEMENT_BLOCKQUOTE_ID:
+            case ELEMENT_CENTER_ID:
+            case ELEMENT_DETAILS_ID:
+            case ELEMENT_DIALOG_ID:
+            case ELEMENT_DIR_ID:
+            case ELEMENT_DIV_ID:
+            case ELEMENT_DL_ID:
+            case ELEMENT_FIELDSET_ID:
+            case ELEMENT_FIGCAPTION_ID:
+            case ELEMENT_FIGURE_ID:
+            case ELEMENT_FOOTER_ID:
+            case ELEMENT_HEADER_ID:
+            case ELEMENT_HGROUP_ID:
+            case ELEMENT_MAIN_ID:
+            case ELEMENT_NAV_ID:
+            case ELEMENT_OL_ID:
+            case ELEMENT_P_ID:
+            case ELEMENT_SEARCH_ID:
+            case ELEMENT_SECTION_ID:
+            case ELEMENT_SUMMARY_ID:
+            case ELEMENT_UL_ID:
+                startAddressUl(treeConstructor);
+                break;
+            case ELEMENT_MENU_ID:
+                startMenu(treeConstructor);
+                break;
+            case ELEMENT_H1_ID:
+            case ELEMENT_H2_ID:
+            case ELEMENT_H3_ID:
+            case ELEMENT_H4_ID:
+            case ELEMENT_H5_ID:
+            case ELEMENT_H6_ID:
+                startH1H6(treeConstructor);
+                break;
+            case ELEMENT_PRE_ID:
+            case ELEMENT_LISTING_ID:
+                startPreListing(treeConstructor);
+                break;
+            case ELEMENT_FORM_ID:
+                startForm(treeConstructor);
+                break;
+            case ELEMENT_LI_ID:
+                startLi(treeConstructor);
+                break;
+            case ELEMENT_DD_ID:
+            case ELEMENT_DT_ID:
+                startDdDt(treeConstructor);
+                break;
+            case ELEMENT_PLAINTEXT_ID:
+                startPlaintext(treeConstructor);
+                break;
+            case ELEMENT_BUTTON_ID:
+                startButton(treeConstructor);
+                break;
+            case ELEMENT_A_ID:
+                startA(treeConstructor);
+                break;
+            case ELEMENT_B_ID:
+            case ELEMENT_BIG_ID:
+            case ELEMENT_CODE_ID:
+            case ELEMENT_EM_ID:
+            case ELEMENT_FONT_ID:
+            case ELEMENT_I_ID:
+            case ELEMENT_S_ID:
+            case ELEMENT_SMALL_ID:
+            case ELEMENT_STRIKE_ID:
+            case ELEMENT_STRONG_ID:
+            case ELEMENT_TT_ID:
+            case ELEMENT_U_ID:
+                startBU(treeConstructor);
+                break;
+            case ELEMENT_NO_BR_ID:
+                startNobr(tagName, treeConstructor);
+                break;
+            case ELEMENT_APPLET_ID:
+            case ELEMENT_MARQUEE_ID:
+            case ELEMENT_OBJECT_ID:
+                startAppletObject(treeConstructor);
+                break;
+            case ELEMENT_TABLE_ID:
+                startTable(treeConstructor);
+                break;
+            case ELEMENT_AREA_ID:
+            case ELEMENT_BR_ID:
+            case ELEMENT_EMBED_ID:
+            case ELEMENT_IMG_ID:
+            case ELEMENT_KEYGEN_ID:
+            case ELEMENT_WBR_ID:
+                startAreaWbr(treeConstructor);
+                break;
+            case ELEMENT_INPUT_ID:
+                startInput(treeConstructor);
+                break;
+            case ELEMENT_PARAM_ID:
+            case ELEMENT_SOURCE_ID:
+            case ELEMENT_TRACK_ID:
+                startParamTrack(treeConstructor);
+                break;
+            case ELEMENT_HR_ID:
+                startHr(treeConstructor);
+                break;
+            case ELEMENT_IMAGE_ID:
+                startImage(treeConstructor);
+                break;
+            case ELEMENT_TEXTAREA_ID:
+                startTextarea(treeConstructor);
+                break;
+            case ELEMENT_XMP_ID:
+                startXmp(treeConstructor);
+                break;
+            case ELEMENT_IFRAME_ID:
+                startIframe(treeConstructor);
+                break;
+            case ELEMENT_NOEMBED_ID:
+            case ELEMENT_NOSCRIPT_ID:
+                startNoembedNoscript(tagName, treeConstructor);
+                break;
+            case ELEMENT_SELECT_ID:
+                startSelect(treeConstructor);
+                break;
+            case ELEMENT_OPTGROUP_ID:
+            case ELEMENT_OPTION_ID:
+                startOptgroupOption(treeConstructor);
+                break;
+            case ELEMENT_RB_ID:
+            case ELEMENT_RTC_ID:
+                startRbRtc(treeConstructor);
+                break;
+            case ELEMENT_RP_ID:
+            case ELEMENT_RT_ID:
+                startRpRt(treeConstructor);
+                break;
+            case ELEMENT_MATH_ID:
+                startMath(tagName, treeConstructor);
+                break;
+            case ELEMENT_SVG_ID:
+                startSvg(tagName, treeConstructor);
+                break;
+            case ELEMENT_CAPTION_ID:
+            case ELEMENT_COL_ID:
+            case ELEMENT_COLGROUP_ID:
+            case ELEMENT_FRAME_ID:
+            case ELEMENT_HEAD_ID:
+            case ELEMENT_TBODY_ID:
+            case ELEMENT_TD_ID:
+            case ELEMENT_TFOOT_ID:
+            case ELEMENT_TH_ID:
+            case ELEMENT_THEAD_ID:
+            case ELEMENT_TR_ID:
+                // ignore token
+                if (treeConstructor.disableIgnoreTokenInBodyStartTag) {
+                    inBodyStartTagAnythingElse(treeConstructor);
+                } else {
+                    treeConstructor.emitParseError();
+                }
+                break;
+            default:
                 inBodyStartTagAnythingElse(treeConstructor);
-            } else {
-                treeConstructor.emitParseError();
-            }
-            break;
-        default:
-            inBodyStartTagAnythingElse(treeConstructor);
-            break;
+                break;
         }
     }
 
-	private static void startSvg(String tagName, TreeConstructor treeConstructor) {
+    private static void startSvg(String tagName, TreeConstructor treeConstructor) {
         Attributes attrs = treeConstructor.getAttributes();
         Common.adjustSVGAttributes(attrs);
         Common.adjustForeignAttributes(attrs);
@@ -564,18 +558,18 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startAddressUl(TreeConstructor treeConstructor) {
-    	if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
     }
-    
+
     private static void startMenu(TreeConstructor treeConstructor) {
-    	if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
+        if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
-	}
+    }
 
     private static void startFrameset(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();
@@ -644,94 +638,94 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void inBodyEndTag(String tagName, TreeConstructor treeConstructor) {
+    private static void inBodyEndTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         switch (tagName) {
-        case "template":
-            TreeConstructorAftersBeforeInitialInHead.inHead(END_TAG, tagName, treeConstructor);
-            break;
-        case "body":
-            endBody(treeConstructor);
-            break;
-        case "html":
-            endHtml(treeConstructor);
-            break;
-        case "address":
-        case "article":
-        case "aside":
-        case "blockquote":
-        case "button":
-        case "center":
-        case "details":
-        case "dialog":
-        case "dir":
-        case "div":
-        case "dl":
-        case "fieldset":
-        case "figcaption":
-        case "figure":
-        case "footer":
-        case "header":
-        case "hgroup":
-        case "listing":
-        case "main":
-        case "menu":
-        case "nav":
-        case "ol":
-        case "pre":
-        case "search":
-        case "section":
-        case "summary":
-        case "ul":
-            endAddressUl(tagName, treeConstructor);
-            break;
-        case "form":
-            endForm(treeConstructor);
-            break;
-        case "p":
-            endP(treeConstructor);
-            break;
-        case "li":
-            endLi(treeConstructor);
-            break;
-        case "dd":
-        case "dt":
-            endDdDt(tagName, treeConstructor);
-            break;
-        case "h1":
-        case "h2":
-        case "h3":
-        case "h4":
-        case "h5":
-        case "h6":
-            endH1H6(tagName, treeConstructor);
-            break;
-        case "a":
-        case "b":
-        case "big":
-        case "code":
-        case "em":
-        case "font":
-        case "i":
-        case "nobr":
-        case "s":
-        case "small":
-        case "strike":
-        case "strong":
-        case "tt":
-        case "u":
-            treeConstructor.adoptionAgencyAlgorithm(tagName);
-            break;
-        case "applet":
-        case "marquee":
-        case "object":
-            endAppletObject(tagName, treeConstructor);
-            break;
-        case "br":
-            endBr(treeConstructor);
-            break;
-        default:
-            anyOtherEndTag(tagName, treeConstructor);
-            break;
+            case "template":
+                TreeConstructorAftersBeforeInitialInHead.inHead(END_TAG, tagName, tagNameID, treeConstructor);
+                break;
+            case "body":
+                endBody(treeConstructor);
+                break;
+            case "html":
+                endHtml(treeConstructor);
+                break;
+            case "address":
+            case "article":
+            case "aside":
+            case "blockquote":
+            case "button":
+            case "center":
+            case "details":
+            case "dialog":
+            case "dir":
+            case "div":
+            case "dl":
+            case "fieldset":
+            case "figcaption":
+            case "figure":
+            case "footer":
+            case "header":
+            case "hgroup":
+            case "listing":
+            case "main":
+            case "menu":
+            case "nav":
+            case "ol":
+            case "pre":
+            case "search":
+            case "section":
+            case "summary":
+            case "ul":
+                endAddressUl(tagName, treeConstructor);
+                break;
+            case "form":
+                endForm(treeConstructor);
+                break;
+            case "p":
+                endP(treeConstructor);
+                break;
+            case "li":
+                endLi(treeConstructor);
+                break;
+            case "dd":
+            case "dt":
+                endDdDt(tagName, treeConstructor);
+                break;
+            case "h1":
+            case "h2":
+            case "h3":
+            case "h4":
+            case "h5":
+            case "h6":
+                endH1H6(tagName, treeConstructor);
+                break;
+            case "a":
+            case "b":
+            case "big":
+            case "code":
+            case "em":
+            case "font":
+            case "i":
+            case "nobr":
+            case "s":
+            case "small":
+            case "strike":
+            case "strong":
+            case "tt":
+            case "u":
+                treeConstructor.adoptionAgencyAlgorithm(tagName);
+                break;
+            case "applet":
+            case "marquee":
+            case "object":
+                endAppletObject(tagName, treeConstructor);
+                break;
+            case "br":
+                endBr(treeConstructor);
+                break;
+            default:
+                anyOtherEndTag(tagName, treeConstructor);
+                break;
         }
     }
 
@@ -882,32 +876,32 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    static void inBody(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inBody(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
-        case CHARACTER:
-            handleInBodyCharacter(treeConstructor);
-            return;
-        case COMMENT:
-            treeConstructor.insertComment();
-            return;
-        case DOCTYPE:
-            treeConstructor.emitParseError(); // ignore
-            return;
-        case EOF:
-            inBodyEof(tokenType, tagName, treeConstructor);
-            return;
-        case END_TAG:
-            inBodyEndTag(tagName, treeConstructor);
-            break;
-        case START_TAG:
-            inBodyStartTag(tagName, treeConstructor);
+            case CHARACTER:
+                handleInBodyCharacter(treeConstructor);
+                return;
+            case COMMENT:
+                treeConstructor.insertComment();
+                return;
+            case DOCTYPE:
+                treeConstructor.emitParseError(); // ignore
+                return;
+            case EOF:
+                inBodyEof(tokenType, tagName, tagNameID,treeConstructor);
+                return;
+            case END_TAG:
+                inBodyEndTag(tagName, tagNameID, treeConstructor);
+                break;
+            case START_TAG:
+                inBodyStartTag(tagName, tagNameID, treeConstructor);
         }
     }
 
-    private static void inBodyEof(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    private static void inBodyEof(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (!treeConstructor.isStackTemplatesInsertionModeIsEmpty()) {
-            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, treeConstructor);
+            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, treeConstructor);
         } else {
             // FIXME add check:
             // If there is a node in the stack of open elements that is not
@@ -952,7 +946,7 @@ class TreeConstructorInBodyForeignContentText {
 
     // ---------------------------
 
-    static void foreignContent(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void foreignContent(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && treeConstructor.getChr() == Characters.NULL) {
             treeConstructor.emitParseError();
             treeConstructor.insertCharacter(Characters.REPLACEMENT_CHARACTER);
@@ -1012,7 +1006,7 @@ class TreeConstructorInBodyForeignContentText {
                 "var".equals(tagName)) || //
                 ("font".equals(tagName) && (treeConstructor.hasAttribute("color") || //
                         treeConstructor.hasAttribute("face") || //
-                /*    */treeConstructor.hasAttribute("size")))) ||
+                        /*    */treeConstructor.hasAttribute("size")))) ||
                 (tokenType == END_TAG && ("br".equals(tagName) || "p".equals(tagName)))) {
             treeConstructor.emitParseError();
 
@@ -1084,6 +1078,7 @@ class TreeConstructorInBodyForeignContentText {
 
 
     private static final Map<String, String> SVG_ELEMENT_CASE_CORRECTION = new HashMap<>();
+
     static {
         SVG_ELEMENT_CASE_CORRECTION.put("altglyph", "altGlyph");
         SVG_ELEMENT_CASE_CORRECTION.put("altglyphdef", "altGlyphDef");
@@ -1128,15 +1123,15 @@ class TreeConstructorInBodyForeignContentText {
 
     static void text(byte tokenType, TreeConstructor treeConstructor) {
         switch (tokenType) {
-        case CHARACTER:
-            treeConstructor.insertCharacter();
-            break;
-        case EOF:
-            textEof(treeConstructor);
-            break;
-        case END_TAG:
-            textEndTag(treeConstructor);
-            break;
+            case CHARACTER:
+                treeConstructor.insertCharacter();
+                break;
+            case EOF:
+                textEof(treeConstructor);
+                break;
+            case END_TAG:
+                textEndTag(treeConstructor);
+                break;
         }
     }
 

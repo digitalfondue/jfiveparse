@@ -24,7 +24,7 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
 
 class TreeConstructorInTable {
 
-    static void inTable(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inTable(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         Element currentNodeTop = treeConstructor.getCurrentNode();
 
@@ -102,14 +102,14 @@ class TreeConstructorInTable {
                 "script".equals(tagName) || //
                 "template".equals(tagName))//
                 || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "input", tagName)) {
 
             boolean hasTypeKey = treeConstructor.hasAttribute("type");
             if (!hasTypeKey || (!"hidden".equalsIgnoreCase(treeConstructor.getAttribute("type").getValue()))) {
                 treeConstructor.emitParseError();
                 treeConstructor.enableFosterParenting();
-                TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+                TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
                 treeConstructor.disableFosterParenting();
             } else {
                 treeConstructor.emitParseError();
@@ -127,11 +127,11 @@ class TreeConstructorInTable {
                 treeConstructor.popCurrentNode();
             }
         } else if (tokenType == EOF) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else {
             treeConstructor.emitParseError();
             treeConstructor.enableFosterParenting();
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
             treeConstructor.disableFosterParenting();
         }
     }
@@ -149,7 +149,7 @@ class TreeConstructorInTable {
 
     // ----- in table body
 
-    static void inTableBody(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inTableBody(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         if (Common.isStartTagNamed(tokenType, "tr", tagName)) {
             clearStackBackToTableBodyContext(treeConstructor);
@@ -191,7 +191,7 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore token
         } else {
-            TreeConstructorInTable.inTable(tokenType, tagName, treeConstructor);
+            TreeConstructorInTable.inTable(tokenType, tagName, tagNameID, treeConstructor);
         }
     }
 
@@ -215,7 +215,7 @@ class TreeConstructorInTable {
 
     // in table text
 
-    static void inTableText(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inTableText(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         int chr = treeConstructor.getChr();
         if (tokenType == CHARACTER && chr == Characters.NULL) {
             treeConstructor.emitParseError();
@@ -244,7 +244,7 @@ class TreeConstructorInTable {
                 int pos = chars.pos();
                 for (int i = 0; i < pos; i++) {
                     treeConstructor.setChr(chars.at(i));
-                    TreeConstructorInBodyForeignContentText.inBody(CHARACTER, tagName, treeConstructor);
+                    TreeConstructorInBodyForeignContentText.inBody(CHARACTER, tagName, tagNameID, treeConstructor);
                 }
 
                 //
@@ -277,7 +277,7 @@ class TreeConstructorInTable {
 
     // ----- in row
 
-    static void inRow(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inRow(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         if (tokenType == START_TAG && ("th".equals(tagName) || "td".equals(tagName))) {
             clearStackBackToTableRowContext(treeConstructor);
@@ -335,7 +335,7 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore token
         } else {
-            TreeConstructorInTable.inTable(tokenType, tagName, treeConstructor);
+            TreeConstructorInTable.inTable(tokenType, tagName, tagNameID, treeConstructor);
         }
 
     }
@@ -353,7 +353,7 @@ class TreeConstructorInTable {
 
     // --------
     // in colgroup
-    static void inColumnGroup(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inColumnGroup(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
@@ -363,7 +363,7 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "col", tagName)) {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.popCurrentNode();
@@ -380,9 +380,9 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "template", tagName) || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == EOF) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_COLGROUP_ID)) {
                 treeConstructor.emitParseError();
@@ -397,22 +397,22 @@ class TreeConstructorInTable {
 
     // ----
     // in cell
-    static void inCell(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inCell(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         switch (tokenType) {
         case END_TAG:
-            inCellEndTag(tagName, treeConstructor);
+            inCellEndTag(tagName, tagNameID, treeConstructor);
             break;
         case START_TAG:
-            inCellStartTag(tagName, treeConstructor);
+            inCellStartTag(tagName, tagNameID, treeConstructor);
             break;
         default:
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
             break;
         }
     }
 
-    private static void inCellEndTag(String tagName, TreeConstructor treeConstructor) {
-        if (("td".equals(tagName) || "th".equals(tagName))) {
+    private static void inCellEndTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+        if ((Common.ELEMENT_TD_ID == tagNameID || Common.ELEMENT_TH_ID == tagNameID)) {
             if (!treeConstructor.hasElementInTableScope(tagName)) {
                 treeConstructor.emitParseError();
                 // ignore token
@@ -432,10 +432,13 @@ class TreeConstructorInTable {
                 "colgroup".equals(tagName) || "html".equals(tagName))) {
             treeConstructor.emitParseError();
             // ignore token
-        } else if (("table".equals(tagName) || //
-                "tbody".equals(tagName) || //
-                "tfoot".equals(tagName) || //
-                "thead".equals(tagName) || "tr".equals(tagName))) {
+        } else if (
+                Common.ELEMENT_TABLE_ID == tagNameID || //
+                Common.ELEMENT_TBODY_ID == tagNameID || //
+                Common.ELEMENT_TFOOT_ID == tagNameID || //
+                Common.ELEMENT_THEAD_ID == tagNameID ||
+                Common.ELEMENT_TR_ID == tagNameID
+        ) {
             if (!treeConstructor.hasElementInTableScope(tagName)) {
                 treeConstructor.emitParseError();
                 // ignore token
@@ -444,11 +447,11 @@ class TreeConstructorInTable {
                 treeConstructor.dispatch();
             }
         } else {
-            TreeConstructorInBodyForeignContentText.inBody(END_TAG, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(END_TAG, tagName, tagNameID, treeConstructor);
         }
     }
 
-    private static void inCellStartTag(String tagName, TreeConstructor treeConstructor) {
+    private static void inCellStartTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (("caption".equals(tagName) || //
                 "col".equals(tagName) || //
                 "colgroup".equals(tagName) || //
@@ -466,7 +469,7 @@ class TreeConstructorInTable {
                 treeConstructor.dispatch();
             }
         } else {
-            TreeConstructorInBodyForeignContentText.inBody(START_TAG, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(START_TAG, tagName, tagNameID, treeConstructor);
         }
     }
 
@@ -488,7 +491,7 @@ class TreeConstructorInTable {
 
     // ---- in caption
 
-    static void inCaption(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inCaption(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         if (Common.isEndTagNamed(tokenType, "caption", tagName)) {
 
@@ -544,7 +547,7 @@ class TreeConstructorInTable {
             treeConstructor.emitParseError();
             // ignore
         } else {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         }
     }
 }

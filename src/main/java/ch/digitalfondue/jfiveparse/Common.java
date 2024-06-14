@@ -275,6 +275,10 @@ class Common {
         return tokenType == TreeConstructor.END_TAG && named.equals(tagName);
     }
 
+    static boolean isEndTagNamed(byte tokenType, byte namedID, byte tagNameID) {
+        return tokenType == TreeConstructor.END_TAG && namedID == tagNameID;
+    }
+
     // private static final HashSet<String> SPECIAL_ELEMENTS_HTML_SET_V2 = new LinkedHashSet<>();
 
     static byte tagNameToID(String tagName) {
@@ -372,6 +376,27 @@ class Common {
             case "rtc": return ELEMENT_RTC_ID;
             //
             case "a": return ELEMENT_A_ID;
+            //
+
+            case "dialog": return ELEMENT_DIALOG_ID;
+            case "search": return ELEMENT_SEARCH_ID;
+            case "b": return ELEMENT_B_ID;
+            case "big": return ELEMENT_BIG_ID;
+            case "code": return ELEMENT_CODE_ID;
+            case "em": return ELEMENT_EM_ID;
+            case "font": return ELEMENT_FONT_ID;
+            case "i": return ELEMENT_I_ID;
+            case "s": return ELEMENT_S_ID;
+            case "small": return ELEMENT_SMALL_ID;
+            case "strike": return ELEMENT_STRIKE_ID;
+            case "strong": return ELEMENT_STRONG_ID;
+            case "tt": return ELEMENT_TT_ID;
+            case "u": return ELEMENT_U_ID;
+            case "nobr": return ELEMENT_NO_BR_ID;
+            case "keygen": return ELEMENT_KEYGEN_ID;
+            case "image": return ELEMENT_IMAGE_ID;
+            case "math": return ELEMENT_MATH_ID;
+            case "svg": return ELEMENT_SVG_ID;
             default: return 0;
         }
     }
@@ -476,6 +501,25 @@ class Common {
     //
     static final byte ELEMENT_A_ID = 88;
     //
+    static final byte ELEMENT_DIALOG_ID = 89;
+    static final byte ELEMENT_SEARCH_ID = 90;
+    static final byte ELEMENT_B_ID = 91;
+    static final byte ELEMENT_BIG_ID = 92;
+    static final byte ELEMENT_CODE_ID = 93;
+    static final byte ELEMENT_EM_ID = 94;
+    static final byte ELEMENT_FONT_ID = 95;
+    static final byte ELEMENT_I_ID = 96;
+    static final byte ELEMENT_S_ID = 97;
+    static final byte ELEMENT_SMALL_ID = 98;
+    static final byte ELEMENT_STRIKE_ID = 99;
+    static final byte ELEMENT_STRONG_ID = 100;
+    static final byte ELEMENT_TT_ID = 101;
+    static final byte ELEMENT_U_ID = 102;
+    static final byte ELEMENT_NO_BR_ID = 103;
+    static final byte ELEMENT_KEYGEN_ID = 104;
+    static final byte ELEMENT_IMAGE_ID = 105;
+    static final byte ELEMENT_MATH_ID = 106;
+    static final byte ELEMENT_SVG_ID = 107;
 
     /*
     public static void main(String[] args) {

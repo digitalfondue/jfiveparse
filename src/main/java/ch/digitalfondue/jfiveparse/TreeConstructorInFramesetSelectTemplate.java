@@ -24,7 +24,7 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
 
 class TreeConstructorInFramesetSelectTemplate {
 
-    static void inFrameset(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inFrameset(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
@@ -34,7 +34,7 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "frameset", tagName)) {
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isEndTagNamed(tokenType, "frameset", tagName)) {
@@ -55,7 +55,7 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
         } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == EOF) {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_HTML_ID)) {
                 treeConstructor.emitParseError();
@@ -67,7 +67,7 @@ class TreeConstructorInFramesetSelectTemplate {
         }
     }
     
-    static void inSelect(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inSelect(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && treeConstructor.getChr() == Characters.NULL) {
             treeConstructor.emitParseError();
             // ignore
@@ -79,7 +79,7 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.emitParseError();
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "option", tagName)) {
             if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
@@ -155,16 +155,16 @@ class TreeConstructorInFramesetSelectTemplate {
         } else if ((tokenType == START_TAG && ("script".equals(tagName) || //
                 "template".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == EOF) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else {
             treeConstructor.emitParseError();
             // ignore
         }
     }
 
-    static void inSelectTable(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inSelectTable(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         boolean isCaptionOrRelatedTags = "caption".equals(tagName) || //
                 "table".equals(tagName) || //
                 "tbody".equals(tagName) || //
@@ -188,7 +188,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.dispatch();
             }
         } else {
-            inSelect(tokenType, tagName, treeConstructor);
+            inSelect(tokenType, tagName, tagNameID, treeConstructor);
         }
     }
     
@@ -200,9 +200,9 @@ class TreeConstructorInFramesetSelectTemplate {
         treeConstructor.dispatch();
     }
 
-    static void inTemplate(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void inTemplate(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER || tokenType == COMMENT || tokenType == DOCTYPE) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if ((tokenType == START_TAG && ("base".equals(tagName) || //
                 "basefont".equals(tagName) || //
                 "bgsound".equals(tagName) || //
@@ -214,7 +214,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 "template".equals(tagName) || //
                 "title".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, "template", tagName)) {
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, treeConstructor);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == START_TAG && ("caption".equals(tagName) || //
                 "colgroup".equals(tagName) || //
                 "tbody".equals(tagName) || //
