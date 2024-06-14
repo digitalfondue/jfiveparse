@@ -25,17 +25,15 @@ class TreeConstructorInBodyForeignContentText {
 
     private static void handleInBodyCharacter(TreeConstructor treeConstructor) {
         int chr = treeConstructor.getChr();
-        if (chr == Characters.NULL) {
-            treeConstructor.emitParseError();
-            // ignore
-        } else {
-
+        if (chr != Characters.NULL) {
             treeConstructor.reconstructActiveFormattingElements();
-
             treeConstructor.insertCharacter((char) chr);
             if (!Common.isTabLfFfCrOrSpace(chr)) {
                 treeConstructor.framesetOkToFalse();
             }
+        } else {
+            treeConstructor.emitParseError();
+            // ignore
         }
     }
 
@@ -232,7 +230,7 @@ class TreeConstructorInBodyForeignContentText {
         Common.adjustSVGAttributes(attrs);
         Common.adjustForeignAttributes(attrs);
 
-        treeConstructor.insertElementToken(tagName, Node.NAMESPACE_SVG, attrs);
+        treeConstructor.insertElementToken(tagName, Node.NAMESPACE_SVG, Node.NAMESPACE_SVG_ID, attrs);
         if (treeConstructor.isSelfClosing()) {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
@@ -246,7 +244,7 @@ class TreeConstructorInBodyForeignContentText {
         Common.adjustMathMLAttributes(attrs);
         Common.adjustForeignAttributes(attrs);
 
-        treeConstructor.insertElementToken(tagName, Node.NAMESPACE_MATHML, attrs);
+        treeConstructor.insertElementToken(tagName, Node.NAMESPACE_MATHML, Node.NAMESPACE_MATHML_ID, attrs);
         if (treeConstructor.isSelfClosing()) {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
@@ -258,7 +256,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
         }
 
-        if (!(Common.isHtmlNS(treeConstructor.getCurrentNode(), "ruby") || Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RTC_ID))) {
+        if (!(Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RUBY_ID) || Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RTC_ID))) {
             treeConstructor.emitParseError();
         }
 
@@ -270,7 +268,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.generateImpliedEndTag();
         }
 
-        if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), "ruby")) {
+        if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RUBY_ID)) {
             treeConstructor.emitParseError();
         }
         treeConstructor.insertHtmlElementToken();
@@ -697,7 +695,7 @@ class TreeConstructorInBodyForeignContentText {
             case "h4":
             case "h5":
             case "h6":
-                endH1H6(tagName, treeConstructor);
+                endH1H6(tagName, tagNameID, treeConstructor);
                 break;
             case "a":
             case "b":
@@ -718,7 +716,7 @@ class TreeConstructorInBodyForeignContentText {
             case "applet":
             case "marquee":
             case "object":
-                endAppletObject(tagName, treeConstructor);
+                endAppletObject(tagName, tagNameID, treeConstructor);
                 break;
             case "br":
                 endBr(treeConstructor);
@@ -741,13 +739,15 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.framesetOkToFalse();
     }
 
-    private static void endAppletObject(String tagName, TreeConstructor treeConstructor) {
+    private static void endAppletObject(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+        // we know tagNameID = applet, marquee, object
         if (!treeConstructor.hasElementInScope(tagName)) {
             treeConstructor.emitParseError();
             // ignore
         } else {
             treeConstructor.generateImpliedEndTag();
-            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
+
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagNameID)) {
                 treeConstructor.emitParseError();
             }
             treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
@@ -755,18 +755,19 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void endH1H6(String tagName, TreeConstructor treeConstructor) {
+    private static void endH1H6(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (!(treeConstructor.hasElementInScope("h1") || //
                 treeConstructor.hasElementInScope("h2") || //
                 treeConstructor.hasElementInScope("h3") || //
                 treeConstructor.hasElementInScope("h4") || //
-                treeConstructor.hasElementInScope("h5") || treeConstructor.hasElementInScope("h6"))) {
+                treeConstructor.hasElementInScope("h5") ||
+                treeConstructor.hasElementInScope("h6"))) {
             treeConstructor.emitParseError();
             // ignore token
         } else {
             treeConstructor.generateImpliedEndTag();
 
-            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagNameID)) { // we know it's h1-h6
                 treeConstructor.emitParseError();
             }
 
@@ -808,7 +809,7 @@ class TreeConstructorInBodyForeignContentText {
     private static void endP(TreeConstructor treeConstructor) {
         if (!treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.emitParseError();
-            treeConstructor.insertHtmlElementWithEmptyAttributes("p");
+            treeConstructor.insertHtmlElementWithEmptyAttributes("p", ELEMENT_P_ID);
         }
         treeConstructor.closePElement();
     }
@@ -1068,7 +1069,7 @@ class TreeConstructorInBodyForeignContentText {
 
         adjustForeignAttributes(treeConstructor.getAttributes());
 
-        treeConstructor.insertElementToken(tagName, currentNode.getNamespaceURI(), treeConstructor.getAttributes());
+        treeConstructor.insertElementToken(tagName, currentNode.getNamespaceURI(), currentNode.namespaceID, treeConstructor.getAttributes());
 
         if (treeConstructor.isSelfClosing()) {
             // we don't execute scripts

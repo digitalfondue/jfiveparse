@@ -118,8 +118,8 @@ class TreeConstructor {
 
     void setTagName(ResizableCharBuilder rawTagName) {
         String tagName = rawTagName.toLowerCase();
-        String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
-        this.tagName = maybeCached != null ? maybeCached : tagName;
+        //String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
+        this.tagName = tagName;
         this.tagNameID = Common.tagNameToID(tagName);
     }
 
@@ -496,7 +496,7 @@ class TreeConstructor {
                 }
 
                 // 13.7
-                Element newElement = buildElement(node.nodeName, node.originalNodeName, node.namespaceURI, node.getAttributes().copy());
+                Element newElement = buildElement(node.nodeName, node.nodeNameID, node.originalNodeName, node.namespaceURI, node.namespaceID, node.getAttributes().copy());
                 commonAncestor.appendChild(newElement);
                 activeFormattingElements.replace(node, newElement);
                 openElements.set(openElements.lastIndexOf(node), newElement);
@@ -531,8 +531,14 @@ class TreeConstructor {
             toInsert.insertChildren(position, lastNode);
 
             // 15
-            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.originalNodeName, formattingElement.getNamespaceURI(), formattingElement.getAttributes()
-                    .copy());
+            Element elem = buildElement(
+                    formattingElement.getNodeName(),
+                    formattingElement.nodeNameID,
+                    formattingElement.originalNodeName,
+                    formattingElement.getNamespaceURI(),
+                    formattingElement.namespaceID,
+                    formattingElement.getAttributes().copy()
+            );
 
             // 16
             List<Node> childs = new ArrayList<>(furthestBlock.getChildNodes());
@@ -600,22 +606,22 @@ class TreeConstructor {
         insertCharacter(chr);
     }
 
-    static Element buildElement(String name, String originalName, String namespace, Attributes attrs) {
-        return new Element(name, originalName, namespace, attrs);
+    static Element buildElement(String name, byte nameID, String originalName, String namespace, byte namespaceID, Attributes attrs) {
+        return new Element(name, nameID, originalName, namespace, namespaceID, attrs);
     }
 
-    Element insertElementToken(String name, String namespace, Attributes attrs) {
-        Element element = buildElement(name, name, namespace, attrs);
+    Element insertElementToken(String name, String namespace, byte nameSpaceID, Attributes attrs) {
+        Element element = buildElement(name, Common.tagNameToID(name), name, namespace, nameSpaceID, attrs);
         return insertHtmlElementToken(element);
     }
 
-    Element insertHtmlElementWithEmptyAttributes(String name) {
-        Element element = buildElement(name, name, Node.NAMESPACE_HTML, null);
+    Element insertHtmlElementWithEmptyAttributes(String name, byte nameID) {
+        Element element = buildElement(name, nameID, name, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, null);
         return insertHtmlElementToken(element);
     }
 
     Element insertHtmlElementToken() {
-        Element element = buildElement(tagName, originalTagName, Node.NAMESPACE_HTML, attrs);
+        Element element = buildElement(tagName, tagNameID, originalTagName, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, attrs);
         return insertHtmlElementToken(element);
     }
 

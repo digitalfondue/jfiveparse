@@ -275,12 +275,6 @@ class Common {
         return tokenType == TreeConstructor.END_TAG && named.equals(tagName);
     }
 
-    static boolean isEndTagNamed(byte tokenType, byte namedID, byte tagNameID) {
-        return tokenType == TreeConstructor.END_TAG && namedID == tagNameID;
-    }
-
-    // private static final HashSet<String> SPECIAL_ELEMENTS_HTML_SET_V2 = new LinkedHashSet<>();
-
     static byte tagNameToID(String tagName) {
         if (tagName == null) {
             return 0;
@@ -397,18 +391,11 @@ class Common {
             case "image": return ELEMENT_IMAGE_ID;
             case "math": return ELEMENT_MATH_ID;
             case "svg": return ELEMENT_SVG_ID;
+            case "ruby": return ELEMENT_RUBY_ID;
             default: return 0;
         }
     }
-/*
-    static {
-        Collections.addAll(SPECIAL_ELEMENTS_HTML_SET_V2, "address", "applet", "area", "article", "aside", "base", "basefont", "bgsound", "blockquote", "body", "br", "button", "caption", "center",
-                "col", "colgroup", "dd", "details", "dir", "div", "dl", "dt", "embed", "fieldset", "figcaption", "figure", "footer", "form", "frame", "frameset", "h1", "h2", "h3",
-                "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "iframe", "img", "input", "li", "link", "listing", "main", "marquee", "menu",
-                "meta", "nav", "noembed", "noframes", "noscript", "object", "ol", "p", "param", "plaintext", "pre", "script", "section", "select", "source", "style", "summary",
-                "table", "tbody", "td", "template", "textarea", "tfoot", "th", "thead", "title", "tr", "track", "ul", "wbr", "xmp");
-    }
-*/
+
     // this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
     static final byte ELEMENT_ADDRESS_ID = 1;
     static final byte ELEMENT_APPLET_ID = 2;
@@ -520,19 +507,7 @@ class Common {
     static final byte ELEMENT_IMAGE_ID = 105;
     static final byte ELEMENT_MATH_ID = 106;
     static final byte ELEMENT_SVG_ID = 107;
-
-    /*
-    public static void main(String[] args) {
-
-        for (var s : SPECIAL_ELEMENTS_HTML_SET_V2) {
-            System.err.println("case \"" + s + "\": return ELEMENT_" + s.toUpperCase(Locale.ROOT)+"_ID;");
-        }
-        int i = 0;
-        for (var s : SPECIAL_ELEMENTS_HTML_SET_V2) {
-            i++;
-            System.err.println("static final byte ELEMENT_" + s.toUpperCase(Locale.ROOT)+"_ID = "+i+";");
-        }
-    }*/
+    static final byte ELEMENT_RUBY_ID = 108;
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;
@@ -683,129 +658,6 @@ class Common {
     //
 
     // ---------------
-
-    static final HashMap<String, String> ELEMENTS_NAME_CACHE_V2 = new HashMap<>();
-
-    static {
-
-        for (String s : new String[] { "big", //
-                "rb",//
-                "math", //
-                "rp", //
-                "rt", //
-                "rtc", //
-                "svg", //
-                "strike",//
-                "s",//
-                "u", //
-                "font", //
-                "small",//
-                "tt", //
-                "optgroup",//
-                "image",//
-                "option", //
-                "keygen", //
-                "dialog",//
-                "a",//
-                "abbr",
-                "address", //
-                "applet", //
-                "area",//
-                "article",//
-                "aside",//
-                "b",//
-                "base",//
-                "basefont",//
-                "bgsound",//
-                "blockquote",//
-                "body",//
-                "br",//
-                "button",//
-                "cite",//
-                "caption",//
-                "center",//
-                "code",//
-                "col",//
-                "colgroup",//
-                "dd",//
-                "del",//
-                "details",//
-                "dir",//
-                "div",//
-                "dl",//
-                "dt",//
-                "em",//
-                "embed",//
-                "fieldset",//
-                "figcaption",//
-                "figure",//
-                "footer",//
-                "form",//
-                "frame",//
-                "frameset",//
-                "h1",//
-                "h2",//
-                "h3",//
-                "h4",//
-                "h5",//
-                "h6",//
-                "head",//
-                "header",//
-                "hgroup",//
-                "hr",//
-                "html",//
-                "i",//
-                "iframe",//
-                "img",//
-                "input",//
-                "label",//
-                "li",//
-                "link",//
-                "listing",//
-                "main",//
-                "marquee",//
-                "menu",//
-                "meta",//
-                "nav",//
-                "nobr",//
-                "noembed",//
-                "noframes",//
-                "noscript",//
-                "noindex",//
-                "object",//
-                "ol",//
-                "p",//
-                "param",//
-                "plaintext",//
-                "pre",//
-                "search",//
-                "script",//
-                "section",//
-                "select",//
-                "source",//
-                "span",//
-                "style",//
-                "summary",//
-                "sup",//
-                "strong",//
-                "table",//
-                "tbody",//
-                "td",//
-                "template",//
-                "textarea",//
-                "tfoot",//
-                "th",//
-                "thead",//
-                "time",//
-                "title",//
-                "tr",//
-                "track",//
-                "ul",//
-                "wbr",//
-                "xmp" }) {
-            ELEMENTS_NAME_CACHE_V2.put(s, s);
-        }
-    }
 
     static boolean isImpliedTagsThoroughly(Element element) {
         byte nodeNameID = element.nodeNameID;

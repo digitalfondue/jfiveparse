@@ -60,14 +60,14 @@ class TreeConstructorAftersBeforeInitialInHead {
                 "html".equals(tagName) || //
                 "br".equals(tagName))) {
             // anything below
-            treeConstructor.insertHtmlElementWithEmptyAttributes("body");
+            treeConstructor.insertHtmlElementWithEmptyAttributes("body", Common.ELEMENT_BODY_ID);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_BODY);
             treeConstructor.dispatch();
         } else if (Common.isStartTagNamed(tokenType, "head", tagName) || tokenType == END_TAG) {
             treeConstructor.emitParseError();
             // ignore token
         } else {
-            treeConstructor.insertHtmlElementWithEmptyAttributes("body");
+            treeConstructor.insertHtmlElementWithEmptyAttributes("body", Common.ELEMENT_BODY_ID);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_BODY);
             treeConstructor.dispatch();
         }
@@ -210,7 +210,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     }
 
     private static void anythingElseHead(TreeConstructor treeConstructor) {
-        Element head = treeConstructor.insertHtmlElementWithEmptyAttributes("head");
+        Element head = treeConstructor.insertHtmlElementWithEmptyAttributes("head", Common.ELEMENT_HEAD_ID);
         treeConstructor.setHead(head);
         treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_HEAD);
         treeConstructor.dispatch();
@@ -242,7 +242,7 @@ class TreeConstructorAftersBeforeInitialInHead {
 
     private static void handleStartTagHtml(String tagName, TreeConstructor treeConstructor) {
         if ("html".equals(tagName)) {
-            Element html = TreeConstructor.buildElement(tagName, tagName, Node.NAMESPACE_HTML, treeConstructor.getAttributes());
+            Element html = TreeConstructor.buildElement(tagName, Common.ELEMENT_HTML_ID, tagName, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, treeConstructor.getAttributes());
             treeConstructor.addToOpenElements(html);
             treeConstructor.getDocument().appendChild(html);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);
@@ -270,7 +270,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     }
 
     private static void anythingElseHtml(TreeConstructor treeConstructor) {
-        Element html = TreeConstructor.buildElement("html", "html", Node.NAMESPACE_HTML, null);
+        Element html = TreeConstructor.buildElement("html", Common.ELEMENT_HTML_ID, "html", Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, null);
         treeConstructor.addToOpenElements(html);
         treeConstructor.getDocument().appendChild(html);
         treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);

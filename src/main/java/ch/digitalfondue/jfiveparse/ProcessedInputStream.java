@@ -130,7 +130,7 @@ abstract class ProcessedInputStream {
     }
 
     int consume() {
-        return buffer.isEmpty ? readWithCRHandling(crFound, read()) : buffer.removeFirst();
+        return !buffer.isEmpty ? buffer.removeFirst() : readWithCRHandling(crFound, read());
     }
 
     int getNextInputCharacter() {
