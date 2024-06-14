@@ -207,12 +207,12 @@ class TreeConstructorActiveFormattingElements {
         return -1;
     }
 
-    int getBetweenLastElementAndMarkerIndex(String tagName, byte namespaceID) {
+    int getBetweenLastElementAndMarkerIndex(byte tagNameID, byte namespaceID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
             if (e instanceof Marker) {
                 return -1;
-            } else if (Common.is(e, tagName, namespaceID)) {
+            } else if (Common.is(e, tagNameID, namespaceID)) {
                 return i;
             }
         }

@@ -369,14 +369,14 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInSelectScope(String tagName) {
+    boolean hasElementInSelectScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
             }
 
-            if (!Common.isHtmlNS(node, "option") && !Common.isHtmlNS(node, "optgroup")) {
+            if (!Common.isHtmlNS(node, Common.ELEMENT_OPTION_ID) && !Common.isHtmlNS(node, Common.ELEMENT_OPTGROUP_ID)) {
                 return false;
             }
         }
@@ -631,9 +631,9 @@ class TreeConstructor {
                 "tr".equals(targetName)))) {
 
             // 1
-            int lastTemplatePos = findLastElementPositionMatching("template", Node.NAMESPACE_HTML_ID);
+            int lastTemplatePos = findLastElementPositionMatching(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
             // 2
-            int lastTablePos = findLastElementPositionMatching("table", Node.NAMESPACE_HTML_ID);
+            int lastTablePos = findLastElementPositionMatching(Common.ELEMENT_TABLE_ID, Node.NAMESPACE_HTML_ID);
             // 3
             if (lastTemplatePos != -1 && ((lastTablePos == -1) || (lastTemplatePos > lastTablePos))) {
                 // inside the template
@@ -657,18 +657,18 @@ class TreeConstructor {
         }
     }
 
-    private int findLastElementPositionMatching(String name, byte namespaceID) {
+    private int findLastElementPositionMatching(byte nameID, byte namespaceID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element e = openElements.get(i);
-            if (Common.is(e, name, namespaceID)) {
+            if (Common.is(e, nameID, namespaceID)) {
                 return i;
             }
         }
         return -1;
     }
 
-    boolean stackOfOpenElementsContains(String name, byte namespaceID) {
-        return findLastElementPositionMatching(name, namespaceID) != -1;
+    boolean stackOfOpenElementsContains(byte nameID, byte namespaceID) {
+        return findLastElementPositionMatching(nameID, namespaceID) != -1;
     }
 
     // FIXME optimize(?)
@@ -798,11 +798,9 @@ class TreeConstructor {
     }
 
     void emitCharacter(char chr) {
-
         tokenType = CHARACTER;
         insertCharacterPreviousTextNode = null;
         this.chr = chr;
-
         dispatch();
     }
 
@@ -1078,8 +1076,8 @@ class TreeConstructor {
         return activeFormattingElements.getElementAtIndex(idx);
     }
 
-    int getIndexInActiveFormattingElementsBetween(String name, byte namespaceID) {
-        return activeFormattingElements.getBetweenLastElementAndMarkerIndex(name, namespaceID);
+    int getIndexInActiveFormattingElementsBetween(byte nameID, byte namespaceID) {
+        return activeFormattingElements.getBetweenLastElementAndMarkerIndex(nameID, namespaceID);
     }
 
     //

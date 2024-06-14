@@ -363,7 +363,16 @@ class Common {
             case "ul": return ELEMENT_UL_ID;
             case "wbr": return ELEMENT_WBR_ID;
             case "xmp": return ELEMENT_XMP_ID;
-            default:return 0;
+            //
+            case "optgroup": return ELEMENT_OPTGROUP_ID;
+            case "option": return ELEMENT_OPTION_ID;
+            case "rb": return ELEMENT_RB_ID;
+            case "rp": return ELEMENT_RP_ID;
+            case "rt": return ELEMENT_RT_ID;
+            case "rtc": return ELEMENT_RTC_ID;
+            //
+            case "a": return ELEMENT_A_ID;
+            default: return 0;
         }
     }
 /*
@@ -458,7 +467,15 @@ class Common {
     static final byte ELEMENT_WBR_ID = 80;
     static final byte ELEMENT_XMP_ID = 81;
     // end this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
-
+    static final byte ELEMENT_OPTGROUP_ID = 82;
+    static final byte ELEMENT_OPTION_ID = 83;
+    static final byte ELEMENT_RB_ID = 84;
+    static final byte ELEMENT_RP_ID = 85;
+    static final byte ELEMENT_RT_ID = 86;
+    static final byte ELEMENT_RTC_ID = 87;
+    //
+    static final byte ELEMENT_A_ID = 88;
+    //
 
     /*
     public static void main(String[] args) {
@@ -498,15 +515,15 @@ class Common {
     	byte namespaceID = element.namespaceID;
         if (Node.NAMESPACE_HTML_ID == namespaceID) {
             switch (tagNameID) {
+                case ELEMENT_APPLET_ID:
+                case ELEMENT_CAPTION_ID:
+                case ELEMENT_HTML_ID:
+                case ELEMENT_MARQUEE_ID:
+                case ELEMENT_OBJECT_ID:
+                case ELEMENT_TABLE_ID:
+                case ELEMENT_TEMPLATE_ID:
                 case ELEMENT_TD_ID:
                 case ELEMENT_TH_ID:
-                case ELEMENT_HTML_ID:
-                case ELEMENT_TABLE_ID:
-                case ELEMENT_APPLET_ID:
-                case ELEMENT_OBJECT_ID:
-                case ELEMENT_CAPTION_ID:
-                case ELEMENT_MARQUEE_ID:
-                case ELEMENT_TEMPLATE_ID:
                     return true;
                 default:
                     return false;
@@ -560,20 +577,20 @@ class Common {
         if (Node.NAMESPACE_HTML_ID != e.namespaceID) {
             return false;
         }
-        switch (e.nodeName) {
-        case "dd":
-        case "dt":
-        case "li":
-        case "optgroup":
-        case "option":
-        case "p":
-        case "rb":
-        case "rp":
-        case "rt":
-        case "rtc":
-            return true;
-        default:
-            return false;
+        switch (e.nodeNameID) {
+            case ELEMENT_DD_ID:
+            case ELEMENT_DT_ID:
+            case ELEMENT_LI_ID:
+            case ELEMENT_OPTGROUP_ID:
+            case ELEMENT_OPTION_ID:
+            case ELEMENT_P_ID:
+            case ELEMENT_RB_ID:
+            case ELEMENT_RP_ID:
+            case ELEMENT_RT_ID:
+            case ELEMENT_RTC_ID:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -746,26 +763,27 @@ class Common {
         }
     }
 
-    static boolean isImpliedTagsThoroughly(String nodeName) {
-        switch (nodeName) {
-            case "caption":
-            case "colgroup":
-            case "dd":
-            case "dt":
-            case "li":
-            case "optgroup":
-            case "option":
-            case "p":
-            case "rb":
-            case "rp":
-            case "rt":
-            case "rtc":
-            case "tbody":
-            case "td":
-            case "tfoot":
-            case "th":
-            case "thead":
-            case "tr":
+    static boolean isImpliedTagsThoroughly(Element element) {
+        byte nodeNameID = element.nodeNameID;
+        switch (nodeNameID) {
+            case ELEMENT_CAPTION_ID:
+            case ELEMENT_COLGROUP_ID:
+            case ELEMENT_DD_ID:
+            case ELEMENT_DT_ID:
+            case ELEMENT_LI_ID:
+            case ELEMENT_OPTGROUP_ID:
+            case ELEMENT_OPTION_ID:
+            case ELEMENT_P_ID:
+            case ELEMENT_RB_ID:
+            case ELEMENT_RP_ID:
+            case ELEMENT_RT_ID:
+            case ELEMENT_RTC_ID:
+            case ELEMENT_TBODY_ID:
+            case ELEMENT_TD_ID:
+            case ELEMENT_TFOOT_ID:
+            case ELEMENT_TH_ID:
+            case ELEMENT_THEAD_ID:
+            case ELEMENT_TR_ID:
                 return true;
             default:
                 return false;
@@ -784,8 +802,8 @@ class Common {
         return sb.toString();
     }
 
-    static boolean is(Element element, String name, byte namespaceID) {
-        return element.namespaceID == namespaceID && element.nodeName.equals(name);
+    static boolean is(Element element, byte nameID, byte namespaceID) {
+        return element.nodeNameID == nameID && element.namespaceID == namespaceID;
     }
     
     static boolean isHtmlNS(Element element, String name) {

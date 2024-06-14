@@ -264,7 +264,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
         }
 
-        if (!(Common.isHtmlNS(treeConstructor.getCurrentNode(), "ruby") || Common.isHtmlNS(treeConstructor.getCurrentNode(), "rtc"))) {
+        if (!(Common.isHtmlNS(treeConstructor.getCurrentNode(), "ruby") || Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RTC_ID))) {
             treeConstructor.emitParseError();
         }
 
@@ -283,7 +283,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startOptgroupOption(TreeConstructor treeConstructor) {
-        if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
+        if (Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
             treeConstructor.popCurrentNode();
         }
 
@@ -419,7 +419,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startA(TreeConstructor treeConstructor) {
-        final int aIdx = treeConstructor.getIndexInActiveFormattingElementsBetween("a", Node.NAMESPACE_HTML_ID);
+        final int aIdx = treeConstructor.getIndexInActiveFormattingElementsBetween(Common.ELEMENT_A_ID, Node.NAMESPACE_HTML_ID);
         if (aIdx != -1) {
             Element a = treeConstructor.getActiveFormattingElementAt(aIdx);
             treeConstructor.emitParseError();
@@ -525,7 +525,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID);
+        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
         if (treeConstructor.getForm() != null && templateIsNotPresent) {
             treeConstructor.emitParseError();
             // ignore the token
@@ -606,7 +606,7 @@ class TreeConstructorInBodyForeignContentText {
 
         if (treeConstructor.openElementsSize() == 1 || //
                 !Common.isHtmlNS(treeConstructor.openElementAt(1), ELEMENT_BODY_ID) || //
-                treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
+                treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
             // ignore
         } else {
             treeConstructor.framesetOkToFalse();
@@ -623,7 +623,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.emitParseError();
 
         // we ignore the token if template is present
-        if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
+        if (!treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
             Element firstInserted = treeConstructor.openElementAt(0);
             for (String attr : treeConstructor.getKeySetOfAttributes()) {
                 if (!firstInserted.getAttributes().containsKey(attr)) {
@@ -820,7 +820,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void endForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID);
+        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
         if (templateIsNotPresent) {
             Element node = treeConstructor.getForm();
             treeConstructor.setForm(null);
@@ -1026,7 +1026,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.insertionModeInHtmlContent();
         } else if (tokenType == START_TAG) {
             anyOtherStartTag(tagName, treeConstructor);
-        } else if (tokenType == END_TAG && Common.is(treeConstructor.getCurrentNode(), "script", Node.NAMESPACE_SVG_ID)) {
+        } else if (tokenType == END_TAG && Common.is(treeConstructor.getCurrentNode(), ELEMENT_SCRIPT_ID, Node.NAMESPACE_SVG_ID)) {
             // we don't execute scripts
             treeConstructor.popCurrentNode();
         } else if (tokenType == END_TAG) {

@@ -476,7 +476,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
             treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
         } else if (Common.isEndTagNamed(tokenType, "template", tagName)) {
-            if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
+            if (!treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -538,7 +538,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     private static void generateImpliedEndTagThoroughly(TreeConstructor treeConstructor) {
         for (; ; ) {
             Element current = treeConstructor.getCurrentNode();
-            if (Node.NAMESPACE_HTML_ID == current.namespaceID && Common.isImpliedTagsThoroughly(current.getNodeName())) {
+            if (Node.NAMESPACE_HTML_ID == current.namespaceID && Common.isImpliedTagsThoroughly(current)) {
                 treeConstructor.popCurrentNode();
                 continue;
             } else {

@@ -81,24 +81,24 @@ class TreeConstructorInFramesetSelectTemplate {
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "option", tagName)) {
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isStartTagNamed(tokenType, "optgroup", tagName)) {
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
             }
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "optgroup")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTGROUP_ID)) {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isStartTagNamed(tokenType, "hr", tagName)) {
             // see https://github.com/html5lib/html5lib-tests/commit/55aa183097fa52bb1328cd93633be6f88159d4b8
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
             }
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "optgroup")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTGROUP_ID)) {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
@@ -106,12 +106,12 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.ackSelfClosingTagIfSet();
         } else if (Common.isEndTagNamed(tokenType, "optgroup", tagName)) {
 
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")
-                    && Common.isHtmlNS(treeConstructor.openElementAt(treeConstructor.openElementsSize() - 2), "optgroup")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)
+                    && Common.isHtmlNS(treeConstructor.openElementAt(treeConstructor.openElementsSize() - 2), Common.ELEMENT_OPTGROUP_ID)) {
                 treeConstructor.popCurrentNode();
             }
 
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "optgroup")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTGROUP_ID)) {
                 treeConstructor.popCurrentNode();
             } else {
                 treeConstructor.emitParseError();
@@ -119,14 +119,14 @@ class TreeConstructorInFramesetSelectTemplate {
             }
 
         } else if (Common.isEndTagNamed(tokenType, "option", tagName)) {
-            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), "option")) {
+            if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
             } else {
                 treeConstructor.emitParseError();
                 // ignore
             }
         } else if (Common.isEndTagNamed(tokenType, "select", tagName)) {
-            if (!treeConstructor.hasElementInSelectScope("select")) {
+            if (!treeConstructor.hasElementInSelectScope(Common.ELEMENT_SELECT_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -135,7 +135,7 @@ class TreeConstructorInFramesetSelectTemplate {
             }
         } else if (Common.isStartTagNamed(tokenType, "select", tagName)) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInSelectScope("select")) {
+            if (!treeConstructor.hasElementInSelectScope(Common.ELEMENT_SELECT_ID)) {
                 // ignore
             } else {
                 treeConstructor.popOpenElementsUntilWithHtmlNS("select");
@@ -145,7 +145,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 "keygen".equals(tagName) || //
                 "textarea".equals(tagName))) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInSelectScope("select")) {
+            if (!treeConstructor.hasElementInSelectScope(Common.ELEMENT_SELECT_ID)) {
                 // ignore
             } else {
                 treeConstructor.popOpenElementsUntilWithHtmlNS("select");
@@ -234,7 +234,7 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.emitParseError();
             // ignore
         } else if (tokenType == EOF) {
-            if (!treeConstructor.stackOfOpenElementsContains("template", Node.NAMESPACE_HTML_ID)) {
+            if (!treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
                 treeConstructor.stopParsing();
             } else {
                 treeConstructor.emitParseError();

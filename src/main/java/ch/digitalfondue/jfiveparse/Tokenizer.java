@@ -114,6 +114,11 @@ class Tokenizer {
         tokenHandler.emitParseError();
     }
 
+    void setStateAndEmitCharacter(int state, int chr) {
+        this.state = state;
+        tokenHandler.emitCharacter((char) chr);
+    }
+
     void emitCharacter(int chr) {
         tokenHandler.emitCharacter((char) chr);
     }
