@@ -196,10 +196,10 @@ class TreeConstructorInBodyForeignContentText {
                 startRpRt(treeConstructor);
                 break;
             case ELEMENT_MATH_ID:
-                startMath(tagName, treeConstructor);
+                startMath(treeConstructor);
                 break;
             case ELEMENT_SVG_ID:
-                startSvg(tagName, treeConstructor);
+                startSvg(treeConstructor);
                 break;
             case ELEMENT_CAPTION_ID:
             case ELEMENT_COL_ID:
@@ -225,26 +225,26 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void startSvg(String tagName, TreeConstructor treeConstructor) {
+    private static void startSvg(TreeConstructor treeConstructor) {
         Attributes attrs = treeConstructor.getAttributes();
         Common.adjustSVGAttributes(attrs);
         Common.adjustForeignAttributes(attrs);
 
-        treeConstructor.insertElementToken(tagName, Node.NAMESPACE_SVG, Node.NAMESPACE_SVG_ID, attrs);
+        treeConstructor.insertElementToken("svg", Common.ELEMENT_SVG_ID, Node.NAMESPACE_SVG, Node.NAMESPACE_SVG_ID, attrs);
         if (treeConstructor.isSelfClosing()) {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
         }
     }
 
-    private static void startMath(String tagName, TreeConstructor treeConstructor) {
+    private static void startMath(TreeConstructor treeConstructor) {
         treeConstructor.reconstructActiveFormattingElements();
 
         Attributes attrs = treeConstructor.getAttributes();
         Common.adjustMathMLAttributes(attrs);
         Common.adjustForeignAttributes(attrs);
 
-        treeConstructor.insertElementToken(tagName, Node.NAMESPACE_MATHML, Node.NAMESPACE_MATHML_ID, attrs);
+        treeConstructor.insertElementToken("math", Common.ELEMENT_MATH_ID, Node.NAMESPACE_MATHML, Node.NAMESPACE_MATHML_ID, attrs);
         if (treeConstructor.isSelfClosing()) {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
@@ -878,7 +878,6 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     static void inBody(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
-
         switch (tokenType) {
             case CHARACTER:
                 handleInBodyCharacter(treeConstructor);
@@ -1069,7 +1068,7 @@ class TreeConstructorInBodyForeignContentText {
 
         adjustForeignAttributes(treeConstructor.getAttributes());
 
-        treeConstructor.insertElementToken(tagName, currentNode.getNamespaceURI(), currentNode.namespaceID, treeConstructor.getAttributes());
+        treeConstructor.insertElementToken(tagName, Common.tagNameToID(tagName), currentNode.getNamespaceURI(), currentNode.namespaceID, treeConstructor.getAttributes());
 
         if (treeConstructor.isSelfClosing()) {
             // we don't execute scripts

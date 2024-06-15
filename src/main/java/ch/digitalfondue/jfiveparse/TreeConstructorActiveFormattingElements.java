@@ -161,7 +161,7 @@ class TreeConstructorActiveFormattingElements {
             // 8
             // Create: Insert an HTML element for the token for which the
             // element entry was created, to obtain new element.
-            Element newElement = treeConstructor.insertElementToken(entry.getNodeName(), entry.getNamespaceURI(), entry.namespaceID, entry.getAttributes().copy());
+            Element newElement = treeConstructor.insertElementToken(entry.getNodeName(), entry.nodeNameID, entry.getNamespaceURI(), entry.namespaceID, entry.getAttributes().copy());
 
             // 9
             // Replace the entry for entry in the list with an entry for new

@@ -610,8 +610,8 @@ class TreeConstructor {
         return new Element(name, nameID, originalName, namespace, namespaceID, attrs);
     }
 
-    Element insertElementToken(String name, String namespace, byte nameSpaceID, Attributes attrs) {
-        Element element = buildElement(name, Common.tagNameToID(name), name, namespace, nameSpaceID, attrs);
+    Element insertElementToken(String name, byte nameId, String namespace, byte nameSpaceID, Attributes attrs) {
+        Element element = buildElement(name, nameId, name, namespace, nameSpaceID, attrs);
         return insertHtmlElementToken(element);
     }
 

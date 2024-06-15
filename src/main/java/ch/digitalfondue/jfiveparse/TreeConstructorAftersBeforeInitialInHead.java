@@ -515,18 +515,21 @@ class TreeConstructorAftersBeforeInitialInHead {
                 chr == Characters.LF || //
                 chr == Characters.FF || chr == Characters.CR || chr == Characters.SPACE)) || //
                 tokenType == COMMENT || //
-                (tokenType == START_TAG && ("basefont".equals(tagName) || //
-                        "bgsound".equals(tagName) || //
-                        "link".equals(tagName) || //
-                        "meta".equals(tagName) || //
-                        "noframes".equals(tagName) || "style".equals(tagName)))) {
+                (tokenType == START_TAG && (
+                        Common.ELEMENT_BASEFONT_ID == tagNameID || //
+                        Common.ELEMENT_BGSOUND_ID == tagNameID || //
+                        Common.ELEMENT_LINK_ID == tagNameID || //
+                        Common.ELEMENT_META_ID == tagNameID || //
+                        Common.ELEMENT_NOFRAMES_ID == tagNameID ||
+                        Common.ELEMENT_STYLE_ID == tagNameID
+                ))) {
             inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_BR_ID, tagNameID)) {
             treeConstructor.emitParseError();
             treeConstructor.popCurrentNode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_HEAD);
             treeConstructor.dispatch();
-        } else if ((tokenType == START_TAG && ("head".equals(tagName) || "noscript".equals(tagName))) || tokenType == END_TAG) {
+        } else if ((tokenType == START_TAG && (Common.ELEMENT_HEAD_ID == tagNameID || Common.ELEMENT_NOSCRIPT_ID == tagNameID)) || tokenType == END_TAG) {
             treeConstructor.emitParseError();
             // ignore token
         } else {

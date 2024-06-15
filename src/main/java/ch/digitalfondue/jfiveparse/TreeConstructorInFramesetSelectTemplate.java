@@ -200,19 +200,23 @@ class TreeConstructorInFramesetSelectTemplate {
     static void inTemplate(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER || tokenType == COMMENT || tokenType == DOCTYPE) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if ((tokenType == START_TAG && ("base".equals(tagName) || //
-                "basefont".equals(tagName) || //
-                "bgsound".equals(tagName) || //
-                "link".equals(tagName) || //
-                "meta".equals(tagName) || //
-                "noframes".equals(tagName) || //
-                "script".equals(tagName) || //
-                "style".equals(tagName) || //
-                "template".equals(tagName) || //
-                "title".equals(tagName)))
+        } else if (
+                (tokenType == START_TAG && (
+                    "base".equals(tagName) || //
+                    "basefont".equals(tagName) || //
+                    "bgsound".equals(tagName) || //
+                    "link".equals(tagName) || //
+                    "meta".equals(tagName) || //
+                    "noframes".equals(tagName) || //
+                    "script".equals(tagName) || //
+                    "style".equals(tagName) || //
+                    "template".equals(tagName) || //
+                    "title".equals(tagName)
+                ))
                 || isEndTagNamed(tokenType, ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (tokenType == START_TAG && ("caption".equals(tagName) || //
+        } else if (tokenType == START_TAG && (
+                "caption".equals(tagName) || //
                 "colgroup".equals(tagName) || //
                 "tbody".equals(tagName) || //
                 "tfoot".equals(tagName) || //
