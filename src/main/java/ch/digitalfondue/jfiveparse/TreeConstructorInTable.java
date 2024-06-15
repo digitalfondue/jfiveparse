@@ -176,9 +176,15 @@ class TreeConstructorInTable {
                 treeConstructor.popCurrentNode();
                 treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
             }
-        } else if ((tokenType == START_TAG && ("caption".equals(tagName) || "col".equals(tagName) || //
-                "colgroup".equals(tagName) || "tbody".equals(tagName) || "tfoot".equals(tagName) || //
-                "thead".equals(tagName)))
+        } else if ((tokenType == START_TAG &&
+                (
+                        Common.ELEMENT_CAPTION_ID == tagNameID ||
+                        Common.ELEMENT_COL_ID == tagNameID ||
+                        Common.ELEMENT_COLGROUP_ID == tagNameID ||
+                        Common.ELEMENT_TBODY_ID == tagNameID ||
+                        Common.ELEMENT_TFOOT_ID == tagNameID || //
+                        Common.ELEMENT_THEAD_ID == tagNameID
+                ))
                 || Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
 
             if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TBODY_ID) && !treeConstructor.hasElementInTableScope(Common.ELEMENT_TFOOT_ID)
@@ -192,8 +198,17 @@ class TreeConstructorInTable {
                 treeConstructor.dispatch();
             }
         } else if (tokenType == END_TAG
-                && ("body".equals(tagName) || "caption".equals(tagName) || "col".equals(tagName) || "colgroup".equals(tagName) || "html".equals(tagName) || "td".equals(tagName)
-                        || "th".equals(tagName) || "tr".equals(tagName))) {
+                &&
+                (
+                        "body".equals(tagName) ||
+                        "caption".equals(tagName) ||
+                        "col".equals(tagName) ||
+                        "colgroup".equals(tagName) ||
+                        "html".equals(tagName) ||
+                        "td".equals(tagName) ||
+                        "th".equals(tagName) ||
+                        "tr".equals(tagName)
+        )) {
             treeConstructor.emitParseError();
             // ignore token
         } else {
@@ -204,13 +219,16 @@ class TreeConstructorInTable {
     private static void clearStackBackToTableBodyContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            String nodeName = e.nodeName;
+            byte nodeNameID = e.nodeNameID;
             if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
-                    ("tbody".equals(nodeName) || //
-                            "tfoot".equals(nodeName) || //
-                            "thead".equals(nodeName) || //
-                            "template".equals(nodeName) || //
-                    "html".equals(nodeName))) {
+                    (
+                            Common.ELEMENT_TBODY_ID == nodeNameID || //
+                                    Common.ELEMENT_TFOOT_ID == nodeNameID || //
+                                    Common.ELEMENT_THEAD_ID == nodeNameID || //
+                                    Common.ELEMENT_TEMPLATE_ID == nodeNameID ||
+                                    Common.ELEMENT_HTML_ID == nodeNameID
+                    )
+            ) {
                 break;
             }
             treeConstructor.popCurrentNode();
