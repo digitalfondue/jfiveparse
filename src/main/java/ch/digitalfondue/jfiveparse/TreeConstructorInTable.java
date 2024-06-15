@@ -461,14 +461,17 @@ class TreeConstructorInTable {
     }
 
     private static void inCellStartTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
-        if (("caption".equals(tagName) || //
-                "col".equals(tagName) || //
-                "colgroup".equals(tagName) || //
-                "tbody".equals(tagName) || //
-                "td".equals(tagName) || //
-                "tfoot".equals(tagName) || //
-                "th".equals(tagName) || //
-                "thead".equals(tagName) || "tr".equals(tagName))) {
+        if (
+                Common.ELEMENT_CAPTION_ID == tagNameID || //
+                Common.ELEMENT_COL_ID == tagNameID  || //
+                Common.ELEMENT_COLGROUP_ID == tagNameID || //
+                Common.ELEMENT_TBODY_ID == tagNameID || //
+                Common.ELEMENT_TD_ID == tagNameID || //
+                Common.ELEMENT_TFOOT_ID == tagNameID || //
+                Common.ELEMENT_TH_ID == tagNameID || //
+                Common.ELEMENT_THEAD_ID == tagNameID  ||
+                Common.ELEMENT_TR_ID == tagNameID
+        ) {
 
             if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TD_ID) && !treeConstructor.hasElementInTableScope(Common.ELEMENT_TH_ID)) {
                 treeConstructor.emitParseError();
