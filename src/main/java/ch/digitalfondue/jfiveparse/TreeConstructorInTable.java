@@ -303,7 +303,7 @@ class TreeConstructorInTable {
 
     static void inRow(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
-        if (tokenType == START_TAG && ("th".equals(tagName) || "td".equals(tagName))) {
+        if (tokenType == START_TAG && (Common.ELEMENT_TH_ID == tagNameID || Common.ELEMENT_TD_ID == tagNameID)) {
             clearStackBackToTableRowContext(treeConstructor);
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_CELL);
@@ -367,8 +367,9 @@ class TreeConstructorInTable {
     private static void clearStackBackToTableRowContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
+            byte nodeNameID = e.nodeNameID;
             if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
-                    ("tr".equals(e.nodeName) || "template".equals(e.nodeName) || "html".equals(e.nodeName))) {
+                    (Common.ELEMENT_TR_ID == nodeNameID || Common.ELEMENT_TEMPLATE_ID == nodeNameID || Common.ELEMENT_HTML_ID == nodeNameID)) {
                 break;
             }
             treeConstructor.popCurrentNode();
