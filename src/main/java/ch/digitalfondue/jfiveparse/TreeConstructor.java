@@ -711,7 +711,7 @@ class TreeConstructor {
             t = (Text) last;
             t.dataBuilder.append(charToInsert);
         } else {
-            t = new Text();
+            t = new Text(new ResizableCharBuilder());
             t.dataBuilder.append(charToInsert);
             toInsert.insertChildren(position, t);
         }
@@ -766,15 +766,15 @@ class TreeConstructor {
             toInsert = openElements.get(openElements.size() - 1);
             position = toInsert.getChildCount();
         }
-        toInsert.insertChildren(position, new Comment(comment.asString()));
+        toInsert.insertChildren(position, new Comment(comment));
     }
 
     void insertCommentToDocument() {
-        document.appendChild(new Comment(comment.asString()));
+        document.appendChild(new Comment(comment));
     }
 
     void insertCommentToHtmlElement() {
-        openElements.get(0).appendChild(new Comment(comment.asString()));
+        openElements.get(0).appendChild(new Comment(comment));
     }
 
     // ------------------
