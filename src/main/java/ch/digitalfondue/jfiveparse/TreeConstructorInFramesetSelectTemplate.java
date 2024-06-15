@@ -131,7 +131,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
                 treeConstructor.resetInsertionModeAppropriately();
             }
         } else if (isStartTagNamed(tokenType, ELEMENT_SELECT_ID, tagNameID)) {
@@ -139,7 +139,7 @@ class TreeConstructorInFramesetSelectTemplate {
             if (!treeConstructor.hasElementInSelectScope(ELEMENT_SELECT_ID)) {
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
                 treeConstructor.resetInsertionModeAppropriately();
             }
         } else if (tokenType == START_TAG && (ELEMENT_INPUT_ID == tagNameID || ELEMENT_KEYGEN_ID == tagNameID || ELEMENT_TEXTAREA_ID == tagNameID)) {
@@ -147,7 +147,7 @@ class TreeConstructorInFramesetSelectTemplate {
             if (!treeConstructor.hasElementInSelectScope(ELEMENT_SELECT_ID)) {
                 // ignore
             } else {
-                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();
             }
@@ -172,7 +172,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 ELEMENT_TH_ID == tagNameID;
         if (tokenType == START_TAG && isCaptionOrRelatedTags) {
             treeConstructor.emitParseError();
-            treeConstructor.popOpenElementsUntilWithHtmlNS("select");
+            treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
             treeConstructor.resetInsertionModeAppropriately();
             treeConstructor.dispatch();
         } else if (tokenType == END_TAG && isCaptionOrRelatedTags) {
@@ -180,7 +180,7 @@ class TreeConstructorInFramesetSelectTemplate {
             if (!treeConstructor.hasElementInTableScope(tagName)) {
                 // ignore token
             } else {
-                treeConstructor.popOpenElementsUntilWithHtmlNS("select");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();
             }
@@ -234,7 +234,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.stopParsing();
             } else {
                 treeConstructor.emitParseError();
-                treeConstructor.popOpenElementsUntilWithHtmlNS("template");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_TEMPLATE_ID);
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.popFromStackTemplatesInsertionMode();
                 treeConstructor.resetInsertionModeAppropriately();

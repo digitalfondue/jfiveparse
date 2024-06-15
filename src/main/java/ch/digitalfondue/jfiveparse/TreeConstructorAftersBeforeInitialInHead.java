@@ -484,7 +484,7 @@ class TreeConstructorAftersBeforeInitialInHead {
                 if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_TEMPLATE_ID)) {
                     treeConstructor.emitParseError();
                 }
-                treeConstructor.popOpenElementsUntilWithHtmlNS("template");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(Common.ELEMENT_TEMPLATE_ID);
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.popFromStackTemplatesInsertionMode();
                 treeConstructor.resetInsertionModeAppropriately();

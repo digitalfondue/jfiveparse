@@ -428,7 +428,7 @@ class TreeConstructorInBodyForeignContentText {
         if (treeConstructor.hasElementInButtonScope(ELEMENT_BUTTON_ID)) {
             treeConstructor.emitParseError();
             treeConstructor.generateImpliedEndTag();
-            treeConstructor.popOpenElementsUntilWithHtmlNS("button");
+            treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_BUTTON_ID);
         }
 
         treeConstructor.reconstructActiveFormattingElements();
@@ -454,7 +454,7 @@ class TreeConstructorInBodyForeignContentText {
                 if (Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_DD_ID)) {
                     treeConstructor.emitParseError();
                 }
-                treeConstructor.popOpenElementsUntilWithHtmlNS("dd");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_DD_ID);
                 break;
             }
 
@@ -463,7 +463,7 @@ class TreeConstructorInBodyForeignContentText {
                 if (Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_DT_ID)) {
                     // parser error
                 }
-                treeConstructor.popOpenElementsUntilWithHtmlNS("dt");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_DT_ID);
                 break;
             }
 
@@ -495,7 +495,7 @@ class TreeConstructorInBodyForeignContentText {
                     treeConstructor.emitParseError();
                 }
 
-                treeConstructor.popOpenElementsUntilWithHtmlNS("li");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_LI_ID);
                 break;
             }
 
@@ -672,7 +672,7 @@ class TreeConstructorInBodyForeignContentText {
             case ELEMENT_SECTION_ID:
             case ELEMENT_SUMMARY_ID:
             case ELEMENT_UL_ID:
-                endAddressUl(tagName, treeConstructor);
+                endAddressUl(tagName, tagNameID, treeConstructor);
                 break;
             case ELEMENT_FORM_ID:
                 endForm(treeConstructor);
@@ -685,7 +685,7 @@ class TreeConstructorInBodyForeignContentText {
                 break;
             case ELEMENT_DD_ID:
             case ELEMENT_DT_ID:
-                endDdDt(tagName, treeConstructor);
+                endDdDt(tagName, tagNameID, treeConstructor);
                 break;
             case ELEMENT_H1_ID:
             case ELEMENT_H2_ID:
@@ -748,7 +748,7 @@ class TreeConstructorInBodyForeignContentText {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagNameID)) {
                 treeConstructor.emitParseError();
             }
-            treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
+            treeConstructor.popOpenElementsUntilWithHtmlNS(tagNameID);
             treeConstructor.clearUpToLastMarkerActiveFormattingElements();
         }
     }
@@ -778,16 +778,17 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void endDdDt(String tagName, TreeConstructor treeConstructor) {
+    // we know it's DD, DT
+    private static void endDdDt(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if (!treeConstructor.hasElementInScope(tagName)) {
             treeConstructor.emitParseError();
             // ignore
         } else {
             treeConstructor.generateImpliedEndTag(tagName, Node.NAMESPACE_HTML);
-            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagName)) {
+            if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), tagNameID)) {
                 treeConstructor.emitParseError();
             }
-            treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
+            treeConstructor.popOpenElementsUntilWithHtmlNS(tagNameID);
         }
     }
 
@@ -800,7 +801,7 @@ class TreeConstructorInBodyForeignContentText {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_LI_ID)) {
                 treeConstructor.emitParseError();
             }
-            treeConstructor.popOpenElementsUntilWithHtmlNS("li");
+            treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_LI_ID);
         }
     }
 
@@ -835,22 +836,23 @@ class TreeConstructorInBodyForeignContentText {
                 if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_FORM_ID)) {
                     treeConstructor.emitParseError();
                 }
-                treeConstructor.popOpenElementsUntilWithHtmlNS("form");
+                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_FORM_ID);
             }
         }
     }
 
-    private static void endAddressUl(String tagName, TreeConstructor treeConstructor) {
+    private static void endAddressUl(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+        //we know the ID are known
         if (!treeConstructor.hasElementInScope(tagName)) {
             treeConstructor.emitParseError();
         } else {
             treeConstructor.generateImpliedEndTag();
             Element currentNode = treeConstructor.getCurrentNode();
-            if (currentNode.namespaceID != Node.NAMESPACE_HTML_ID || !currentNode.getNodeName().equals(tagName)) {
+            if (currentNode.namespaceID != Node.NAMESPACE_HTML_ID || currentNode.nodeNameID != tagNameID) {
                 treeConstructor.emitParseError();
             }
 
-            treeConstructor.popOpenElementsUntilWithHtmlNS(tagName);
+            treeConstructor.popOpenElementsUntilWithHtmlNS(tagNameID);
         }
     }
 

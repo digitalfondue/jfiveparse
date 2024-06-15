@@ -282,7 +282,7 @@ class TreeConstructor {
             emitParseError();
         }
 
-        popOpenElementsUntilWithHtmlNS("p");
+        popOpenElementsUntilWithHtmlNS(Common.ELEMENT_P_ID);
     }
 
     Element getCurrentNode() {
@@ -781,10 +781,10 @@ class TreeConstructor {
         return openElements.remove(openElements.size() - 1);
     }
 
-    void popOpenElementsUntilWithHtmlNS(String name) {
+    void popOpenElementsUntilWithHtmlNS(byte nameID) {
         while (true) {
             Element e = popCurrentNode();
-            if (Common.isHtmlNS(e, name)) {
+            if (Common.isHtmlNS(e, nameID)) {
                 return;
             }
         }
