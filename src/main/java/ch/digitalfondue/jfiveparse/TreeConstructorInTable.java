@@ -73,7 +73,7 @@ class TreeConstructorInTable {
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
             treeConstructor.emitParseError();
 
-            if (!treeConstructor.hasElementInTableScope("table")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TABLE_ID)) {
                 // ignore
             } else {
                 treeConstructor.popOpenElementsUntilWithHtmlNS(Common.ELEMENT_TABLE_ID);
@@ -81,7 +81,7 @@ class TreeConstructorInTable {
                 treeConstructor.dispatch();
             }
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
-            if (!treeConstructor.hasElementInTableScope("table")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TABLE_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -165,7 +165,7 @@ class TreeConstructorInTable {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_ROW);
             treeConstructor.dispatch();
         } else if (tokenType == END_TAG && ("tbody".equals(tagName) || "tfoot".equals(tagName) || "thead".equals(tagName))) {
-            if (!treeConstructor.hasElementInTableScope(tagName)) {
+            if (!treeConstructor.hasElementInTableScope(tagNameID)) { // tbody, tfoot, thead
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -178,8 +178,8 @@ class TreeConstructorInTable {
                 "thead".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
 
-            if (!treeConstructor.hasElementInTableScope("tbody") && !treeConstructor.hasElementInTableScope("tfoot")
-                    && !treeConstructor.hasElementInTableScope("thead")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TBODY_ID) && !treeConstructor.hasElementInTableScope(Common.ELEMENT_TFOOT_ID)
+                    && !treeConstructor.hasElementInTableScope(Common.ELEMENT_THEAD_ID)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -288,7 +288,7 @@ class TreeConstructorInTable {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_CELL);
             treeConstructor.insertMarkerInActiveFormattingElements();
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TR_ID, tagNameID)) {
-            if (!treeConstructor.hasElementInTableScope("tr")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TR_ID)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -304,7 +304,7 @@ class TreeConstructorInTable {
                 "thead".equals(tagName) || //
                 "tr".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
-            if (!treeConstructor.hasElementInTableScope("tr")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TR_ID)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -317,10 +317,10 @@ class TreeConstructorInTable {
                 "tfoot".equals(tagName) || //
                 "thead".equals(tagName))) {
 
-            if (!treeConstructor.hasElementInTableScope(tagName)) {
+            if (!treeConstructor.hasElementInTableScope(tagNameID)) { //tbody, tfoot thread
                 treeConstructor.emitParseError();
                 // ignore token
-            } else if (!treeConstructor.hasElementInTableScope("tr")) {
+            } else if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TR_ID)) {
                 // ignore token
             } else {
                 clearStackBackToTableRowContext(treeConstructor);
@@ -416,7 +416,7 @@ class TreeConstructorInTable {
 
     private static void inCellEndTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
         if ((Common.ELEMENT_TD_ID == tagNameID || Common.ELEMENT_TH_ID == tagNameID)) {
-            if (!treeConstructor.hasElementInTableScope(tagName)) {
+            if (!treeConstructor.hasElementInTableScope(tagNameID)) { // TD or TH
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -445,7 +445,7 @@ class TreeConstructorInTable {
                 Common.ELEMENT_THEAD_ID == tagNameID ||
                 Common.ELEMENT_TR_ID == tagNameID
         ) {
-            if (!treeConstructor.hasElementInTableScope(tagName)) {
+            if (!treeConstructor.hasElementInTableScope(tagNameID)) { // table, tbody, tfoot, thead or tr
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -467,7 +467,7 @@ class TreeConstructorInTable {
                 "th".equals(tagName) || //
                 "thead".equals(tagName) || "tr".equals(tagName))) {
 
-            if (!treeConstructor.hasElementInTableScope("td") && !treeConstructor.hasElementInTableScope("th")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TD_ID) && !treeConstructor.hasElementInTableScope(Common.ELEMENT_TH_ID)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -501,7 +501,7 @@ class TreeConstructorInTable {
 
         if (Common.isEndTagNamed(tokenType, Common.ELEMENT_CAPTION_ID, tagNameID)) {
 
-            if (!treeConstructor.hasElementInTableScope("caption")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_CAPTION_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -525,7 +525,7 @@ class TreeConstructorInTable {
                 "tr".equals(tagName)))
                 || Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
 
-            if (!treeConstructor.hasElementInTableScope("caption")) {
+            if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_CAPTION_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {

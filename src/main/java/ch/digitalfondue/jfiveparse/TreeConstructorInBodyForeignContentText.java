@@ -178,7 +178,7 @@ class TreeConstructorInBodyForeignContentText {
                 break;
             case ELEMENT_NOEMBED_ID:
             case ELEMENT_NOSCRIPT_ID:
-                startNoembedNoscript(tagName, treeConstructor);
+                startNoembedNoscript(tagNameID, treeConstructor);
                 break;
             case ELEMENT_SELECT_ID:
                 startSelect(treeConstructor);
@@ -301,8 +301,8 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void startNoembedNoscript(String tagName, TreeConstructor treeConstructor) {
-        if ("noscript".equals(tagName) && !treeConstructor.isScriptingFlag()) {
+    private static void startNoembedNoscript(byte tagNameID, TreeConstructor treeConstructor) {
+        if (ELEMENT_NOSCRIPT_ID == tagNameID && !treeConstructor.isScriptingFlag()) {
             inBodyStartTagAnythingElse(treeConstructor);
         } else {
             genericRawTextElementParsing(treeConstructor);

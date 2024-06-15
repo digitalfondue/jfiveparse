@@ -432,10 +432,12 @@ class TreeConstructorAftersBeforeInitialInHead {
             // ignore
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (tokenType == START_TAG && ("base".equals(tagName) || //
-                "basefont".equals(tagName) || //
-                "bgsound".equals(tagName) || //
-                "link".equals(tagName))) {
+        } else if (tokenType == START_TAG && (
+                Common.ELEMENT_BASE_ID == tagNameID || //
+                Common.ELEMENT_BASEFONT_ID == tagNameID || //
+                Common.ELEMENT_BGSOUND_ID == tagNameID || //
+                Common.ELEMENT_LINK_ID == tagNameID
+        )) {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
@@ -446,8 +448,8 @@ class TreeConstructorAftersBeforeInitialInHead {
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_TITLE_ID, tagNameID)) {
             genericRCDataParsing(treeConstructor);
         } else if (tokenType == START_TAG && (//
-                ("noscript".equals(tagName) && treeConstructor.isScriptingFlag()) || //
-                        ("noframes".equals(tagName) || "style".equals(tagName)))) {
+                (Common.ELEMENT_NOSCRIPT_ID == tagNameID && treeConstructor.isScriptingFlag()) || //
+                        (Common.ELEMENT_NOFRAMES_ID == tagNameID || Common.ELEMENT_STYLE_ID == tagNameID))) {
             genericRawTextElementParsing(treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_NOSCRIPT_ID, tagNameID) && !treeConstructor.isScriptingFlag()) {
             treeConstructor.insertHtmlElementToken();
@@ -464,7 +466,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_HEAD_ID, tagNameID)) {
             treeConstructor.popCurrentNode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_HEAD);
-        } else if (tokenType == END_TAG && ("body".equals(tagName) || "html".equals(tagName) || "br".equals(tagName))) {
+        } else if (tokenType == END_TAG && (Common.ELEMENT_BODY_ID == tagNameID || Common.ELEMENT_HTML_ID == tagNameID || Common.ELEMENT_BR_ID == tagNameID)) {
             // do as anything else
             treeConstructor.popCurrentNode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_HEAD);

@@ -177,7 +177,7 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.dispatch();
         } else if (tokenType == END_TAG && isCaptionOrRelatedTags) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInTableScope(tagName)) {
+            if (!treeConstructor.hasElementInTableScope(tagNameID)) { // known ID
                 // ignore token
             } else {
                 treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);

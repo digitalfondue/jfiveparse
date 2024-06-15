@@ -359,10 +359,10 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInTableScope(String tagName) {
+    boolean hasElementInTableScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
             } else if ((Common.isHtmlNS(node, Common.ELEMENT_HTML_ID) || Common.isHtmlNS(node, Common.ELEMENT_TABLE_ID) || Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID))) {
                 return false;
