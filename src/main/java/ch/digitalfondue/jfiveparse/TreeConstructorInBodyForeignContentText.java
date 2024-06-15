@@ -546,9 +546,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.closePElement();
         }
         Element e = treeConstructor.getCurrentNode();
-        if (Node.NAMESPACE_HTML_ID == e.namespaceID && e.getNodeName().length() == 2 && //
-                e.getNodeName().charAt(0) == 'h' && //
-                (e.getNodeName().charAt(1) >= '1' && e.getNodeName().charAt(1) <= '6')) {
+        if (Common.isHtmlNSBetween(e, ELEMENT_H1_ID, ELEMENT_H6_ID)) {
             treeConstructor.emitParseError();
             treeConstructor.popCurrentNode();
         }

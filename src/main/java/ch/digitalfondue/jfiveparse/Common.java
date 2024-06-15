@@ -271,8 +271,8 @@ class Common {
         return tokenType == TreeConstructor.START_TAG && named.equals(tagName);
     }
 
-    static boolean isEndTagNamed(byte tokenType, String named, String tagName) {
-        return tokenType == TreeConstructor.END_TAG && named.equals(tagName);
+    static boolean isEndTagNamed(byte tokenType, byte namedID, byte tagNameID) {
+        return tokenType == TreeConstructor.END_TAG && namedID == tagNameID;
     }
 
     static byte tagNameToID(String tagName) {

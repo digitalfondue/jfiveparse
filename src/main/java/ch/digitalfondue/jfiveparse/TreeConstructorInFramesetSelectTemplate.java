@@ -37,7 +37,7 @@ class TreeConstructorInFramesetSelectTemplate {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "frameset", tagName)) {
             treeConstructor.insertHtmlElementToken();
-        } else if (Common.isEndTagNamed(tokenType, "frameset", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_FRAMESET_ID, tagNameID)) {
 
             // TODO: should check if it's the root element and not only if it's
             // a html element?
@@ -104,7 +104,7 @@ class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
-        } else if (Common.isEndTagNamed(tokenType, "optgroup", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_OPTGROUP_ID, tagNameID)) {
 
             if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)
                     && Common.isHtmlNS(treeConstructor.openElementAt(treeConstructor.openElementsSize() - 2), Common.ELEMENT_OPTGROUP_ID)) {
@@ -118,14 +118,14 @@ class TreeConstructorInFramesetSelectTemplate {
                 // ignore
             }
 
-        } else if (Common.isEndTagNamed(tokenType, "option", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_OPTION_ID, tagNameID)) {
             if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
             } else {
                 treeConstructor.emitParseError();
                 // ignore
             }
-        } else if (Common.isEndTagNamed(tokenType, "select", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_SELECT_ID, tagNameID)) {
             if (!treeConstructor.hasElementInSelectScope(Common.ELEMENT_SELECT_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
@@ -154,7 +154,7 @@ class TreeConstructorInFramesetSelectTemplate {
             }
         } else if ((tokenType == START_TAG && ("script".equals(tagName) || //
                 "template".equals(tagName)))
-                || Common.isEndTagNamed(tokenType, "template", tagName)) {
+                || Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == EOF) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
@@ -213,7 +213,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 "style".equals(tagName) || //
                 "template".equals(tagName) || //
                 "title".equals(tagName)))
-                || Common.isEndTagNamed(tokenType, "template", tagName)) {
+                || Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == START_TAG && ("caption".equals(tagName) || //
                 "colgroup".equals(tagName) || //

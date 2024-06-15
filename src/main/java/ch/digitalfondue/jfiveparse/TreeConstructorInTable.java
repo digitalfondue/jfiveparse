@@ -77,7 +77,7 @@ class TreeConstructorInTable {
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();
             }
-        } else if (Common.isEndTagNamed(tokenType, "table", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
             if (!treeConstructor.hasElementInTableScope("table")) {
                 treeConstructor.emitParseError();
                 // ignore
@@ -101,7 +101,7 @@ class TreeConstructorInTable {
         } else if (tokenType == START_TAG && ("style".equals(tagName) || //
                 "script".equals(tagName) || //
                 "template".equals(tagName))//
-                || Common.isEndTagNamed(tokenType, "template", tagName)) {
+                || Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, "input", tagName)) {
 
@@ -173,7 +173,7 @@ class TreeConstructorInTable {
         } else if ((tokenType == START_TAG && ("caption".equals(tagName) || "col".equals(tagName) || //
                 "colgroup".equals(tagName) || "tbody".equals(tagName) || "tfoot".equals(tagName) || //
                 "thead".equals(tagName)))
-                || Common.isEndTagNamed(tokenType, "table", tagName)) {
+                || Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
 
             if (!treeConstructor.hasElementInTableScope("tbody") && !treeConstructor.hasElementInTableScope("tfoot")
                     && !treeConstructor.hasElementInTableScope("thead")) {
@@ -284,7 +284,7 @@ class TreeConstructorInTable {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_CELL);
             treeConstructor.insertMarkerInActiveFormattingElements();
-        } else if (Common.isEndTagNamed(tokenType, "tr", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TR_ID, tagNameID)) {
             if (!treeConstructor.hasElementInTableScope("tr")) {
                 treeConstructor.emitParseError();
                 // ignore token
@@ -300,7 +300,7 @@ class TreeConstructorInTable {
                 "tfoot".equals(tagName) || //
                 "thead".equals(tagName) || //
                 "tr".equals(tagName)))
-                || Common.isEndTagNamed(tokenType, "table", tagName)) {
+                || Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
             if (!treeConstructor.hasElementInTableScope("tr")) {
                 treeConstructor.emitParseError();
                 // ignore token
@@ -368,7 +368,7 @@ class TreeConstructorInTable {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
-        } else if (Common.isEndTagNamed(tokenType, "colgroup", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_COLGROUP_ID, tagNameID)) {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_COLGROUP_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
@@ -376,10 +376,10 @@ class TreeConstructorInTable {
                 treeConstructor.popCurrentNode();
                 treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
             }
-        } else if (Common.isEndTagNamed(tokenType, "col", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_COL_ID, tagNameID)) {
             treeConstructor.emitParseError();
             // ignore
-        } else if (Common.isStartTagNamed(tokenType, "template", tagName) || Common.isEndTagNamed(tokenType, "template", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, "template", tagName) || Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == EOF) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
@@ -426,10 +426,13 @@ class TreeConstructorInTable {
                 treeConstructor.clearUpToLastMarkerActiveFormattingElements();
                 treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_ROW);
             }
-        } else if (("body".equals(tagName) || //
-                "caption".equals(tagName) || //
-                "col".equals(tagName) || //
-                "colgroup".equals(tagName) || "html".equals(tagName))) {
+        } else if (
+                tagNameID == Common.ELEMENT_BODY_ID || //
+                tagNameID == Common.ELEMENT_CAPTION_ID || //
+                tagNameID == Common.ELEMENT_COL_ID || //
+                tagNameID == Common.ELEMENT_COLGROUP_ID || //
+                tagNameID == Common.ELEMENT_HTML_ID
+        ) {
             treeConstructor.emitParseError();
             // ignore token
         } else if (
@@ -493,7 +496,7 @@ class TreeConstructorInTable {
 
     static void inCaption(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
-        if (Common.isEndTagNamed(tokenType, "caption", tagName)) {
+        if (Common.isEndTagNamed(tokenType, Common.ELEMENT_CAPTION_ID, tagNameID)) {
 
             if (!treeConstructor.hasElementInTableScope("caption")) {
                 treeConstructor.emitParseError();
@@ -517,7 +520,7 @@ class TreeConstructorInTable {
                 "th".equals(tagName) || //
                 "thead".equals(tagName) || //
                 "tr".equals(tagName)))
-                || Common.isEndTagNamed(tokenType, "table", tagName)) {
+                || Common.isEndTagNamed(tokenType, Common.ELEMENT_TABLE_ID, tagNameID)) {
 
             if (!treeConstructor.hasElementInTableScope("caption")) {
                 treeConstructor.emitParseError();

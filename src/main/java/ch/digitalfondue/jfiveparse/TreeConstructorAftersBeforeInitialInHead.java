@@ -54,7 +54,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.addToOpenElements(treeConstructor.getHead());
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
             treeConstructor.removeFromOpenElements(treeConstructor.getHead());
-        } else if (Common.isEndTagNamed(tokenType, "template", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == END_TAG && ("body".equals(tagName) || //
                 "html".equals(tagName) || //
@@ -83,7 +83,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (Common.isEndTagNamed(tokenType, "html", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
             if (treeConstructor.isHtmlFragmentParsing()) {
                 treeConstructor.emitParseError();
             } else {
@@ -108,7 +108,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (Common.isEndTagNamed(tokenType, "html", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_AFTER_FRAMESET);
         } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
@@ -461,7 +461,7 @@ class TreeConstructorAftersBeforeInitialInHead {
 
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.TEXT);
 
-        } else if (Common.isEndTagNamed(tokenType, "head", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_HEAD_ID, tagNameID)) {
             treeConstructor.popCurrentNode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_HEAD);
         } else if (tokenType == END_TAG && ("body".equals(tagName) || "html".equals(tagName) || "br".equals(tagName))) {
@@ -475,7 +475,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.framesetOkToFalse();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
             treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
-        } else if (Common.isEndTagNamed(tokenType, "template", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             if (!treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
                 treeConstructor.emitParseError();
                 // ignore
@@ -506,7 +506,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             // ignore
         } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (Common.isEndTagNamed(tokenType, "noscript", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_NOSCRIPT_ID, tagNameID)) {
             treeConstructor.popCurrentNode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_HEAD);
         } else if ((tokenType == CHARACTER && (chr == Characters.TAB || //
@@ -519,7 +519,7 @@ class TreeConstructorAftersBeforeInitialInHead {
                         "meta".equals(tagName) || //
                         "noframes".equals(tagName) || "style".equals(tagName)))) {
             inHead(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (Common.isEndTagNamed(tokenType, "br", tagName)) {
+        } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_BR_ID, tagNameID)) {
             treeConstructor.emitParseError();
             treeConstructor.popCurrentNode();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_HEAD);
