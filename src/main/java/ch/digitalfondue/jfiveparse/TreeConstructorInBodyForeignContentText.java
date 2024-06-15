@@ -635,88 +635,88 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void inBodyEndTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
-        switch (tagName) {
-            case "template":
+        switch (tagNameID) {
+            case ELEMENT_TEMPLATE_ID:
                 TreeConstructorAftersBeforeInitialInHead.inHead(END_TAG, tagName, tagNameID, treeConstructor);
                 break;
-            case "body":
+            case ELEMENT_BODY_ID:
                 endBody(treeConstructor);
                 break;
-            case "html":
+            case ELEMENT_HTML_ID:
                 endHtml(treeConstructor);
                 break;
-            case "address":
-            case "article":
-            case "aside":
-            case "blockquote":
-            case "button":
-            case "center":
-            case "details":
-            case "dialog":
-            case "dir":
-            case "div":
-            case "dl":
-            case "fieldset":
-            case "figcaption":
-            case "figure":
-            case "footer":
-            case "header":
-            case "hgroup":
-            case "listing":
-            case "main":
-            case "menu":
-            case "nav":
-            case "ol":
-            case "pre":
-            case "search":
-            case "section":
-            case "summary":
-            case "ul":
+            case ELEMENT_ADDRESS_ID:
+            case ELEMENT_ARTICLE_ID:
+            case ELEMENT_ASIDE_ID:
+            case ELEMENT_BLOCKQUOTE_ID:
+            case ELEMENT_BUTTON_ID:
+            case ELEMENT_CENTER_ID:
+            case ELEMENT_DETAILS_ID:
+            case ELEMENT_DIALOG_ID:
+            case ELEMENT_DIR_ID:
+            case ELEMENT_DIV_ID:
+            case ELEMENT_DL_ID:
+            case ELEMENT_FIELDSET_ID:
+            case ELEMENT_FIGCAPTION_ID:
+            case ELEMENT_FIGURE_ID:
+            case ELEMENT_FOOTER_ID:
+            case ELEMENT_HEADER_ID:
+            case ELEMENT_HGROUP_ID:
+            case ELEMENT_LISTING_ID:
+            case ELEMENT_MAIN_ID:
+            case ELEMENT_MENU_ID:
+            case ELEMENT_NAV_ID:
+            case ELEMENT_OL_ID:
+            case ELEMENT_PRE_ID:
+            case ELEMENT_SEARCH_ID:
+            case ELEMENT_SECTION_ID:
+            case ELEMENT_SUMMARY_ID:
+            case ELEMENT_UL_ID:
                 endAddressUl(tagName, treeConstructor);
                 break;
-            case "form":
+            case ELEMENT_FORM_ID:
                 endForm(treeConstructor);
                 break;
-            case "p":
+            case ELEMENT_P_ID:
                 endP(treeConstructor);
                 break;
-            case "li":
+            case ELEMENT_LI_ID:
                 endLi(treeConstructor);
                 break;
-            case "dd":
-            case "dt":
+            case ELEMENT_DD_ID:
+            case ELEMENT_DT_ID:
                 endDdDt(tagName, treeConstructor);
                 break;
-            case "h1":
-            case "h2":
-            case "h3":
-            case "h4":
-            case "h5":
-            case "h6":
+            case ELEMENT_H1_ID:
+            case ELEMENT_H2_ID:
+            case ELEMENT_H3_ID:
+            case ELEMENT_H4_ID:
+            case ELEMENT_H5_ID:
+            case ELEMENT_H6_ID:
                 endH1H6(tagName, tagNameID, treeConstructor);
                 break;
-            case "a":
-            case "b":
-            case "big":
-            case "code":
-            case "em":
-            case "font":
-            case "i":
-            case "nobr":
-            case "s":
-            case "small":
-            case "strike":
-            case "strong":
-            case "tt":
-            case "u":
+            case ELEMENT_A_ID:
+            case ELEMENT_B_ID:
+            case ELEMENT_BIG_ID:
+            case ELEMENT_CODE_ID:
+            case ELEMENT_EM_ID:
+            case ELEMENT_FONT_ID:
+            case ELEMENT_I_ID:
+            case ELEMENT_NO_BR_ID:
+            case ELEMENT_S_ID:
+            case ELEMENT_SMALL_ID:
+            case ELEMENT_STRIKE_ID:
+            case ELEMENT_STRONG_ID:
+            case ELEMENT_TT_ID:
+            case ELEMENT_U_ID:
                 treeConstructor.adoptionAgencyAlgorithm(tagName);
                 break;
-            case "applet":
-            case "marquee":
-            case "object":
+            case ELEMENT_APPLET_ID:
+            case ELEMENT_MARQUEE_ID:
+            case ELEMENT_OBJECT_ID:
                 endAppletObject(tagName, tagNameID, treeConstructor);
                 break;
-            case "br":
+            case ELEMENT_BR_ID:
                 endBr(treeConstructor);
                 break;
             default:
