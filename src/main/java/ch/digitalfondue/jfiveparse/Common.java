@@ -267,8 +267,8 @@ class Common {
         return chr == Characters.TAB || chr == Characters.LF || chr == Characters.FF || chr == Characters.CR || chr == Characters.SPACE;
     }
 
-    static boolean isStartTagNamed(byte tokenType, String named, String tagName) {
-        return tokenType == TreeConstructor.START_TAG && named.equals(tagName);
+    static boolean isStartTagNamed(byte tokenType, byte namedID, byte tagNameID) {
+        return tokenType == TreeConstructor.START_TAG && namedID == tagNameID;
     }
 
     static boolean isEndTagNamed(byte tokenType, byte namedID, byte tagNameID) {

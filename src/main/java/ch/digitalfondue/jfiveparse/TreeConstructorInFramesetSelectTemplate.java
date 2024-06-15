@@ -33,9 +33,9 @@ class TreeConstructorInFramesetSelectTemplate {
         } else if (tokenType == DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
-        } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (Common.isStartTagNamed(tokenType, "frameset", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_FRAMESET_ID, tagNameID)) {
             treeConstructor.insertHtmlElementToken();
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_FRAMESET_ID, tagNameID)) {
 
@@ -50,11 +50,11 @@ class TreeConstructorInFramesetSelectTemplate {
                     treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_FRAMESET);
                 }
             }
-        } else if (Common.isStartTagNamed(tokenType, "frame", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_FRAME_ID, tagNameID)) {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
-        } else if (Common.isStartTagNamed(tokenType, "noframes", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_NOFRAMES_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == EOF) {
             if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_HTML_ID)) {
@@ -78,14 +78,14 @@ class TreeConstructorInFramesetSelectTemplate {
         } else if (tokenType == DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
-        } else if (Common.isStartTagNamed(tokenType, "html", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (Common.isStartTagNamed(tokenType, "option", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_OPTION_ID, tagNameID)) {
             if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
-        } else if (Common.isStartTagNamed(tokenType, "optgroup", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_OPTGROUP_ID, tagNameID)) {
             if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
             }
@@ -93,7 +93,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertHtmlElementToken();
-        } else if (Common.isStartTagNamed(tokenType, "hr", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HR_ID, tagNameID)) {
             // see https://github.com/html5lib/html5lib-tests/commit/55aa183097fa52bb1328cd93633be6f88159d4b8
             if (Common.isHtmlNS(treeConstructor.getCurrentNode(), Common.ELEMENT_OPTION_ID)) {
                 treeConstructor.popCurrentNode();
@@ -133,7 +133,7 @@ class TreeConstructorInFramesetSelectTemplate {
                 treeConstructor.popOpenElementsUntilWithHtmlNS("select");
                 treeConstructor.resetInsertionModeAppropriately();
             }
-        } else if (Common.isStartTagNamed(tokenType, "select", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_SELECT_ID, tagNameID)) {
             treeConstructor.emitParseError();
             if (!treeConstructor.hasElementInSelectScope(Common.ELEMENT_SELECT_ID)) {
                 // ignore
@@ -221,9 +221,9 @@ class TreeConstructorInFramesetSelectTemplate {
                 "tfoot".equals(tagName) || //
                 "thead".equals(tagName))) {
             popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_TABLE);
-        } else if (Common.isStartTagNamed(tokenType, "col", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_COL_ID, tagNameID)) {
             popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_COLUMN_GROUP);
-        } else if (Common.isStartTagNamed(tokenType, "tr", tagName)) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_TR_ID, tagNameID)) {
             popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_TABLE_BODY);
         } else if (tokenType == START_TAG && ("td".equals(tagName) || //
                 "th".equals(tagName))) {
