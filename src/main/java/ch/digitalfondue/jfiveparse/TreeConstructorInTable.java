@@ -88,26 +88,28 @@ class TreeConstructorInTable {
                 treeConstructor.popOpenElementsUntilWithHtmlNS(Common.ELEMENT_TABLE_ID);
                 treeConstructor.resetInsertionModeAppropriately();
             }
-        } else if (tokenType == END_TAG && ("body".equals(tagName) || //
-                "caption".equals(tagName) || //
-                "col".equals(tagName) || //
-                "colgroup".equals(tagName) || //
-                "html".equals(tagName) || //
-                "tbody".equals(tagName) || //
-                "td".equals(tagName) || //
-                "tfoot".equals(tagName) || //
-                "th".equals(tagName) || //
-                "thead".equals(tagName) || //
-                "tr".equals(tagName))) {
+        } else if (tokenType == END_TAG && (
+                Common.ELEMENT_BODY_ID == tagNameID || //
+                        Common.ELEMENT_CAPTION_ID == tagNameID || //
+                        Common.ELEMENT_COL_ID == tagNameID || //
+                        Common.ELEMENT_COLGROUP_ID == tagNameID || //
+                        Common.ELEMENT_HTML_ID == tagNameID || //
+                        Common.ELEMENT_TBODY_ID == tagNameID || //
+                        Common.ELEMENT_TD_ID == tagNameID || //
+                        Common.ELEMENT_TFOOT_ID == tagNameID || //
+                        Common.ELEMENT_TH_ID == tagNameID || //
+                        Common.ELEMENT_THEAD_ID == tagNameID || //
+                        Common.ELEMENT_TR_ID == tagNameID
+        )) {
             // parser error
             // ignore token
-        } else if (tokenType == START_TAG && ("style".equals(tagName) || //
-                "script".equals(tagName) || //
-                "template".equals(tagName))//
+        } else if (tokenType == START_TAG && (
+                Common.ELEMENT_STYLE_ID == tagNameID || //
+                Common.ELEMENT_SCRIPT_ID == tagNameID || //
+                Common.ELEMENT_TEMPLATE_ID == tagNameID)//
                 || Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_INPUT_ID, tagNameID)) {
-
             boolean hasTypeKey = treeConstructor.hasAttribute("type");
             if (!hasTypeKey || (!"hidden".equalsIgnoreCase(treeConstructor.getAttribute("type").getValue()))) {
                 treeConstructor.emitParseError();
@@ -142,8 +144,9 @@ class TreeConstructorInTable {
     private static void cleanStackBackToTableContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
-                    ("table".equals(e.getNodeName()) || "template".equals(e.getNodeName()) || "html".equals(e.getNodeName()))) {
+            if (Node.NAMESPACE_HTML_ID == e.namespaceID &&
+                    (Common.ELEMENT_TABLE_ID == e.nodeNameID || Common.ELEMENT_TEMPLATE_ID == e.nodeNameID || Common.ELEMENT_HTML_ID == e.nodeNameID)
+            ) {
                 break;
             }
             treeConstructor.popCurrentNode();
@@ -158,13 +161,13 @@ class TreeConstructorInTable {
             clearStackBackToTableBodyContext(treeConstructor);
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_ROW);
-        } else if (tokenType == START_TAG && ("th".equals(tagName) || "td".equals(tagName))) {
+        } else if (tokenType == START_TAG && (Common.ELEMENT_TH_ID == tagNameID || Common.ELEMENT_TD_ID == tagNameID)) {
             treeConstructor.emitParseError();
             clearStackBackToTableBodyContext(treeConstructor);
             treeConstructor.insertHtmlElementWithEmptyAttributes("tr", Common.ELEMENT_TR_ID);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_ROW);
             treeConstructor.dispatch();
-        } else if (tokenType == END_TAG && ("tbody".equals(tagName) || "tfoot".equals(tagName) || "thead".equals(tagName))) {
+        } else if (tokenType == END_TAG && (Common.ELEMENT_TBODY_ID == tagNameID || Common.ELEMENT_TFOOT_ID == tagNameID || Common.ELEMENT_THEAD_ID == tagNameID)) {
             if (!treeConstructor.hasElementInTableScope(tagNameID)) { // tbody, tfoot, thead
                 treeConstructor.emitParseError();
                 // ignore token

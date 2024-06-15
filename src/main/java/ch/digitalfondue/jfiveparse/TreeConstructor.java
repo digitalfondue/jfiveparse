@@ -631,12 +631,14 @@ class TreeConstructor {
     Node[] findAppropriatePlaceForInsertingNode(Element overrideTarget) {
 
         Element target = overrideTarget != null ? overrideTarget : getCurrentNode();
-        String targetName = target.getNodeName();
-        if (fosterParentingEnabled && (Node.NAMESPACE_HTML_ID == target.namespaceID && ("table".equals(targetName) || //
-                "tbody".equals(targetName) || //
-                "tfoot".equals(targetName) || //
-                "thead".equals(targetName) || //
-                "tr".equals(targetName)))) {
+        byte targetNameID = target.nodeNameID;
+        if (fosterParentingEnabled && (Node.NAMESPACE_HTML_ID == target.namespaceID && (
+                Common.ELEMENT_TABLE_ID == targetNameID || //
+                Common.ELEMENT_TBODY_ID == targetNameID || //
+                Common.ELEMENT_TFOOT_ID == targetNameID || //
+                Common.ELEMENT_THEAD_ID == targetNameID || //
+                Common.ELEMENT_TR_ID == targetNameID
+        ))) {
 
             // 1
             int lastTemplatePos = findLastElementPositionMatching(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
