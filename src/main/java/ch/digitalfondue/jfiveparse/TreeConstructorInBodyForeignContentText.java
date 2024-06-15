@@ -135,7 +135,7 @@ class TreeConstructorInBodyForeignContentText {
                 startBU(treeConstructor);
                 break;
             case ELEMENT_NO_BR_ID:
-                startNobr(tagName, treeConstructor);
+                startNobr(treeConstructor);
                 break;
             case ELEMENT_APPLET_ID:
             case ELEMENT_MARQUEE_ID:
@@ -252,7 +252,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startRpRt(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInScope("ruby")) {
+        if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
             treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
         }
 
@@ -264,7 +264,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startRbRtc(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInScope("ruby")) {
+        if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
             treeConstructor.generateImpliedEndTag();
         }
 
@@ -392,11 +392,11 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.framesetOkToFalse();
     }
 
-    private static void startNobr(String tagName, TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements();
-        if (treeConstructor.hasElementInScope("nobr")) {
+    private static void startNobr(TreeConstructor treeConstructor) {
+        treeConstructor.reconstructActiveFormattingElements(); // we know it's NOBR
+        if (treeConstructor.hasElementInScope(ELEMENT_NO_BR_ID)) {
             treeConstructor.emitParseError();
-            treeConstructor.adoptionAgencyAlgorithm(tagName);
+            treeConstructor.adoptionAgencyAlgorithm(ELEMENT_NO_BR_ID);
             treeConstructor.reconstructActiveFormattingElements();
         }
         Element nobr = treeConstructor.insertHtmlElementToken();
@@ -415,7 +415,7 @@ class TreeConstructorInBodyForeignContentText {
         if (aIdx != -1) {
             Element a = treeConstructor.getActiveFormattingElementAt(aIdx);
             treeConstructor.emitParseError();
-            treeConstructor.adoptionAgencyAlgorithm("a");
+            treeConstructor.adoptionAgencyAlgorithm(ELEMENT_A_ID);
             treeConstructor.removeInActiveFormattingElements(a);
             treeConstructor.removeFromOpenElements(a);
         }
@@ -672,7 +672,7 @@ class TreeConstructorInBodyForeignContentText {
             case ELEMENT_SECTION_ID:
             case ELEMENT_SUMMARY_ID:
             case ELEMENT_UL_ID:
-                endAddressUl(tagName, tagNameID, treeConstructor);
+                endAddressUl(tagNameID, treeConstructor);
                 break;
             case ELEMENT_FORM_ID:
                 endForm(treeConstructor);
@@ -693,7 +693,7 @@ class TreeConstructorInBodyForeignContentText {
             case ELEMENT_H4_ID:
             case ELEMENT_H5_ID:
             case ELEMENT_H6_ID:
-                endH1H6(tagName, tagNameID, treeConstructor);
+                endH1H6(tagNameID, treeConstructor);
                 break;
             case ELEMENT_A_ID:
             case ELEMENT_B_ID:
@@ -709,12 +709,12 @@ class TreeConstructorInBodyForeignContentText {
             case ELEMENT_STRONG_ID:
             case ELEMENT_TT_ID:
             case ELEMENT_U_ID:
-                treeConstructor.adoptionAgencyAlgorithm(tagName);
+                treeConstructor.adoptionAgencyAlgorithm(tagNameID);
                 break;
             case ELEMENT_APPLET_ID:
             case ELEMENT_MARQUEE_ID:
             case ELEMENT_OBJECT_ID:
-                endAppletObject(tagName, tagNameID, treeConstructor);
+                endAppletObject(tagNameID, treeConstructor);
                 break;
             case ELEMENT_BR_ID:
                 endBr(treeConstructor);
@@ -737,9 +737,9 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.framesetOkToFalse();
     }
 
-    private static void endAppletObject(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void endAppletObject(byte tagNameID, TreeConstructor treeConstructor) {
         // we know tagNameID = applet, marquee, object
-        if (!treeConstructor.hasElementInScope(tagName)) {
+        if (!treeConstructor.hasElementInScope(tagNameID)) {
             treeConstructor.emitParseError();
             // ignore
         } else {
@@ -753,13 +753,13 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void endH1H6(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
-        if (!(treeConstructor.hasElementInScope("h1") || //
-                treeConstructor.hasElementInScope("h2") || //
-                treeConstructor.hasElementInScope("h3") || //
-                treeConstructor.hasElementInScope("h4") || //
-                treeConstructor.hasElementInScope("h5") ||
-                treeConstructor.hasElementInScope("h6"))) {
+    private static void endH1H6(byte tagNameID, TreeConstructor treeConstructor) {
+        if (!(treeConstructor.hasElementInScope(ELEMENT_H1_ID) || //
+                treeConstructor.hasElementInScope(ELEMENT_H2_ID) || //
+                treeConstructor.hasElementInScope(ELEMENT_H3_ID) || //
+                treeConstructor.hasElementInScope(ELEMENT_H4_ID) || //
+                treeConstructor.hasElementInScope(ELEMENT_H5_ID) ||
+                treeConstructor.hasElementInScope(ELEMENT_H6_ID))) {
             treeConstructor.emitParseError();
             // ignore token
         } else {
@@ -780,7 +780,7 @@ class TreeConstructorInBodyForeignContentText {
 
     // we know it's DD, DT
     private static void endDdDt(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope(tagName)) {
+        if (!treeConstructor.hasElementInScope(tagNameID)) {
             treeConstructor.emitParseError();
             // ignore
         } else {
@@ -828,7 +828,7 @@ class TreeConstructorInBodyForeignContentText {
                 treeConstructor.removeFromOpenElements(node);
             }
         } else {
-            if (!treeConstructor.hasElementInScope("form")) {
+            if (!treeConstructor.hasElementInScope(ELEMENT_FORM_ID)) {
                 treeConstructor.emitParseError();
                 // ignore token
             } else {
@@ -841,9 +841,9 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void endAddressUl(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void endAddressUl(byte tagNameID, TreeConstructor treeConstructor) {
         //we know the ID are known
-        if (!treeConstructor.hasElementInScope(tagName)) {
+        if (!treeConstructor.hasElementInScope(tagNameID)) {
             treeConstructor.emitParseError();
         } else {
             treeConstructor.generateImpliedEndTag();
@@ -857,7 +857,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void endHtml(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope("body")) {
+        if (!treeConstructor.hasElementInScope(ELEMENT_BODY_ID)) {
             treeConstructor.emitParseError();
             // ignore token
         } else {
@@ -868,7 +868,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void endBody(TreeConstructor treeConstructor) {
-        if (!treeConstructor.hasElementInScope("body")) {
+        if (!treeConstructor.hasElementInScope(ELEMENT_BODY_ID)) {
             treeConstructor.emitParseError();
             // ignore token
         } else {

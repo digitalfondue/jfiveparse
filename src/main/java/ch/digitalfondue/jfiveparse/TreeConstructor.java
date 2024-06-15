@@ -311,10 +311,10 @@ class TreeConstructor {
 
     // ------------
 
-    boolean hasElementInScope(String tagName) {
+    boolean hasElementInScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
             } else if (Common.isInCommonInScope(node)) {
                 return false;
@@ -387,10 +387,10 @@ class TreeConstructor {
 
     // implementation of
     // https://html.spec.whatwg.org/multipage/syntax.html#adoption-agency-algorithm
-    void adoptionAgencyAlgorithm(String subject) {
+    void adoptionAgencyAlgorithm(byte subjectID) {
         Element current = getCurrentNode();
         // 1
-        if (Common.isHtmlNS(current, subject) && !activeFormattingElements.contains(current)) {
+        if (Common.isHtmlNS(current, subjectID) && !activeFormattingElements.contains(current)) {
             popCurrentNode();
             return;
         }
@@ -409,7 +409,7 @@ class TreeConstructor {
             outerLoopCounter++;
 
             // 5
-            final int formattingElementIdx = activeFormattingElements.getBetweenLastElementAndMarkerIndex(subject);
+            final int formattingElementIdx = activeFormattingElements.getBetweenLastElementAndMarkerIndex(subjectID);
 
             // no such element
             if (formattingElementIdx == -1) {

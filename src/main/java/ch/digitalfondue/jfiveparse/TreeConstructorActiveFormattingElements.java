@@ -195,12 +195,13 @@ class TreeConstructorActiveFormattingElements {
         return activeFormattingElements.get(idx);
     }
 
-    int getBetweenLastElementAndMarkerIndex(String tagName) {
+    // we know we pass non zero tagNameID
+    int getBetweenLastElementAndMarkerIndex(byte tagNameID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
             if (e instanceof Marker) {
                 return -1;
-            } else if (tagName.equals(e.getNodeName())) {
+            } else if (tagNameID == e.nodeNameID) {
                 return i;
             }
         }
