@@ -710,7 +710,7 @@ class Common {
         return element.nodeNameID == nameID && element.namespaceID == Node.NAMESPACE_HTML_ID;
     }
 
-    /** /!\ beware when using this function!, the from to must be carefully chosed! */
+    /** /!\ beware when using this function!, the "from"-"to" must be carefully chosen! */
     static boolean isHtmlNSBetween(Element element, byte nameIDFrom, byte nameIDto) {
         return element.nodeNameID >= nameIDFrom && element.nodeNameID <= nameIDto && element.namespaceID == Node.NAMESPACE_HTML_ID;
     }

@@ -118,7 +118,6 @@ class TreeConstructor {
 
     void setTagName(ResizableCharBuilder rawTagName) {
         String tagName = rawTagName.toLowerCase();
-        //String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
         this.tagName = tagName;
         this.tagNameID = Common.tagNameToID(tagName);
     }

@@ -402,7 +402,12 @@ class Tokenizer {
                 if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
-                    attributes.put(new AttributeNode(curAttrName, currentAttributeName.containsUpperCase ? currentAttributeName.asString() : curAttrName, currentAttributeValue.asString(), currentAttributeQuoteType));
+                    attributes.put(new AttributeNode(
+                            curAttrName,
+                            currentAttributeName.containsUpperCase ? currentAttributeName.asString() : curAttrName,
+                            currentAttributeValue,
+                            currentAttributeQuoteType
+                    ));
                 }
             }
         } catch (NullPointerException npe) {
