@@ -278,7 +278,7 @@ class TreeConstructor {
         generateImpliedEndTag("p", Node.NAMESPACE_HTML);
 
         Element e = getCurrentNode();
-        if (!("p".equals(e.getNodeName()) && Node.NAMESPACE_HTML_ID == e.namespaceID)) {
+        if (!(Common.ELEMENT_P_ID == e.nodeNameID && Node.NAMESPACE_HTML_ID == e.namespaceID)) {
             emitParseError();
         }
 

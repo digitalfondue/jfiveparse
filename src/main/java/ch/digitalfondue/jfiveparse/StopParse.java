@@ -18,7 +18,7 @@ package ch.digitalfondue.jfiveparse;
 /**
  * For stopping the parser, this exception is launched internally.
  */
-class StopParse extends RuntimeException {
+final class StopParse extends RuntimeException {
 
     private static final long serialVersionUID = -3662411325068849613L;
 
