@@ -56,13 +56,16 @@ class TreeConstructorInTable {
             treeConstructor.insertHtmlElementWithEmptyAttributes("colgroup", Common.ELEMENT_COLGROUP_ID);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_COLUMN_GROUP);
             treeConstructor.dispatch();
-        } else if (tokenType == START_TAG && ("tbody".equals(tagName) || //
-                "tfoot".equals(tagName) || "thead".equals(tagName))) {
+        } else if (tokenType == START_TAG && (Common.ELEMENT_TBODY_ID == tagNameID || //
+                Common.ELEMENT_TFOOT_ID == tagNameID || Common.ELEMENT_THEAD_ID == tagNameID)) {
             cleanStackBackToTableContext(treeConstructor);
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE_BODY);
-        } else if (tokenType == START_TAG && ("td".equals(tagName) || //
-                "th".equals(tagName) || "tr".equals(tagName))) {
+        } else if (tokenType == START_TAG && (
+                Common.ELEMENT_TD_ID == tagNameID || //
+                Common.ELEMENT_TH_ID == tagNameID ||
+                Common.ELEMENT_TR_ID == tagNameID
+        )) {
             cleanStackBackToTableContext(treeConstructor);
             treeConstructor.insertHtmlElementWithEmptyAttributes("tbody", Common.ELEMENT_TBODY_ID);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE_BODY);
