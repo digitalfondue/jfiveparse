@@ -97,7 +97,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     protected static boolean skipEndTag(Element e) {
-        return Node.NAMESPACE_HTML.equals(e.getNamespaceURI()) && Common.isNoEndTag(e.getNodeName());
+        return Node.NAMESPACE_HTML_ID == e.namespaceID && Common.isNoEndTag(e.getNodeName());
     }
 
     @Override
@@ -120,7 +120,7 @@ public class HtmlSerializer implements NodesVisitor {
 
                 appendable.append('>');
 
-                if ((Common.isHtmlNS(e, "pre") || Common.isHtmlNS(e, "textarea") || Common.isHtmlNS(e, "listing")) && //
+                if ((Common.isHtmlNS(e, Common.ELEMENT_PRE_ID) || Common.isHtmlNS(e, Common.ELEMENT_TEXTAREA_ID) || Common.isHtmlNS(e, Common.ELEMENT_LISTING_ID)) && //
                         e.hasChildNodes() && //
                         e.getFirstChild().getNodeType() == Node.TEXT_NODE) {
                     String text = ((Text) e.getFirstChild()).getData();
@@ -137,7 +137,7 @@ public class HtmlSerializer implements NodesVisitor {
                 boolean literalAppend = false;
                 if (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
                     Element p = (Element) parent;
-                    literalAppend = Node.NAMESPACE_HTML.equals(p.getNamespaceURI())
+                    literalAppend = Node.NAMESPACE_HTML_ID == p.namespaceID
                             && (Common.isTextNodeParent(p.getNodeName()) || ("noscript".equals(p.getNodeName()) && !scriptingDisabled));
                 }
                 Text t = (Text) node;

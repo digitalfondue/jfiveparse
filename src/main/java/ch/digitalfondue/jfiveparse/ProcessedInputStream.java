@@ -66,7 +66,7 @@ abstract class ProcessedInputStream {
         }
     }
 
-    static class ReaderProcessedInputStream extends ProcessedInputStream {
+    static final class ReaderProcessedInputStream extends ProcessedInputStream {
 
         private final Reader reader;
 
@@ -130,7 +130,7 @@ abstract class ProcessedInputStream {
     }
 
     int consume() {
-        return buffer.isEmpty ? readWithCRHandling(crFound, read()) : buffer.removeFirst();
+        return !buffer.isEmpty ? buffer.removeFirst() : readWithCRHandling(crFound, read());
     }
 
     int getNextInputCharacter() {

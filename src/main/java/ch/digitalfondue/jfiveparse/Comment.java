@@ -20,10 +20,15 @@ package ch.digitalfondue.jfiveparse;
  */
 public class Comment extends Node {
 
+    ResizableCharBuilder dataBuilder;
     private String data;
 
     public Comment(String data) {
         this.data = data;
+    }
+
+    Comment(ResizableCharBuilder dataBuilder) {
+        this.dataBuilder = dataBuilder;
     }
 
     @Override
@@ -32,11 +37,16 @@ public class Comment extends Node {
     }
 
     public String getData() {
+        if (data == null && dataBuilder != null) {
+            data = dataBuilder.asString();
+            dataBuilder = null;
+        }
         return data;
     }
 
     public void setData(String data) {
         this.data = data;
+        this.dataBuilder = null;
     }
 
     /**

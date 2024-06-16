@@ -161,7 +161,7 @@ class TreeConstructorActiveFormattingElements {
             // 8
             // Create: Insert an HTML element for the token for which the
             // element entry was created, to obtain new element.
-            Element newElement = treeConstructor.insertElementToken(entry.getNodeName(), entry.getNamespaceURI(), entry.getAttributes().copy());
+            Element newElement = treeConstructor.insertElementToken(entry.getNodeName(), entry.nodeNameID, entry.getNamespaceURI(), entry.namespaceID, entry.getAttributes().copy());
 
             // 9
             // Replace the entry for entry in the list with an entry for new
@@ -195,24 +195,25 @@ class TreeConstructorActiveFormattingElements {
         return activeFormattingElements.get(idx);
     }
 
-    int getBetweenLastElementAndMarkerIndex(String tagName) {
+    // we know we pass non zero tagNameID
+    int getBetweenLastElementAndMarkerIndex(byte tagNameID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
             if (e instanceof Marker) {
                 return -1;
-            } else if (tagName.equals(e.getNodeName())) {
+            } else if (tagNameID == e.nodeNameID) {
                 return i;
             }
         }
         return -1;
     }
 
-    int getBetweenLastElementAndMarkerIndex(String tagName, String namespace) {
+    int getBetweenLastElementAndMarkerIndex(byte tagNameID, byte namespaceID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
             if (e instanceof Marker) {
                 return -1;
-            } else if (Common.is(e, tagName, namespace)) {
+            } else if (Common.is(e, tagNameID, namespaceID)) {
                 return i;
             }
         }

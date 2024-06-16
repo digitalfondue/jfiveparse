@@ -39,7 +39,7 @@ class TokenizerMarkupDeclarationState {
                 tokenizer.setState(TokenizerState.DOCTYPE_STATE);
 
             } else if (tokenizer.getAdjustedCurrentNode() != null && //
-                    !Node.NAMESPACE_HTML.equals(tokenizer.getAdjustedCurrentNode().getNamespaceURI()) && //
+                    Node.NAMESPACE_HTML_ID != tokenizer.getAdjustedCurrentNode().namespaceID && //
                     matchCDATACodePoints(chars)) {
 
                 processedInputStream.consume(7);

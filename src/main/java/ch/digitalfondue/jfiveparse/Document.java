@@ -58,7 +58,7 @@ public class Document extends Node {
         Element e = getFirstElementChild();
         if (e != null) {
             for (Node c : e.getChildNodes()) {
-                if (c instanceof Element && nodeNameMatcher.test(c.getNodeName()) && NAMESPACE_HTML.equals(((Element) c).getNamespaceURI())) {
+                if (c instanceof Element && nodeNameMatcher.test(c.getNodeName()) && NAMESPACE_HTML_ID == (((Element) c).namespaceID)) {
                     return (Element) c;
                 }
             }

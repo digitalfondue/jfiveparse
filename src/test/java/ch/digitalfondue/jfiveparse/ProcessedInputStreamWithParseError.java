@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import ch.digitalfondue.jfiveparse.ProcessedInputStream.StringProcessedInputStream;
 
-class ProcessedInputStreamWithParseError extends StringProcessedInputStream {
+final class ProcessedInputStreamWithParseError extends StringProcessedInputStream {
 
     private final TreeConstructor tokenHandler;
     private int alreadyVisitedPosition = -1;

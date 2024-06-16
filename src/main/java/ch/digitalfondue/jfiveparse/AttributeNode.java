@@ -21,7 +21,9 @@ public class AttributeNode {
 
     String name;
     String originalName;
-    String value;
+
+    private String value;
+    private ResizableCharBuilder valueBuilder;
 
     //
     String prefix;
@@ -36,8 +38,9 @@ public class AttributeNode {
         this.value = value;
     }
 
-    AttributeNode(String name, String originalName, String value, int attributeQuoteType) {
-        this(name, value);
+    AttributeNode(String name, String originalName, ResizableCharBuilder value, int attributeQuoteType) {
+        this.name = name;
+        this.valueBuilder = value;
         this.originalName = originalName;
         this.attributeQuoteType = attributeQuoteType;
     }
@@ -46,6 +49,7 @@ public class AttributeNode {
         this.name = a.name;
         this.originalName = a.originalName;
         this.value = a.value;
+        this.valueBuilder = a.valueBuilder;
         this.prefix = a.prefix;
         this.namespace = a.namespace;
         this.attributeQuoteType = a.attributeQuoteType;
@@ -58,10 +62,15 @@ public class AttributeNode {
     }
 
     public String getValue() {
+        if (value == null && valueBuilder != null) {
+            value = valueBuilder.asString();
+            valueBuilder = null;
+        }
         return value;
     }
     
     public void setValue(String value) {
+        this.valueBuilder = null;
         this.value = value;
     }
 
@@ -79,7 +88,7 @@ public class AttributeNode {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, value, prefix, namespace);
+        return Objects.hash(name, getValue(), prefix, namespace);
     }
 
     @Override
@@ -91,7 +100,7 @@ public class AttributeNode {
         if (obj instanceof AttributeNode) {
             AttributeNode other = (AttributeNode) obj;
             return name.equals(other.name) && //
-                    value.equals(other.value) && //
+                    getValue().equals(other.getValue()) && //
                     Objects.equals(prefix, other.prefix) && //
                     Objects.equals(namespace, other.namespace);
         } else {

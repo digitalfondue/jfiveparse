@@ -25,6 +25,8 @@ public class Element extends Node {
     final String nodeName;
     final String originalNodeName;
     final String namespaceURI;
+    final byte namespaceID;
+    final byte nodeNameID;
     Attributes attributes;
 
     private List<Node> childNodes = null;
@@ -57,13 +59,20 @@ public class Element extends Node {
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
-        this(name, name, nameSpace, attributes);
+        this(name, Common.tagNameToID(name), name, nameSpace, Node.toNameSpaceId(nameSpace), attributes);
     }
 
-    Element(String name, String originalName, String nameSpace, Attributes attributes) {
+    Element(String name,
+            byte nameID,
+            String originalName,
+            String nameSpace,
+            byte namespaceID,
+            Attributes attributes) {
         this.nodeName = name;
+        this.nodeNameID = nameID;
         this.originalNodeName = originalName;
         this.namespaceURI = nameSpace;
+        this.namespaceID = namespaceID;
         this.attributes = attributes;
     }
 
@@ -319,7 +328,7 @@ public class Element extends Node {
 
 	@Override
 	public Node cloneNode(boolean deep) {
-        Element clone = new Element(nodeName, originalNodeName, namespaceURI, attributes == null ? null : attributes.copy());
+        Element clone = new Element(nodeName, nodeNameID, originalNodeName, namespaceURI, namespaceID, attributes == null ? null : attributes.copy());
         if (!deep) {
             return clone;
         }
@@ -382,7 +391,7 @@ public class Element extends Node {
      * @return
      */
     public String getTagName() {
-        if (Node.NAMESPACE_HTML.equals(namespaceURI)) {
+        if (Node.NAMESPACE_HTML_ID == namespaceID) {
             return nodeName.toUpperCase(Locale.ENGLISH);
         } else {
             return originalNodeName;

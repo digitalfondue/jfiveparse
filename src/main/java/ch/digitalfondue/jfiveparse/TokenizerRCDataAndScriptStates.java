@@ -57,8 +57,7 @@ class TokenizerRCDataAndScriptStates {
             tokenizer.createTemporaryBuffer();
             tokenizer.setState(TokenizerState.RCDATA_END_TAG_OPEN_STATE);
         } else {
-            tokenizer.setState(TokenizerState.RCDATA_STATE);
-            tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(TokenizerState.RCDATA_STATE, Characters.LESSTHAN_SIGN);
             processedInputStream.reconsume(chr);
         }
     }
@@ -71,8 +70,7 @@ class TokenizerRCDataAndScriptStates {
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.RCDATA_END_TAG_NAME_STATE);
         } else {
-            tokenizer.setState(TokenizerState.RCDATA_STATE);
-            tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(TokenizerState.RCDATA_STATE, Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(Characters.SOLIDUS);
             processedInputStream.reconsume(chr);
         }
@@ -119,8 +117,7 @@ class TokenizerRCDataAndScriptStates {
     }
 
     private static void anythingElseRCDataEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.setState(TokenizerState.RCDATA_STATE);
-        tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
+        tokenizer.setStateAndEmitCharacter(TokenizerState.RCDATA_STATE, Characters.LESSTHAN_SIGN);
         tokenizer.emitCharacter(Characters.SOLIDUS);
 
         tokenizer.emitTemporaryBufferAsCharacters();
@@ -577,12 +574,8 @@ class TokenizerRCDataAndScriptStates {
         case Characters.SPACE:
         case Characters.SOLIDUS:
         case Characters.GREATERTHAN_SIGN:
-            if (tokenizer.isTemporaryBufferEquals(SCRIPT)) {
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
-            } else {
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
-            }
-            tokenizer.emitCharacter(chr);
+            var state = tokenizer.isTemporaryBufferEquals(SCRIPT) ? TokenizerState.SCRIPT_DATA_ESCAPED_STATE : TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE;
+            tokenizer.setStateAndEmitCharacter(state, chr);
             break;
         default:
             if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {

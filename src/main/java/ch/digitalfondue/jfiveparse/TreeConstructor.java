@@ -74,6 +74,7 @@ class TreeConstructor {
 
     // --- tag related ---
     private String tagName;
+    private byte tagNameID;
     private String originalTagName;
     private boolean selfClosing;
     private Attributes attrs;
@@ -117,17 +118,18 @@ class TreeConstructor {
 
     void setTagName(ResizableCharBuilder rawTagName) {
         String tagName = rawTagName.toLowerCase();
-        String maybeCached = Common.ELEMENTS_NAME_CACHE_V2.get(tagName);
-        this.tagName = maybeCached != null ? maybeCached : tagName;
+        this.tagName = tagName;
+        this.tagNameID = Common.tagNameToID(tagName);
     }
 
     //
 
     Element getAdjustedCurrentNode() {
-        final int size = openElements.size();
-        if (size == 0) {
+        if (openElements.isEmpty()) {
             return null;
-        } else if (isHtmlFragmentParsing && size == 1) {
+        }
+        final int size = openElements.size();
+        if (isHtmlFragmentParsing && size == 1) {
             return context;
         } else {
             return openElements.get(size - 1);
@@ -154,21 +156,21 @@ class TreeConstructor {
             insertionModeInHtmlContent();
         } else {
             // -> foreign
-            TreeConstructorInBodyForeignContentText.foreignContent(tokenType, tagName, this);
+            TreeConstructorInBodyForeignContentText.foreignContent(tokenType, tagName, tagNameID, this);
         }
     }
 
     private boolean checkIsInHtmlContent() {
         Element adjustedCurrentNode = getAdjustedCurrentNode();
         return openElements.isEmpty()
-                || (adjustedCurrentNode != null && (Node.NAMESPACE_HTML.equals(adjustedCurrentNode.getNamespaceURI()) || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
+                || (adjustedCurrentNode != null && (Node.NAMESPACE_HTML_ID == adjustedCurrentNode.namespaceID || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
                 || tokenType == EOF;
     }
 
     private boolean checkIsInHtmlContentSVGMathML(Element adjustedCurrentNode) {
         return (Common.isMathMLIntegrationPoint(adjustedCurrentNode) && ((tokenType == START_TAG && (!"mglyph".equals(tagName) && !"malignmark".equals(tagName))) || tokenType == CHARACTER))
                 || //
-                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML.equals(adjustedCurrentNode.getNamespaceURI())) && tokenType == START_TAG && "svg"
+                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML_ID == adjustedCurrentNode.namespaceID) && tokenType == START_TAG && "svg"
                         .equals(tagName)) || //
                 (Common.isHtmlIntegrationPoint(adjustedCurrentNode) && (tokenType == START_TAG || tokenType == CHARACTER));
     }
@@ -181,10 +183,10 @@ class TreeConstructor {
             TreeConstructorInBodyForeignContentText.text(tokenType, this);
             break;
         case TreeConstructionInsertionMode.IN_BODY:
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, this);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_CELL:
-            TreeConstructorInTable.inCell(tokenType, tagName, this);
+            TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
             break;
         // end most used
         default:
@@ -199,70 +201,70 @@ class TreeConstructor {
             TreeConstructorAftersBeforeInitialInHead.initial(tokenType, this);
             break;
         case TreeConstructionInsertionMode.BEFORE_HTML:
-            TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.BEFORE_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.beforeHead(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.beforeHead(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_HEAD_NOSCRIPT:
-            TreeConstructorAftersBeforeInitialInHead.inHeadNoScript(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.inHeadNoScript(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.AFTER_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.afterHead(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.afterHead(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_BODY:
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, this);
+            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.TEXT:
             TreeConstructorInBodyForeignContentText.text(tokenType, this);
             break;
         case TreeConstructionInsertionMode.IN_TABLE:
-            TreeConstructorInTable.inTable(tokenType, tagName, this);
+            TreeConstructorInTable.inTable(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_TABLE_TEXT:
-            TreeConstructorInTable.inTableText(tokenType, tagName, this);
+            TreeConstructorInTable.inTableText(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_CAPTION:
-            TreeConstructorInTable.inCaption(tokenType, tagName, this);
+            TreeConstructorInTable.inCaption(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_COLUMN_GROUP:
-            TreeConstructorInTable.inColumnGroup(tokenType, tagName, this);
+            TreeConstructorInTable.inColumnGroup(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_TABLE_BODY:
-            TreeConstructorInTable.inTableBody(tokenType, tagName, this);
+            TreeConstructorInTable.inTableBody(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_ROW:
-            TreeConstructorInTable.inRow(tokenType, tagName, this);
+            TreeConstructorInTable.inRow(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_CELL:
-            TreeConstructorInTable.inCell(tokenType, tagName, this);
+            TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_SELECT:
-            TreeConstructorInFramesetSelectTemplate.inSelect(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inSelect(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_SELECT_IN_TABLE:
-            TreeConstructorInFramesetSelectTemplate.inSelectTable(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inSelectTable(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_TEMPLATE:
-            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.AFTER_BODY:
-            TreeConstructorAftersBeforeInitialInHead.afterBody(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.afterBody(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.IN_FRAMESET:
-            TreeConstructorInFramesetSelectTemplate.inFrameset(tokenType, tagName, this);
+            TreeConstructorInFramesetSelectTemplate.inFrameset(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.AFTER_FRAMESET:
-            TreeConstructorAftersBeforeInitialInHead.afterFrameset(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.afterFrameset(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.AFTER_AFTER_BODY:
-            TreeConstructorAftersBeforeInitialInHead.afterAfterBody(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.afterAfterBody(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.AFTER_AFTER_FRAMESET:
-            TreeConstructorAftersBeforeInitialInHead.afterAfterFrameset(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.afterAfterFrameset(tokenType, tagName, tagNameID, this);
             break;
         }
     }
@@ -275,11 +277,11 @@ class TreeConstructor {
         generateImpliedEndTag("p", Node.NAMESPACE_HTML);
 
         Element e = getCurrentNode();
-        if (!("p".equals(e.getNodeName()) && Node.NAMESPACE_HTML.equals(e.getNamespaceURI()))) {
+        if (!(Common.ELEMENT_P_ID == e.nodeNameID && Node.NAMESPACE_HTML_ID == e.namespaceID)) {
             emitParseError();
         }
 
-        popOpenElementsUntilWithHtmlNS("p");
+        popOpenElementsUntilWithHtmlNS(Common.ELEMENT_P_ID);
     }
 
     Element getCurrentNode() {
@@ -308,10 +310,10 @@ class TreeConstructor {
 
     // ------------
 
-    boolean hasElementInScope(String tagName) {
+    boolean hasElementInScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
             } else if (Common.isInCommonInScope(node)) {
                 return false;
@@ -332,12 +334,12 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInButtonScope(String tagName) {
+    boolean hasElementInButtonScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
-            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, "button")) {
+            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, Common.ELEMENT_BUTTON_ID)) {
                 return false;
             }
         }
@@ -347,35 +349,35 @@ class TreeConstructor {
     boolean hasLiElementInListScope() {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, "li")) {
+            if (Common.isHtmlNS(node, Common.ELEMENT_LI_ID)) {
                 return true;
-            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, "ol") || Common.isHtmlNS(node, "ul")) {
+            } else if (Common.isInCommonInScope(node) || Common.isHtmlNS(node, Common.ELEMENT_OL_ID) || Common.isHtmlNS(node, Common.ELEMENT_UL_ID)) {
                 return false;
             }
         }
         return false;
     }
 
-    boolean hasElementInTableScope(String tagName) {
+    boolean hasElementInTableScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
-            } else if ((Common.isHtmlNS(node, "html") || Common.isHtmlNS(node, "table") || Common.isHtmlNS(node, "template"))) {
+            } else if ((Common.isHtmlNS(node, Common.ELEMENT_HTML_ID) || Common.isHtmlNS(node, Common.ELEMENT_TABLE_ID) || Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID))) {
                 return false;
             }
         }
         return false;
     }
 
-    boolean hasElementInSelectScope(String tagName) {
+    boolean hasElementInSelectScope(byte tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagName)) {
+            if (Common.isHtmlNS(node, tagNameID)) {
                 return true;
             }
 
-            if (!Common.isHtmlNS(node, "option") && !Common.isHtmlNS(node, "optgroup")) {
+            if (!Common.isHtmlNS(node, Common.ELEMENT_OPTION_ID) && !Common.isHtmlNS(node, Common.ELEMENT_OPTGROUP_ID)) {
                 return false;
             }
         }
@@ -384,10 +386,10 @@ class TreeConstructor {
 
     // implementation of
     // https://html.spec.whatwg.org/multipage/syntax.html#adoption-agency-algorithm
-    void adoptionAgencyAlgorithm(String subject) {
+    void adoptionAgencyAlgorithm(byte subjectID) {
         Element current = getCurrentNode();
         // 1
-        if (Common.isHtmlNS(current, subject) && !activeFormattingElements.contains(current)) {
+        if (Common.isHtmlNS(current, subjectID) && !activeFormattingElements.contains(current)) {
             popCurrentNode();
             return;
         }
@@ -406,7 +408,7 @@ class TreeConstructor {
             outerLoopCounter++;
 
             // 5
-            final int formattingElementIdx = activeFormattingElements.getBetweenLastElementAndMarkerIndex(subject);
+            final int formattingElementIdx = activeFormattingElements.getBetweenLastElementAndMarkerIndex(subjectID);
 
             // no such element
             if (formattingElementIdx == -1) {
@@ -493,7 +495,7 @@ class TreeConstructor {
                 }
 
                 // 13.7
-                Element newElement = buildElement(node.nodeName, node.originalNodeName, node.namespaceURI, node.getAttributes().copy());
+                Element newElement = buildElement(node.nodeName, node.nodeNameID, node.originalNodeName, node.namespaceURI, node.namespaceID, node.getAttributes().copy());
                 commonAncestor.appendChild(newElement);
                 activeFormattingElements.replace(node, newElement);
                 openElements.set(openElements.lastIndexOf(node), newElement);
@@ -528,8 +530,14 @@ class TreeConstructor {
             toInsert.insertChildren(position, lastNode);
 
             // 15
-            Element elem = buildElement(formattingElement.getNodeName(), formattingElement.originalNodeName, formattingElement.getNamespaceURI(), formattingElement.getAttributes()
-                    .copy());
+            Element elem = buildElement(
+                    formattingElement.getNodeName(),
+                    formattingElement.nodeNameID,
+                    formattingElement.originalNodeName,
+                    formattingElement.getNamespaceURI(),
+                    formattingElement.namespaceID,
+                    formattingElement.getAttributes().copy()
+            );
 
             // 16
             List<Node> childs = new ArrayList<>(furthestBlock.getChildNodes());
@@ -597,22 +605,22 @@ class TreeConstructor {
         insertCharacter(chr);
     }
 
-    static Element buildElement(String name, String originalName, String namespace, Attributes attrs) {
-        return new Element(name, originalName, namespace, attrs);
+    static Element buildElement(String name, byte nameID, String originalName, String namespace, byte namespaceID, Attributes attrs) {
+        return new Element(name, nameID, originalName, namespace, namespaceID, attrs);
     }
 
-    Element insertElementToken(String name, String namespace, Attributes attrs) {
-        Element element = buildElement(name, name, namespace, attrs);
+    Element insertElementToken(String name, byte nameId, String namespace, byte nameSpaceID, Attributes attrs) {
+        Element element = buildElement(name, nameId, name, namespace, nameSpaceID, attrs);
         return insertHtmlElementToken(element);
     }
 
-    Element insertHtmlElementWithEmptyAttributes(String name) {
-        Element element = buildElement(name, name, Node.NAMESPACE_HTML, null);
+    Element insertHtmlElementWithEmptyAttributes(String name, byte nameID) {
+        Element element = buildElement(name, nameID, name, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, null);
         return insertHtmlElementToken(element);
     }
 
     Element insertHtmlElementToken() {
-        Element element = buildElement(tagName, originalTagName, Node.NAMESPACE_HTML, attrs);
+        Element element = buildElement(tagName, tagNameID, originalTagName, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, attrs);
         return insertHtmlElementToken(element);
     }
 
@@ -622,17 +630,19 @@ class TreeConstructor {
     Node[] findAppropriatePlaceForInsertingNode(Element overrideTarget) {
 
         Element target = overrideTarget != null ? overrideTarget : getCurrentNode();
-        String targetName = target.getNodeName();
-        if (fosterParentingEnabled && (Node.NAMESPACE_HTML.equals(target.getNamespaceURI()) && ("table".equals(targetName) || //
-                "tbody".equals(targetName) || //
-                "tfoot".equals(targetName) || //
-                "thead".equals(targetName) || //
-                "tr".equals(targetName)))) {
+        byte targetNameID = target.nodeNameID;
+        if (fosterParentingEnabled && (Node.NAMESPACE_HTML_ID == target.namespaceID && (
+                Common.ELEMENT_TABLE_ID == targetNameID || //
+                Common.ELEMENT_TBODY_ID == targetNameID || //
+                Common.ELEMENT_TFOOT_ID == targetNameID || //
+                Common.ELEMENT_THEAD_ID == targetNameID || //
+                Common.ELEMENT_TR_ID == targetNameID
+        ))) {
 
             // 1
-            int lastTemplatePos = findLastElementPositionMatching("template", Node.NAMESPACE_HTML);
+            int lastTemplatePos = findLastElementPositionMatching(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
             // 2
-            int lastTablePos = findLastElementPositionMatching("table", Node.NAMESPACE_HTML);
+            int lastTablePos = findLastElementPositionMatching(Common.ELEMENT_TABLE_ID, Node.NAMESPACE_HTML_ID);
             // 3
             if (lastTemplatePos != -1 && ((lastTablePos == -1) || (lastTemplatePos > lastTablePos))) {
                 // inside the template
@@ -656,18 +666,18 @@ class TreeConstructor {
         }
     }
 
-    private int findLastElementPositionMatching(String name, String nameSpace) {
+    private int findLastElementPositionMatching(byte nameID, byte namespaceID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element e = openElements.get(i);
-            if (Common.is(e, name, nameSpace)) {
+            if (Common.is(e, nameID, namespaceID)) {
                 return i;
             }
         }
         return -1;
     }
 
-    boolean stackOfOpenElementsContains(String name, String namespace) {
-        return findLastElementPositionMatching(name, namespace) != -1;
+    boolean stackOfOpenElementsContains(byte nameID, byte namespaceID) {
+        return findLastElementPositionMatching(nameID, namespaceID) != -1;
     }
 
     // FIXME optimize(?)
@@ -700,7 +710,7 @@ class TreeConstructor {
             t = (Text) last;
             t.dataBuilder.append(charToInsert);
         } else {
-            t = new Text();
+            t = new Text(new ResizableCharBuilder());
             t.dataBuilder.append(charToInsert);
             toInsert.insertChildren(position, t);
         }
@@ -755,15 +765,15 @@ class TreeConstructor {
             toInsert = openElements.get(openElements.size() - 1);
             position = toInsert.getChildCount();
         }
-        toInsert.insertChildren(position, new Comment(comment.asString()));
+        toInsert.insertChildren(position, new Comment(comment));
     }
 
     void insertCommentToDocument() {
-        document.appendChild(new Comment(comment.asString()));
+        document.appendChild(new Comment(comment));
     }
 
     void insertCommentToHtmlElement() {
-        openElements.get(0).appendChild(new Comment(comment.asString()));
+        openElements.get(0).appendChild(new Comment(comment));
     }
 
     // ------------------
@@ -772,10 +782,10 @@ class TreeConstructor {
         return openElements.remove(openElements.size() - 1);
     }
 
-    void popOpenElementsUntilWithHtmlNS(String name) {
+    void popOpenElementsUntilWithHtmlNS(byte nameID) {
         while (true) {
             Element e = popCurrentNode();
-            if (Common.isHtmlNS(e, name)) {
+            if (Common.isHtmlNS(e, nameID)) {
                 return;
             }
         }
@@ -797,11 +807,9 @@ class TreeConstructor {
     }
 
     void emitCharacter(char chr) {
-
         tokenType = CHARACTER;
         insertCharacterPreviousTextNode = null;
         this.chr = chr;
-
         dispatch();
     }
 
@@ -864,7 +872,7 @@ class TreeConstructor {
                 node = context;
             }
 
-            if (Common.isHtmlNS(node, "select")) {
+            if (Common.isHtmlNS(node, Common.ELEMENT_SELECT_ID)) {
                 if (last) {
                     insertionMode = TreeConstructionInsertionMode.IN_SELECT;
                     break;
@@ -877,9 +885,9 @@ class TreeConstructor {
                         }
                         ancestorIdx--;
                         ancestor = openElements.get(ancestorIdx);
-                        if (Common.isHtmlNS(ancestor, "template")) {
+                        if (Common.isHtmlNS(ancestor, Common.ELEMENT_TEMPLATE_ID)) {
                             break;
-                        } else if (Common.isHtmlNS(ancestor, "table")) {
+                        } else if (Common.isHtmlNS(ancestor, Common.ELEMENT_TABLE_ID)) {
                             insertionMode = TreeConstructionInsertionMode.IN_SELECT_IN_TABLE;
                             return;
                         }
@@ -887,37 +895,37 @@ class TreeConstructor {
                     insertionMode = TreeConstructionInsertionMode.IN_SELECT;
                     break;
                 }
-            } else if ((Common.isHtmlNS(node, "td") || Common.isHtmlNS(node, "th")) && !last) {
+            } else if ((Common.isHtmlNS(node, Common.ELEMENT_TD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TH_ID)) && !last) {
                 insertionMode = TreeConstructionInsertionMode.IN_CELL;
                 break;
-            } else if (Common.isHtmlNS(node, "tr")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TR_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_ROW;
                 break;
-            } else if (Common.isHtmlNS(node, "tbody") || Common.isHtmlNS(node, "thead") || Common.isHtmlNS(node, "tfoot")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TBODY_ID) || Common.isHtmlNS(node, Common.ELEMENT_THEAD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TFOOT_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_TABLE_BODY;
                 break;
-            } else if (Common.isHtmlNS(node, "caption")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_CAPTION_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_CAPTION;
                 break;
-            } else if (Common.isHtmlNS(node, "colgroup")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_COLGROUP_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_COLUMN_GROUP;
                 break;
-            } else if (Common.isHtmlNS(node, "table")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TABLE_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_TABLE;
                 break;
-            } else if (Common.isHtmlNS(node, "template")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID)) {
                 insertionMode = stackTemplatesInsertionMode.get(stackTemplatesInsertionMode.size() - 1);
                 break;
-            } else if (Common.isHtmlNS(node, "head")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_HEAD_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_HEAD;
                 break;
-            } else if (Common.isHtmlNS(node, "body")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_BODY_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_BODY;
                 break;
-            } else if (Common.isHtmlNS(node, "frameset")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_FRAMESET_ID)) {
                 insertionMode = TreeConstructionInsertionMode.IN_FRAMESET;
                 break;
-            } else if (Common.isHtmlNS(node, "html")) {
+            } else if (Common.isHtmlNS(node, Common.ELEMENT_HTML_ID)) {
                 if (head == null) {
                     insertionMode = TreeConstructionInsertionMode.BEFORE_HEAD;
                 } else {
@@ -1049,7 +1057,7 @@ class TreeConstructor {
     }
 
     void framesetOkToFalse() {
-        framesetOk = false;
+        framesetOk = Boolean.FALSE;
     }
 
     //
@@ -1077,8 +1085,8 @@ class TreeConstructor {
         return activeFormattingElements.getElementAtIndex(idx);
     }
 
-    int getIndexInActiveFormattingElementsBetween(String name, String namespace) {
-        return activeFormattingElements.getBetweenLastElementAndMarkerIndex(name, namespace);
+    int getIndexInActiveFormattingElementsBetween(byte nameID, byte namespaceID) {
+        return activeFormattingElements.getBetweenLastElementAndMarkerIndex(nameID, namespaceID);
     }
 
     //

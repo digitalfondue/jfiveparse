@@ -114,6 +114,11 @@ class Tokenizer {
         tokenHandler.emitParseError();
     }
 
+    void setStateAndEmitCharacter(int state, int chr) {
+        this.state = state;
+        tokenHandler.emitCharacter((char) chr);
+    }
+
     void emitCharacter(int chr) {
         tokenHandler.emitCharacter((char) chr);
     }
@@ -397,7 +402,12 @@ class Tokenizer {
                 if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
-                    attributes.put(new AttributeNode(curAttrName, currentAttributeName.containsUpperCase ? currentAttributeName.asString() : curAttrName, currentAttributeValue.asString(), currentAttributeQuoteType));
+                    attributes.put(new AttributeNode(
+                            curAttrName,
+                            currentAttributeName.containsUpperCase ? currentAttributeName.asString() : curAttrName,
+                            currentAttributeValue,
+                            currentAttributeQuoteType
+                    ));
                 }
             }
         } catch (NullPointerException npe) {

@@ -61,21 +61,20 @@ class TokenizerPlainAndRawTextStates {
                 for (;;) {
                     int internalChr = processedInputStream.getNextInputCharacterAndConsume();
                     switch (internalChr) {
-                    case Characters.LESSTHAN_SIGN:
-                        tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
-                        tokenizer.setState(TokenizerState.RAWTEXT_LESS_THAN_SIGN_STATE);
-                        return;
-                    case Characters.NULL:
-                        tokenizer.emitParseError();
-                        tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
-                        return;
-                    case Characters.EOF:
-                        tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
-                        tokenizer.emitEOF();
-                        return;
-                    default:
-                        textNode.append((char) internalChr);
-                        break;
+                        case Characters.LESSTHAN_SIGN:
+                            tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
+                            tokenizer.setState(TokenizerState.RAWTEXT_LESS_THAN_SIGN_STATE);
+                            return;
+                        case Characters.NULL:
+                            tokenizer.emitParseError();
+                            tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
+                            return;
+                        case Characters.EOF:
+                            tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
+                            tokenizer.emitEOF();
+                            return;
+                        default:
+                            textNode.append((char) internalChr);
                     }
                 }
             }
@@ -89,8 +88,7 @@ class TokenizerPlainAndRawTextStates {
             tokenizer.createTemporaryBuffer();
             tokenizer.setState(TokenizerState.RAWTEXT_END_TAG_OPEN_STATE);
         } else {
-            tokenizer.setState(TokenizerState.RAWTEXT_STATE);
-            tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(TokenizerState.RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
             processedInputStream.reconsume(chr);
         }
     }
@@ -103,8 +101,7 @@ class TokenizerPlainAndRawTextStates {
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.RAWTEXT_END_TAG_NAME_STATE);
         } else {
-            tokenizer.setState(TokenizerState.RAWTEXT_STATE);
-            tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(TokenizerState.RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(Characters.SOLIDUS);
             processedInputStream.reconsume(chr);
         }
@@ -151,8 +148,7 @@ class TokenizerPlainAndRawTextStates {
     }
 
     private static void anythingElseRawTextEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.setState(TokenizerState.RAWTEXT_STATE);
-        tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
+        tokenizer.setStateAndEmitCharacter(TokenizerState.RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
         tokenizer.emitCharacter(Characters.SOLIDUS);
 
         tokenizer.emitTemporaryBufferAsCharacters();

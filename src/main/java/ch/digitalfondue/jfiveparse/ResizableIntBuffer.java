@@ -35,7 +35,7 @@ class ResizableIntBuffer {
         }
         buff[--start] = c;
 
-        isEmpty = length() == 0;
+        isEmpty = false;
     }
 
     private void resizeForStart() {
@@ -53,7 +53,7 @@ class ResizableIntBuffer {
         }
         buff[pos++] = c;
 
-        isEmpty = length() == 0;
+        isEmpty = false;
     }
 
     private void resizeForEnd() {
