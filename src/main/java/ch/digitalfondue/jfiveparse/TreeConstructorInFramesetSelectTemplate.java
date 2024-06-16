@@ -202,25 +202,25 @@ class TreeConstructorInFramesetSelectTemplate {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (
                 (tokenType == START_TAG && (
-                    "base".equals(tagName) || //
-                    "basefont".equals(tagName) || //
-                    "bgsound".equals(tagName) || //
-                    "link".equals(tagName) || //
-                    "meta".equals(tagName) || //
-                    "noframes".equals(tagName) || //
-                    "script".equals(tagName) || //
-                    "style".equals(tagName) || //
-                    "template".equals(tagName) || //
-                    "title".equals(tagName)
+                    ELEMENT_BASE_ID == tagNameID || //
+                    ELEMENT_BASEFONT_ID == tagNameID || //
+                    ELEMENT_BGSOUND_ID == tagNameID || //
+                    ELEMENT_LINK_ID == tagNameID || //
+                    ELEMENT_META_ID == tagNameID || //
+                    ELEMENT_NOFRAMES_ID == tagNameID || //
+                    ELEMENT_SCRIPT_ID == tagNameID || //
+                    ELEMENT_STYLE_ID == tagNameID || //
+                    ELEMENT_TEMPLATE_ID == tagNameID || //
+                    ELEMENT_TITLE_ID == tagNameID
                 ))
                 || isEndTagNamed(tokenType, ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == START_TAG && (
-                "caption".equals(tagName) || //
-                "colgroup".equals(tagName) || //
-                "tbody".equals(tagName) || //
-                "tfoot".equals(tagName) || //
-                "thead".equals(tagName))) {
+                ELEMENT_CAPTION_ID == tagNameID || //
+                ELEMENT_COLGROUP_ID == tagNameID || //
+                ELEMENT_TBODY_ID == tagNameID || //
+                ELEMENT_TFOOT_ID == tagNameID || //
+                ELEMENT_THEAD_ID == tagNameID)) {
             popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_TABLE);
         } else if (isStartTagNamed(tokenType, ELEMENT_COL_ID, tagNameID)) {
             popPushSetAndDispatch(treeConstructor, TreeConstructionInsertionMode.IN_COLUMN_GROUP);
