@@ -960,54 +960,57 @@ class TreeConstructorInBodyForeignContentText {
         } else if (tokenType == DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore token
-        } else if (tokenType == START_TAG && (("b".equals(tagName) || //
-                "big".equals(tagName) || //
-                "blockquote".equals(tagName) || //
-                "body".equals(tagName) || //
-                "br".equals(tagName) || //
-                "center".equals(tagName) || //
-                "code".equals(tagName) || //
-                "dd".equals(tagName) || //
-                "div".equals(tagName) || //
-                "dl".equals(tagName) || //
-                "dt".equals(tagName) || //
-                "em".equals(tagName) || //
-                "embed".equals(tagName) || //
-                "h1".equals(tagName) || //
-                "h2".equals(tagName) || //
-                "h3".equals(tagName) || //
-                "h4".equals(tagName) || //
-                "h5".equals(tagName) || //
-                "h6".equals(tagName) || //
-                "head".equals(tagName) || //
-                "hr".equals(tagName) || //
-                "i".equals(tagName) || //
-                "img".equals(tagName) || //
-                "li".equals(tagName) || //
-                "listing".equals(tagName) || //
-                "menu".equals(tagName) || //
-                "meta".equals(tagName) || //
-                "nobr".equals(tagName) || //
-                "ol".equals(tagName) || //
-                "p".equals(tagName) || //
-                "pre".equals(tagName) || //
-                "ruby".equals(tagName) || //
-                "s".equals(tagName) || //
-                "small".equals(tagName) || //
-                "span".equals(tagName) || //
-                "strong".equals(tagName) || //
-                "strike".equals(tagName) || //
-                "sub".equals(tagName) || //
-                "sup".equals(tagName) || //
-                "table".equals(tagName) || //
-                "tt".equals(tagName) || //
-                "u".equals(tagName) || //
-                "ul".equals(tagName) || //
-                "var".equals(tagName)) || //
-                ("font".equals(tagName) && (treeConstructor.hasAttribute("color") || //
-                        treeConstructor.hasAttribute("face") || //
-                        /*    */treeConstructor.hasAttribute("size")))) ||
-                (tokenType == END_TAG && ("br".equals(tagName) || "p".equals(tagName)))) {
+        } else if (tokenType == START_TAG && (
+                (
+                ELEMENT_B_ID == tagNameID || //
+                ELEMENT_BIG_ID == tagNameID || //
+                ELEMENT_BLOCKQUOTE_ID == tagNameID || //
+                ELEMENT_BODY_ID == tagNameID || //
+                ELEMENT_BR_ID == tagNameID || //
+                ELEMENT_CENTER_ID == tagNameID || //
+                ELEMENT_CODE_ID == tagNameID || //
+                ELEMENT_DD_ID == tagNameID || //
+                ELEMENT_DIV_ID == tagNameID || //
+                ELEMENT_DL_ID == tagNameID || //
+                ELEMENT_DT_ID == tagNameID || //
+                ELEMENT_EM_ID == tagNameID || //
+                ELEMENT_EMBED_ID == tagNameID || //
+                ELEMENT_H1_ID == tagNameID || //
+                ELEMENT_H2_ID == tagNameID || //
+                ELEMENT_H3_ID == tagNameID || //
+                ELEMENT_H4_ID == tagNameID || //
+                ELEMENT_H5_ID == tagNameID || //
+                ELEMENT_H6_ID == tagNameID || //
+                ELEMENT_HEAD_ID == tagNameID || //
+                ELEMENT_HR_ID == tagNameID || //
+                ELEMENT_I_ID == tagNameID || //
+                ELEMENT_IMG_ID == tagNameID || //
+                ELEMENT_LI_ID == tagNameID || //
+                ELEMENT_LISTING_ID == tagNameID || //
+                ELEMENT_MENU_ID == tagNameID || //
+                ELEMENT_META_ID == tagNameID || //
+                ELEMENT_NO_BR_ID == tagNameID || //
+                ELEMENT_OL_ID == tagNameID || //
+                ELEMENT_P_ID == tagNameID || //
+                ELEMENT_PRE_ID == tagNameID || //
+                ELEMENT_RUBY_ID == tagNameID || //
+                ELEMENT_S_ID == tagNameID || //
+                ELEMENT_SMALL_ID == tagNameID || //
+                ELEMENT_SPAN_ID == tagNameID || //
+                ELEMENT_STRONG_ID == tagNameID || //
+                ELEMENT_STRIKE_ID == tagNameID || //
+                ELEMENT_SUB_ID == tagNameID || //
+                ELEMENT_SUP_ID == tagNameID || //
+                ELEMENT_TABLE_ID == tagNameID || //
+                ELEMENT_TT_ID == tagNameID || //
+                ELEMENT_U_ID == tagNameID || //
+                ELEMENT_UL_ID == tagNameID || //
+                ELEMENT_VAR_ID == tagNameID//
+                ) || //
+                (ELEMENT_FONT_ID == tagNameID && (treeConstructor.hasAttribute("color") || //
+                        treeConstructor.hasAttribute("face") ||
+                        treeConstructor.hasAttribute("size")))) ||
+                (tokenType == END_TAG && (ELEMENT_BR_ID == tagNameID || ELEMENT_P_ID == tagNameID))) {
             treeConstructor.emitParseError();
 
             while (true) {

@@ -392,6 +392,11 @@ class Common {
             case "math": return ELEMENT_MATH_ID;
             case "svg": return ELEMENT_SVG_ID;
             case "ruby": return ELEMENT_RUBY_ID;
+            case "span": return ELEMENT_SPAN_ID;
+            case "sub": return ELEMENT_SUB_ID;
+            case "sup": return ELEMENT_SUP_ID;
+            case "var": return ELEMENT_VAR_ID;
+
             default: return 0;
         }
     }
@@ -508,6 +513,11 @@ class Common {
     static final byte ELEMENT_MATH_ID = 106;
     static final byte ELEMENT_SVG_ID = 107;
     static final byte ELEMENT_RUBY_ID = 108;
+    //
+    static final byte ELEMENT_SPAN_ID = 109;
+    static final byte ELEMENT_SUB_ID = 110;
+    static final byte ELEMENT_SUP_ID = 111;
+    static final byte ELEMENT_VAR_ID = 112;
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;

@@ -201,7 +201,7 @@ class TreeConstructor {
             TreeConstructorAftersBeforeInitialInHead.initial(tokenType, this);
             break;
         case TreeConstructionInsertionMode.BEFORE_HTML:
-            TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, this);
+            TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, tagNameID, this);
             break;
         case TreeConstructionInsertionMode.BEFORE_HEAD:
             TreeConstructorAftersBeforeInitialInHead.beforeHead(tokenType, tagName, tagNameID, this);

@@ -40,25 +40,29 @@ class TreeConstructorAftersBeforeInitialInHead {
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_FRAMESET_ID, tagNameID)) {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_FRAMESET);
-        } else if (tokenType == START_TAG && ("base".equals(tagName) || //
-                "basefont".equals(tagName) || //
-                "bgsound".equals(tagName) || //
-                "link".equals(tagName) || //
-                "meta".equals(tagName) || //
-                "noframes".equals(tagName) || //
-                "script".equals(tagName) || //
-                "style".equals(tagName) || //
-                "template".equals(tagName) || //
-                "title".equals(tagName))) {
+        } else if (tokenType == START_TAG && (
+                Common.ELEMENT_BASE_ID == tagNameID || //
+                Common.ELEMENT_BASEFONT_ID == tagNameID || //
+                Common.ELEMENT_BGSOUND_ID == tagNameID || //
+                Common.ELEMENT_LINK_ID == tagNameID || //
+                Common.ELEMENT_META_ID == tagNameID || //
+                Common.ELEMENT_NOFRAMES_ID == tagNameID || //
+                Common.ELEMENT_SCRIPT_ID == tagNameID || //
+                Common.ELEMENT_STYLE_ID == tagNameID || //
+                Common.ELEMENT_TEMPLATE_ID == tagNameID || //
+                Common.ELEMENT_TITLE_ID == tagNameID
+        )) {
             treeConstructor.emitParseError();
             treeConstructor.addToOpenElements(treeConstructor.getHead());
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
             treeConstructor.removeFromOpenElements(treeConstructor.getHead());
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (tokenType == END_TAG && ("body".equals(tagName) || //
-                "html".equals(tagName) || //
-                "br".equals(tagName))) {
+        } else if (tokenType == END_TAG && (
+                Common.ELEMENT_BODY_ID == tagNameID || //
+                Common.ELEMENT_HTML_ID == tagNameID || //
+                Common.ELEMENT_BR_ID == tagNameID
+        )) {
             // anything below
             treeConstructor.insertHtmlElementWithEmptyAttributes("body", Common.ELEMENT_BODY_ID);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_BODY);
@@ -171,7 +175,7 @@ class TreeConstructorAftersBeforeInitialInHead {
                 anythingElseHead(treeConstructor);
                 break;
             case END_TAG:
-                handleEndTagHead(tagName, treeConstructor);
+                handleEndTagHead(tagNameID, treeConstructor);
                 break;
             case START_TAG:
                 handleStartTagHead(tokenType, tagName, tagNameID, treeConstructor);
@@ -191,9 +195,11 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    private static void handleEndTagHead(String tagName, TreeConstructor treeConstructor) {
-        if ((!"head".equals(tagName) && !"body".equals(tagName) && //
-                !"html".equals(tagName) && !"br".equals(tagName))) {
+    private static void handleEndTagHead(byte tagNameID, TreeConstructor treeConstructor) {
+        if (
+                Common.ELEMENT_HEAD_ID != tagNameID && Common.ELEMENT_BODY_ID != tagNameID &&
+                Common.ELEMENT_HTML_ID != tagNameID && Common.ELEMENT_BR_ID != tagNameID
+        ) {
             treeConstructor.emitParseError();
             // ignore
         } else {
@@ -216,7 +222,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         treeConstructor.dispatch();
     }
 
-    static void beforeHtml(byte tokenType, String tagName, TreeConstructor treeConstructor) {
+    static void beforeHtml(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
             case CHARACTER:
@@ -232,17 +238,17 @@ class TreeConstructorAftersBeforeInitialInHead {
                 anythingElseHtml(treeConstructor);
                 break;
             case END_TAG:
-                handleEndTagHtml(tagName, treeConstructor);
+                handleEndTagHtml(tagNameID, treeConstructor);
                 break;
             case START_TAG:
-                handleStartTagHtml(tagName, treeConstructor);
+                handleStartTagHtml(tagName, tagNameID, treeConstructor);
                 break;
         }
     }
 
-    private static void handleStartTagHtml(String tagName, TreeConstructor treeConstructor) {
-        if ("html".equals(tagName)) {
-            Element html = TreeConstructor.buildElement(tagName, Common.ELEMENT_HTML_ID, tagName, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, treeConstructor.getAttributes());
+    private static void handleStartTagHtml(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+        if (Common.ELEMENT_HTML_ID == tagNameID) {
+            Element html = TreeConstructor.buildElement("html", Common.ELEMENT_HTML_ID, tagName, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, treeConstructor.getAttributes());
             treeConstructor.addToOpenElements(html);
             treeConstructor.getDocument().appendChild(html);
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.BEFORE_HEAD);
@@ -251,9 +257,9 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    private static void handleEndTagHtml(String tagName, TreeConstructor treeConstructor) {
-        if ((!"head".equals(tagName) && !"body".equals(tagName) && //
-                !"html".equals(tagName) && !"br".equals(tagName))) {
+    private static void handleEndTagHtml(byte tagNameID, TreeConstructor treeConstructor) {
+        if ((Common.ELEMENT_HEAD_ID != tagNameID && Common.ELEMENT_BODY_ID != tagNameID && //
+                Common.ELEMENT_HTML_ID != tagNameID && Common.ELEMENT_BR_ID != tagNameID)) {
             treeConstructor.emitParseError();
             // ignore
         } else {
