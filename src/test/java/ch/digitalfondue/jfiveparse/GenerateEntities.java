@@ -29,7 +29,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Generate the file "entities-with-1-2-codepoint", used by Entities
+ * Generate the file "entities-with-1-2-codepoint", used by Entities.
+ * entities.json is from https://html.spec.whatwg.org/entities.json
  */
 public class GenerateEntities {
 
