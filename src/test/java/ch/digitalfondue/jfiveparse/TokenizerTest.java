@@ -29,27 +29,23 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import com.google.gson.Gson;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.gson.GsonBuilder;
 
-@RunWith(Parameterized.class)
 public class TokenizerTest {
 
     TokenizerTestDescriptor desc;
     TokenizerStateForTest state;
 
-    public TokenizerTest(String path, TokenizerTestDescriptor test, TokenizerStateForTest state) {
+    public void initTokenizerTest(String path, TokenizerTestDescriptor test, TokenizerStateForTest state) {
         this.desc = test;
         this.state = state;
     }
 
-    @Parameters(name = "{0}:''{1}'':{2}")
     public static List<Object[]> data() throws IOException {
         List<Object[]> data = new ArrayList<>();
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("src/test/resources/html5lib-tests/tokenizer"), "*.test")) {
@@ -80,9 +76,12 @@ public class TokenizerTest {
 
     private static final Gson GSON = new GsonBuilder().create();
 
+    @MethodSource("data")
     @SuppressWarnings("unchecked")
-    @Test
-    public void test() {
+    @ParameterizedTest(name = "{0}:''{1}'':{2}")
+    public void test(String path, TokenizerTestDescriptor test, TokenizerStateForTest state) {
+
+        initTokenizerTest(path, test, state);
 
         // unescape
         if (desc.doubleEscaped != null && desc.doubleEscaped) {
@@ -119,7 +118,7 @@ public class TokenizerTest {
 
         List<Token> tokens = mergeCharacter(tokenSaver.getTokens());
 
-        Assert.assertEquals(desc.output.toString(), tokens.toString());
+        assertEquals(desc.output.toString(), tokens.toString());
     }
 
     @SuppressWarnings("unchecked")

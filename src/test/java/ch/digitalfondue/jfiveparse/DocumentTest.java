@@ -15,32 +15,33 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DocumentTest {
+
+class DocumentTest {
 
 
     @Test
-    public void checkDocumentRelatedMethods() {
+    void checkDocumentRelatedMethods() {
         Document d1 = new Parser().parse("<!DOCTYPE html><div>Hello World</div>");
-        Assert.assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", HtmlSerializer.serialize(d1));
+        assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", HtmlSerializer.serialize(d1));
 
-        Assert.assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", JFiveParse.serialize(JFiveParse.parse("<!DOCTYPE html><div>Hello World</div>")));
-        Assert.assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", JFiveParse.serialize(JFiveParse.parse(new StringReader("<!DOCTYPE html><div>Hello World</div>"))));
+        assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", JFiveParse.serialize(JFiveParse.parse("<!DOCTYPE html><div>Hello World</div>")));
+        assertEquals("<!DOCTYPE html><html><head></head><body><div>Hello World</div></body></html>", JFiveParse.serialize(JFiveParse.parse(new StringReader("<!DOCTYPE html><div>Hello World</div>"))));
 
-        Assert.assertEquals("html", d1.getDocumentElement().getNodeName());
-        Assert.assertEquals("<head></head>", d1.getHead().getOuterHTML());
-        Assert.assertEquals("<body><div>Hello World</div></body>", d1.getBody().getOuterHTML());
+        assertEquals("html", d1.getDocumentElement().getNodeName());
+        assertEquals("<head></head>", d1.getHead().getOuterHTML());
+        assertEquals("<body><div>Hello World</div></body>", d1.getBody().getOuterHTML());
 
         Element body = new Element("body");
         body.setId("newBody");
 
         d1.setBody(body);
 
-        Assert.assertEquals("<body id=\"newBody\"></body>", d1.getBody().getOuterHTML());
+        assertEquals("<body id=\"newBody\"></body>", d1.getBody().getOuterHTML());
     }
 }

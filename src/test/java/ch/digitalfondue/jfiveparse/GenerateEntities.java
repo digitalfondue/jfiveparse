@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class GenerateEntities {
     public static void main(String[] args) throws IOException {
         Type type = (new TypeToken<Map<String, EntityValues>>() {
         }).getType();
-        String json = new String(Files.readAllBytes(Paths.get("src/test/resources/entities.json")), StandardCharsets.UTF_8);
+        String json = Files.readString(Paths.get("src/test/resources/entities.json"));
         Map<String, EntityValues> m = new GsonBuilder().create().fromJson(json, type);
 
         Prefix p = new Prefix(null);

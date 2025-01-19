@@ -29,25 +29,25 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class TreeConstructionTest {
 
     boolean scripting;
     TreeConstruction treeTest;
 
-    public TreeConstructionTest(String path, TreeConstruction test, boolean scripting) {
+    public void initTreeConstructionTest(String path, TreeConstruction test, boolean scripting) {
         this.treeTest = test;
         this.scripting = scripting;
     }
 
-    @Test
-    public void check() {
+    @MethodSource("data")
+    @ParameterizedTest(name = "{0}:{index}:{2}")
+    public void check(String path, TreeConstruction test, boolean scripting) {
+        initTreeConstructionTest(path, test, scripting);
         Set<Option> options = EnumSet.noneOf(Option.class);
         if(!scripting) {
             options.add(Option.SCRIPTING_DISABLED);
@@ -56,15 +56,14 @@ public class TreeConstructionTest {
         if (treeTest.isDocumentFragment) {
             List<Node> nodes = parser.parseFragment(new Element(treeTest.documentFragmentElement, treeTest.documentFragmentNamespace, null), treeTest.data);
             String rendered = renderNodes(nodes);
-            Assert.assertEquals(treeTest.document, rendered);
+            assertEquals(treeTest.document, rendered);
         } else {
             Document document = parser.parse(treeTest.data);
             String rendered = renderDocument(document);
-            Assert.assertEquals(treeTest.document, rendered);
+            assertEquals(treeTest.document, rendered);
         }
     }
 
-    @Parameters(name = "{0}:{index}:{2}")
     public static List<Object[]> data() throws IOException {
         List<Object[]> data = new ArrayList<>();
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("src/test/resources/html5lib-tests/tree-construction"), "*.dat")) {
@@ -180,7 +179,7 @@ public class TreeConstructionTest {
     private static void renderNode(Node node, int depth, StringBuilder sb) {
 
         int spaces = depth == 0 ? 1 : depth * 2 + 1;
-        sb.append("|").append(StringUtils.repeat(' ', spaces));
+        sb.append("|").append(" ".repeat(spaces));
 
         int depthsForTemplatesChilds = 0;
 
@@ -199,7 +198,7 @@ public class TreeConstructionTest {
             if (!attributesName.isEmpty()) {
                 sb.append("\n");
                 for (String k : attributesName) {
-                    sb.append("|").append(StringUtils.repeat(' ', spaces + 2));
+                    sb.append("|").append(" ".repeat(spaces + 2));
 
                     AttributeNode attribute = elem.getAttributes().get(k);
                     if (attribute.getNamespace() != null) {
@@ -218,7 +217,7 @@ public class TreeConstructionTest {
             }
 
             if (Common.isHtmlNS(elem, Common.ELEMENT_TEMPLATE_ID)) {
-                sb.append("\n|").append(StringUtils.repeat(' ', spaces + 2)).append("content");
+                sb.append("\n|").append(" ".repeat(spaces + 2)).append("content");
                 depthsForTemplatesChilds += 1;
             }
 
@@ -245,7 +244,6 @@ public class TreeConstructionTest {
         for (Node childNode : node.getChildNodes()) {
             renderNode(childNode, depth + 1 + depthsForTemplatesChilds, sb);
         }
-
     }
 
 }

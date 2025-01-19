@@ -22,76 +22,77 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class HtmlSerializationTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class HtmlSerializationTest {
 
     private static Parser parser(Option... options) {
         return new Parser(new HashSet<>(Arrays.asList(options)));
     }
-    
+
     @Test
-    public void testTagNameCase() {
+    void tagNameCase() {
         Parser p = parser();
         Document d = p.parse("<DiV></dIV><sPaN></SPAN>");
-        Assert.assertEquals("<html><head></head><body><div></div><span></span></body></html>", d.getFirstElementChild().getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><DiV></DiV><sPaN></sPaN></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_TAG_CASE)));
+        assertEquals("<html><head></head><body><div></div><span></span></body></html>", d.getFirstElementChild().getOuterHTML());
+        assertEquals("<html><head></head><body><DiV></DiV><sPaN></sPaN></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_TAG_CASE)));
     }
 
     @Test
-    public void testAttributeCase() {
+    void attributeCase() {
         Parser p = parser();
         Document d = p.parse("<div AttrIbutE=\"my-attribute\"></div>");
-        Assert.assertEquals("<html><head></head><body><div attribute=\"my-attribute\"></div></body></html>", d.getFirstElementChild().getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><div AttrIbutE=\"my-attribute\"></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_ATTRIBUTES_CASE)));
+        assertEquals("<html><head></head><body><div attribute=\"my-attribute\"></div></body></html>", d.getFirstElementChild().getOuterHTML());
+        assertEquals("<html><head></head><body><div AttrIbutE=\"my-attribute\"></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_ATTRIBUTES_CASE)));
     }
 
     @Test
-    public void testAttributeQuote() {
+    void attributeQuote() {
         Parser p = parser();
         Document d = p.parse("<div attr=val attr2='val2' attr3=\"val3\"></div>");
-        Assert.assertEquals("<html><head></head><body><div attr=\"val\" attr2=\"val2\" attr3=\"val3\"></div></body></html>", d.getFirstElementChild().getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><div attr=val attr2='val2' attr3=\"val3\"></div></body></html>",
+        assertEquals("<html><head></head><body><div attr=\"val\" attr2=\"val2\" attr3=\"val3\"></div></body></html>", d.getFirstElementChild().getOuterHTML());
+        assertEquals("<html><head></head><body><div attr=val attr2='val2' attr3=\"val3\"></div></body></html>",
                 d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE)));
     }
 
     @Test
-    public void testHideEmptyAttributeValue() {
+    void hideEmptyAttributeValue() {
         Parser p = parser();
         Document d = p.parse("<div attr attr2='' attr3=\"\"></div>");
-        Assert.assertEquals("<html><head></head><body><div attr=\"\" attr2=\"\" attr3=\"\"></div></body></html>", d.getFirstElementChild().getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><div attr attr2='' attr3=\"\"></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE)));
-        Assert.assertEquals("<html><head></head><body><div attr attr2 attr3></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.HIDE_EMPTY_ATTRIBUTE_VALUE)));
+        assertEquals("<html><head></head><body><div attr=\"\" attr2=\"\" attr3=\"\"></div></body></html>", d.getFirstElementChild().getOuterHTML());
+        assertEquals("<html><head></head><body><div attr attr2='' attr3=\"\"></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE)));
+        assertEquals("<html><head></head><body><div attr attr2 attr3></div></body></html>", d.getFirstElementChild().getOuterHTML(EnumSet.of(Option.HIDE_EMPTY_ATTRIBUTE_VALUE)));
     }
 
     @Test
-    public void testSerializeToByteArray() throws IOException {
+    void serializeToByteArray() throws IOException {
         Parser p = parser();
         Document d = p.parse("<DiV></dIV><sPaN></SPAN>");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Writer osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
         HtmlSerializer.serialize(d, osw);
-        Assert.assertEquals("<html><head></head><body><div></div><span></span></body></html>", new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals("<html><head></head><body><div></div><span></span></body></html>", new String(baos.toByteArray(), StandardCharsets.UTF_8));
     }
 
     @Test
-    public void testSimpleApi() {
+    void simpleApi() {
         Document doc = JFiveParse.parse("<html><body>Hello world!</body></html>");
-        Assert.assertEquals("<html><head></head><body>Hello world!</body></html>", JFiveParse.serialize(doc));
+        assertEquals("<html><head></head><body>Hello world!</body></html>", JFiveParse.serialize(doc));
 
 
         // from reader
         Document doc2 = JFiveParse.parse(new StringReader("<html><body>Hello world!</body></html>"));
-        Assert.assertEquals("<html><head></head><body>Hello world!</body></html>", JFiveParse.serialize(doc2));
+        assertEquals("<html><head></head><body>Hello world!</body></html>", JFiveParse.serialize(doc2));
 
 
         // parse fragment
         List<Node> fragment = JFiveParse.parseFragment("<p><span>Hello world</span></p>");
-        Assert.assertEquals("<p><span>Hello world</span></p>", JFiveParse.serialize(fragment.get(0)));
+        assertEquals("<p><span>Hello world</span></p>", JFiveParse.serialize(fragment.get(0)));
 
         // parse fragment from reader
         List<Node> fragment2 = JFiveParse.parseFragment(new StringReader("<p><span>Hello world</span></p>"));
-        Assert.assertEquals("<p><span>Hello world</span></p>", JFiveParse.serialize(fragment2.get(0)));
+        assertEquals("<p><span>Hello world</span></p>", JFiveParse.serialize(fragment2.get(0)));
     }
 }

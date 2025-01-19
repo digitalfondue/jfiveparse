@@ -1,17 +1,18 @@
 package ch.digitalfondue.jfiveparse;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Resizable {
+class Resizable {
 
     @Test
-    public void checkTest() {
+    void checkTest() {
         var v = new ResizableCharBuilder();
         for (int i = 0; i < 100; i++) {
             v.append('a');
         }
-        Assert.assertEquals("a".repeat(100), v.toString());
+        assertEquals("a".repeat(100), v.toString());
     }
 }

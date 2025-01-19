@@ -1,14 +1,15 @@
 package ch.digitalfondue.jfiveparse;
 
 import static ch.digitalfondue.jfiveparse.Common.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class EnsureCommonElementIDTest {
+class EnsureCommonElementIDTest {
 
     @Test
-    public void ensureCommonElementIDRanges() {
+    void ensureCommonElementIDRanges() {
         var addressToXmpSpecial = new byte[]{
                 ELEMENT_ADDRESS_ID,
                 ELEMENT_APPLET_ID,
@@ -104,16 +105,16 @@ public class EnsureCommonElementIDTest {
 
         // check they always are consecutive and ELEMENT_ADDRESS_ID and ELEMENT_XMP_ID are first and last
         for (int i = 1; i < addressToXmpSpecial.length; i++) {
-            Assert.assertEquals(addressToXmpSpecial[i], addressToXmpSpecial[i - 1] + 1);
-            Assert.assertTrue(ELEMENT_ADDRESS_ID < addressToXmpSpecial[i]);
-            Assert.assertTrue(ELEMENT_XMP_ID > addressToXmpSpecial[i] || ELEMENT_XMP_ID == addressToXmpSpecial[i]);
+            assertEquals(addressToXmpSpecial[i], addressToXmpSpecial[i - 1] + 1);
+            assertTrue(ELEMENT_ADDRESS_ID < addressToXmpSpecial[i]);
+            assertTrue(ELEMENT_XMP_ID > addressToXmpSpecial[i] || ELEMENT_XMP_ID == addressToXmpSpecial[i]);
         }
 
 
         for (int i = 1; i < h1h6.length; i++) {
-            Assert.assertEquals(h1h6[i], h1h6[i - 1] + 1);
-            Assert.assertTrue(ELEMENT_H1_ID < h1h6[i]);
-            Assert.assertTrue(ELEMENT_H6_ID > h1h6[i] || ELEMENT_H6_ID == h1h6[i]);
+            assertEquals(h1h6[i], h1h6[i - 1] + 1);
+            assertTrue(ELEMENT_H1_ID < h1h6[i]);
+            assertTrue(ELEMENT_H6_ID > h1h6[i] || ELEMENT_H6_ID == h1h6[i]);
         }
     }
 }

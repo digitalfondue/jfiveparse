@@ -15,35 +15,37 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CloneTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+
+class CloneTest {
 
     @Test
-    public void cloneDeep() {
+    void cloneDeep() {
         Document document = new Parser().parse("<div><p>Hello World</p></div>");
         Document cloned = (Document) document.cloneNode(true);
-        Assert.assertEquals(document.getFirstElementChild().getOuterHTML(), cloned.getFirstElementChild().getOuterHTML());
+        assertEquals(document.getFirstElementChild().getOuterHTML(), cloned.getFirstElementChild().getOuterHTML());
 
         ((Text) cloned.getElementsByTagName("p").get(0).getChildNodes().get(0)).setData("Hello World!");
 
-        Assert.assertNotEquals(document.getFirstElementChild().getOuterHTML(), cloned.getFirstElementChild().getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getFirstElementChild().getOuterHTML());
-        Assert.assertEquals("<html><head></head><body><div><p>Hello World!</p></div></body></html>", cloned.getFirstElementChild().getOuterHTML());
+        assertNotEquals(document.getFirstElementChild().getOuterHTML(), cloned.getFirstElementChild().getOuterHTML());
+        assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getFirstElementChild().getOuterHTML());
+        assertEquals("<html><head></head><body><div><p>Hello World!</p></div></body></html>", cloned.getFirstElementChild().getOuterHTML());
     }
 
 
     @Test
-    public void cloneShallow() {
+    void cloneShallow() {
         Document document = new Parser().parse("<div><p>Hello World</p></div>");
         Document cloned = (Document) document.cloneNode(false);
-        Assert.assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getFirstElementChild().getOuterHTML());
-        Assert.assertEquals(null, cloned.getFirstElementChild());
+        assertEquals("<html><head></head><body><div><p>Hello World</p></div></body></html>", document.getFirstElementChild().getOuterHTML());
+        assertNull(cloned.getFirstElementChild());
 
         Element div = document.getElementsByTagName("div").get(0);
         Element divCloned = (Element) div.cloneNode(false);
-        Assert.assertEquals("<div><p>Hello World</p></div>", div.getOuterHTML());
-        Assert.assertEquals("<div></div>", divCloned.getOuterHTML());
+        assertEquals("<div><p>Hello World</p></div>", div.getOuterHTML());
+        assertEquals("<div></div>", divCloned.getOuterHTML());
     }
 }
