@@ -139,6 +139,7 @@ public abstract class Node {
      * parentNode defined, it will be removed from the original parent.
      */
     public void appendChild(Node node) {
+        Objects.requireNonNull(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
@@ -162,6 +163,7 @@ public abstract class Node {
      *            the node to be inserted
      */
     public void insertChildren(int position, Node node) {
+        Objects.requireNonNull(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
@@ -191,6 +193,8 @@ public abstract class Node {
      *            fail silently.
      */
     public void insertBefore(Node toInsert, Node before) {
+        Objects.requireNonNull(toInsert);
+        Objects.requireNonNull(before);
         int idx = getChildNodes().indexOf(before);
         if (idx >= 0) {
             insertChildren(idx, toInsert);
@@ -206,6 +210,8 @@ public abstract class Node {
      *            the node to be replaced
      */
     public void replaceChild(Node node, Node oldChild) {
+        Objects.requireNonNull(node);
+        Objects.requireNonNull(oldChild);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
@@ -229,6 +235,7 @@ public abstract class Node {
      *            the node to be removed
      */
     public void removeChild(Node node) {
+        Objects.requireNonNull(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
@@ -248,8 +255,7 @@ public abstract class Node {
     /**
      * Get the first child, if present or else null.
      */
-    public Node getFirstChild() {
-        List<Node> childs = getChildNodes();
+    public Node getFirstChild() {        List<Node> childs = getChildNodes();
         return childs.isEmpty() ? null : childs.get(0);
     }
 

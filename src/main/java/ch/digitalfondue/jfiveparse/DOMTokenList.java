@@ -37,7 +37,7 @@ public class DOMTokenList extends AbstractList<String> {
         if (a != null && a.getValue() != null) {
             List<String> vals = new ArrayList<>();
             for (String s : a.getValue().split("\\s+")) {
-                if (s != null && s.trim().length() > 0) {
+                if (s != null && !s.trim().isEmpty()) {
                     vals.add(s);
                 }
             }

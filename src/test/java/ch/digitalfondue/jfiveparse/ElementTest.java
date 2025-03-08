@@ -15,10 +15,10 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by mattia on 28/04/16.
@@ -154,5 +154,32 @@ class ElementTest {
         Element svg = (Element) parser.parseFragment(new Element("div"), "<svg><path id=myid>foo</path></svg>").get(0);
         assertEquals("svg", svg.getTagName());
         assertEquals("path", svg.getFirstElementChild().getTagName());
+    }
+
+    @Test
+    void checkAttributes() {
+        Element div = new Element("div");
+        assertTrue(div.getAttributes().isEmpty());
+        assertFalse(div.hasAttributes());
+        assertFalse(div.hasAttribute("test"));
+        div.setAttribute("test", "value");
+        div.setAttribute("test2", null);
+        assertTrue(div.hasAttributes());
+        assertFalse(div.getAttributes().isEmpty());
+        assertTrue(div.hasAttribute("test"));
+        assertEquals("value", div.getAttributes().getNamedItem("test"));
+        assertEquals(null, div.getAttributes().getNamedItem("test2"));
+        div.removeAttribute("test");
+        assertFalse(div.hasAttribute("test"));
+        assertFalse(div.getAttributes().containsKey("test"));
+        assertTrue(div.getAttributes().containsKey("test2"));
+        assertEquals("<div test2=\"null\"></div>", div.getOuterHTML());
+    }
+
+    @Test
+    void checkAddNull() {
+        Element div = new Element("div");
+        Assertions.assertThrows(NullPointerException.class, () -> div.appendChild(null));
+        Assertions.assertThrows(NullPointerException.class, () -> div.insertChildren(0, null));
     }
 }

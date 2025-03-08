@@ -2,6 +2,7 @@ package ch.digitalfondue.jfiveparse;
 
 import org.jsoup.Jsoup;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
@@ -21,7 +22,7 @@ public class TestParsePerf {
         file = new String(Files.readAllBytes(Paths.get("src/test/resources/test.html")), StandardCharsets.UTF_8);
     }
 
-    int round = 20_000;
+    int round = 20_000_000;
 
     @Test
     void check() {
@@ -31,7 +32,8 @@ public class TestParsePerf {
         assertEquals(parser.parse(file).getBody().getTextContent().trim(), Jsoup.parse(file).select("body").get(0).wholeText().trim());
     }
 
-    //@Test
+    @Disabled
+    @Test
     public void parse() {
 
         long start = System.nanoTime();
@@ -42,7 +44,8 @@ public class TestParsePerf {
         System.err.println("time " + ((end - start)/round));
     }
 
-    //@Test
+    @Disabled
+    @Test
     public void parse2() {
         long start = System.nanoTime();
         for (int i = 0; i < round; i++) {
