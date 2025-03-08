@@ -255,7 +255,8 @@ public abstract class Node {
     /**
      * Get the first child, if present or else null.
      */
-    public Node getFirstChild() {        List<Node> childs = getChildNodes();
+    public Node getFirstChild() {
+        List<Node> childs = getChildNodes();
         return childs.isEmpty() ? null : childs.get(0);
     }
 
