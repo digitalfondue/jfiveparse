@@ -432,7 +432,7 @@ public abstract class Node {
      * be returned in "tree order". The name is case sensitive.
      */
     public List<Element> getElementsByTagName(String name) {
-        return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name));
+        return getAllNodesMatching(Selector.select().element(name).toMatcher());
     }
 
     /**
@@ -441,7 +441,7 @@ public abstract class Node {
      * case sensitive.
      */
     public List<Element> getElementsByTagNameNS(String name, String namespace) {
-        return getAllNodesMatching(new NodeMatchers.ElementHasTagName(name, namespace));
+        return getAllNodesMatching(Selector.select().element(name, namespace).toMatcher());
     }
 
     /**
@@ -461,7 +461,8 @@ public abstract class Node {
      * @return
      */
     public boolean contains(Node node) {
-        return !getAllNodesMatching(new NodeMatchers.NodeIsEqualReference(node), true).isEmpty();
+        // check same reference
+        return !getAllNodesMatching((n) -> n == node, true).isEmpty();
     }
 
     /**
@@ -472,7 +473,7 @@ public abstract class Node {
 			return ((Text) this).getData();
 		}
 
-        List<Text> textNodes = getAllNodesMatching(new NodeMatchers.NodeHasType(TEXT_NODE));
+        List<Text> textNodes = getAllNodesMatching((node) -> node.getNodeType() == TEXT_NODE);
         StringBuilder sb = new StringBuilder();
         for (Text n : textNodes) {
             sb.append(n.getData());

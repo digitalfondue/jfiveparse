@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -141,7 +142,7 @@ public class Selector {
      * @return
      */
     public Selector element(String name) {
-        matchers.add(new NodeMatchers.ElementHasTagName(name));
+        matchers.add(node -> node.getNodeType() == Node.ELEMENT_NODE && name.equals(node.getNodeName()));
         return this;
     }
 
@@ -154,7 +155,8 @@ public class Selector {
      * @return
      */
     public Selector element(String name, String namespace) {
-        matchers.add(new NodeMatchers.ElementHasTagName(name, namespace));
+        matchers.add(node -> node.getNodeType() == Node.ELEMENT_NODE && name.equals(node.getNodeName())
+                && Objects.equals(namespace, ((Element) node).getNamespaceURI()));
         return this;
     }
 
@@ -311,7 +313,13 @@ public class Selector {
      * @return
      */
     public Selector isFirstChild() {
-        matchers.add(new NodeMatchers.IsFirstChild());
+        matchers.add(node -> {
+            if (node.parentNode != null) {
+                return node.parentNode.getFirstChild() == node;
+            } else {
+                return false;
+            }
+        });
         return this;
     }
 
@@ -321,7 +329,13 @@ public class Selector {
      * @return
      */
     public Selector isFirstElementChild() {
-        matchers.add(new NodeMatchers.IsFirstElementChild());
+        matchers.add(node -> {
+            if (node.parentNode != null) {
+                return node.parentNode.getFirstElementChild() == node;
+            } else {
+                return false;
+            }
+        });
         return this;
     }
 
@@ -335,7 +349,13 @@ public class Selector {
      * @return
      */
     public Selector isLastChild() {
-        matchers.add(new NodeMatchers.IsLastChild());
+        matchers.add(node -> {
+            if (node.parentNode != null) {
+                return node.parentNode.getLastChild() == node;
+            } else {
+                return false;
+            }
+        });
         return this;
     }
 
@@ -345,8 +365,20 @@ public class Selector {
      * @return
      */
     public Selector isLastElementChild() {
-        matchers.add(new NodeMatchers.IsLastElementChild());
+        matchers.add(node -> {
+            if (node.parentNode != null) {
+                return node.parentNode.getLastElementChild() == node;
+            } else {
+                return false;
+            }
+        });
         return this;
+    }
+
+    private List<NodeMatcher> copyAndClear() {
+        var copyMatchers = new ArrayList<>(matchers);
+        matchers.clear();
+        return copyMatchers;
     }
 
     /**
@@ -359,8 +391,8 @@ public class Selector {
      * @return
      */
     public Selector withChild() {
-        NodeMatcher hasParentMatching = new NodeMatchers.HasParentMatching(new NodeMatchers.AndMatcher(new ArrayList<>(matchers)));
-        matchers.clear();
+        var rules = andMatchers(copyAndClear());
+        NodeMatcher hasParentMatching = (node) -> node.parentNode != null && rules.match(node.parentNode);
         matchers.add(hasParentMatching);
         return this;
     }
@@ -375,10 +407,29 @@ public class Selector {
      * @return
      */
     public Selector withDescendant() {
-        NodeMatcher hasAncestorMatching = new NodeMatchers.HasAncestorMatching(new NodeMatchers.AndMatcher(new ArrayList<>(matchers)));
-        matchers.clear();
+        var ancestorMatcher = andMatchers(copyAndClear());
+        NodeMatcher hasAncestorMatching = (node) -> {
+            while (node.parentNode != null) {
+                node = node.parentNode;
+                if (ancestorMatcher.match(node)) {
+                    return true;
+                }
+            }
+            return false;
+        };
         matchers.add(hasAncestorMatching);
         return this;
+    }
+
+    private static NodeMatcher andMatchers(List<NodeMatcher> nodeMatchers) {
+        return (node) -> {
+            for (NodeMatcher m : nodeMatchers) {
+                if (!m.match(node)) {
+                    return false;
+                }
+            }
+            return true;
+        };
     }
 
     /**
@@ -387,6 +438,6 @@ public class Selector {
      * @return
      */
     public NodeMatcher toMatcher() {
-        return new NodeMatchers.AndMatcher(matchers);
+        return matchers.size() == 1 ? matchers.get(0) : andMatchers(matchers);
     }
 }

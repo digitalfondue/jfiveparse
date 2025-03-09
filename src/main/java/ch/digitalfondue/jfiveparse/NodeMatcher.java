@@ -15,6 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+@FunctionalInterface
 public interface NodeMatcher {
     boolean match(Node node);
 }

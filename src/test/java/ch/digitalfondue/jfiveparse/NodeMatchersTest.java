@@ -29,7 +29,7 @@ class NodeMatchersTest {
     @Test
     void firstChildTest() {
         Document doc = parser.parse("<div></div><div id=myid></div><div></div>");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsFirstChild());
+        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(0), div.get(0));
     }
@@ -37,7 +37,7 @@ class NodeMatchersTest {
     @Test
     void firstElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsFirstElementChild());
+        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstElementChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1), div.get(0));
     }
@@ -45,7 +45,7 @@ class NodeMatchersTest {
     @Test
     void lastElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>text");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsLastElementChild());
+        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastElementChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
 
@@ -54,7 +54,7 @@ class NodeMatchersTest {
     @Test
     void lastChildTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(new NodeMatchers.IsLastChild());
+        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
     }
@@ -117,11 +117,11 @@ class NodeMatchersTest {
     @Test
     void hasParentMatch() {
         Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
-        List<Element> e = doc.getAllNodesMatching(new NodeMatchers.HasParentMatching(new NodeMatchers.HasAttribute("id", "depth1", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        List<Element> e = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withChild().toMatcher());
         assertEquals(1, e.size());
         assertEquals("depth2", e.get(0).getAttribute("id"));
 
-        List<Element> empty = doc.getAllNodesMatching(new NodeMatchers.HasParentMatching(new NodeMatchers.HasAttribute("id", "depth0", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        List<Element> empty = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth0").withChild().toMatcher());
         assertEquals(0, empty.size());
     }
 
@@ -129,19 +129,19 @@ class NodeMatchersTest {
     void hasAncestorMatch() {
         Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
 
-        List<Node> e0 = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth3", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        List<Node> e0 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth3").withDescendant().toMatcher());
         assertEquals(0, e0.size());
 
-        List<Element> e1 = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth2", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        List<Element> e1 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth2").withDescendant().toMatcher());
         assertEquals(1, e1.size());
         assertEquals("depth3", e1.get(0).getAttribute("id"));
 
-        List<Element> e2 = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth1", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        List<Element> e2 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withDescendant().toMatcher());
         assertEquals(2, e2.size());
         assertEquals("depth2", e2.get(0).getAttribute("id"));
         assertEquals("depth3", e2.get(1).getAttribute("id"));
 
-        List<Node> empty = doc.getAllNodesMatching(new NodeMatchers.HasAncestorMatching(new NodeMatchers.HasAttribute("id", "depth0", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ)));
+        List<Node> empty = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth0").withDescendant().toMatcher());
         assertEquals(0, empty.size());
     }
 
