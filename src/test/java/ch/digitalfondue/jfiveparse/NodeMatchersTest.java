@@ -62,8 +62,8 @@ class NodeMatchersTest {
     @Test
     void hasAttributeValueEqTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div id=myid2></div>");
-        List<Element> divIdMyId = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id", "myid", NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ));
-        List<Element> divId = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id"));
+        List<Element> divIdMyId = doc.getAllNodesMatching(Selector.select().attrValEq("id", "myid").toMatcher());
+        List<Element> divId = doc.getAllNodesMatching(Selector.select().attr("id").toMatcher());
         assertEquals(1, divIdMyId.size());
         assertEquals(2, divId.size());
         assertEquals("myid", divId.get(0).getAttribute("id"));
@@ -73,44 +73,44 @@ class NodeMatchersTest {
     @Test
     void hasAttributeValueInListTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "class1", NodeMatchers.ATTRIBUTE_MATCH_VALUE_IN_LIST));
+        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class1").toMatcher());
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "class2", NodeMatchers.ATTRIBUTE_MATCH_VALUE_IN_LIST));
+        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class2").toMatcher());
         assertEquals(2, divClasses.size());
     }
 
     @Test
     void hasAttributeValueStartWithTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "class2 class1", NodeMatchers.ATTRIBUTE_MATCH_VALUE_START_WITH));
+        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2 class1").toMatcher());
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "class2", NodeMatchers.ATTRIBUTE_MATCH_VALUE_START_WITH));
+        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2").toMatcher());
         assertEquals(2, divClasses.size());
     }
 
     @Test
     void hasAttributeValueEndWithTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "class1 class3", NodeMatchers.ATTRIBUTE_MATCH_VALUE_END_WITH));
+        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class1 class3").toMatcher());
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "class3", NodeMatchers.ATTRIBUTE_MATCH_VALUE_END_WITH));
+        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class3").toMatcher());
         assertEquals(2, divClasses.size());
     }
 
     @Test
     void hasAttributeValueContainTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "class2 class1", NodeMatchers.ATTRIBUTE_MATCH_VALUE_CONTAINS));
+        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValContains("class", "class2 class1").toMatcher());
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(new NodeMatchers.HasAttribute("class", "cl", NodeMatchers.ATTRIBUTE_MATCH_VALUE_CONTAINS));
+        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValContains("class", "cl").toMatcher());
         assertEquals(2, divClasses.size());
     }
 

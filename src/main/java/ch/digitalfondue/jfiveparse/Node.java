@@ -450,7 +450,7 @@ public abstract class Node {
      * element found during the traversal will be returned.
      */
     public Element getElementById(String idValue) {
-        List<Element> l = getAllNodesMatching(new NodeMatchers.HasAttribute("id", idValue, NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ), true);
+        List<Element> l = getAllNodesMatching(Selector.select().id(idValue).toMatcher(), true);
         return l.isEmpty() ? null : l.get(0);
     }
 

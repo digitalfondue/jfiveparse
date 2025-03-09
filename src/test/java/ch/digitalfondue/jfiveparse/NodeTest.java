@@ -164,8 +164,8 @@ class NodeTest {
     @Test
     void match() {
         Document doc = parser.parse("<div id=cont> text<div> bla bla <div id=myid class=>blabla</div>plop</div></div>");
-        assertEquals(1, doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id"), true).size());
-        assertEquals(2, doc.getAllNodesMatching(new NodeMatchers.HasAttribute("id"), false).size());
+        assertEquals(1, doc.getAllNodesMatching(Selector.select().attr("id").toMatcher(), true).size());
+        assertEquals(2, doc.getAllNodesMatching(Selector.select().attr("id").toMatcher(), false).size());
     }
 
     @Test

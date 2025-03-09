@@ -18,6 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -170,8 +171,7 @@ public class Selector {
      * @return
      */
     public Selector hasClass(String value) {
-        matchers.add(new NodeMatchers.HasAttribute("class", value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_IN_LIST));
-        return this;
+        return attrValInList("class", value);
     }
 
     /**
@@ -204,9 +204,20 @@ public class Selector {
      * @return
      */
     public Selector id(String value) {
-        matchers.add(new NodeMatchers.HasAttribute("id", value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ));
-        return this;
+        return attrValEq("id", value);
+    }
 
+    private static NodeMatcher matchAttr(String name, BiPredicate<String, Element> attributeValueMatcher) {
+        return (node) -> {
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                return false;
+            }
+            Element elem = (Element) node;
+            if (!elem.getAttributes().containsKey(name)) {
+                return false;
+            }
+            return attributeValueMatcher.test(elem.getAttribute(name), elem);
+        };
     }
 
     /**
@@ -219,7 +230,7 @@ public class Selector {
      * @return
      */
     public Selector attr(String name) {
-        matchers.add(new NodeMatchers.HasAttribute(name));
+        matchers.add(matchAttr(name, (attrValue, elem) -> true));
         return this;
     }
 
@@ -235,7 +246,7 @@ public class Selector {
      * @return
      */
     public Selector attrValEq(String name, String value) {
-        matchers.add(new NodeMatchers.HasAttribute(name, value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_EQ));
+        matchers.add(matchAttr(name, (attrValue, elem) -> Objects.equals(attrValue, value)));
         return this;
     }
 
@@ -251,7 +262,7 @@ public class Selector {
      * @return
      */
     public Selector attrValInList(String name, String value) {
-        matchers.add(new NodeMatchers.HasAttribute(name, value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_IN_LIST));
+        matchers.add(matchAttr(name, (attrValue, elem) -> new DOMTokenList(elem, name).contains(value)));
         return this;
     }
 
@@ -267,7 +278,7 @@ public class Selector {
      * @return
      */
     public Selector attrValStartWith(String name, String value) {
-        matchers.add(new NodeMatchers.HasAttribute(name, value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_START_WITH));
+        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
         return this;
     }
 
@@ -283,7 +294,7 @@ public class Selector {
      * @return
      */
     public Selector attrValEndWith(String name, String value) {
-        matchers.add(new NodeMatchers.HasAttribute(name, value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_END_WITH));
+        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
         return this;
     }
 
@@ -299,7 +310,7 @@ public class Selector {
      * @return
      */
     public Selector attrValContains(String name, String value) {
-        matchers.add(new NodeMatchers.HasAttribute(name, value, NodeMatchers.ATTRIBUTE_MATCH_VALUE_CONTAINS));
+        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
         return this;
     }
 
