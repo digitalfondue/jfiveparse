@@ -548,7 +548,6 @@ public abstract class Node {
     public abstract Node cloneNode(boolean deep);
 
 
-
 	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
 		if(concatenatedText.length() == 0) {
 			removeChild(text);

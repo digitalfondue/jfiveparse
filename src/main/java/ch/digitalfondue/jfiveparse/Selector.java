@@ -213,10 +213,7 @@ public class Selector {
                 return false;
             }
             Element elem = (Element) node;
-            if (!elem.getAttributes().containsKey(name)) {
-                return false;
-            }
-            return attributeValueMatcher.test(elem.getAttribute(name), elem);
+            return elem.getAttributes().containsKey(name) && attributeValueMatcher.test(elem.getAttribute(name), elem);
         };
     }
 
@@ -324,13 +321,7 @@ public class Selector {
      * @return
      */
     public Selector isFirstChild() {
-        matchers.add(node -> {
-            if (node.parentNode != null) {
-                return node.parentNode.getFirstChild() == node;
-            } else {
-                return false;
-            }
-        });
+        matchers.add(node -> node.parentNode != null && node.parentNode.getFirstChild() == node);
         return this;
     }
 
@@ -340,13 +331,7 @@ public class Selector {
      * @return
      */
     public Selector isFirstElementChild() {
-        matchers.add(node -> {
-            if (node.parentNode != null) {
-                return node.parentNode.getFirstElementChild() == node;
-            } else {
-                return false;
-            }
-        });
+        matchers.add(node -> node.parentNode != null && node.parentNode.getFirstElementChild() == node);
         return this;
     }
 
@@ -360,13 +345,7 @@ public class Selector {
      * @return
      */
     public Selector isLastChild() {
-        matchers.add(node -> {
-            if (node.parentNode != null) {
-                return node.parentNode.getLastChild() == node;
-            } else {
-                return false;
-            }
-        });
+        matchers.add(node -> node.parentNode != null && node.parentNode.getLastChild() == node);
         return this;
     }
 
@@ -376,13 +355,7 @@ public class Selector {
      * @return
      */
     public Selector isLastElementChild() {
-        matchers.add(node -> {
-            if (node.parentNode != null) {
-                return node.parentNode.getLastElementChild() == node;
-            } else {
-                return false;
-            }
-        });
+        matchers.add(node -> node.parentNode != null && node.parentNode.getLastElementChild() == node);
         return this;
     }
 
