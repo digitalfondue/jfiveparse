@@ -43,11 +43,10 @@ public class Attributes implements Iterable<AttributeNode> {
             return true;
         }
 
-        if (!(obj instanceof Attributes)) {
-            return false;
+        if (obj instanceof Attributes) {
+            return Objects.equals(attributes, ((Attributes) obj).attributes);
         }
-
-        return Objects.equals(attributes, ((Attributes) obj).attributes);
+        return false;
     }
 
     public Attributes copy() {

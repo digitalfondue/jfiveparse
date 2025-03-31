@@ -15,6 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.Objects;
+
 /**
  * Represent a text node.
  */
@@ -65,4 +67,15 @@ public class Text extends Node {
 	public Node cloneNode(boolean deep) {
 		return new Text(getData());
 	}
+
+    @Override
+    public boolean isEqualNode(Node other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Text) {
+            return Objects.equals(getData(), ((Text) other).getData());
+        }
+        return false;
+    }
 }

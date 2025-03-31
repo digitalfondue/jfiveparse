@@ -547,6 +547,16 @@ public abstract class Node {
      */
     public abstract Node cloneNode(boolean deep);
 
+    /**
+     * Check if the node is equal to the parameter.
+     *
+     * See <a href="https://dom.spec.whatwg.org/#concept-node-equals">...</a>
+     *
+     * @param other
+     * @return
+     */
+    public abstract boolean isEqualNode(Node other);
+
 
 	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
 		if(concatenatedText.length() == 0) {

@@ -117,4 +117,13 @@ public class Document extends Node {
         }
         return cloned;
 	}
+
+    @Override
+    public boolean isEqualNode(Node other) {
+        if (this == other) {
+            return true;
+        }
+        // FIXME
+        throw new IllegalStateException("FIXME TO IMPLEMENT");
+    }
 }

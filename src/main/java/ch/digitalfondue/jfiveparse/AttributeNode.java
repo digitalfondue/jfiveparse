@@ -103,8 +103,7 @@ public class AttributeNode {
                     getValue().equals(other.getValue()) && //
                     Objects.equals(prefix, other.prefix) && //
                     Objects.equals(namespace, other.namespace);
-        } else {
-            return false;
         }
+        return false;
     }
 }

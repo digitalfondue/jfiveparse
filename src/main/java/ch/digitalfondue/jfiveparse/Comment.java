@@ -15,6 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.Objects;
+
 /**
  * Represent a comment.
  */
@@ -61,4 +63,15 @@ public class Comment extends Node {
 	public Node cloneNode(boolean deep) {
 		return new Comment(getData());
 	}
+
+    @Override
+    public boolean isEqualNode(Node other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof Comment) {
+            return Objects.equals(getData(), ((Comment) other).getData());
+        }
+        return false;
+    }
 }

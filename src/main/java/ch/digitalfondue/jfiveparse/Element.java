@@ -343,6 +343,15 @@ public class Element extends Node {
         return clone;
 	}
 
+    @Override
+    public boolean isEqualNode(Node other) {
+        if (this == other) {
+            return true;
+        }
+        // FIXME
+        throw new IllegalStateException("FIXME TO IMPLEMENT");
+    }
+
     /**
      * Get the html content of the child of this node.
      */
