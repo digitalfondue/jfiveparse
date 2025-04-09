@@ -22,7 +22,7 @@ import java.util.*;
  */
 public abstract class Node {
 
-    private static final List<Node> EMPTY_LIST = Collections.emptyList();
+    private static final List<Node> EMPTY_LIST = List.of();
 
     Node parentNode;
 
@@ -557,6 +557,20 @@ public abstract class Node {
      */
     public abstract boolean isEqualNode(Node other);
 
+    /**
+     * Null safe static isEqualNode helper
+     *
+     * @param a
+     * @param b
+     * @return
+     */
+    static boolean nodesEquals(Node a, Node b) {
+        if (a != null && b != null) {
+            return a.isEqualNode(b);
+        } else {
+            return a == null && b == null;
+        }
+    }
 
 	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
 		if(concatenatedText.length() == 0) {

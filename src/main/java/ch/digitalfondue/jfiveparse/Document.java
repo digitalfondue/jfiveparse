@@ -123,7 +123,22 @@ public class Document extends Node {
         if (this == other) {
             return true;
         }
-        // FIXME
-        throw new IllegalStateException("FIXME TO IMPLEMENT");
+        if (other instanceof Document) {
+            Document otherDocument = (Document) other;
+            if (!Node.nodesEquals(doctype, otherDocument.doctype)) {
+                return false;
+            }
+            int count = getChildCount();
+            if (count != otherDocument.getChildCount()) {
+                return false;
+            }
+            for (var i = 0; i < count; i++) {
+                if (!Node.nodesEquals(childNodes.get(i), otherDocument.childNodes.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }
