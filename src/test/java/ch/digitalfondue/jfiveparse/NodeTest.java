@@ -280,4 +280,26 @@ class NodeTest {
         assertTrue(b.isSameNode(b));
     }
 
+
+    private static boolean areFragmentEquals(String a, String b) {
+        return JFiveParse.parseFragment(a).get(0).isEqualNode(JFiveParse.parseFragment(b).get(0));
+    }
+
+    @Test
+    void isEqualNodeCheck() {
+        assertTrue(areFragmentEquals("<p>a</p>", "<p>a</p>"));
+        assertTrue(areFragmentEquals("<p id=test>a</p>", "<p id='test'>a</p>"));
+        assertTrue(areFragmentEquals("<p id=test>a<!-- comment --></p>", "<p id='test'>a<!-- comment --></p>"));
+        assertTrue(areFragmentEquals("<p><span><span><span>b</span></span></span></p>", "<p><span><span><span>b</span></span></span></p>"));
+
+        assertFalse(areFragmentEquals("<p>a</p>", "<li>a</li>"));
+        assertFalse(areFragmentEquals("<p>a</p>", "<p>b</p>"));
+        assertFalse(areFragmentEquals("<p id=testa>a</p>", "<p id='testb'>a</p>"));
+        assertFalse(areFragmentEquals("<p id=test>a<!-- comment --></p>", "<p id='test'>a<!-- commentb --></p>"));
+        assertFalse(areFragmentEquals("<p><span><span><span>b</span></span></span></p>", "<p><span><span><span>c</span></span></span></p>"));
+
+
+        assertTrue(JFiveParse.parse("<html><body>hello</body></html>").isEqualNode(JFiveParse.parse("<html><body>hello</body></html>")));
+        assertFalse(JFiveParse.parse("<!DOCTYPE html><html><body>hello</body></html>").isEqualNode(JFiveParse.parse("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html><body>hello</body></html>")));
+    }
 }

@@ -43,11 +43,10 @@ public class Attributes implements Iterable<AttributeNode> {
             return true;
         }
 
-        if (!(obj instanceof Attributes)) {
-            return false;
+        if (obj instanceof Attributes) {
+            return Objects.equals(attributes, ((Attributes) obj).attributes);
         }
-
-        return Objects.equals(attributes, ((Attributes) obj).attributes);
+        return false;
     }
 
     public Attributes copy() {
@@ -64,7 +63,7 @@ public class Attributes implements Iterable<AttributeNode> {
     }
 
     Set<String> keySet() {
-        return attributes == null ? Collections.emptySet() : attributes.keySet();
+        return attributes == null ? Set.of() : attributes.keySet();
     }
 
     private void ensureMap() {

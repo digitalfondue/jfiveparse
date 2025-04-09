@@ -15,6 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.Objects;
+
 /**
  * Represent a document type.
  */
@@ -59,4 +61,18 @@ public class DocumentType extends Node {
 	public Node cloneNode(boolean deep) {
 		return new DocumentType(getName(), getPublicId(), getSystemId());
 	}
+
+    @Override
+    public boolean isEqualNode(Node other) {
+        if (this == other) {
+            return true;
+        }
+        if (other instanceof DocumentType) {
+            DocumentType otherDocType = (DocumentType) other;
+            return Objects.equals(name, otherDocType.name) &&
+                    Objects.equals(publicId, otherDocType.publicId) &&
+                    Objects.equals(systemId, otherDocType.systemId);
+        }
+        return false;
+    }
 }

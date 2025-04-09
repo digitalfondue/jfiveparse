@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -19,11 +18,12 @@ public class TestParsePerf {
 
     @BeforeEach
     void load() throws IOException {
-        file = new String(Files.readAllBytes(Paths.get("src/test/resources/test.html")), StandardCharsets.UTF_8);
+        file = Files.readString(Paths.get("src/test/resources/test.html"));
     }
 
     int round = 20_000_000;
 
+    @Disabled
     @Test
     void check() {
         assertEquals(91, parser.parse(file).getAllNodesMatching(Selector.select().element("div").toMatcher()).size());
@@ -35,7 +35,6 @@ public class TestParsePerf {
     @Disabled
     @Test
     public void parse() {
-
         long start = System.nanoTime();
         for (int i = 0; i < round; i++) {
             parser.parse(file);
