@@ -5,9 +5,9 @@
 
 
 
-jfiveparse pass all the non scripted tests for the tokenizer and tree construction from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
+jfiveparse pass all the non-scripted tests for the tokenizer and tree construction from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
 
-It provide both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
+It provides both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
 
 Requires java 11.
@@ -18,7 +18,7 @@ Requires java 11.
 
 As far as I know, there is no pure java html5 parser that currently pass the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests) (well, the more relevant tests :D, note: this project was published in october 2015).
 
-Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently the jar weight around ~150kb. The target is to keep it under 200kb.
+Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently, the jar weight around ~150kb. The target is to keep it under 200kb.
 
 Performance should be competitive with other java parsers.
 
@@ -35,14 +35,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.1.1'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.1.2'
 ```
 
 ## Use:
@@ -164,9 +164,9 @@ By default, when parsing/serializing, the following transformations will
 be applied:
  
  - entities will be interpreted and converted
- - all the attribute values will be double quoted
- - tag and attribute names will be lower case
- - the "/" character used in self closing tag will be ignored
+ - all the attribute values will be double-quoted
+ - tag and attribute names will be lower-case
+ - the "/" character used in self-closing tag will be ignored
  - some whitespace will be ignored
  
 Currently, jfiveparse can preserve the entities, the attribute quoting type and 
