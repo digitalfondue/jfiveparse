@@ -72,16 +72,17 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.18.3</version>
+            <version>1.19.1</version>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>tools.profiler</groupId>
             <artifactId>async-profiler</artifactId>
             <version>3.0</version>
             <scope>test</scope>
         </dependency>
-
+        -->
     </dependencies>
 
     <build>

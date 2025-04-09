@@ -63,7 +63,7 @@ public class Attributes implements Iterable<AttributeNode> {
     }
 
     Set<String> keySet() {
-        return attributes == null ? Collections.emptySet() : attributes.keySet();
+        return attributes == null ? Set.of() : attributes.keySet();
     }
 
     private void ensureMap() {

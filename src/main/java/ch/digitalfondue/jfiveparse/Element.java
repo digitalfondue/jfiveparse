@@ -87,7 +87,7 @@ public class Element extends Node {
      */
     @Override
     public List<Node> getChildNodes() {
-        return childNodes == null ? Collections.emptyList() : Collections.unmodifiableList(childNodes);
+        return childNodes == null ? List.of() : Collections.unmodifiableList(childNodes);
     }
 
     @Override
@@ -348,8 +348,26 @@ public class Element extends Node {
         if (this == other) {
             return true;
         }
-        // FIXME
-        throw new IllegalStateException("FIXME TO IMPLEMENT");
+        if (other instanceof Element) {
+            Element otherElement = (Element) other;
+            var count = getChildCount();
+            var equalityCheck = Objects.equals(getNodeName(), otherElement.getNodeName()) &&
+                    Objects.equals(getNamespaceURI(), otherElement.getNamespaceURI()) &&
+                    Objects.equals(count, otherElement.getChildCount()) &&
+                    Objects.equals(getAttributes(), otherElement.getAttributes());
+
+            if (!equalityCheck) {
+                return false;
+            }
+
+            for (var i = 0; i < count; i++) {
+                if (!Node.nodesEquals(childNodes.get(i), otherElement.childNodes.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
