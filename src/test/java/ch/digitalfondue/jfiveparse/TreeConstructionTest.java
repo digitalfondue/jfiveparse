@@ -178,8 +178,7 @@ public class TreeConstructionTest {
 
         int depthsForTemplatesChilds = 0;
 
-        if (node instanceof Element) {
-            Element elem = (Element) node;
+        if (node instanceof Element elem) {
             sb.append("<");
             if (Node.NAMESPACE_MATHML.equals(elem.getNamespaceURI())) {
                 sb.append("math ");
@@ -220,9 +219,8 @@ public class TreeConstructionTest {
             sb.append("\"").append(((Text) node).getData()).append("\"");
         } else if (node instanceof Comment) {
             sb.append("<!-- ").append(((Comment) node).getData()).append(" -->");
-        } else if (node instanceof DocumentType) {
+        } else if (node instanceof DocumentType dt) {
 
-            DocumentType dt = (DocumentType) node;
             sb.append("<!DOCTYPE ");
             sb.append(dt.getName());
             if (isNotBlank(dt.getPublicId()) || isNotBlank(dt.getSystemId())) {

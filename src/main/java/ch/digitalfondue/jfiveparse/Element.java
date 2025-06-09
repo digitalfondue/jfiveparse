@@ -348,8 +348,7 @@ public class Element extends Node {
         if (this == other) {
             return true;
         }
-        if (other instanceof Element) {
-            Element otherElement = (Element) other;
+        if (other instanceof Element otherElement) {
             var count = getChildCount();
             var equalityCheck = Objects.equals(getNodeName(), otherElement.getNodeName()) &&
                     Objects.equals(getNamespaceURI(), otherElement.getNamespaceURI()) &&
