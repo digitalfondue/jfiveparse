@@ -15,12 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class DOMTokenList extends AbstractList<String> {
 
@@ -57,13 +52,10 @@ public class DOMTokenList extends AbstractList<String> {
         element.getAttributes().put(attrName, Common.join(vals.iterator()));
     }
 
-    @SafeVarargs
     public final void add(String val, String... values) {
         add(val);
         if (values != null) {
-            for (String s : values) {
-                add(s);
-            }
+            addAll(Arrays.asList(values));
         }
     }
 

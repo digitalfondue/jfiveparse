@@ -573,7 +573,7 @@ public abstract class Node {
     }
 
 	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
-		if(concatenatedText.length() == 0) {
+		if(concatenatedText.isEmpty()) {
 			removeChild(text);
 		} else {
 			replaceChild(new Text(concatenatedText.toString()), text);
