@@ -1,12 +1,12 @@
 /**
  * Copyright © 2025 digitalfondue (info@digitalfondue.ch)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-// based on https://github.com/fb55/css-what/blob/master/src/parse.ts#L429
+// based on https://github.com/fb55/css-what/blob/master/src/parse.ts
 // under the license (BSD 2-Clause "Simplified" License): ( https://github.com/fb55/css-what/blob/master/LICENSE )
 // Copyright (c) Felix Böhm
 // All rights reserved.
@@ -84,7 +84,7 @@ class CSS {
     }
 
     enum SelectorType {
-        Child, Parent, Sibling, Adjacent, Attribute, PseudoElement, Descendant
+        Child, Parent, Sibling, Adjacent, Attribute, PseudoElement, ColumnCombinator, Descendant
     }
 
     enum AttributeAction {
@@ -121,7 +121,14 @@ class CSS {
         };
     }
 
-    private static boolean isQuote(char c){
+    private static boolean isTraversal(CssSelector selector) {
+        return switch (selector.type) {
+            case Adjacent, Child, Descendant, Parent, Sibling, ColumnCombinator -> true;
+            default -> false;
+        };
+    }
+
+    private static boolean isQuote(char c) {
         return c == '\'' || c == '"';
     }
 
@@ -154,10 +161,36 @@ class CSS {
         }
 
         String readValueWithParenthesis() {
-            return ""; // FIXME
+            selectorIndex += 1;
+            int start = selectorIndex;
+            for (int counter = 1; selectorIndex < selectorLength; selectorIndex++) {
+                switch (selector.charAt(selectorIndex)) {
+                    case '\\': {
+                        // Skip next character
+                        selectorIndex += 1;
+                        break;
+                    }
+                    case '(': {
+                        counter += 1;
+                        break;
+                    }
+                    case ')': {
+                        counter -= 1;
+
+                        if (counter == 0) {
+                            return unescapeCSS(selector.substring(start, selectorIndex++));
+                        }
+                        break;
+                    }
+                }
+            }
+            throw new IllegalStateException("Parenthesis not matched");
         }
 
         void ensureNotTraversal() {
+            if (!tokens.isEmpty() && isTraversal(tokens.get(tokens.size() - 1))) {
+                throw new IllegalStateException("Did not expect successive traversals.");
+            }
         }
 
         void addTraversal(SelectorType type) {
@@ -268,7 +301,7 @@ class CSS {
                         }
                         stripWhitespace(0);
                         // Determine comparison operation
-                        AttributeAction action  = AttributeAction.Exists;
+                        AttributeAction action = AttributeAction.Exists;
                         AttributeAction possibleAction = getActionTypes(selector.charAt(selectorIndex));
                         if (possibleAction != null) {
                             action = possibleAction;
@@ -345,7 +378,7 @@ class CSS {
                         break;
                     }
                     default: {
-
+                        // FIXME
                     }
                 }
             }
