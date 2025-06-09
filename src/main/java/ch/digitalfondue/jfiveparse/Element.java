@@ -128,7 +128,7 @@ public class Element extends Node {
 
     private Node insertAdjacentNode(String position, Node node) {
         Objects.requireNonNull(position, "position must be not null");
-        position = position.toLowerCase(Locale.ENGLISH);
+        position = position.toLowerCase(Locale.ROOT);
         Node parentNode = getParentNode();
         switch (position) {
             case "beforebegin":
@@ -168,7 +168,7 @@ public class Element extends Node {
 
     public void insertAdjacentHTML(String position, String text) {
         Objects.requireNonNull(position, "position must be not null");
-        position = position.toLowerCase(Locale.ENGLISH);
+        position = position.toLowerCase(Locale.ROOT);
     	Parser parser = new Parser();
     	Node parentNode = getParentNode();
 
