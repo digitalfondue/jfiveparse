@@ -15,9 +15,9 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // based on https://github.com/fb55/css-what/blob/master/src/parse.ts
 // under the license (BSD 2-Clause "Simplified" License): ( https://github.com/fb55/css-what/blob/master/LICENSE )
@@ -34,13 +34,16 @@ import java.util.Locale;
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class CSS {
 
+    private static final Pattern reName = Pattern.compile("^[^#\\\\]?(?:\\\\(?:[\\da-f]{1,6}\\s?|.)|[\\w\\u00B0-\\uFFFF-])+");
+    private static final Pattern reEscape = Pattern.compile("\\\\([\\da-f]{1,6}\\s?|(\\s)|.)", Pattern.CASE_INSENSITIVE);
+
+
     // expose it on the JFiveParse class
     static List<List<CssSelector>> parseSelector(String selector) {
         List<List<CssSelector>> subselects = new ArrayList<>();
         int endIndex = new ParseSelector(subselects, selector, 0).parse();
         if (endIndex < selector.length()) {
-            throw new IllegalStateException("Unmatched selector: ");
-            //throw new Error(`Unmatched selector: ${selector.slice(endIndex)}`);
+            throw new IllegalStateException("Unmatched selector: " + selector.substring(endIndex));
         }
 
         return subselects;
@@ -51,6 +54,17 @@ class CSS {
 
         CssSelector(SelectorType type) {
             this.type = type;
+        }
+    }
+
+    static class TagSelector extends CssSelector {
+        String name;
+        String namespace;
+
+        TagSelector(String name, String namespace) {
+            super(SelectorType.Tag);
+            this.name = name;
+            this.namespace = namespace;
         }
     }
 
@@ -83,13 +97,31 @@ class CSS {
         }
     }
 
+    static class PseudoSelector extends CssSelector {
+        Object data;
+        String name;
+
+        PseudoSelector(String name, Object data) {
+            super(SelectorType.Pseudo);
+            this.name = name;
+            this.data = data;
+        }
+    }
+
+    static class UniversalSelector extends CssSelector {
+        String namespace;
+
+        UniversalSelector(String namespace) {
+            super(SelectorType.Universal);
+        }
+    }
+
     enum SelectorType {
-        Child, Parent, Sibling, Adjacent, Attribute, PseudoElement, ColumnCombinator, Descendant
+        Child, Parent, Sibling, Adjacent, Attribute, PseudoElement, ColumnCombinator, Universal, Tag, Pseudo, Descendant
     }
 
     enum AttributeAction {
         Equals, Exists, Start, End, Any, Not, Hyphen, Element
-
     }
 
     private static String unescapeCSS(String cssString) {
@@ -132,10 +164,29 @@ class CSS {
         return c == '\'' || c == '"';
     }
 
+    private static final Set<String> pseudosToPseudoElements = Set.of(
+            "before",
+            "after",
+            "first-line",
+            "first-letter"
+    );
+
+    private static final Set<String> stripQuotesFromPseudos = Set.of("contains", "icontains");
+
+    private static final Set<String> unpackPseudos = Set.of(
+            "has",
+            "not",
+            "matches",
+            "is",
+            "where",
+            "host",
+            "host-context"
+    );
+
     private static class ParseSelector {
 
         final List<List<CssSelector>> subselects;
-        ArrayList<CssSelector> tokens = new ArrayList<>();
+        List<CssSelector> tokens = new ArrayList<>();
         final String selector;
         final int selectorLength;
         int selectorIndex;
@@ -149,7 +200,13 @@ class CSS {
 
 
         String getName(int offset) {
-            return ""; // FIXME
+            Matcher matcher = reName.matcher(selector.substring(selectorIndex + offset));
+            if (!matcher.find()) {
+                throw new IllegalStateException("Expected name, found " + selector.substring(selectorIndex));
+            }
+            String name = matcher.group();
+            selectorIndex += offset + name.length();
+            return unescapeCSS(name);
         }
 
         void stripWhitespace(int offset) {
@@ -216,6 +273,15 @@ class CSS {
         }
 
         void finalizeSubselector() {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type == SelectorType.Descendant) {
+                tokens.remove(tokens.size()-1);
+            }
+
+            if (tokens.isEmpty()) {
+                throw new IllegalStateException("Empty sub-selector");
+            }
+
+            subselects.add(tokens);
         }
 
         int parse() {
@@ -366,9 +432,38 @@ class CSS {
                         }
 
                         String name = getName(1).toLowerCase(Locale.ROOT);
+                        if (pseudosToPseudoElements.contains(name)) {
+                            tokens.add(new PseudoElement(name, null));
+                            break;
+                        }
 
-                        //FIXME
+                        Object data = null;
+                        if (selector.charAt(selectorIndex) == '(') {
+                            if (unpackPseudos.contains(name)) {
+                                if (isQuote(selector.charAt(selectorIndex + 1))) {
+                                    throw new IllegalStateException("Pseudo-selector " + name + " cannot be quoted");
+                                }
 
+                                List<List<CssSelector>> subselects = new ArrayList<>();
+                                data = subselects;
+                                selectorIndex = new ParseSelector(subselects, selector, selectorIndex + 1).parse();
+                                if (selector.charAt(selectorIndex) != ')') {
+                                    throw new IllegalStateException("Missing closing parenthesis in :" + name + " (" + selector + ")");
+                                }
+                                selectorIndex += 1;
+                            } else {
+                                String value = readValueWithParenthesis();
+
+                                if (stripQuotesFromPseudos.contains(name)) {
+                                    char quot = value.charAt(0);
+                                    if (quot == value.charAt(value.length() - 1) && isQuote(quot)) {
+                                        value = value.substring(1, value.length() - 2);
+                                    }
+                                }
+                                data = unescapeCSS(value);
+                            }
+                        }
+                        tokens.add(new PseudoSelector(name, data));
                         break;
                     }
                     case ',': {
@@ -378,13 +473,56 @@ class CSS {
                         break;
                     }
                     default: {
-                        // FIXME
+                        if (selector.startsWith("/*", selectorIndex)) {
+                            int endIndex = selector.indexOf("*/", selectorIndex + 2);
+                            if (endIndex < 0) {
+                                throw new IllegalStateException("Comment was not terminated");
+                            }
+                            selectorIndex = endIndex + 2;
+                            // Remove leading whitespace
+                            if (tokens.isEmpty()) {
+                                stripWhitespace(0);
+                            }
+
+                            break;
+                        }
+                        String namespace = null;
+                        String name = null;
+                        if (firstChar == '*') {
+                            selectorIndex += 1;
+                            name = "*";
+                        } else if (firstChar == '|') {
+                            name = "";
+                            if (selector.charAt(selectorIndex + 1) == '|') {
+                                addTraversal(SelectorType.ColumnCombinator);
+                                stripWhitespace(2);
+                                break;
+                            }
+                        } else if (reName.matcher(selector.substring(selectorIndex)).find()) {
+                            name = getName(0);
+                        } else {
+                            break loop;
+                        }
+                        if (canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '|' && selector.charAt(selectorIndex + 1) != '|') {
+                            namespace = name;
+                            if (selector.charAt(selectorIndex + 1) == '*') {
+                                name = "*";
+                                selectorIndex += 2;
+                            } else {
+                                name = getName(1);
+                            }
+                        }
+                        tokens.add("*".equals(name)  ? new UniversalSelector(namespace) : new TagSelector(name, namespace));
                     }
                 }
             }
 
             finalizeSubselector();
             return selectorIndex;
+        }
+
+        private boolean canCharAt(int i) {
+            return i < selectorLength;
         }
     }
 }
