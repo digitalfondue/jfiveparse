@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 class CSSTest {
 
 
+    // Tag names
+
     @Test
     void checkDiv() {
         CSS.parseSelector("div");
@@ -16,6 +18,7 @@ class CSSTest {
         CSS.parseSelector("*");
     }
 
+    // Traversal
     @Test
     void checkDivDiv() {
         CSS.parseSelector("div div");
@@ -31,4 +34,22 @@ class CSSTest {
     void checkDivPlusDiv() {
         CSS.parseSelector("div + div");
     }
+
+    @Test
+    void checkDivSiblingDiv() {
+        CSS.parseSelector("div ~ div");
+    }
+
+    @Test
+    void checkParent() {
+        CSS.parseSelector("p < div");
+    }
+
+    // Escaped whitespace
+
+    //
+
+    // Attributes
+    
+
 }
