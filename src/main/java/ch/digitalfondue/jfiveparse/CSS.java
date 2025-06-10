@@ -45,75 +45,29 @@ class CSS {
         if (endIndex < selector.length()) {
             throw new IllegalStateException("Unmatched selector: " + selector.substring(endIndex));
         }
-
         return subselects;
     }
 
-    static class CssSelector {
-        SelectorType type;
-
-        CssSelector(SelectorType type) {
-            this.type = type;
-        }
+    sealed interface CssSelector {
+        SelectorType type();
     }
 
-    static class TagSelector extends CssSelector {
-        String name;
-        String namespace;
-
-        TagSelector(String name, String namespace) {
-            super(SelectorType.Tag);
-            this.name = name;
-            this.namespace = namespace;
-        }
+    record CssSelectorType(SelectorType type) implements CssSelector {
     }
 
-    static class AttributeSelector extends CssSelector {
-        String name;
-        AttributeAction action;
-        String value;
-        String ignoreCase;
-        String nameSpace;
-
-        AttributeSelector(String name, AttributeAction action, String value, String ignoreCase, String nameSpace) {
-            super(SelectorType.Attribute);
-            this.name = name;
-            this.action = action;
-            this.value = value;
-            this.ignoreCase = ignoreCase;
-            this.nameSpace = nameSpace;
-        }
+    record TagSelector(SelectorType type, String name, String namespace) implements CssSelector {
     }
 
-    static class PseudoElement extends CssSelector {
-
-        String name;
-        String data;
-
-        PseudoElement(String name, String data) {
-            super(SelectorType.PseudoElement);
-            this.name = name;
-            this.data = data;
-        }
+    record AttributeSelector(SelectorType type, String name, AttributeAction action, String value, String ignoreCase, String namespace) implements CssSelector {
     }
 
-    static class PseudoSelector extends CssSelector {
-        Object data;
-        String name;
-
-        PseudoSelector(String name, Object data) {
-            super(SelectorType.Pseudo);
-            this.name = name;
-            this.data = data;
-        }
+    record PseudoElement(SelectorType type, String name, String data) implements CssSelector {
     }
 
-    static class UniversalSelector extends CssSelector {
-        String namespace;
+    record PseudoSelector(SelectorType type, String name, Object data) implements CssSelector {
+    }
 
-        UniversalSelector(String namespace) {
-            super(SelectorType.Universal);
-        }
+    record UniversalSelector(SelectorType type, String namespace) implements CssSelector {
     }
 
     enum SelectorType {
@@ -154,7 +108,7 @@ class CSS {
     }
 
     private static boolean isTraversal(CssSelector selector) {
-        return switch (selector.type) {
+        return switch (selector.type()) {
             case Adjacent, Child, Descendant, Parent, Sibling, ColumnCombinator -> true;
             default -> false;
         };
@@ -183,12 +137,12 @@ class CSS {
             "host-context"
     );
 
-    private static class ParseSelector {
+    private static final class ParseSelector {
 
         final List<List<CssSelector>> subselects;
-        List<CssSelector> tokens = new ArrayList<>();
         final String selector;
         final int selectorLength;
+        List<CssSelector> tokens = new ArrayList<>();
         int selectorIndex;
 
         ParseSelector(List<List<CssSelector>> subselects, String selector, int selectorIndex) {
@@ -251,19 +205,20 @@ class CSS {
         }
 
         void addTraversal(SelectorType type) {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type == SelectorType.Descendant
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.Descendant
             ) {
-                tokens.get(tokens.size() - 1).type = type;
+                tokens.set(tokens.size() - 1, new CssSelectorType(type));
                 return;
             }
 
             ensureNotTraversal();
 
-            tokens.add(new CssSelector(type));
+            tokens.add(new CssSelectorType(type));
         }
 
         void addSpecialAttribute(String name, AttributeAction action) {
             tokens.add(new AttributeSelector(
+                    SelectorType.Attribute,
                     name,
                     action,
                     getName(1),
@@ -273,7 +228,7 @@ class CSS {
         }
 
         void finalizeSubselector() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type == SelectorType.Descendant) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.Descendant) {
                 tokens.remove(tokens.size()-1);
             }
 
@@ -302,9 +257,9 @@ class CSS {
                     case 13: // carriage return
                     case 32: // space
                     {
-                        if (tokens.isEmpty() || tokens.get(0).type != SelectorType.Descendant) {
+                        if (tokens.isEmpty() || tokens.get(0).type() != SelectorType.Descendant) {
                             ensureNotTraversal();
-                            tokens.add(new CssSelector(SelectorType.Descendant));
+                            tokens.add(new CssSelectorType(SelectorType.Descendant));
                         }
                         stripWhitespace(1);
                         break;
@@ -420,20 +375,20 @@ class CSS {
                         }
 
                         selectorIndex += 1;
-                        tokens.add(new AttributeSelector(name, action, value, ignoreCase, namespace));
+                        tokens.add(new AttributeSelector(SelectorType.Attribute, name, action, value, ignoreCase, namespace));
                         break;
                     }
                     case ':': {
                         if (selector.charAt(selectorIndex + 1) == ':') {
                             String name = getName(2).toLowerCase(Locale.ROOT);
                             String data = selector.charAt(selectorIndex) == '(' ? readValueWithParenthesis() : null;
-                            tokens.add(new PseudoElement(name, data));
+                            tokens.add(new PseudoElement(SelectorType.PseudoElement, name, data));
                             break;
                         }
 
                         String name = getName(1).toLowerCase(Locale.ROOT);
                         if (pseudosToPseudoElements.contains(name)) {
-                            tokens.add(new PseudoElement(name, null));
+                            tokens.add(new PseudoElement(SelectorType.PseudoElement, name, null));
                             break;
                         }
 
@@ -463,7 +418,7 @@ class CSS {
                                 data = unescapeCSS(value);
                             }
                         }
-                        tokens.add(new PseudoSelector(name, data));
+                        tokens.add(new PseudoSelector(SelectorType.Pseudo, name, data));
                         break;
                     }
                     case ',': {
@@ -512,7 +467,7 @@ class CSS {
                                 name = getName(1);
                             }
                         }
-                        tokens.add("*".equals(name)  ? new UniversalSelector(namespace) : new TagSelector(name, namespace));
+                        tokens.add("*".equals(name)  ? new UniversalSelector(SelectorType.Universal, namespace) : new TagSelector(SelectorType.Tag, name, namespace));
                     }
                 }
             }
