@@ -179,7 +179,7 @@ public class Selector {
      */
     public Selector element(String name, String namespace) {
         matchers.add(node -> node.getNodeType() == Node.ELEMENT_NODE && name.equals(node.getNodeName())
-                && Objects.equals(namespace, ((Element) node).getNamespaceURI()));
+                && Objects.equals(namespace, ((CommonNode.CommonElement) node).getNamespaceURI()));
         return this;
     }
 
@@ -229,13 +229,13 @@ public class Selector {
         return attrValEq("id", value);
     }
 
-    private static NodeMatcher matchAttr(String name, BiPredicate<String, Element> attributeValueMatcher) {
+    private static NodeMatcher matchAttr(String name, BiPredicate<String, CommonNode.CommonElement> attributeValueMatcher) {
         return (node) -> {
             if (node.getNodeType() != Node.ELEMENT_NODE) {
                 return false;
             }
-            Element elem = (Element) node;
-            return elem.getAttributes().containsKey(name) && attributeValueMatcher.test(elem.getAttribute(name), elem);
+            CommonNode.CommonElement elem = (CommonNode.CommonElement) node;
+            return elem.containsAttribute(name) && attributeValueMatcher.test(elem.getAttributeValue(name), elem);
         };
     }
 
@@ -281,7 +281,7 @@ public class Selector {
      * @return
      */
     public Selector attrValInList(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> new DOMTokenList(elem, name).contains(value)));
+        matchers.add(matchAttr(name, (attrValue, elem) -> DOMTokenList.extractValues(elem, name).contains(value)));
         return this;
     }
 
@@ -343,7 +343,7 @@ public class Selector {
      * @return
      */
     public Selector isFirstChild() {
-        matchers.add(node -> node.parentNode != null && node.parentNode.getFirstChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getFirstChild() == node);
         return this;
     }
 
@@ -353,7 +353,7 @@ public class Selector {
      * @return
      */
     public Selector isFirstElementChild() {
-        matchers.add(node -> node.parentNode != null && node.parentNode.getFirstElementChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getFirstElementChild() == node);
         return this;
     }
 
@@ -367,7 +367,7 @@ public class Selector {
      * @return
      */
     public Selector isLastChild() {
-        matchers.add(node -> node.parentNode != null && node.parentNode.getLastChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getLastChild() == node);
         return this;
     }
 
@@ -377,7 +377,7 @@ public class Selector {
      * @return
      */
     public Selector isLastElementChild() {
-        matchers.add(node -> node.parentNode != null && node.parentNode.getLastElementChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getLastElementChild() == node);
         return this;
     }
 
@@ -398,7 +398,7 @@ public class Selector {
      */
     public Selector withChild() {
         var rules = andMatchers(copyAndClear());
-        NodeMatcher hasParentMatching = (node) -> node.parentNode != null && rules.match(node.parentNode);
+        NodeMatcher hasParentMatching = (node) -> node.getParentNode() != null && rules.match(node.getParentNode());
         matchers.add(hasParentMatching);
         return this;
     }
@@ -415,8 +415,8 @@ public class Selector {
     public Selector withDescendant() {
         var ancestorMatcher = andMatchers(copyAndClear());
         NodeMatcher hasAncestorMatching = (node) -> {
-            while (node.parentNode != null) {
-                node = node.parentNode;
+            while (node.getParentNode() != null) {
+                node = node.getParentNode();
                 if (ancestorMatcher.match(node)) {
                     return true;
                 }

@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Base class for all the nodes.
  */
-public abstract class Node {
+public abstract class Node implements CommonNode {
 
     private static final List<Node> EMPTY_LIST = List.of();
 

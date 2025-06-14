@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class DOMTokenList extends AbstractList<String> {
 
@@ -27,19 +28,25 @@ public class DOMTokenList extends AbstractList<String> {
         this.attrName = attrName;
     }
 
-    private List<String> attributeValues() {
-        AttributeNode a = element.attributes != null ? element.attributes.get(attrName) : null;
-        if (a != null && a.getValue() != null) {
-            List<String> vals = new ArrayList<>();
-            for (String s : a.getValue().split("\\s+")) {
-                if (s != null && !s.trim().isEmpty()) {
-                    vals.add(s);
+    private static final Pattern SPACES = Pattern.compile("\\s+");
+
+    static List<String> extractValues(CommonNode.CommonElement element, String attrName) {
+        List<String> vals = new ArrayList<>();
+        if (element.containsAttribute(attrName)) {
+            String value = element.getAttributeValue(attrName);
+            if (value != null) {
+                for (String s : SPACES.split(value)) {
+                    if (!s.trim().isEmpty()) {
+                        vals.add(s);
+                    }
                 }
             }
-            return vals;
-        } else {
-            return new ArrayList<>(1);
         }
+        return vals;
+    }
+
+    private List<String> attributeValues() {
+        return extractValues(element, attrName);
     }
 
     @Override

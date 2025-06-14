@@ -144,4 +144,92 @@ public class W3CDom {
             return false;
         }
     }
+
+    static CommonNode wrap(org.w3c.dom.Node node) {
+        if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+            return new CommonElementWrapper((org.w3c.dom.Element) node);
+        }
+        return new CommonNodeWrapper(node);
+    }
+
+    static class CommonNodeWrapper implements CommonNode {
+
+        protected final org.w3c.dom.Node node;
+
+        CommonNodeWrapper(org.w3c.dom.Node node) {
+            this.node = node;
+        }
+
+        @Override
+        public byte getNodeType() {
+            return (byte) node.getNodeType();
+        }
+
+        @Override
+        public String getNodeName() {
+            return node.getNodeName();
+        }
+
+        @Override
+        public CommonNode getParentNode() {
+            return wrap(node.getParentNode());
+        }
+
+        @Override
+        public CommonNode getFirstChild() {
+            return wrap(node.getFirstChild());
+        }
+
+        @Override
+        public CommonNode getLastChild() {
+            return wrap(node.getLastChild());
+        }
+
+        @Override
+        public CommonElement getFirstElementChild() {
+            var childNodes = node.getChildNodes();
+            var count = childNodes.getLength();
+            for (int i = 0; i < count; i++) {
+                var childNode = childNodes.item(i);
+                if (childNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                    return new CommonElementWrapper((org.w3c.dom.Element) childNode);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public CommonElement getLastElementChild() {
+            var childNodes = node.getChildNodes();
+            for (int i = childNodes.getLength() - 1; i >= 0; i--) {
+                var childNode = childNodes.item(i);
+                if (childNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+                    return new CommonElementWrapper((org.w3c.dom.Element) childNode);
+                }
+            }
+            return null;
+        }
+    }
+
+    static final class CommonElementWrapper extends CommonNodeWrapper implements CommonNode.CommonElement {
+
+        CommonElementWrapper(org.w3c.dom.Element node) {
+            super(node);
+        }
+
+        @Override
+        public String getNamespaceURI() {
+            return node.getNamespaceURI();
+        }
+
+        @Override
+        public boolean containsAttribute(String name) {
+            return node.getAttributes().getNamedItem(name) != null;
+        }
+
+        @Override
+        public String getAttributeValue(String name) {
+            return node.getAttributes().getNamedItem(name).getNodeValue();
+        }
+    }
 }
