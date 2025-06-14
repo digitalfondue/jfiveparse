@@ -17,13 +17,5 @@ package ch.digitalfondue.jfiveparse;
 
 @FunctionalInterface
 public interface NodeMatcher {
-    default boolean match(Node node) {
-        return match((CommonNode) node);
-    }
-
-    default boolean match(org.w3c.dom.Node node) {
-        return match(W3CDom.wrap(node));
-    }
-
     boolean match(CommonNode node);
 }
