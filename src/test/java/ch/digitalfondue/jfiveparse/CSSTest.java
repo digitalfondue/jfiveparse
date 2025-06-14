@@ -57,6 +57,15 @@ class CSSTest {
     //
 
     // Attributes
+    @Test
+    void checkAttributeStart() {
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.Attribute, "name", CSS.AttributeAction.Start, "foo[", null, null))), CSS.parseSelector("[name^=\"foo[\"]"));
+    }
+
+    @Test
+    void checkAttributeStart2() {
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.Attribute, "name", CSS.AttributeAction.Start, "foo[bar]", null, null))), CSS.parseSelector("[name^=\"foo[bar]\"]"));
+    }
 
 
 }
