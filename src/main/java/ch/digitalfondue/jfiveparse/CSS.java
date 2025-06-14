@@ -222,8 +222,8 @@ class CSS {
                     name,
                     action,
                     getName(1),
-                    null,
-                    "quirks")
+                    "quirks",
+                    null)
             );
         }
 

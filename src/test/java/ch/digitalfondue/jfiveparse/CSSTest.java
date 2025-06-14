@@ -52,7 +52,12 @@ class CSSTest {
         assertEquals(List.of(List.of(tag("p"), new CSS.CssSelectorType(CSS.SelectorType.Parent), tag("div"))), CSS.parseSelector("p < div"));
     }
 
-    // Escaped whitespace
+    // Escaped whitespace & special characters
+
+    @Test
+    void checkSpecialCharacters() {
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.Attribute, "class", CSS.AttributeAction.Element, "m™²³", "quirks", null))), CSS.parseSelector(".m™²³"));
+    }
 
     //
 
