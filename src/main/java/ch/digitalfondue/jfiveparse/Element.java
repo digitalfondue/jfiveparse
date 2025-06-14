@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-public class Element extends Node {
+public class Element extends Node implements CommonNode.CommonElement {
 
     final String nodeName;
     final String originalNodeName;
@@ -117,6 +117,18 @@ public class Element extends Node {
      */
     public String getNamespaceURI() {
         return namespaceURI;
+    }
+
+
+    // case sensitive check
+    @Override
+    public boolean containsAttribute(String name) {
+        return attributes != null && attributes.containsKey(name);
+    }
+
+    @Override
+    public String getAttributeValue(String name) {
+        return attributes != null ? attributes.getNamedItem(name) : null;
     }
 
     void setInnerHtml(List<Node> nodes) {
