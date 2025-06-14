@@ -209,6 +209,11 @@ public class W3CDom {
             }
             return null;
         }
+
+        @Override
+        public boolean isSameNode(CommonNode otherNode) {
+            return otherNode instanceof CommonNodeWrapper cnw && node.isSameNode(cnw.node);
+        }
     }
 
     static final class CommonElementWrapper extends CommonNodeWrapper implements CommonNode.CommonElement {

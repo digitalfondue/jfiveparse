@@ -321,7 +321,7 @@ public class Selector {
      * @return
      */
     public Selector isFirstChild() {
-        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getFirstChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.isSameNode(node.getParentNode().getFirstChild()));
         return this;
     }
 
@@ -331,7 +331,7 @@ public class Selector {
      * @return
      */
     public Selector isFirstElementChild() {
-        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getFirstElementChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.isSameNode(node.getParentNode().getFirstElementChild()));
         return this;
     }
 
@@ -345,7 +345,7 @@ public class Selector {
      * @return
      */
     public Selector isLastChild() {
-        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getLastChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.isSameNode(node.getParentNode().getLastChild()));
         return this;
     }
 
@@ -355,7 +355,7 @@ public class Selector {
      * @return
      */
     public Selector isLastElementChild() {
-        matchers.add(node -> node.getParentNode() != null && node.getParentNode().getLastElementChild() == node);
+        matchers.add(node -> node.getParentNode() != null && node.isSameNode(node.getParentNode().getLastElementChild()));
         return this;
     }
 
