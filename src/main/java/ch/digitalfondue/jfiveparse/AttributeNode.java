@@ -97,8 +97,7 @@ public class AttributeNode {
             return true;
         }
 
-        if (obj instanceof AttributeNode) {
-            AttributeNode other = (AttributeNode) obj;
+        if (obj instanceof AttributeNode other) {
             return name.equals(other.name) && //
                     getValue().equals(other.getValue()) && //
                     Objects.equals(prefix, other.prefix) && //

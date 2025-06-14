@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Base class for all the nodes.
  */
-public abstract class Node {
+public abstract class Node implements CommonNode {
 
     private static final List<Node> EMPTY_LIST = List.of();
 
@@ -93,16 +93,19 @@ public abstract class Node {
      *         {@link #COMMENT_NODE}, {@link #DOCUMENT_NODE} and
      *         {@link #DOCUMENT_TYPE_NODE}.
      */
+    @Override
     public abstract byte getNodeType();
 
     /**
      * @return the node name. Each concrete class will return a specific value.
      */
+    @Override
     public abstract String getNodeName();
 
     /**
      * Get the parent node if present or else return null.
      */
+    @Override
     public Node getParentNode() {
         return parentNode;
     }
@@ -263,6 +266,7 @@ public abstract class Node {
     /**
      * Get the last child, if present or else null.
      */
+    @Override
     public Node getLastChild() {
         List<Node> childs = getChildNodes();
         return childs.isEmpty() ? null : childs.get(childs.size() - 1);
@@ -272,6 +276,7 @@ public abstract class Node {
      * Get the first <strong>{@link Element}</strong> child, if present or else
      * null.
      */
+    @Override
     public Element getFirstElementChild() {
         List<Node> childs = getChildNodes();
         for (Node n : childs) {
@@ -286,6 +291,7 @@ public abstract class Node {
      * Get the last <strong>{@link Element}</strong> child, if present or else
      * null.
      */
+    @Override
     public Element getLastElementChild() {
         List<Node> childs = getChildNodes();
         for (int i = childs.size() - 1; i >= 0; i--) {
@@ -535,7 +541,8 @@ public abstract class Node {
      * @param other
      * @return
      */
-    public boolean isSameNode(Node other) {
+    @Override
+    public boolean isSameNode(CommonNode other) {
         return this == other;
     }
 
@@ -573,7 +580,7 @@ public abstract class Node {
     }
 
 	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
-		if(concatenatedText.length() == 0) {
+		if(concatenatedText.isEmpty()) {
 			removeChild(text);
 		} else {
 			replaceChild(new Text(concatenatedText.toString()), text);

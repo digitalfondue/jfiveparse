@@ -22,7 +22,7 @@ import java.util.Map;
 
 class TokenSaver extends TreeConstructor {
 
-    List<Token> tokens = new ArrayList<>();
+    final List<Token> tokens = new ArrayList<>();
 
     public TokenSaver() {
         super(false, false);

@@ -16,7 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -68,7 +67,7 @@ public class TreeConstructionTest {
         List<Object[]> data = new ArrayList<>();
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("src/test/resources/html5lib-tests/tree-construction"), "*.dat")) {
             for (Path p : ds) {
-                String file = new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
+                String file = Files.readString(p);
                 String[] testsAsString = file.split("\n\n#data\n");
                 for (String t : testsAsString) {
                     TreeConstruction treeTest = parse(t);
@@ -183,8 +182,7 @@ public class TreeConstructionTest {
 
         int depthsForTemplatesChilds = 0;
 
-        if (node instanceof Element) {
-            Element elem = (Element) node;
+        if (node instanceof Element elem) {
             sb.append("<");
             if (Node.NAMESPACE_MATHML.equals(elem.getNamespaceURI())) {
                 sb.append("math ");
@@ -225,9 +223,8 @@ public class TreeConstructionTest {
             sb.append("\"").append(((Text) node).getData()).append("\"");
         } else if (node instanceof Comment) {
             sb.append("<!-- ").append(((Comment) node).getData()).append(" -->");
-        } else if (node instanceof DocumentType) {
+        } else if (node instanceof DocumentType dt) {
 
-            DocumentType dt = (DocumentType) node;
             sb.append("<!DOCTYPE ");
             sb.append(dt.getName());
             if (StringUtils.isNotBlank(dt.getPublicId()) || StringUtils.isNotBlank(dt.getSystemId())) {
