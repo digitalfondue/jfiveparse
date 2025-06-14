@@ -115,6 +115,7 @@ public class Element extends Node implements CommonNode.CommonElement {
     /**
      * Return the namespace.
      */
+    @Override
     public String getNamespaceURI() {
         return namespaceURI;
     }

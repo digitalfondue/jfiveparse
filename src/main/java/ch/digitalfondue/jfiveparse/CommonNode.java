@@ -10,6 +10,8 @@ public interface CommonNode {
     CommonElement getFirstElementChild();
     CommonElement getLastElementChild();
 
+    boolean isSameNode(CommonNode node);
+
     interface CommonElement extends CommonNode {
         String getNamespaceURI();
 
