@@ -368,6 +368,8 @@ class CSS {
 
                             stripWhitespace(0);
                             // See if we have a force ignore flag
+                            // FIXME
+                            // complete code here
                         }
 
                         if (selector.charAt(selectorIndex) != ']') {
