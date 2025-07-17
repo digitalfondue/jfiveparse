@@ -35,6 +35,22 @@ class NodeMatchersTest {
     }
 
     @Test
+    void universalTest() {
+        Document doc = parser.parse("<div></div><div id=myid><span><i></i></span></div><div></div>");
+        // div *
+        List<Element> universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withDescendant().universal().toMatcher());
+        assertEquals(2, universal.size());
+        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
+        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0), universal.get(1));
+
+
+        // div > *
+        universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withChild().universal().toMatcher());
+        assertEquals(1, universal.size());
+        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
+    }
+
+    @Test
     void firstElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
         List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstElementChild().toMatcher());

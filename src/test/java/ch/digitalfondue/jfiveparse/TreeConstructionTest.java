@@ -16,19 +16,12 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -68,7 +61,7 @@ public class TreeConstructionTest {
         List<Object[]> data = new ArrayList<>();
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("src/test/resources/html5lib-tests/tree-construction"), "*.dat")) {
             for (Path p : ds) {
-                String file = new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
+                String file = Files.readString(p);
                 String[] testsAsString = file.split("\n\n#data\n");
                 for (String t : testsAsString) {
                     TreeConstruction treeTest = parse(t);
@@ -83,8 +76,10 @@ public class TreeConstructionTest {
                 }
             }
         }
-        data.sort((o1, o2) -> new CompareToBuilder().append(o1[0], o2[0]).append((boolean) o1[2], (boolean) o2[2]).toComparison());
+        data.sort((o1, o2) -> Comparator.<Object[], String>comparing(o -> (String) o[0]).thenComparing(o -> (boolean) o[2]).compare(o1, o2));
         return data;
+
+
     }
 
     static TreeConstruction parse(String test) {
@@ -148,7 +143,7 @@ public class TreeConstructionTest {
 
     }
 
-    static class TreeConstruction {
+    public static class TreeConstruction {
         String data;
         List<String> errors;
         String documentFragmentElement;
@@ -230,7 +225,7 @@ public class TreeConstructionTest {
             DocumentType dt = (DocumentType) node;
             sb.append("<!DOCTYPE ");
             sb.append(dt.getName());
-            if (StringUtils.isNotBlank(dt.getPublicId()) || StringUtils.isNotBlank(dt.getSystemId())) {
+            if (isNotBlank(dt.getPublicId()) || isNotBlank(dt.getSystemId())) {
                 sb.append(" ");
                 sb.append("\"").append(dt.getPublicId()).append("\"");
                 sb.append(" ");
@@ -244,6 +239,10 @@ public class TreeConstructionTest {
         for (Node childNode : node.getChildNodes()) {
             renderNode(childNode, depth + 1 + depthsForTemplatesChilds, sb);
         }
+    }
+
+    private static boolean isNotBlank(String s) {
+        return s != null && !s.isBlank();
     }
 
 }
