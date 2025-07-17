@@ -118,6 +118,18 @@ import java.util.function.BiPredicate;
  * <code>Selector.select().element("span").isLastChild().toMatcher()</code>
  * </td>
  * </tr>
+ * <tr>
+ * <td>td *</td>
+ * <td>
+ * <code>Selector.select().element("td").withDescendant().universal().toMatcher()</code>
+ * </td>
+ * </tr>
+ * <tr>
+ * <td>td > *</td>
+ * <td>
+ * <code>Selector.select().element("td").withChild().universal().toMatcher()</code>
+ * </td>
+ * </tr>
  * </table>
  */
 public class Selector {
@@ -144,6 +156,16 @@ public class Selector {
      */
     public Selector element(String name) {
         matchers.add(node -> node.getNodeType() == Node.ELEMENT_NODE && name.equals(node.getNodeName()));
+        return this;
+    }
+
+    /**
+     * Universal selector "*". It matches any node.
+     *
+     * @return
+     */
+    public Selector universal() {
+        matchers.add(n -> true);
         return this;
     }
 
