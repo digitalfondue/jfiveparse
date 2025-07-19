@@ -67,8 +67,7 @@ public class DocumentType extends Node {
         if (this == other) {
             return true;
         }
-        if (other instanceof DocumentType) {
-            DocumentType otherDocType = (DocumentType) other;
+        if (other instanceof DocumentType otherDocType) {
             return Objects.equals(name, otherDocType.name) &&
                     Objects.equals(publicId, otherDocType.publicId) &&
                     Objects.equals(systemId, otherDocType.systemId);

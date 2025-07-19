@@ -88,7 +88,7 @@ public class TokenizerTest {
 
             Replacer doubleEscapedUnicode = result -> {
                 int val = Integer.parseInt(result.group(1), 16);
-                return new String(new char[] { ((char) val) });
+                return String.valueOf(((char) val));
             };
             String newInput = replaceAll(desc.input, "\\\\u([\\d\\w]{4})", doubleEscapedUnicode);
             desc.input = newInput;
@@ -155,9 +155,7 @@ public class TokenizerTest {
 
         for (Token t : tokens) {
             Token lastRes = res.isEmpty() ? null : res.get(res.size() - 1);
-            if (t != null && lastRes != null && t instanceof Token.CharacterToken && lastRes instanceof Token.CharacterToken) {
-                Token.CharacterToken lastResChar = (Token.CharacterToken) lastRes;
-                Token.CharacterToken currentChar = (Token.CharacterToken) t;
+            if (t != null && lastRes != null && t instanceof Token.CharacterToken currentChar && lastRes instanceof Token.CharacterToken lastResChar) {
                 for (int i = 0; i < currentChar.chr.pos(); i++) {
                     lastResChar.chr.append(currentChar.chr.at(i));
                 }
@@ -203,7 +201,7 @@ public class TokenizerTest {
 
     // https://code.google.com/p/guava-libraries/issues/detail?id=651
     static String replaceAll(String target, String regex, Replacer operation) {
-        StringBuffer result = new StringBuffer(target.length() * 3 / 2);
+        StringBuilder result = new StringBuilder(target.length() * 3 / 2);
         Pattern pattern = Pattern.compile(regex);
 
         Matcher matcher = pattern.matcher(target);
