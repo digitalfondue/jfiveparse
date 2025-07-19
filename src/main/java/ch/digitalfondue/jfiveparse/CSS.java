@@ -71,11 +71,11 @@ class CSS {
     }
 
     enum SelectorType {
-        Child, Parent, Sibling, Adjacent, Attribute, PseudoElement, ColumnCombinator, Universal, Tag, Pseudo, Descendant
+        CHILD, PARENT, SIBLING, ADJACENT, ATTRIBUTE, PSEUDO_ELEMENT, COLUMN_COMBINATOR, UNIVERSAL, TAG, PSEUDO, DESCENDANT
     }
 
     enum AttributeAction {
-        Equals, Exists, Start, End, Any, Not, Hyphen, Element
+        EQUALS, EXISTS, START, END, ANY, NOT, HYPHEN, ELEMENT
     }
 
     private static String unescapeCSS(String cssString) {
@@ -84,12 +84,12 @@ class CSS {
 
     private static AttributeAction getActionTypes(char c) {
         return switch (c) {
-            case '~' /*Tilde*/ -> AttributeAction.Element;
-            case '^' /*Circumflex*/ -> AttributeAction.Start;
-            case '$' /*Dollar*/ -> AttributeAction.End;
-            case '*' /*Asterisk*/ -> AttributeAction.Any;
-            case '!' /*ExclamationMark*/ -> AttributeAction.Not;
-            case '|' /* Pipe */ -> AttributeAction.Hyphen;
+            case '~' /*Tilde*/ -> AttributeAction.ELEMENT;
+            case '^' /*Circumflex*/ -> AttributeAction.START;
+            case '$' /*Dollar*/ -> AttributeAction.END;
+            case '*' /*Asterisk*/ -> AttributeAction.ANY;
+            case '!' /*ExclamationMark*/ -> AttributeAction.NOT;
+            case '|' /* Pipe */ -> AttributeAction.HYPHEN;
             default -> null;
         };
 
@@ -109,7 +109,7 @@ class CSS {
 
     private static boolean isTraversal(CssSelector selector) {
         return switch (selector.type()) {
-            case Adjacent, Child, Descendant, Parent, Sibling, ColumnCombinator -> true;
+            case ADJACENT, CHILD, DESCENDANT, PARENT, SIBLING, COLUMN_COMBINATOR -> true;
             default -> false;
         };
     }
@@ -118,32 +118,30 @@ class CSS {
         return c == '\'' || c == '"';
     }
 
-    private static final Set<String> pseudosToPseudoElements = Set.of(
-            "before",
-            "after",
-            "first-line",
-            "first-letter"
-    );
 
-    private static final Set<String> stripQuotesFromPseudos = Set.of("contains", "icontains");
+    private static boolean isPseudosToPseudoElements(String name) {
+        return switch (name) {
+            case "before", "after", "first-line", "first-letter" -> true;
+            default -> false;
+        };
+    }
 
-    private static final Set<String> unpackPseudos = Set.of(
-            "has",
-            "not",
-            "matches",
-            "is",
-            "where",
-            "host",
-            "host-context"
-    );
+    private static boolean isUnpackPseudos(String name) {
+        return switch (name) {
+            case "has", "not", "matches", "is", "where", "host", "host-context" -> true;
+            default -> false;
+        };
+    }
+
+
 
     private static final class ParseSelector {
 
-        final List<List<CssSelector>> subselects;
-        final String selector;
-        final int selectorLength;
-        List<CssSelector> tokens = new ArrayList<>();
-        int selectorIndex;
+        private final List<List<CssSelector>> subselects;
+        private final String selector;
+        private final int selectorLength;
+        private List<CssSelector> tokens = new ArrayList<>();
+        private int selectorIndex;
 
         ParseSelector(List<List<CssSelector>> subselects, String selector, int selectorIndex) {
             this.subselects = subselects;
@@ -205,7 +203,7 @@ class CSS {
         }
 
         void addTraversal(SelectorType type) {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.Descendant
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.DESCENDANT
             ) {
                 tokens.set(tokens.size() - 1, new CssSelectorType(type));
                 return;
@@ -218,7 +216,7 @@ class CSS {
 
         void addSpecialAttribute(String name, AttributeAction action) {
             tokens.add(new AttributeSelector(
-                    SelectorType.Attribute,
+                    SelectorType.ATTRIBUTE,
                     name,
                     action,
                     getName(1),
@@ -228,7 +226,7 @@ class CSS {
         }
 
         void finalizeSubselector() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.Descendant) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.DESCENDANT) {
                 tokens.remove(tokens.size()-1);
             }
 
@@ -257,9 +255,9 @@ class CSS {
                     case 13: // carriage return
                     case 32: // space
                     {
-                        if (tokens.isEmpty() || tokens.get(0).type() != SelectorType.Descendant) {
+                        if (tokens.isEmpty() || tokens.get(0).type() != SelectorType.DESCENDANT) {
                             ensureNotTraversal();
-                            tokens.add(new CssSelectorType(SelectorType.Descendant));
+                            tokens.add(new CssSelectorType(SelectorType.DESCENDANT));
                         }
                         stripWhitespace(1);
                         break;
@@ -267,37 +265,37 @@ class CSS {
                     // Traversals
                     case '>': // GreaterThan
                     {
-                        addTraversal(SelectorType.Child);
+                        addTraversal(SelectorType.CHILD);
                         stripWhitespace(1);
                         break;
                     }
                     case '<': // LessThan
                     {
-                        addTraversal(SelectorType.Parent);
+                        addTraversal(SelectorType.PARENT);
                         stripWhitespace(1);
                         break;
                     }
                     case '~': //Tilde
                     {
-                        addTraversal(SelectorType.Sibling);
+                        addTraversal(SelectorType.SIBLING);
                         stripWhitespace(1);
                         break;
                     }
                     case '+': //Plus
                     {
-                        addTraversal(SelectorType.Adjacent);
+                        addTraversal(SelectorType.ADJACENT);
                         stripWhitespace(1);
                         break;
                     }
                     // Special attribute selectors: .class, #id
                     case '.': //Period
                     {
-                        addSpecialAttribute("class", AttributeAction.Element);
+                        addSpecialAttribute("class", AttributeAction.ELEMENT);
                         break;
                     }
                     case '#': //Hash
                     {
-                        addSpecialAttribute("id", AttributeAction.Equals);
+                        addSpecialAttribute("id", AttributeAction.EQUALS);
                         break;
                     }
                     case '[': // LeftSquareBracket
@@ -322,7 +320,7 @@ class CSS {
                         }
                         stripWhitespace(0);
                         // Determine comparison operation
-                        AttributeAction action = AttributeAction.Exists;
+                        AttributeAction action = AttributeAction.EXISTS;
                         AttributeAction possibleAction = getActionTypes(selector.charAt(selectorIndex));
                         if (possibleAction != null) {
                             action = possibleAction;
@@ -333,14 +331,14 @@ class CSS {
 
                             stripWhitespace(2);
                         } else if (selector.charAt(selectorIndex) == '=') {
-                            action = AttributeAction.Equals;
+                            action = AttributeAction.EQUALS;
                             stripWhitespace(1);
                         }
 
                         String value = "";
                         String ignoreCase = null;
 
-                        if (action != AttributeAction.Exists) {
+                        if (action != AttributeAction.EXISTS) {
                             if (isQuote(selector.charAt(selectorIndex))) {
                                 char quote = selector.charAt(selectorIndex);
                                 selectorIndex += 1;
@@ -377,26 +375,26 @@ class CSS {
                         }
 
                         selectorIndex += 1;
-                        tokens.add(new AttributeSelector(SelectorType.Attribute, name, action, value, ignoreCase, namespace));
+                        tokens.add(new AttributeSelector(SelectorType.ATTRIBUTE, name, action, value, ignoreCase, namespace));
                         break;
                     }
                     case ':': {
                         if (selector.charAt(selectorIndex + 1) == ':') {
                             String name = getName(2).toLowerCase(Locale.ROOT);
                             String data = selector.charAt(selectorIndex) == '(' ? readValueWithParenthesis() : null;
-                            tokens.add(new PseudoElement(SelectorType.PseudoElement, name, data));
+                            tokens.add(new PseudoElement(SelectorType.PSEUDO_ELEMENT, name, data));
                             break;
                         }
 
                         String name = getName(1).toLowerCase(Locale.ROOT);
-                        if (pseudosToPseudoElements.contains(name)) {
-                            tokens.add(new PseudoElement(SelectorType.PseudoElement, name, null));
+                        if (isPseudosToPseudoElements(name)) {
+                            tokens.add(new PseudoElement(SelectorType.PSEUDO_ELEMENT, name, null));
                             break;
                         }
 
                         Object data = null;
                         if (selector.charAt(selectorIndex) == '(') {
-                            if (unpackPseudos.contains(name)) {
+                            if (isUnpackPseudos(name)) {
                                 if (isQuote(selector.charAt(selectorIndex + 1))) {
                                     throw new IllegalStateException("Pseudo-selector " + name + " cannot be quoted");
                                 }
@@ -410,8 +408,7 @@ class CSS {
                                 selectorIndex += 1;
                             } else {
                                 String value = readValueWithParenthesis();
-
-                                if (stripQuotesFromPseudos.contains(name)) {
+                                if ("contains".equals(name) || "icontains".equals(name)) {
                                     char quot = value.charAt(0);
                                     if (quot == value.charAt(value.length() - 1) && isQuote(quot)) {
                                         value = value.substring(1, value.length() - 2);
@@ -420,7 +417,7 @@ class CSS {
                                 data = unescapeCSS(value);
                             }
                         }
-                        tokens.add(new PseudoSelector(SelectorType.Pseudo, name, data));
+                        tokens.add(new PseudoSelector(SelectorType.PSEUDO, name, data));
                         break;
                     }
                     case ',': {
@@ -451,7 +448,7 @@ class CSS {
                         } else if (firstChar == '|') {
                             name = "";
                             if (selector.charAt(selectorIndex + 1) == '|') {
-                                addTraversal(SelectorType.ColumnCombinator);
+                                addTraversal(SelectorType.COLUMN_COMBINATOR);
                                 stripWhitespace(2);
                                 break;
                             }
@@ -469,7 +466,7 @@ class CSS {
                                 name = getName(1);
                             }
                         }
-                        tokens.add("*".equals(name)  ? new UniversalSelector(SelectorType.Universal, namespace) : new TagSelector(SelectorType.Tag, name, namespace));
+                        tokens.add("*".equals(name)  ? new UniversalSelector(SelectorType.UNIVERSAL, namespace) : new TagSelector(SelectorType.TAG, name, namespace));
                     }
                 }
             }

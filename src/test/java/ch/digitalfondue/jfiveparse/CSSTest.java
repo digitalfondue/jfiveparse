@@ -11,52 +11,60 @@ class CSSTest {
 
 
     static CSS.CssSelector tag(String name) {
-        return new CSS.TagSelector(CSS.SelectorType.Tag, name, null);
+        return new CSS.TagSelector(CSS.SelectorType.TAG, name, null);
     }
 
     // Tag names
     @Test
     void checkDiv() {
-        assertEquals(List.of(List.of(tag("div"))), CSS.parseSelector("div"));
+        var r = CSS.parseSelector("div");
+        assertEquals(List.of(List.of(tag("div"))), r);
     }
 
     @Test
     void checkUniversal() {
-        assertEquals(List.of(List.of(new CSS.UniversalSelector(CSS.SelectorType.Universal, null))), CSS.parseSelector("*"));
+        var r = CSS.parseSelector("*");
+        assertEquals(List.of(List.of(new CSS.UniversalSelector(CSS.SelectorType.UNIVERSAL, null))), r);
     }
 
     // Traversal
     @Test
     void checkDivDiv() {
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.Descendant), tag("div"))), CSS.parseSelector("div div"));
+        var r = CSS.parseSelector("div div");
+        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.DESCENDANT), tag("div"))), r);
     }
 
 
     @Test
     void checkDivSpaceDiv() {
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.Descendant), tag("div"))), CSS.parseSelector("div\t \n \tdiv"));
+        var r = CSS.parseSelector("div\t \n \tdiv");
+        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.DESCENDANT), tag("div"))), r);
     }
 
     @Test
     void checkDivPlusDiv() {
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.Adjacent), tag("div"))), CSS.parseSelector("div + div"));
+        var r = CSS.parseSelector("div + div");
+        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.ADJACENT), tag("div"))), r);
     }
 
     @Test
     void checkDivSiblingDiv() {
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.Sibling), tag("div"))), CSS.parseSelector("div ~ div"));
+        var r = CSS.parseSelector("div ~ div");
+        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.SIBLING), tag("div"))), r);
     }
 
     @Test
     void checkParent() {
-        assertEquals(List.of(List.of(tag("p"), new CSS.CssSelectorType(CSS.SelectorType.Parent), tag("div"))), CSS.parseSelector("p < div"));
+        var r = CSS.parseSelector("p < div");
+        assertEquals(List.of(List.of(tag("p"), new CSS.CssSelectorType(CSS.SelectorType.PARENT), tag("div"))), r);
     }
 
     // Escaped whitespace & special characters
 
     @Test
     void checkSpecialCharacters() {
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.Attribute, "class", CSS.AttributeAction.Element, "m™²³", "quirks", null))), CSS.parseSelector(".m™²³"));
+        var r = CSS.parseSelector(".m™²³");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "class", CSS.AttributeAction.ELEMENT, "m™²³", "quirks", null))), r);
     }
 
     //
@@ -64,12 +72,26 @@ class CSSTest {
     // Attributes
     @Test
     void checkAttributeStart() {
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.Attribute, "name", CSS.AttributeAction.Start, "foo[", null, null))), CSS.parseSelector("[name^=\"foo[\"]"));
+        var r = CSS.parseSelector("[name^=\"foo[\"]");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.START, "foo[", null, null))), r);
     }
 
     @Test
     void checkAttributeStart2() {
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.Attribute, "name", CSS.AttributeAction.Start, "foo[bar]", null, null))), CSS.parseSelector("[name^=\"foo[bar]\"]"));
+        var r = CSS.parseSelector("[name^=\"foo[bar]\"]");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.START, "foo[bar]", null, null))), r);
+    }
+
+    @Test
+    void checkAttributeEnd() {
+        var r = CSS.parseSelector("[name$=\"[bar]\"]");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.END, "[bar]", null, null))), r);
+    }
+
+    @Test
+    void checkAttributeAny() {
+        var r = CSS.parseSelector("[href *= \"google\"]");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "href", CSS.AttributeAction.ANY, "google", null, null))), r);
     }
 
 
