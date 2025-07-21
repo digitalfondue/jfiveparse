@@ -1,6 +1,6 @@
 package ch.digitalfondue.jfiveparse;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -94,5 +94,82 @@ class CSSTest {
         assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "href", CSS.AttributeAction.ANY, "google", null, null))), r);
     }
 
+    @Test
+    void checkQuotedAttributeWithInternalNewLine() {
+        var r = CSS.parseSelector("[value=\"\nsome text\n\"]");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "value", CSS.AttributeAction.EQUALS, "\nsome text\n", null, null))), r);
+    }
+
+
+    @Test
+    void checkAttributeWithPreviouslyNormalizedCharacters() {
+        var r = CSS.parseSelector("[name='foo ~ < > , bar' i]");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.EQUALS, "foo ~ < > , bar", "true", null))), r);
+    }
+
+    @Test
+    void idStartingWithADot() {
+        var r = CSS.parseSelector("#.identifier");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "id", CSS.AttributeAction.EQUALS, ".identifier", "quirks", null))), r);
+    }
+
+    //
+
+    @Test
+    void pseudoElement1() {
+        var r = CSS.parseSelector("::foo");
+        assertEquals(List.of(List.of(new CSS.PseudoElement(CSS.SelectorType.PSEUDO_ELEMENT, "foo", null))), r);
+    }
+
+    @Test
+    void pseudoElement2() {
+        var r = CSS.parseSelector("::foo()");
+        assertEquals(List.of(List.of(new CSS.PseudoElement(CSS.SelectorType.PSEUDO_ELEMENT, "foo", ""))), r);
+    }
+
+    @Test
+    void pseudoElement3() {
+        var r = CSS.parseSelector("::foo(bar())");
+        assertEquals(List.of(List.of(new CSS.PseudoElement(CSS.SelectorType.PSEUDO_ELEMENT, "foo", "bar()"))), r);
+    }
+    //
+
+    //
+    @Test
+    void pseudoSelector1() {
+        var r = CSS.parseSelector(":foo");
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "foo", null))), r);
+    }
+
+    @Test
+    void pseudoSelector2() {
+        var r = CSS.parseSelector(":bar(baz)");
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "bar", "baz"))), r);
+    }
+
+    @Test
+    void pseudoSelector3() {
+        var r = CSS.parseSelector(":contains(\"(foo)\")");
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", "(foo)"))), r);
+    }
+
+    @Test
+    void pseudoSelector4() {
+        var r = CSS.parseSelector(":where(a)");
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "where", List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "a", null)))))), r);
+    }
+
+    @Test
+    void pseudoSelector5() {
+        var r = CSS.parseSelector(":icontains('')");
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "icontains", ""))), r);
+    }
+
+    @Test
+    void pseudoSelector6() {
+        var r = CSS.parseSelector(":contains(\"(foo)\")");
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", "(foo)"))), r);
+    }
+    //TODO: Multiple selectors
 
 }

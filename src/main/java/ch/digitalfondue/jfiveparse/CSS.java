@@ -365,9 +365,19 @@ class CSS {
                             }
 
                             stripWhitespace(0);
-                            // See if we have a force ignore flag
-                            // FIXME
-                            // complete code here
+                            switch (selector.charAt(selectorIndex) | 0x20) {
+                                // If the forceIgnore flag is set (either `i` or `s`), use that value
+                                case 'i': {
+                                    ignoreCase = "true";
+                                    stripWhitespace(1);
+                                    break;
+                                }
+                                case 's': {
+                                    ignoreCase = "false";
+                                    stripWhitespace(1);
+                                    break;
+                                }
+                            }
                         }
 
                         if (selector.charAt(selectorIndex) != ']') {
@@ -381,7 +391,7 @@ class CSS {
                     case ':': {
                         if (selector.charAt(selectorIndex + 1) == ':') {
                             String name = getName(2).toLowerCase(Locale.ROOT);
-                            String data = selector.charAt(selectorIndex) == '(' ? readValueWithParenthesis() : null;
+                            String data = canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '(' ? readValueWithParenthesis() : null;
                             tokens.add(new PseudoElement(SelectorType.PSEUDO_ELEMENT, name, data));
                             break;
                         }
@@ -393,7 +403,7 @@ class CSS {
                         }
 
                         Object data = null;
-                        if (selector.charAt(selectorIndex) == '(') {
+                        if (canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '(') {
                             if (isUnpackPseudos(name)) {
                                 if (isQuote(selector.charAt(selectorIndex + 1))) {
                                     throw new IllegalStateException("Pseudo-selector " + name + " cannot be quoted");
@@ -411,7 +421,7 @@ class CSS {
                                 if ("contains".equals(name) || "icontains".equals(name)) {
                                     char quot = value.charAt(0);
                                     if (quot == value.charAt(value.length() - 1) && isQuote(quot)) {
-                                        value = value.substring(1, value.length() - 2);
+                                        value = value.substring(1, value.length() - 1);
                                     }
                                 }
                                 data = unescapeCSS(value);
