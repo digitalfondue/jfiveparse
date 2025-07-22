@@ -170,6 +170,21 @@ class CSSTest {
         var r = CSS.parseSelector(":contains(\"(foo)\")");
         assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", "(foo)"))), r);
     }
-    //TODO: Multiple selectors
 
+
+    @Test
+    void multipleSelectors() {
+        var r = CSS.parseSelector("a , b");
+        assertEquals(List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "a", null)), List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "b", null))), r);
+    }
+
+    @Test
+    void pseudoSelectorWithData() {
+        var r = CSS.parseSelector(":host(h1, p)");
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "host",
+                List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "h1", null)), List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "p", null)))))), r);
+    }
+
+    // TODO: others
+    // TODO: import https://github.com/fb55/css-what/blob/25396c36bfc08bb4839aec690a7c6625b57165de/src/__fixtures__/out.json
 }
