@@ -64,7 +64,10 @@ class CSS {
     record PseudoElement(SelectorType type, String name, String data) implements CssSelector {
     }
 
-    record PseudoSelector(SelectorType type, String name, Object data) implements CssSelector {
+    sealed interface DataPseudo {};
+    record DataString(String value) implements DataPseudo {}
+    record DataSelectors(List<List<CssSelector>> value) implements DataPseudo {}
+    record PseudoSelector(SelectorType type, String name, DataPseudo data) implements CssSelector {
     }
 
     record UniversalSelector(SelectorType type, String namespace) implements CssSelector {
@@ -402,7 +405,7 @@ class CSS {
                             break;
                         }
 
-                        Object data = null;
+                        DataPseudo data = null;
                         if (canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '(') {
                             if (isUnpackPseudos(name)) {
                                 if (isQuote(selector.charAt(selectorIndex + 1))) {
@@ -410,7 +413,7 @@ class CSS {
                                 }
 
                                 List<List<CssSelector>> subselects = new ArrayList<>();
-                                data = subselects;
+                                data = new DataSelectors(subselects);
                                 selectorIndex = new ParseSelector(subselects, selector, selectorIndex + 1).parse();
                                 if (selector.charAt(selectorIndex) != ')') {
                                     throw new IllegalStateException("Missing closing parenthesis in :" + name + " (" + selector + ")");
@@ -424,7 +427,7 @@ class CSS {
                                         value = value.substring(1, value.length() - 1);
                                     }
                                 }
-                                data = unescapeCSS(value);
+                                data = new DataString(unescapeCSS(value));
                             }
                         }
                         tokens.add(new PseudoSelector(SelectorType.PSEUDO, name, data));

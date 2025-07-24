@@ -144,31 +144,31 @@ class CSSTest {
     @Test
     void pseudoSelector2() {
         var r = CSS.parseSelector(":bar(baz)");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "bar", "baz"))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "bar", new CSS.DataString("baz")))), r);
     }
 
     @Test
     void pseudoSelector3() {
         var r = CSS.parseSelector(":contains(\"(foo)\")");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", "(foo)"))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", new CSS.DataString("(foo)")))), r);
     }
 
     @Test
     void pseudoSelector4() {
         var r = CSS.parseSelector(":where(a)");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "where", List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "a", null)))))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "where", new CSS.DataSelectors(List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "a", null))))))), r);
     }
 
     @Test
     void pseudoSelector5() {
         var r = CSS.parseSelector(":icontains('')");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "icontains", ""))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "icontains", new CSS.DataString("")))), r);
     }
 
     @Test
     void pseudoSelector6() {
         var r = CSS.parseSelector(":contains(\"(foo)\")");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", "(foo)"))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", new CSS.DataString("(foo)")))), r);
     }
 
 
@@ -181,8 +181,12 @@ class CSSTest {
     @Test
     void pseudoSelectorWithData() {
         var r = CSS.parseSelector(":host(h1, p)");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "host",
-                List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "h1", null)), List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "p", null)))))), r);
+        assertEquals(List.of(List.of(
+                new CSS.PseudoSelector(
+                        CSS.SelectorType.PSEUDO,
+                        "host",
+                        new CSS.DataSelectors(List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "h1", null)), List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "p", null))))
+                ))), r);
     }
 
     // TODO: others
