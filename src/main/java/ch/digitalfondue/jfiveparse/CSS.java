@@ -55,22 +55,42 @@ class CSS {
     record CssSelectorType(SelectorType type) implements CssSelector {
     }
 
-    record TagSelector(SelectorType type, String name, String namespace) implements CssSelector {
+    record TagSelector(String name, String namespace) implements CssSelector {
+        @Override
+        public SelectorType type() {
+            return SelectorType.TAG;
+        }
     }
 
-    record AttributeSelector(SelectorType type, String name, AttributeAction action, String value, String ignoreCase, String namespace) implements CssSelector {
+    record AttributeSelector(String name, AttributeAction action, String value, String ignoreCase, String namespace) implements CssSelector {
+        @Override
+        public SelectorType type() {
+            return SelectorType.ATTRIBUTE;
+        }
     }
 
-    record PseudoElement(SelectorType type, String name, String data) implements CssSelector {
+    record PseudoElement(String name, String data) implements CssSelector {
+        @Override
+        public SelectorType type() {
+            return SelectorType.PSEUDO_ELEMENT;
+        }
     }
 
     sealed interface DataPseudo {};
     record DataString(String value) implements DataPseudo {}
     record DataSelectors(List<List<CssSelector>> value) implements DataPseudo {}
-    record PseudoSelector(SelectorType type, String name, DataPseudo data) implements CssSelector {
+    record PseudoSelector(String name, DataPseudo data) implements CssSelector {
+        @Override
+        public SelectorType type() {
+            return SelectorType.PSEUDO;
+        }
     }
 
-    record UniversalSelector(SelectorType type, String namespace) implements CssSelector {
+    record UniversalSelector(String namespace) implements CssSelector {
+        @Override
+        public SelectorType type() {
+            return SelectorType.UNIVERSAL;
+        }
     }
 
     enum SelectorType {
@@ -219,7 +239,6 @@ class CSS {
 
         void addSpecialAttribute(String name, AttributeAction action) {
             tokens.add(new AttributeSelector(
-                    SelectorType.ATTRIBUTE,
                     name,
                     action,
                     getName(1),
@@ -388,20 +407,20 @@ class CSS {
                         }
 
                         selectorIndex += 1;
-                        tokens.add(new AttributeSelector(SelectorType.ATTRIBUTE, name, action, value, ignoreCase, namespace));
+                        tokens.add(new AttributeSelector(name, action, value, ignoreCase, namespace));
                         break;
                     }
                     case ':': {
                         if (selector.charAt(selectorIndex + 1) == ':') {
                             String name = getName(2).toLowerCase(Locale.ROOT);
                             String data = canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '(' ? readValueWithParenthesis() : null;
-                            tokens.add(new PseudoElement(SelectorType.PSEUDO_ELEMENT, name, data));
+                            tokens.add(new PseudoElement(name, data));
                             break;
                         }
 
                         String name = getName(1).toLowerCase(Locale.ROOT);
                         if (isPseudosToPseudoElements(name)) {
-                            tokens.add(new PseudoElement(SelectorType.PSEUDO_ELEMENT, name, null));
+                            tokens.add(new PseudoElement(name, null));
                             break;
                         }
 
@@ -430,7 +449,7 @@ class CSS {
                                 data = new DataString(unescapeCSS(value));
                             }
                         }
-                        tokens.add(new PseudoSelector(SelectorType.PSEUDO, name, data));
+                        tokens.add(new PseudoSelector(name, data));
                         break;
                     }
                     case ',': {
@@ -479,13 +498,18 @@ class CSS {
                                 name = getName(1);
                             }
                         }
-                        tokens.add("*".equals(name)  ? new UniversalSelector(SelectorType.UNIVERSAL, namespace) : new TagSelector(SelectorType.TAG, name, namespace));
+                        tokens.add("*".equals(name)  ? new UniversalSelector(namespace) : new TagSelector(name, namespace));
                     }
                 }
             }
 
             finalizeSubselector();
             return selectorIndex;
+        }
+
+
+        private boolean charAtIsEqual(int i, char toCompare) {
+            return i < selectorLength && selector.charAt(i) == toCompare;
         }
 
         private boolean canCharAt(int i) {

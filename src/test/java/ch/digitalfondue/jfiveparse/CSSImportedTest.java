@@ -72,7 +72,6 @@ class CSSImportedTest {
     private static CSS.CssSelector from(String type, JsonObject elem) {
         return switch (type) {
             case "attribute" -> new CSS.AttributeSelector(
-                    CSS.SelectorType.ATTRIBUTE,
                     elem.get("name").getAsString(),
                     ATTRIBUTE_ACTION.get(elem.get("action").getAsString()),
                     elem.get("value").getAsString(),
@@ -87,11 +86,11 @@ class CSSImportedTest {
                 } else if (pseudoData.isJsonArray() && pseudoData instanceof JsonArray subSelectors) {
                     data = new CSS.DataSelectors(convertFromJson(subSelectors));
                 }
-                yield new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, elem.get("name").getAsString(), data);
+                yield new CSS.PseudoSelector(elem.get("name").getAsString(), data);
             }
-            case "pseudo-element" -> new CSS.PseudoElement(CSS.SelectorType.PSEUDO_ELEMENT, elem.get("name").getAsString(), fromStringOrNull(elem.get("data")));
-            case "tag" -> new CSS.TagSelector(CSS.SelectorType.TAG, elem.get("name").getAsString(), fromStringOrNull(elem.get("namespace")));
-            case "universal" -> new CSS.UniversalSelector(CSS.SelectorType.UNIVERSAL, fromStringOrNull(elem.get("namespace")));
+            case "pseudo-element" -> new CSS.PseudoElement(elem.get("name").getAsString(), fromStringOrNull(elem.get("data")));
+            case "tag" -> new CSS.TagSelector(elem.get("name").getAsString(), fromStringOrNull(elem.get("namespace")));
+            case "universal" -> new CSS.UniversalSelector(fromStringOrNull(elem.get("namespace")));
             case "adjacent" -> new CSS.CssSelectorType(CSS.SelectorType.ADJACENT);
             case "child" -> new CSS.CssSelectorType(CSS.SelectorType.CHILD);
             case "descendant" -> new CSS.CssSelectorType(CSS.SelectorType.DESCENDANT);

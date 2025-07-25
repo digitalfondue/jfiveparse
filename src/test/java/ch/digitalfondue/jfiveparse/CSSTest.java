@@ -11,7 +11,7 @@ class CSSTest {
 
 
     static CSS.CssSelector tag(String name) {
-        return new CSS.TagSelector(CSS.SelectorType.TAG, name, null);
+        return new CSS.TagSelector(name, null);
     }
 
     // Tag names
@@ -24,7 +24,7 @@ class CSSTest {
     @Test
     void checkUniversal() {
         var r = CSS.parseSelector("*");
-        assertEquals(List.of(List.of(new CSS.UniversalSelector(CSS.SelectorType.UNIVERSAL, null))), r);
+        assertEquals(List.of(List.of(new CSS.UniversalSelector(null))), r);
     }
 
     // Traversal
@@ -64,7 +64,7 @@ class CSSTest {
     @Test
     void checkSpecialCharacters() {
         var r = CSS.parseSelector(".m™²³");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "class", CSS.AttributeAction.ELEMENT, "m™²³", "quirks", null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("class", CSS.AttributeAction.ELEMENT, "m™²³", "quirks", null))), r);
     }
 
     //
@@ -73,44 +73,44 @@ class CSSTest {
     @Test
     void checkAttributeStart() {
         var r = CSS.parseSelector("[name^=\"foo[\"]");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.START, "foo[", null, null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector( "name", CSS.AttributeAction.START, "foo[", null, null))), r);
     }
 
     @Test
     void checkAttributeStart2() {
         var r = CSS.parseSelector("[name^=\"foo[bar]\"]");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.START, "foo[bar]", null, null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector( "name", CSS.AttributeAction.START, "foo[bar]", null, null))), r);
     }
 
     @Test
     void checkAttributeEnd() {
         var r = CSS.parseSelector("[name$=\"[bar]\"]");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.END, "[bar]", null, null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("name", CSS.AttributeAction.END, "[bar]", null, null))), r);
     }
 
     @Test
     void checkAttributeAny() {
         var r = CSS.parseSelector("[href *= \"google\"]");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "href", CSS.AttributeAction.ANY, "google", null, null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("href", CSS.AttributeAction.ANY, "google", null, null))), r);
     }
 
     @Test
     void checkQuotedAttributeWithInternalNewLine() {
         var r = CSS.parseSelector("[value=\"\nsome text\n\"]");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "value", CSS.AttributeAction.EQUALS, "\nsome text\n", null, null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("value", CSS.AttributeAction.EQUALS, "\nsome text\n", null, null))), r);
     }
 
 
     @Test
     void checkAttributeWithPreviouslyNormalizedCharacters() {
         var r = CSS.parseSelector("[name='foo ~ < > , bar' i]");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "name", CSS.AttributeAction.EQUALS, "foo ~ < > , bar", "true", null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("name", CSS.AttributeAction.EQUALS, "foo ~ < > , bar", "true", null))), r);
     }
 
     @Test
     void idStartingWithADot() {
         var r = CSS.parseSelector("#.identifier");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector(CSS.SelectorType.ATTRIBUTE, "id", CSS.AttributeAction.EQUALS, ".identifier", "quirks", null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, ".identifier", "quirks", null))), r);
     }
 
     //
@@ -118,19 +118,19 @@ class CSSTest {
     @Test
     void pseudoElement1() {
         var r = CSS.parseSelector("::foo");
-        assertEquals(List.of(List.of(new CSS.PseudoElement(CSS.SelectorType.PSEUDO_ELEMENT, "foo", null))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoElement("foo", null))), r);
     }
 
     @Test
     void pseudoElement2() {
         var r = CSS.parseSelector("::foo()");
-        assertEquals(List.of(List.of(new CSS.PseudoElement(CSS.SelectorType.PSEUDO_ELEMENT, "foo", ""))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoElement("foo", ""))), r);
     }
 
     @Test
     void pseudoElement3() {
         var r = CSS.parseSelector("::foo(bar())");
-        assertEquals(List.of(List.of(new CSS.PseudoElement(CSS.SelectorType.PSEUDO_ELEMENT, "foo", "bar()"))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoElement("foo", "bar()"))), r);
     }
     //
 
@@ -138,44 +138,44 @@ class CSSTest {
     @Test
     void pseudoSelector1() {
         var r = CSS.parseSelector(":foo");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "foo", null))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector("foo", null))), r);
     }
 
     @Test
     void pseudoSelector2() {
         var r = CSS.parseSelector(":bar(baz)");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "bar", new CSS.DataString("baz")))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector("bar", new CSS.DataString("baz")))), r);
     }
 
     @Test
     void pseudoSelector3() {
         var r = CSS.parseSelector(":contains(\"(foo)\")");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", new CSS.DataString("(foo)")))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector("contains", new CSS.DataString("(foo)")))), r);
     }
 
     @Test
     void pseudoSelector4() {
         var r = CSS.parseSelector(":where(a)");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "where", new CSS.DataSelectors(List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "a", null))))))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector("where", new CSS.DataSelectors(List.of(List.of(new CSS.TagSelector("a", null))))))), r);
     }
 
     @Test
     void pseudoSelector5() {
         var r = CSS.parseSelector(":icontains('')");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "icontains", new CSS.DataString("")))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector("icontains", new CSS.DataString("")))), r);
     }
 
     @Test
     void pseudoSelector6() {
         var r = CSS.parseSelector(":contains(\"(foo)\")");
-        assertEquals(List.of(List.of(new CSS.PseudoSelector(CSS.SelectorType.PSEUDO, "contains", new CSS.DataString("(foo)")))), r);
+        assertEquals(List.of(List.of(new CSS.PseudoSelector("contains", new CSS.DataString("(foo)")))), r);
     }
 
 
     @Test
     void multipleSelectors() {
         var r = CSS.parseSelector("a , b");
-        assertEquals(List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "a", null)), List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "b", null))), r);
+        assertEquals(List.of(List.of(new CSS.TagSelector("a", null)), List.of(new CSS.TagSelector("b", null))), r);
     }
 
     @Test
@@ -183,9 +183,8 @@ class CSSTest {
         var r = CSS.parseSelector(":host(h1, p)");
         assertEquals(List.of(List.of(
                 new CSS.PseudoSelector(
-                        CSS.SelectorType.PSEUDO,
                         "host",
-                        new CSS.DataSelectors(List.of(List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "h1", null)), List.of(new CSS.TagSelector(CSS.SelectorType.TAG, "p", null))))
+                        new CSS.DataSelectors(List.of(List.of(new CSS.TagSelector( "h1", null)), List.of(new CSS.TagSelector("p", null))))
                 ))), r);
     }
 
