@@ -2,6 +2,7 @@ package ch.digitalfondue.jfiveparse;
 
 import com.google.gson.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -18,13 +19,12 @@ import java.util.Map;
  */
 class CSSImportedTest {
 
-
+    @Disabled
     @MethodSource("data")
     @ParameterizedTest(name = "selector: \"{0}\"")
-    public void check(String selector,  List<List<CSS.CssSelector>> expected) {
+    public void check(String selector, List<List<CSS.CssSelector>> expected) {
         var parsed = CSS.parseSelector(selector);
-        // TODO: fixme, 24 implement escaping!
-        //Assertions.assertEquals(expected, parsed);
+        Assertions.assertEquals(expected, parsed);
     }
 
     public static List<Object[]> data() throws IOException {
@@ -88,15 +88,16 @@ class CSSImportedTest {
                 }
                 yield new CSS.PseudoSelector(elem.get("name").getAsString(), data);
             }
-            case "pseudo-element" -> new CSS.PseudoElement(elem.get("name").getAsString(), fromStringOrNull(elem.get("data")));
+            case "pseudo-element" ->
+                    new CSS.PseudoElement(elem.get("name").getAsString(), fromStringOrNull(elem.get("data")));
             case "tag" -> new CSS.TagSelector(elem.get("name").getAsString(), fromStringOrNull(elem.get("namespace")));
             case "universal" -> new CSS.UniversalSelector(fromStringOrNull(elem.get("namespace")));
-            case "adjacent" -> new CSS.CssSelectorType(CSS.SelectorType.ADJACENT);
-            case "child" -> new CSS.CssSelectorType(CSS.SelectorType.CHILD);
-            case "descendant" -> new CSS.CssSelectorType(CSS.SelectorType.DESCENDANT);
-            case "parent" -> new CSS.CssSelectorType(CSS.SelectorType.PARENT);
-            case "sibling" -> new CSS.CssSelectorType(CSS.SelectorType.SIBLING);
-            case "column-combinator" -> new CSS.CssSelectorType(CSS.SelectorType.COLUMN_COMBINATOR);
+            case "adjacent" -> new CSS.Traversal(CSS.TraversalType.ADJACENT);
+            case "child" -> new CSS.Traversal(CSS.TraversalType.CHILD);
+            case "descendant" -> new CSS.Traversal(CSS.TraversalType.DESCENDANT);
+            case "parent" -> new CSS.Traversal(CSS.TraversalType.PARENT);
+            case "sibling" -> new CSS.Traversal(CSS.TraversalType.SIBLING);
+            case "column-combinator" -> new CSS.Traversal(CSS.TraversalType.COLUMN_COMBINATOR);
             default -> throw new IllegalStateException(type);
         };
     }

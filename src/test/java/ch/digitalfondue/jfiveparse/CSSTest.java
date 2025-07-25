@@ -31,32 +31,32 @@ class CSSTest {
     @Test
     void checkDivDiv() {
         var r = CSS.parseSelector("div div");
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.DESCENDANT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.DESCENDANT), tag("div"))), r);
     }
 
 
     @Test
     void checkDivSpaceDiv() {
         var r = CSS.parseSelector("div\t \n \tdiv");
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.DESCENDANT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.DESCENDANT), tag("div"))), r);
     }
 
     @Test
     void checkDivPlusDiv() {
         var r = CSS.parseSelector("div + div");
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.ADJACENT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.ADJACENT), tag("div"))), r);
     }
 
     @Test
     void checkDivSiblingDiv() {
         var r = CSS.parseSelector("div ~ div");
-        assertEquals(List.of(List.of(tag("div"), new CSS.CssSelectorType(CSS.SelectorType.SIBLING), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.SIBLING), tag("div"))), r);
     }
 
     @Test
     void checkParent() {
         var r = CSS.parseSelector("p < div");
-        assertEquals(List.of(List.of(tag("p"), new CSS.CssSelectorType(CSS.SelectorType.PARENT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("p"), new CSS.Traversal(CSS.TraversalType.PARENT), tag("div"))), r);
     }
 
     // Escaped whitespace & special characters

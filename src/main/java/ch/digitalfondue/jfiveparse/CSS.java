@@ -48,53 +48,25 @@ class CSS {
         return subselects;
     }
 
-    sealed interface CssSelector {
-        SelectorType type();
-    }
+    sealed interface CssSelector {}
 
-    record CssSelectorType(SelectorType type) implements CssSelector {
-    }
+    record Traversal(TraversalType type) implements CssSelector {}
 
-    record TagSelector(String name, String namespace) implements CssSelector {
-        @Override
-        public SelectorType type() {
-            return SelectorType.TAG;
-        }
-    }
+    record TagSelector(String name, String namespace) implements CssSelector {}
 
-    record AttributeSelector(String name, AttributeAction action, String value, String ignoreCase, String namespace) implements CssSelector {
-        @Override
-        public SelectorType type() {
-            return SelectorType.ATTRIBUTE;
-        }
-    }
+    record AttributeSelector(String name, AttributeAction action, String value, String ignoreCase, String namespace) implements CssSelector {}
 
-    record PseudoElement(String name, String data) implements CssSelector {
-        @Override
-        public SelectorType type() {
-            return SelectorType.PSEUDO_ELEMENT;
-        }
-    }
+    record PseudoElement(String name, String data) implements CssSelector {}
 
-    sealed interface DataPseudo {};
+    sealed interface DataPseudo {}
     record DataString(String value) implements DataPseudo {}
     record DataSelectors(List<List<CssSelector>> value) implements DataPseudo {}
-    record PseudoSelector(String name, DataPseudo data) implements CssSelector {
-        @Override
-        public SelectorType type() {
-            return SelectorType.PSEUDO;
-        }
-    }
+    record PseudoSelector(String name, DataPseudo data) implements CssSelector {}
 
-    record UniversalSelector(String namespace) implements CssSelector {
-        @Override
-        public SelectorType type() {
-            return SelectorType.UNIVERSAL;
-        }
-    }
+    record UniversalSelector(String namespace) implements CssSelector {}
 
-    enum SelectorType {
-        CHILD, PARENT, SIBLING, ADJACENT, ATTRIBUTE, PSEUDO_ELEMENT, COLUMN_COMBINATOR, UNIVERSAL, TAG, PSEUDO, DESCENDANT
+    enum TraversalType {
+        CHILD, PARENT, SIBLING, ADJACENT, COLUMN_COMBINATOR, DESCENDANT
     }
 
     enum AttributeAction {
@@ -131,10 +103,7 @@ class CSS {
     }
 
     private static boolean isTraversal(CssSelector selector) {
-        return switch (selector.type()) {
-            case ADJACENT, CHILD, DESCENDANT, PARENT, SIBLING, COLUMN_COMBINATOR -> true;
-            default -> false;
-        };
+        return selector instanceof Traversal;
     }
 
     private static boolean isQuote(char c) {
@@ -225,16 +194,16 @@ class CSS {
             }
         }
 
-        void addTraversal(SelectorType type) {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.DESCENDANT
+        void addTraversal(TraversalType type) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Traversal ct && ct.type() == TraversalType.DESCENDANT
             ) {
-                tokens.set(tokens.size() - 1, new CssSelectorType(type));
+                tokens.set(tokens.size() - 1, new Traversal(type));
                 return;
             }
 
             ensureNotTraversal();
 
-            tokens.add(new CssSelectorType(type));
+            tokens.add(new Traversal(type));
         }
 
         void addSpecialAttribute(String name, AttributeAction action) {
@@ -248,7 +217,7 @@ class CSS {
         }
 
         void finalizeSubselector() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1).type() == SelectorType.DESCENDANT) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Traversal ct && ct.type() == TraversalType.DESCENDANT) {
                 tokens.remove(tokens.size()-1);
             }
 
@@ -277,9 +246,10 @@ class CSS {
                     case 13: // carriage return
                     case 32: // space
                     {
-                        if (tokens.isEmpty() || tokens.get(0).type() != SelectorType.DESCENDANT) {
+                        // check the first token is not DESCENDANT
+                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Traversal ct) || ct.type() != TraversalType.DESCENDANT)) {
                             ensureNotTraversal();
-                            tokens.add(new CssSelectorType(SelectorType.DESCENDANT));
+                            tokens.add(new Traversal(TraversalType.DESCENDANT));
                         }
                         stripWhitespace(1);
                         break;
@@ -287,25 +257,25 @@ class CSS {
                     // Traversals
                     case '>': // GreaterThan
                     {
-                        addTraversal(SelectorType.CHILD);
+                        addTraversal(TraversalType.CHILD);
                         stripWhitespace(1);
                         break;
                     }
                     case '<': // LessThan
                     {
-                        addTraversal(SelectorType.PARENT);
+                        addTraversal(TraversalType.PARENT);
                         stripWhitespace(1);
                         break;
                     }
                     case '~': //Tilde
                     {
-                        addTraversal(SelectorType.SIBLING);
+                        addTraversal(TraversalType.SIBLING);
                         stripWhitespace(1);
                         break;
                     }
                     case '+': //Plus
                     {
-                        addTraversal(SelectorType.ADJACENT);
+                        addTraversal(TraversalType.ADJACENT);
                         stripWhitespace(1);
                         break;
                     }
@@ -479,7 +449,7 @@ class CSS {
                         } else if (firstChar == '|') {
                             name = "";
                             if (charAtIsEqual(selectorIndex + 1, '|')) {
-                                addTraversal(SelectorType.COLUMN_COMBINATOR);
+                                addTraversal(TraversalType.COLUMN_COMBINATOR);
                                 stripWhitespace(2);
                                 break;
                             }
