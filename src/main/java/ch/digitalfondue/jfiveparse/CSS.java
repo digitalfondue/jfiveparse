@@ -326,7 +326,7 @@ class CSS {
                         String name;
                         String namespace = null;
 
-                        if (selector.charAt(selectorIndex) == '|') { // Pipe
+                        if (charAtIsEqual(selectorIndex, '|')) { // Pipe
                             // Equivalent to no namespace
                             name = getName(1);
                         } else if (selector.startsWith("*|", selectorIndex)) {
@@ -335,7 +335,7 @@ class CSS {
                         } else {
                             name = getName(0);
 
-                            if (selector.charAt(selectorIndex) == '|' /* Pipe */ && selector.charAt(selectorIndex + 1) != '=' /* Equal */) {
+                            if (charAtIsEqual(selectorIndex, '|') /* Pipe */ && !charAtIsEqual(selectorIndex + 1, '=') /* Equal */) {
                                 namespace = name;
                                 name = getName(1);
                             }
@@ -346,13 +346,12 @@ class CSS {
                         AttributeAction possibleAction = getActionTypes(selector.charAt(selectorIndex));
                         if (possibleAction != null) {
                             action = possibleAction;
-                            if (selector.charAt(selectorIndex + 1) != '='
-                            ) {
+                            if (!charAtIsEqual(selectorIndex + 1, '=')) {
                                 throw new Error("Expected `=`");
                             }
 
                             stripWhitespace(2);
-                        } else if (selector.charAt(selectorIndex) == '=') {
+                        } else if (charAtIsEqual(selectorIndex, '=')) {
                             action = AttributeAction.EQUALS;
                             stripWhitespace(1);
                         }
@@ -402,7 +401,7 @@ class CSS {
                             }
                         }
 
-                        if (selector.charAt(selectorIndex) != ']') {
+                        if (!charAtIsEqual(selectorIndex, ']')) {
                             throw new IllegalStateException("Attribute selector didn't terminate");
                         }
 
@@ -411,7 +410,7 @@ class CSS {
                         break;
                     }
                     case ':': {
-                        if (selector.charAt(selectorIndex + 1) == ':') {
+                        if (charAtIsEqual(selectorIndex + 1, ':')) {
                             String name = getName(2).toLowerCase(Locale.ROOT);
                             String data = canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '(' ? readValueWithParenthesis() : null;
                             tokens.add(new PseudoElement(name, data));
@@ -425,16 +424,16 @@ class CSS {
                         }
 
                         DataPseudo data = null;
-                        if (canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '(') {
+                        if (charAtIsEqual(selectorIndex, '(')) {
                             if (isUnpackPseudos(name)) {
-                                if (isQuote(selector.charAt(selectorIndex + 1))) {
+                                if (canCharAt(selectorIndex + 1) && isQuote(selector.charAt(selectorIndex + 1))) {
                                     throw new IllegalStateException("Pseudo-selector " + name + " cannot be quoted");
                                 }
 
                                 List<List<CssSelector>> subselects = new ArrayList<>();
                                 data = new DataSelectors(subselects);
                                 selectorIndex = new ParseSelector(subselects, selector, selectorIndex + 1).parse();
-                                if (selector.charAt(selectorIndex) != ')') {
+                                if (!charAtIsEqual(selectorIndex, ')')) {
                                     throw new IllegalStateException("Missing closing parenthesis in :" + name + " (" + selector + ")");
                                 }
                                 selectorIndex += 1;
@@ -473,13 +472,13 @@ class CSS {
                             break;
                         }
                         String namespace = null;
-                        String name = null;
+                        String name;
                         if (firstChar == '*') {
                             selectorIndex += 1;
                             name = "*";
                         } else if (firstChar == '|') {
                             name = "";
-                            if (selector.charAt(selectorIndex + 1) == '|') {
+                            if (charAtIsEqual(selectorIndex + 1, '|')) {
                                 addTraversal(SelectorType.COLUMN_COMBINATOR);
                                 stripWhitespace(2);
                                 break;
@@ -489,7 +488,7 @@ class CSS {
                         } else {
                             break loop;
                         }
-                        if (canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '|' && selector.charAt(selectorIndex + 1) != '|') {
+                        if (charAtIsEqual(selectorIndex, '|') && !charAtIsEqual(selectorIndex + 1, '|')) {
                             namespace = name;
                             if (selector.charAt(selectorIndex + 1) == '*') {
                                 name = "*";
