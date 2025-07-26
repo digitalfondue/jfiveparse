@@ -173,7 +173,7 @@ public class Parser {
         tokenizer.tokenize(is);
 
         // 14
-        return new ArrayList<>(root.getChildNodes());
+        return new ArrayList<>(root.getRawChildNodes());
     }
 
     private static Element getFirstFormElementFrom(Node node) {

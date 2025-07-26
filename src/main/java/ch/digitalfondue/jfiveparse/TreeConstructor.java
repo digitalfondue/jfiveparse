@@ -525,7 +525,7 @@ class TreeConstructor {
             } else {
                 toInsert = place[0];
                 // insert before
-                position = toInsert.getChildNodes().indexOf(place[1]);
+                position = toInsert.getRawChildNodes().indexOf(place[1]);
             }
             toInsert.insertChildren(position, lastNode);
 
@@ -540,7 +540,7 @@ class TreeConstructor {
             );
 
             // 16
-            List<Node> childs = new ArrayList<>(furthestBlock.getChildNodes());
+            List<Node> childs = new ArrayList<>(furthestBlock.getRawChildNodes());
             furthestBlock.empty();
             for (Node n : childs) {
                 elem.appendChild(n);
@@ -689,17 +689,17 @@ class TreeConstructor {
         Node last;
         if (!fosterParentingEnabled) {
             toInsert = getCurrentNode();
-            nodes = toInsert.getChildNodes();
+            nodes = toInsert.getRawChildNodes();
             position = nodes.size();
         } else {
             Node[] place = findAppropriatePlaceForInsertingNode(null);
             if (place[1] == null) { // insert as a last child
                 toInsert = place[0];
-                nodes = toInsert.getChildNodes();
+                nodes = toInsert.getRawChildNodes();
                 position = nodes.size();
             } else { // insert before
                 toInsert = place[0];
-                nodes = toInsert.getChildNodes();
+                nodes = toInsert.getRawChildNodes();
                 position = nodes.indexOf(place[1]);
             }
         }
@@ -731,7 +731,7 @@ class TreeConstructor {
             } else {
                 toInsert = place[0];
                 // insert before
-                position = toInsert.getChildNodes().indexOf(place[1]);
+                position = toInsert.getRawChildNodes().indexOf(place[1]);
             }
 
         } else {
@@ -759,7 +759,7 @@ class TreeConstructor {
             } else {
                 toInsert = place[0];
                 // insert before
-                position = toInsert.getChildNodes().indexOf(place[1]);
+                position = toInsert.getRawChildNodes().indexOf(place[1]);
             }
         } else {
             toInsert = openElements.get(openElements.size() - 1);

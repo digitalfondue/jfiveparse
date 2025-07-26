@@ -22,7 +22,7 @@ import java.util.*;
  */
 public sealed abstract class Node implements CommonNode permits Comment, Document, DocumentType, Element, Text {
 
-    private static final List<Node> EMPTY_LIST = List.of();
+    static final List<Node> EMPTY_LIST = List.of();
 
     Node parentNode;
 
@@ -108,6 +108,15 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     }
 
     /**
+     * Get the child nodes without generating allocations (wrapping with unmodifiable _or_ creating a mutable array).
+     *
+     * @return
+     */
+    List<Node> getRawChildNodes() {
+        return EMPTY_LIST;
+    }
+
+    /**
      * Remove all child nodes from this node.
      */
     public void empty() {
@@ -127,7 +136,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * Get the number of childs of the current node.
      */
     public int getChildCount() {
-        return getMutableChildNodes().size();
+        return getRawChildNodes().size();
     }
 
     /**
@@ -191,7 +200,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     public void insertBefore(Node toInsert, Node before) {
         Objects.requireNonNull(toInsert);
         Objects.requireNonNull(before);
-        int idx = getChildNodes().indexOf(before);
+        int idx = getRawChildNodes().indexOf(before);
         if (idx >= 0) {
             insertChildren(idx, toInsert);
         }
@@ -252,7 +261,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * Get the first child, if present or else null.
      */
     public Node getFirstChild() {
-        List<Node> childs = getChildNodes();
+        List<Node> childs = getRawChildNodes();
         return childs.isEmpty() ? null : childs.get(0);
     }
 
@@ -261,7 +270,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      */
     @Override
     public Node getLastChild() {
-        List<Node> childs = getChildNodes();
+        List<Node> childs = getRawChildNodes();
         return childs.isEmpty() ? null : childs.get(childs.size() - 1);
     }
 
@@ -271,7 +280,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      */
     @Override
     public Element getFirstElementChild() {
-        List<Node> childs = getChildNodes();
+        List<Node> childs = getRawChildNodes();
         for (Node n : childs) {
             if (n instanceof Element e) {
                 return e;
@@ -286,7 +295,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      */
     @Override
     public Element getLastElementChild() {
-        List<Node> childs = getChildNodes();
+        List<Node> childs = getRawChildNodes();
         for (int i = childs.size() - 1; i >= 0; i--) {
             Node n = childs.get(i);
             if (n instanceof Element e) {
@@ -304,7 +313,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
             return null;
         }
 
-        List<Node> siblings = parentNode.getChildNodes();
+        List<Node> siblings = parentNode.getRawChildNodes();
         int currentElemIdx = siblings.indexOf(this);
         return currentElemIdx == 0 ? null : siblings.get(currentElemIdx - 1);
     }
@@ -332,7 +341,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
             return null;
         }
 
-        List<Node> siblings = parentNode.getChildNodes();
+        List<Node> siblings = parentNode.getRawChildNodes();
         int currentElemIdx = siblings.indexOf(this);
 
         return currentElemIdx == siblings.size() - 1 ? null : siblings.get(currentElemIdx + 1);
@@ -357,7 +366,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * @return true if this node has at least one child.
      */
     public boolean hasChildNodes() {
-        return !getChildNodes().isEmpty();
+        return !getRawChildNodes().isEmpty();
     }
 
     /**
@@ -485,7 +494,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      */
     public void normalize() {
 
-		List<Node> childs = new ArrayList<>(this.getChildNodes());
+		List<Node> childs = new ArrayList<>(getRawChildNodes());
 
 		// iterator helpers
 		Node text = null;

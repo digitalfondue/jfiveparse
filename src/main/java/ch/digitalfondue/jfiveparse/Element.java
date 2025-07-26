@@ -87,7 +87,12 @@ public final class Element extends Node implements CommonNode.CommonElement {
      */
     @Override
     public List<Node> getChildNodes() {
-        return childNodes == null ? List.of() : Collections.unmodifiableList(childNodes);
+        return childNodes == null ? EMPTY_LIST : Collections.unmodifiableList(childNodes);
+    }
+
+    @Override
+    List<Node> getRawChildNodes() {
+        return childNodes == null ? EMPTY_LIST : childNodes;
     }
 
     @Override

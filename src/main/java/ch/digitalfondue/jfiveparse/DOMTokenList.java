@@ -59,7 +59,7 @@ public final class DOMTokenList extends AbstractList<String> {
         element.getAttributes().put(attrName, Common.join(vals));
     }
 
-    public final void add(String val, String... values) {
+    public void add(String val, String... values) {
         add(val);
         if (values != null) {
             addAll(Arrays.asList(values));

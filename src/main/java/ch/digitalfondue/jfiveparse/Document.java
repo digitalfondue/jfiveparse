@@ -42,6 +42,11 @@ public final class Document extends Node {
         return childNodes;
     }
 
+    @Override
+    List<Node> getRawChildNodes() {
+        return childNodes;
+    }
+
     public void setDoctype(DocumentType doctype) {
         this.doctype = doctype;
     }
@@ -57,7 +62,7 @@ public final class Document extends Node {
     private Element getChildOfDocumentElementMatching(Predicate<String> nodeNameMatcher) {
         Element e = getFirstElementChild();
         if (e != null) {
-            for (Node c : e.getChildNodes()) {
+            for (Node c : e.getRawChildNodes()) {
                 if (c instanceof Element ce && nodeNameMatcher.test(c.getNodeName()) && NAMESPACE_HTML_ID == ce.namespaceID) {
                     return ce;
                 }
