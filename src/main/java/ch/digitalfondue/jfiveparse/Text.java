@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Represent a text node.
  */
-public class Text extends Node {
+public final class Text extends Node {
 
     ResizableCharBuilder dataBuilder;
     private String data;

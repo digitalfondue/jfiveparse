@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Writer;
 import java.util.EnumSet;
 import java.util.Set;
@@ -103,10 +104,8 @@ public class HtmlSerializer implements NodesVisitor {
     @Override
     public void start(Node node) {
         try {
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element e = (Element) node;
-                // TODO: for tag outside of html,mathml,svg namespace : use
-                // qualified name!
+            if (node instanceof Element e) {
+                // TODO: for tag outside of html,mathml,svg namespace : use qualified name!
                 appendable.append('<').append(getNodeName(e));
                 for (AttributeNode attr : e.getAttributes()) {
                     appendable.append(' ').append(serializeAttributeName(attr));//
@@ -117,9 +116,7 @@ public class HtmlSerializer implements NodesVisitor {
                     }
                     appendable.append('=').append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
                 }
-
                 appendable.append('>');
-
                 if ((Common.isHtmlNS(e, Common.ELEMENT_PRE_ID) || Common.isHtmlNS(e, Common.ELEMENT_TEXTAREA_ID) || Common.isHtmlNS(e, Common.ELEMENT_LISTING_ID)) && //
                         e.hasChildNodes() && //
                         e.getFirstChild().getNodeType() == Node.TEXT_NODE) {
@@ -129,10 +126,8 @@ public class HtmlSerializer implements NodesVisitor {
                     }
                 }
 
-            } else if (node.getNodeType() == Node.TEXT_NODE) {
-                // TODO: handle the case when the nodes are created with
-                // scripting disabled
-
+            } else if (node instanceof Text t) {
+                // TODO: handle the case when the nodes are created with scripting disabled
                 Node parent = node.getParentNode();
                 boolean literalAppend = false;
                 if (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
@@ -140,14 +135,13 @@ public class HtmlSerializer implements NodesVisitor {
                     literalAppend = Node.NAMESPACE_HTML_ID == p.namespaceID
                             && (Common.isTextNodeParent(p.getNodeName()) || ("noscript".equals(p.getNodeName()) && !scriptingDisabled));
                 }
-                Text t = (Text) node;
                 appendable.append(literalAppend ? t.getData() : escapeTextData(t.getData()));
 
-            } else if (node.getNodeType() == Node.COMMENT_NODE) {
-                appendable.append("<!--").append(((Comment) node).getData()).append("-->");
-            } else if (node.getNodeType() == Node.DOCUMENT_TYPE_NODE) {
+            } else if (node instanceof Comment comment) {
+                appendable.append("<!--").append(comment.getData()).append("-->");
+            } else if (node instanceof DocumentType dt) {
                 // TODO: should append the rest of the attributes if present
-                appendable.append("<!DOCTYPE ").append(((DocumentType) node).getName()).append('>');
+                appendable.append("<!DOCTYPE ").append(dt.getName()).append('>');
             }
         } catch (IOException ioe) {
             throw new SerializationException(ioe);
@@ -174,6 +168,7 @@ public class HtmlSerializer implements NodesVisitor {
 
     public static class SerializationException extends RuntimeException {
 
+        @Serial
         private static final long serialVersionUID = -2182908125163112627L;
 
         public SerializationException(Throwable t) {

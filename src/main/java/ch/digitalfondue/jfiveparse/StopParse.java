@@ -15,11 +15,14 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.io.Serial;
+
 /**
  * For stopping the parser, this exception is launched internally.
  */
 final class StopParse extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = -3662411325068849613L;
 
     @Override

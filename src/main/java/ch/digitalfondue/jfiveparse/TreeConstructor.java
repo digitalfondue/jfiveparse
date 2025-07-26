@@ -389,7 +389,7 @@ class TreeConstructor {
     void adoptionAgencyAlgorithm(byte subjectID) {
         Element current = getCurrentNode();
         // 1
-        if (Common.isHtmlNS(current, subjectID) && !activeFormattingElements.contains(current)) {
+        if (Common.isHtmlNS(current, subjectID) && !activeFormattingElements.activeFormattingElements.contains(current)) {
             popCurrentNode();
             return;
         }
@@ -421,7 +421,7 @@ class TreeConstructor {
             final Element formattingElement = activeFormattingElements.getElementAtIndex(formattingElementIdx);
             if (openElements.lastIndexOf(formattingElement) == -1) {
                 emitParseError();
-                activeFormattingElements.removeAtIndex(formattingElementIdx);
+                activeFormattingElements.activeFormattingElements.remove(formattingElementIdx);
                 return;
             }
 
@@ -447,7 +447,7 @@ class TreeConstructor {
                         break;
                     }
                 }
-                activeFormattingElements.removeAtIndex(formattingElementIdx);
+                activeFormattingElements.activeFormattingElements.remove(formattingElementIdx);
                 return;
             }
 
@@ -484,12 +484,12 @@ class TreeConstructor {
                 }
 
                 // 13.5
-                if (innerLoopCounter > 3 && activeFormattingElements.contains(node)) {
+                if (innerLoopCounter > 3 && activeFormattingElements.activeFormattingElements.contains(node)) {
                     activeFormattingElements.remove(node);
                 }
 
                 // 13.6
-                if (!activeFormattingElements.contains(node)) {
+                if (!activeFormattingElements.activeFormattingElements.contains(node)) {
                     nodeBefore = openElements.get(openElements.lastIndexOf(node) - 1);
                     continue;
                 }

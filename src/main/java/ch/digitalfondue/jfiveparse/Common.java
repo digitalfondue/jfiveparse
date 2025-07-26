@@ -623,16 +623,8 @@ class Common {
         };
     }
 
-    static String join(Iterator<String> l) {
-        StringBuilder sb = new StringBuilder();
-        while (l.hasNext()) {
-            sb.append(l.next());
-            if (l.hasNext()) {
-                sb.append(' ');
-            }
-
-        }
-        return sb.toString();
+    static String join(List<String> l) {
+        return String.join(" ", l);
     }
 
     static boolean is(Element element, byte nameID, byte namespaceID) {

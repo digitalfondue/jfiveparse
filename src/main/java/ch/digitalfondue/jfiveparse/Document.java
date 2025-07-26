@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 /**
  * Represent a document.
  */
-public class Document extends Node {
+public final class Document extends Node {
     private final List<Node> childNodes = new ArrayList<>(2);
     private DocumentType doctype;
 

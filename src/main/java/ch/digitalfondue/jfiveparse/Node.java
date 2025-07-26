@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Base class for all the nodes.
  */
-public abstract class Node implements CommonNode {
+public sealed abstract class Node implements CommonNode permits Comment, Document, DocumentType, Element, Text {
 
     private static final List<Node> EMPTY_LIST = List.of();
 

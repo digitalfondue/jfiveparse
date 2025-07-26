@@ -21,7 +21,7 @@ class TreeConstructorActiveFormattingElements {
 
     final ArrayList<Element> activeFormattingElements = new ArrayList<>();
     private final TreeConstructor treeConstructor;
-    Element bookmark;
+    Bookmark bookmark;
 
     private static final class Marker extends Element {
         Marker() {
@@ -222,18 +222,6 @@ class TreeConstructorActiveFormattingElements {
 
     int indexOf(Element e) {
         return activeFormattingElements.lastIndexOf(e);
-    }
-
-    /*void set(int idx, Element element) {
-        activeFormattingElements.set(idx, element);
-    }*/
-
-    boolean contains(Element e) {
-        return activeFormattingElements.lastIndexOf(e) != -1;
-    }
-
-    void removeAtIndex(int index) {
-        activeFormattingElements.remove(index);
     }
 
     void remove(Element e) {

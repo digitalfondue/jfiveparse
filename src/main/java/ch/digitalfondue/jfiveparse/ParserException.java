@@ -16,12 +16,15 @@
 package ch.digitalfondue.jfiveparse;
 
 
+import java.io.Serial;
+
 public class ParserException extends RuntimeException {
 
     ParserException(Throwable ioe) {
         super(ioe);
     }
 
+    @Serial
     private static final long serialVersionUID = 4813626126106692625L;
 
 }

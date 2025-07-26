@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class Attributes implements Iterable<AttributeNode> {
+public final class Attributes implements Iterable<AttributeNode> {
 
     private Map<String, AttributeNode> attributes;
 

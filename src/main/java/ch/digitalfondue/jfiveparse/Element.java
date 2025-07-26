@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-public class Element extends Node implements CommonNode.CommonElement {
+public non-sealed class Element extends Node implements CommonNode.CommonElement {
 
     final String nodeName;
     final String originalNodeName;
@@ -290,7 +290,7 @@ public class Element extends Node implements CommonNode.CommonElement {
      * Get a space separated list of class names.
      */
     public String getClassName() {
-        return Common.join(getClassList().listIterator());
+        return Common.join(getClassList());
     }
 
     /**

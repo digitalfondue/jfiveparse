@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Represent a comment.
  */
-public class Comment extends Node {
+public final class Comment extends Node {
 
     ResizableCharBuilder dataBuilder;
     private String data;

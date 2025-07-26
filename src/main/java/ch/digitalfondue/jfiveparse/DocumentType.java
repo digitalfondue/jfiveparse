@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Represent a document type.
  */
-public class DocumentType extends Node {
+public final class DocumentType extends Node {
 
     private final String name;
     private final String publicId;

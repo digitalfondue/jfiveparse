@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.Objects;
 
-public class AttributeNode {
+public final class AttributeNode {
 
     String name;
     String originalName;
