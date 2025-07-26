@@ -10,7 +10,7 @@ class EnsureCommonElementIDTest {
 
     @Test
     void ensureCommonElementIDRanges() {
-        var addressToXmpSpecial = new byte[]{
+        var addressToXmpSpecial = new int[]{
                 ELEMENT_ADDRESS_ID,
                 ELEMENT_APPLET_ID,
                 ELEMENT_AREA_ID,
@@ -94,7 +94,7 @@ class EnsureCommonElementIDTest {
                 ELEMENT_XMP_ID,
         };
 
-        var h1h6 = new byte[]{
+        var h1h6 = new int[]{
                 ELEMENT_H1_ID,
                 ELEMENT_H2_ID,
                 ELEMENT_H3_ID,

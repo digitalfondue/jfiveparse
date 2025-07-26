@@ -25,7 +25,7 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
 
 class TreeConstructorInFramesetSelectTemplate {
 
-    static void inFrameset(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inFrameset(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         if (tokenType == CHARACTER && isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
@@ -68,7 +68,7 @@ class TreeConstructorInFramesetSelectTemplate {
         }
     }
     
-    static void inSelect(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inSelect(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && treeConstructor.getChr() == Characters.NULL) {
             treeConstructor.emitParseError();
             // ignore
@@ -161,7 +161,7 @@ class TreeConstructorInFramesetSelectTemplate {
         }
     }
 
-    static void inSelectTable(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inSelectTable(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         boolean isCaptionOrRelatedTags = ELEMENT_CAPTION_ID == tagNameID || //
                 ELEMENT_TABLE_ID == tagNameID || //
                 ELEMENT_TBODY_ID == tagNameID || //
@@ -197,7 +197,7 @@ class TreeConstructorInFramesetSelectTemplate {
         treeConstructor.dispatch();
     }
 
-    static void inTemplate(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inTemplate(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER || tokenType == COMMENT || tokenType == DOCTYPE) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (

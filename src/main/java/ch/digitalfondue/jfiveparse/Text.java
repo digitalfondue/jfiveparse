@@ -38,7 +38,7 @@ public final class Text extends Node {
     }
 
     @Override
-    public byte getNodeType() {
+    public int getNodeType() {
         return TEXT_NODE;
     }
 

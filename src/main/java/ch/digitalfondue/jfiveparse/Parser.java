@@ -122,7 +122,7 @@ public class Parser {
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);
 
-        byte namespaceID = node.namespaceID;
+        int namespaceID = node.namespaceID;
         String name = node.nodeName;
 
         // 4

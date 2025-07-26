@@ -27,66 +27,59 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     Node parentNode;
 
     public static final String NAMESPACE_HTML = "http://www.w3.org/1999/xhtml";
-    static final byte NAMESPACE_HTML_ID = 1;
+    static final int NAMESPACE_HTML_ID = 1;
     public static final String NAMESPACE_SVG = "http://www.w3.org/2000/svg";
-    static final byte NAMESPACE_SVG_ID = 2;
+    static final int NAMESPACE_SVG_ID = 2;
     public static final String NAMESPACE_MATHML = "http://www.w3.org/1998/Math/MathML";
-    static final byte NAMESPACE_MATHML_ID = 3;
+    static final int NAMESPACE_MATHML_ID = 3;
 
     public static final String NAMESPACE_XMLNS = "http://www.w3.org/2000/xmlns/";
-    static final byte NAMESPACE_XMLNS_ID = 4;
+    static final int NAMESPACE_XMLNS_ID = 4;
     public static final String NAMESPACE_XML = "http://www.w3.org/XML/1998/namespace";
-    static final byte NAMESPACE_XML_ID = 5;
+    static final int NAMESPACE_XML_ID = 5;
     public static final String NAMESPACE_XLINK = "http://www.w3.org/1999/xlink";
-    static final byte NAMESPACE_XLINK_ID = 6;
+    static final int NAMESPACE_XLINK_ID = 6;
 
 
-    static byte toNameSpaceId(String s) {
+    static int toNameSpaceId(String s) {
         if (s == null) {
             return 0;
         }
-        switch (s) {
-            case NAMESPACE_HTML:
-                return NAMESPACE_HTML_ID;
-            case NAMESPACE_SVG:
-                return NAMESPACE_SVG_ID;
-            case NAMESPACE_MATHML:
-                return NAMESPACE_MATHML_ID;
-            case NAMESPACE_XMLNS:
-                return NAMESPACE_XMLNS_ID;
-            case NAMESPACE_XML:
-                return NAMESPACE_XML_ID;
-            case NAMESPACE_XLINK:
-                return NAMESPACE_XLINK_ID;
-            default:
-                return 0;
-        }
+        return switch (s) {
+            case NAMESPACE_HTML -> NAMESPACE_HTML_ID;
+            case NAMESPACE_SVG -> NAMESPACE_SVG_ID;
+            case NAMESPACE_MATHML -> NAMESPACE_MATHML_ID;
+            case NAMESPACE_XMLNS -> NAMESPACE_XMLNS_ID;
+            case NAMESPACE_XML -> NAMESPACE_XML_ID;
+            case NAMESPACE_XLINK -> NAMESPACE_XLINK_ID;
+            default -> 0;
+        };
     }
 
     /**
      * {@link Element} node type value:
      */
-    public static final byte ELEMENT_NODE = 1;
+    public static final int ELEMENT_NODE = 1;
 
     /**
      * {@link Text} node type value:
      */
-    public static final byte TEXT_NODE = 3;
+    public static final int TEXT_NODE = 3;
 
     /**
      * {@link Comment} node type value:
      */
-    public static final byte COMMENT_NODE = 8;
+    public static final int COMMENT_NODE = 8;
 
     /**
      * {@link Document} node type value:
      */
-    public static final byte DOCUMENT_NODE = 9;
+    public static final int DOCUMENT_NODE = 9;
 
     /**
      * {@link DocumentType} node type value:
      */
-    public static final byte DOCUMENT_TYPE_NODE = 10;
+    public static final int DOCUMENT_TYPE_NODE = 10;
 
     /**
      * @return the node type. See {@link #ELEMENT_NODE}, {@link #TEXT_NODE},
@@ -94,7 +87,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      *         {@link #DOCUMENT_TYPE_NODE}.
      */
     @Override
-    public abstract byte getNodeType();
+    public abstract int getNodeType();
 
     /**
      * @return the node name. Each concrete class will return a specific value.

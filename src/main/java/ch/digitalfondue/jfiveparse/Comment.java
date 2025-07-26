@@ -34,7 +34,7 @@ public final class Comment extends Node {
     }
 
     @Override
-    public byte getNodeType() {
+    public int getNodeType() {
         return COMMENT_NODE;
     }
 

@@ -27,12 +27,12 @@ class TreeConstructor {
     private ResizableCharBuilder insertCharacterPreviousTextNode;
     //
 
-    static final byte CHARACTER = 0;
-    static final byte COMMENT = 1;
-    static final byte DOCTYPE = 2;
-    static final byte EOF = 3;
-    static final byte END_TAG = 4;
-    static final byte START_TAG = 5;
+    static final int CHARACTER = 0;
+    static final int COMMENT = 1;
+    static final int DOCTYPE = 2;
+    static final int EOF = 3;
+    static final int END_TAG = 4;
+    static final int START_TAG = 5;
 
     //
     private boolean scriptingFlag;
@@ -54,7 +54,7 @@ class TreeConstructor {
     final boolean interpretSelfClosingAnythingElse;
 
     // ----
-    private byte tokenType;
+    private int tokenType;
     // --- token values ---
     // --- character ---
     private char chr;
@@ -74,7 +74,7 @@ class TreeConstructor {
 
     // --- tag related ---
     private String tagName;
-    private byte tagNameID;
+    private int tagNameID;
     private String originalTagName;
     private boolean selfClosing;
     private Attributes attrs;
@@ -310,7 +310,7 @@ class TreeConstructor {
 
     // ------------
 
-    boolean hasElementInScope(byte tagNameID) {
+    boolean hasElementInScope(int tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
             if (Common.isHtmlNS(node, tagNameID)) {
@@ -334,7 +334,7 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInButtonScope(byte tagNameID) {
+    boolean hasElementInButtonScope(int tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
             if (Common.isHtmlNS(node, tagNameID)) {
@@ -358,7 +358,7 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInTableScope(byte tagNameID) {
+    boolean hasElementInTableScope(int tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
             if (Common.isHtmlNS(node, tagNameID)) {
@@ -370,7 +370,7 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInSelectScope(byte tagNameID) {
+    boolean hasElementInSelectScope(int tagNameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
             if (Common.isHtmlNS(node, tagNameID)) {
@@ -386,7 +386,7 @@ class TreeConstructor {
 
     // implementation of
     // https://html.spec.whatwg.org/multipage/syntax.html#adoption-agency-algorithm
-    void adoptionAgencyAlgorithm(byte subjectID) {
+    void adoptionAgencyAlgorithm(int subjectID) {
         Element current = getCurrentNode();
         // 1
         if (Common.isHtmlNS(current, subjectID) && !activeFormattingElements.activeFormattingElements.contains(current)) {
@@ -605,16 +605,16 @@ class TreeConstructor {
         insertCharacter(chr);
     }
 
-    static Element buildElement(String name, byte nameID, String originalName, String namespace, byte namespaceID, Attributes attrs) {
+    static Element buildElement(String name, int nameID, String originalName, String namespace, int namespaceID, Attributes attrs) {
         return new Element(name, nameID, originalName, namespace, namespaceID, attrs);
     }
 
-    Element insertElementToken(String name, byte nameId, String namespace, byte nameSpaceID, Attributes attrs) {
+    Element insertElementToken(String name, int nameId, String namespace, int nameSpaceID, Attributes attrs) {
         Element element = buildElement(name, nameId, name, namespace, nameSpaceID, attrs);
         return insertHtmlElementToken(element);
     }
 
-    Element insertHtmlElementWithEmptyAttributes(String name, byte nameID) {
+    Element insertHtmlElementWithEmptyAttributes(String name, int nameID) {
         Element element = buildElement(name, nameID, name, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, null);
         return insertHtmlElementToken(element);
     }
@@ -630,7 +630,7 @@ class TreeConstructor {
     Node[] findAppropriatePlaceForInsertingNode(Element overrideTarget) {
 
         Element target = overrideTarget != null ? overrideTarget : getCurrentNode();
-        byte targetNameID = target.nodeNameID;
+        int targetNameID = target.nodeNameID;
         if (fosterParentingEnabled && (Node.NAMESPACE_HTML_ID == target.namespaceID && (
                 Common.ELEMENT_TABLE_ID == targetNameID || //
                 Common.ELEMENT_TBODY_ID == targetNameID || //
@@ -666,7 +666,7 @@ class TreeConstructor {
         }
     }
 
-    private int findLastElementPositionMatching(byte nameID, byte namespaceID) {
+    private int findLastElementPositionMatching(int nameID, int namespaceID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element e = openElements.get(i);
             if (Common.is(e, nameID, namespaceID)) {
@@ -676,7 +676,7 @@ class TreeConstructor {
         return -1;
     }
 
-    boolean stackOfOpenElementsContains(byte nameID, byte namespaceID) {
+    boolean stackOfOpenElementsContains(int nameID, int namespaceID) {
         return findLastElementPositionMatching(nameID, namespaceID) != -1;
     }
 
@@ -782,7 +782,7 @@ class TreeConstructor {
         return openElements.remove(openElements.size() - 1);
     }
 
-    void popOpenElementsUntilWithHtmlNS(byte nameID) {
+    void popOpenElementsUntilWithHtmlNS(int nameID) {
         while (true) {
             Element e = popCurrentNode();
             if (Common.isHtmlNS(e, nameID)) {
@@ -941,11 +941,11 @@ class TreeConstructor {
         }
     }
 
-    byte getTokenType() {
+    int getTokenType() {
         return tokenType;
     }
 
-    void setTokenType(byte tokenType) {
+    void setTokenType(int tokenType) {
         this.tokenType = tokenType;
     }
 
@@ -1085,7 +1085,7 @@ class TreeConstructor {
         return activeFormattingElements.getElementAtIndex(idx);
     }
 
-    int getIndexInActiveFormattingElementsBetween(byte nameID, byte namespaceID) {
+    int getIndexInActiveFormattingElementsBetween(int nameID, int namespaceID) {
         return activeFormattingElements.getBetweenLastElementAndMarkerIndex(nameID, namespaceID);
     }
 

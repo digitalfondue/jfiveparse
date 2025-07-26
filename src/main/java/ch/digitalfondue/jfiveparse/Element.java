@@ -25,8 +25,8 @@ public final class Element extends Node implements CommonNode.CommonElement {
     final String nodeName;
     final String originalNodeName;
     final String namespaceURI;
-    final byte namespaceID;
-    final byte nodeNameID;
+    final int namespaceID;
+    final int nodeNameID;
     Attributes attributes;
 
     private List<Node> childNodes = null;
@@ -63,10 +63,10 @@ public final class Element extends Node implements CommonNode.CommonElement {
     }
 
     Element(String name,
-            byte nameID,
+            int nameID,
             String originalName,
             String nameSpace,
-            byte namespaceID,
+            int namespaceID,
             Attributes attributes) {
         this.nodeName = name;
         this.nodeNameID = nameID;
@@ -99,7 +99,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
     }
 
     @Override
-    public byte getNodeType() {
+    public int getNodeType() {
         return ELEMENT_NODE;
     }
 

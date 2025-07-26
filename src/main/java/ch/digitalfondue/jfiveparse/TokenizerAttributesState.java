@@ -324,7 +324,7 @@ class TokenizerAttributesState {
         tokenizer.setState(tokenizer.getPreviousState());
 
         // cleanup, maybe useless
-        tokenizer.setPreviousState((byte) -1);
+        tokenizer.setPreviousState(-1);
         tokenizer.setAdditionalAllowedCharacter(-1);
         //
     }

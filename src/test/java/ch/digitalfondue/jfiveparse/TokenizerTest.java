@@ -106,7 +106,7 @@ public class TokenizerTest {
     private void checkSingleTest(TokenizerTestDescriptor desc, TokenizerStateForTest initialState) {
         TokenSaver tokenSaver = new TokenSaver();
         Tokenizer tokenizer = new Tokenizer(tokenSaver);
-        tokenizer.setState((byte) initialState.ordinal());
+        tokenizer.setState(initialState.ordinal());
 
         if (desc.lastStartTag != null) {
             tokenizer.setLastStartTag(new ResizableCharBuilder(desc.lastStartTag));

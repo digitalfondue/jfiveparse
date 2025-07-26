@@ -23,7 +23,7 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
 class TreeConstructorAftersBeforeInitialInHead {
 
-    static void afterHead(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void afterHead(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
         } else if (tokenType == COMMENT) {
@@ -77,7 +77,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    static void afterBody(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void afterBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == COMMENT) {
@@ -101,7 +101,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    static void afterFrameset(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void afterFrameset(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
@@ -124,7 +124,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    static void afterAfterBody(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void afterAfterBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == COMMENT) {
             treeConstructor.insertCommentToDocument();
         } else if (tokenType == DOCTYPE || //
@@ -140,7 +140,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    static void afterAfterFrameset(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void afterAfterFrameset(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == COMMENT) {
             treeConstructor.insertCommentToDocument();
         } else if ((tokenType == DOCTYPE) || //
@@ -158,7 +158,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     }
 
     // ------------ before --------------
-    static void beforeHead(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void beforeHead(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
             case CHARACTER:
@@ -183,7 +183,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    private static void handleStartTagHead(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void handleStartTagHead(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HEAD_ID, tagNameID)) {
@@ -195,7 +195,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    private static void handleEndTagHead(byte tagNameID, TreeConstructor treeConstructor) {
+    private static void handleEndTagHead(int tagNameID, TreeConstructor treeConstructor) {
         if (
                 Common.ELEMENT_HEAD_ID != tagNameID && Common.ELEMENT_BODY_ID != tagNameID &&
                 Common.ELEMENT_HTML_ID != tagNameID && Common.ELEMENT_BR_ID != tagNameID
@@ -222,7 +222,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         treeConstructor.dispatch();
     }
 
-    static void beforeHtml(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void beforeHtml(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
             case CHARACTER:
@@ -246,7 +246,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    private static void handleStartTagHtml(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void handleStartTagHtml(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (Common.ELEMENT_HTML_ID == tagNameID) {
             Element html = TreeConstructor.buildElement("html", Common.ELEMENT_HTML_ID, tagName, Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, treeConstructor.getAttributes());
             treeConstructor.addToOpenElements(html);
@@ -257,7 +257,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    private static void handleEndTagHtml(byte tagNameID, TreeConstructor treeConstructor) {
+    private static void handleEndTagHtml(int tagNameID, TreeConstructor treeConstructor) {
         if ((Common.ELEMENT_HEAD_ID != tagNameID && Common.ELEMENT_BODY_ID != tagNameID && //
                 Common.ELEMENT_HTML_ID != tagNameID && Common.ELEMENT_BR_ID != tagNameID)) {
             treeConstructor.emitParseError();
@@ -284,7 +284,7 @@ class TreeConstructorAftersBeforeInitialInHead {
     }
 
     // ----------- initial
-    static void initial(byte tokenType, TreeConstructor treeConstructor) {
+    static void initial(int tokenType, TreeConstructor treeConstructor) {
 
         switch (tokenType) {
             case CHARACTER:
@@ -365,7 +365,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             "-//webtechs//dtd mozilla html//");
 
     // 0 = no-quirks-mode, 1 =  limited-quirks mode, 2 = quirks-mode
-    private static byte quirksType(DocumentType documentType) {
+    private static int quirksType(DocumentType documentType) {
         if (!"html".equals(documentType.getName())) {
             return 2;
         }
@@ -428,7 +428,7 @@ class TreeConstructorAftersBeforeInitialInHead {
 
     // --- in head ---
 
-    static void inHead(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inHead(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
         } else if (tokenType == COMMENT) {
@@ -507,7 +507,7 @@ class TreeConstructorAftersBeforeInitialInHead {
         }
     }
 
-    static void inHeadNoScript(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inHeadNoScript(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         final int chr = treeConstructor.getChr();
         if (tokenType == DOCTYPE) {
             treeConstructor.emitParseError();

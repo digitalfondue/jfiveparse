@@ -221,7 +221,7 @@ class Common {
 
     static boolean isHtmlIntegrationPoint(Element e) {
         String nodeName = e.nodeName;
-        byte namespaceID = e.namespaceID;
+        int namespaceID = e.namespaceID;
 
         return ((Node.NAMESPACE_MATHML_ID == namespaceID && "annotation-xml".equals(nodeName)) && //
                 matchEncoding(e.getAttributes().get("encoding")))
@@ -267,15 +267,15 @@ class Common {
         return chr == Characters.TAB || chr == Characters.LF || chr == Characters.FF || chr == Characters.CR || chr == Characters.SPACE;
     }
 
-    static boolean isStartTagNamed(byte tokenType, byte namedID, byte tagNameID) {
+    static boolean isStartTagNamed(int tokenType, int namedID, int tagNameID) {
         return tokenType == TreeConstructor.START_TAG && namedID == tagNameID;
     }
 
-    static boolean isEndTagNamed(byte tokenType, byte namedID, byte tagNameID) {
+    static boolean isEndTagNamed(int tokenType, int namedID, int tagNameID) {
         return tokenType == TreeConstructor.END_TAG && namedID == tagNameID;
     }
 
-    static byte tagNameToID(String tagName) {
+    static int tagNameToID(String tagName) {
         if (tagName == null) {
             return 0;
         }
@@ -401,127 +401,127 @@ class Common {
     }
 
     // this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
-    static final byte ELEMENT_ADDRESS_ID = 1;
-    static final byte ELEMENT_APPLET_ID = 2;
-    static final byte ELEMENT_AREA_ID = 3;
-    static final byte ELEMENT_ARTICLE_ID = 4;
-    static final byte ELEMENT_ASIDE_ID = 5;
-    static final byte ELEMENT_BASE_ID = 6;
-    static final byte ELEMENT_BASEFONT_ID = 7;
-    static final byte ELEMENT_BGSOUND_ID = 8;
-    static final byte ELEMENT_BLOCKQUOTE_ID = 9;
-    static final byte ELEMENT_BODY_ID = 10;
-    static final byte ELEMENT_BR_ID = 11;
-    static final byte ELEMENT_BUTTON_ID = 12;
-    static final byte ELEMENT_CAPTION_ID = 13;
-    static final byte ELEMENT_CENTER_ID = 14;
-    static final byte ELEMENT_COL_ID = 15;
-    static final byte ELEMENT_COLGROUP_ID = 16;
-    static final byte ELEMENT_DD_ID = 17;
-    static final byte ELEMENT_DETAILS_ID = 18;
-    static final byte ELEMENT_DIR_ID = 19;
-    static final byte ELEMENT_DIV_ID = 20;
-    static final byte ELEMENT_DL_ID = 21;
-    static final byte ELEMENT_DT_ID = 22;
-    static final byte ELEMENT_EMBED_ID = 23;
-    static final byte ELEMENT_FIELDSET_ID = 24;
-    static final byte ELEMENT_FIGCAPTION_ID = 25;
-    static final byte ELEMENT_FIGURE_ID = 26;
-    static final byte ELEMENT_FOOTER_ID = 27;
-    static final byte ELEMENT_FORM_ID = 28;
-    static final byte ELEMENT_FRAME_ID = 29;
-    static final byte ELEMENT_FRAMESET_ID = 30;
-    static final byte ELEMENT_H1_ID = 31;
-    static final byte ELEMENT_H2_ID = 32;
-    static final byte ELEMENT_H3_ID = 33;
-    static final byte ELEMENT_H4_ID = 34;
-    static final byte ELEMENT_H5_ID = 35;
-    static final byte ELEMENT_H6_ID = 36;
-    static final byte ELEMENT_HEAD_ID = 37;
-    static final byte ELEMENT_HEADER_ID = 38;
-    static final byte ELEMENT_HGROUP_ID = 39;
-    static final byte ELEMENT_HR_ID = 40;
-    static final byte ELEMENT_HTML_ID = 41;
-    static final byte ELEMENT_IFRAME_ID = 42;
-    static final byte ELEMENT_IMG_ID = 43;
-    static final byte ELEMENT_INPUT_ID = 44;
-    static final byte ELEMENT_LI_ID = 45;
-    static final byte ELEMENT_LINK_ID = 46;
-    static final byte ELEMENT_LISTING_ID = 47;
-    static final byte ELEMENT_MAIN_ID = 48;
-    static final byte ELEMENT_MARQUEE_ID = 49;
-    static final byte ELEMENT_MENU_ID = 50;
-    static final byte ELEMENT_META_ID = 51;
-    static final byte ELEMENT_NAV_ID = 52;
-    static final byte ELEMENT_NOEMBED_ID = 53;
-    static final byte ELEMENT_NOFRAMES_ID = 54;
-    static final byte ELEMENT_NOSCRIPT_ID = 55;
-    static final byte ELEMENT_OBJECT_ID = 56;
-    static final byte ELEMENT_OL_ID = 57;
-    static final byte ELEMENT_P_ID = 58;
-    static final byte ELEMENT_PARAM_ID = 59;
-    static final byte ELEMENT_PLAINTEXT_ID = 60;
-    static final byte ELEMENT_PRE_ID = 61;
-    static final byte ELEMENT_SCRIPT_ID = 62;
-    static final byte ELEMENT_SECTION_ID = 63;
-    static final byte ELEMENT_SELECT_ID = 64;
-    static final byte ELEMENT_SOURCE_ID = 65;
-    static final byte ELEMENT_STYLE_ID = 66;
-    static final byte ELEMENT_SUMMARY_ID = 67;
-    static final byte ELEMENT_TABLE_ID = 68;
-    static final byte ELEMENT_TBODY_ID = 69;
-    static final byte ELEMENT_TD_ID = 70;
-    static final byte ELEMENT_TEMPLATE_ID = 71;
-    static final byte ELEMENT_TEXTAREA_ID = 72;
-    static final byte ELEMENT_TFOOT_ID = 73;
-    static final byte ELEMENT_TH_ID = 74;
-    static final byte ELEMENT_THEAD_ID = 75;
-    static final byte ELEMENT_TITLE_ID = 76;
-    static final byte ELEMENT_TR_ID = 77;
-    static final byte ELEMENT_TRACK_ID = 78;
-    static final byte ELEMENT_UL_ID = 79;
-    static final byte ELEMENT_WBR_ID = 80;
-    static final byte ELEMENT_XMP_ID = 81;
+    static final int ELEMENT_ADDRESS_ID = 1;
+    static final int ELEMENT_APPLET_ID = 2;
+    static final int ELEMENT_AREA_ID = 3;
+    static final int ELEMENT_ARTICLE_ID = 4;
+    static final int ELEMENT_ASIDE_ID = 5;
+    static final int ELEMENT_BASE_ID = 6;
+    static final int ELEMENT_BASEFONT_ID = 7;
+    static final int ELEMENT_BGSOUND_ID = 8;
+    static final int ELEMENT_BLOCKQUOTE_ID = 9;
+    static final int ELEMENT_BODY_ID = 10;
+    static final int ELEMENT_BR_ID = 11;
+    static final int ELEMENT_BUTTON_ID = 12;
+    static final int ELEMENT_CAPTION_ID = 13;
+    static final int ELEMENT_CENTER_ID = 14;
+    static final int ELEMENT_COL_ID = 15;
+    static final int ELEMENT_COLGROUP_ID = 16;
+    static final int ELEMENT_DD_ID = 17;
+    static final int ELEMENT_DETAILS_ID = 18;
+    static final int ELEMENT_DIR_ID = 19;
+    static final int ELEMENT_DIV_ID = 20;
+    static final int ELEMENT_DL_ID = 21;
+    static final int ELEMENT_DT_ID = 22;
+    static final int ELEMENT_EMBED_ID = 23;
+    static final int ELEMENT_FIELDSET_ID = 24;
+    static final int ELEMENT_FIGCAPTION_ID = 25;
+    static final int ELEMENT_FIGURE_ID = 26;
+    static final int ELEMENT_FOOTER_ID = 27;
+    static final int ELEMENT_FORM_ID = 28;
+    static final int ELEMENT_FRAME_ID = 29;
+    static final int ELEMENT_FRAMESET_ID = 30;
+    static final int ELEMENT_H1_ID = 31;
+    static final int ELEMENT_H2_ID = 32;
+    static final int ELEMENT_H3_ID = 33;
+    static final int ELEMENT_H4_ID = 34;
+    static final int ELEMENT_H5_ID = 35;
+    static final int ELEMENT_H6_ID = 36;
+    static final int ELEMENT_HEAD_ID = 37;
+    static final int ELEMENT_HEADER_ID = 38;
+    static final int ELEMENT_HGROUP_ID = 39;
+    static final int ELEMENT_HR_ID = 40;
+    static final int ELEMENT_HTML_ID = 41;
+    static final int ELEMENT_IFRAME_ID = 42;
+    static final int ELEMENT_IMG_ID = 43;
+    static final int ELEMENT_INPUT_ID = 44;
+    static final int ELEMENT_LI_ID = 45;
+    static final int ELEMENT_LINK_ID = 46;
+    static final int ELEMENT_LISTING_ID = 47;
+    static final int ELEMENT_MAIN_ID = 48;
+    static final int ELEMENT_MARQUEE_ID = 49;
+    static final int ELEMENT_MENU_ID = 50;
+    static final int ELEMENT_META_ID = 51;
+    static final int ELEMENT_NAV_ID = 52;
+    static final int ELEMENT_NOEMBED_ID = 53;
+    static final int ELEMENT_NOFRAMES_ID = 54;
+    static final int ELEMENT_NOSCRIPT_ID = 55;
+    static final int ELEMENT_OBJECT_ID = 56;
+    static final int ELEMENT_OL_ID = 57;
+    static final int ELEMENT_P_ID = 58;
+    static final int ELEMENT_PARAM_ID = 59;
+    static final int ELEMENT_PLAINTEXT_ID = 60;
+    static final int ELEMENT_PRE_ID = 61;
+    static final int ELEMENT_SCRIPT_ID = 62;
+    static final int ELEMENT_SECTION_ID = 63;
+    static final int ELEMENT_SELECT_ID = 64;
+    static final int ELEMENT_SOURCE_ID = 65;
+    static final int ELEMENT_STYLE_ID = 66;
+    static final int ELEMENT_SUMMARY_ID = 67;
+    static final int ELEMENT_TABLE_ID = 68;
+    static final int ELEMENT_TBODY_ID = 69;
+    static final int ELEMENT_TD_ID = 70;
+    static final int ELEMENT_TEMPLATE_ID = 71;
+    static final int ELEMENT_TEXTAREA_ID = 72;
+    static final int ELEMENT_TFOOT_ID = 73;
+    static final int ELEMENT_TH_ID = 74;
+    static final int ELEMENT_THEAD_ID = 75;
+    static final int ELEMENT_TITLE_ID = 76;
+    static final int ELEMENT_TR_ID = 77;
+    static final int ELEMENT_TRACK_ID = 78;
+    static final int ELEMENT_UL_ID = 79;
+    static final int ELEMENT_WBR_ID = 80;
+    static final int ELEMENT_XMP_ID = 81;
     // end this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
-    static final byte ELEMENT_OPTGROUP_ID = 82;
-    static final byte ELEMENT_OPTION_ID = 83;
-    static final byte ELEMENT_RB_ID = 84;
-    static final byte ELEMENT_RP_ID = 85;
-    static final byte ELEMENT_RT_ID = 86;
-    static final byte ELEMENT_RTC_ID = 87;
+    static final int ELEMENT_OPTGROUP_ID = 82;
+    static final int ELEMENT_OPTION_ID = 83;
+    static final int ELEMENT_RB_ID = 84;
+    static final int ELEMENT_RP_ID = 85;
+    static final int ELEMENT_RT_ID = 86;
+    static final int ELEMENT_RTC_ID = 87;
     //
-    static final byte ELEMENT_A_ID = 88;
+    static final int ELEMENT_A_ID = 88;
     //
-    static final byte ELEMENT_DIALOG_ID = 89;
-    static final byte ELEMENT_SEARCH_ID = 90;
-    static final byte ELEMENT_B_ID = 91;
-    static final byte ELEMENT_BIG_ID = 92;
-    static final byte ELEMENT_CODE_ID = 93;
-    static final byte ELEMENT_EM_ID = 94;
-    static final byte ELEMENT_FONT_ID = 95;
-    static final byte ELEMENT_I_ID = 96;
-    static final byte ELEMENT_S_ID = 97;
-    static final byte ELEMENT_SMALL_ID = 98;
-    static final byte ELEMENT_STRIKE_ID = 99;
-    static final byte ELEMENT_STRONG_ID = 100;
-    static final byte ELEMENT_TT_ID = 101;
-    static final byte ELEMENT_U_ID = 102;
-    static final byte ELEMENT_NO_BR_ID = 103;
-    static final byte ELEMENT_KEYGEN_ID = 104;
-    static final byte ELEMENT_IMAGE_ID = 105;
-    static final byte ELEMENT_MATH_ID = 106;
-    static final byte ELEMENT_SVG_ID = 107;
-    static final byte ELEMENT_RUBY_ID = 108;
+    static final int ELEMENT_DIALOG_ID = 89;
+    static final int ELEMENT_SEARCH_ID = 90;
+    static final int ELEMENT_B_ID = 91;
+    static final int ELEMENT_BIG_ID = 92;
+    static final int ELEMENT_CODE_ID = 93;
+    static final int ELEMENT_EM_ID = 94;
+    static final int ELEMENT_FONT_ID = 95;
+    static final int ELEMENT_I_ID = 96;
+    static final int ELEMENT_S_ID = 97;
+    static final int ELEMENT_SMALL_ID = 98;
+    static final int ELEMENT_STRIKE_ID = 99;
+    static final int ELEMENT_STRONG_ID = 100;
+    static final int ELEMENT_TT_ID = 101;
+    static final int ELEMENT_U_ID = 102;
+    static final int ELEMENT_NO_BR_ID = 103;
+    static final int ELEMENT_KEYGEN_ID = 104;
+    static final int ELEMENT_IMAGE_ID = 105;
+    static final int ELEMENT_MATH_ID = 106;
+    static final int ELEMENT_SVG_ID = 107;
+    static final int ELEMENT_RUBY_ID = 108;
     //
-    static final byte ELEMENT_SPAN_ID = 109;
-    static final byte ELEMENT_SUB_ID = 110;
-    static final byte ELEMENT_SUP_ID = 111;
-    static final byte ELEMENT_VAR_ID = 112;
+    static final int ELEMENT_SPAN_ID = 109;
+    static final int ELEMENT_SUB_ID = 110;
+    static final int ELEMENT_SUP_ID = 111;
+    static final int ELEMENT_VAR_ID = 112;
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;
-        byte nodeNameID = element.nodeNameID;
-    	byte nodeNameSpaceId = element.namespaceID;
+        int nodeNameID = element.nodeNameID;
+    	int nodeNameSpaceId = element.namespaceID;
         if (Node.NAMESPACE_HTML_ID == nodeNameSpaceId) {
             return nodeNameID >= ELEMENT_ADDRESS_ID && nodeNameID <= ELEMENT_XMP_ID;
         } else if (Node.NAMESPACE_MATHML_ID == nodeNameSpaceId) {
@@ -539,8 +539,8 @@ class Common {
 
     static boolean isInCommonInScope(Element element) {
     	String tagName = element.nodeName;
-        byte tagNameID = element.nodeNameID;
-    	byte namespaceID = element.namespaceID;
+        int tagNameID = element.nodeNameID;
+    	int namespaceID = element.namespaceID;
         if (Node.NAMESPACE_HTML_ID == namespaceID) {
             return switch (tagNameID) {
                 case ELEMENT_APPLET_ID, ELEMENT_CAPTION_ID, ELEMENT_HTML_ID, ELEMENT_MARQUEE_ID, ELEMENT_OBJECT_ID,
@@ -613,7 +613,7 @@ class Common {
     // ---------------
 
     static boolean isImpliedTagsThoroughly(Element element) {
-        byte nodeNameID = element.nodeNameID;
+        int nodeNameID = element.nodeNameID;
         return switch (nodeNameID) {
             case ELEMENT_CAPTION_ID, ELEMENT_COLGROUP_ID, ELEMENT_DD_ID, ELEMENT_DT_ID, ELEMENT_LI_ID,
                  ELEMENT_OPTGROUP_ID, ELEMENT_OPTION_ID, ELEMENT_P_ID, ELEMENT_RB_ID, ELEMENT_RP_ID, ELEMENT_RT_ID,
@@ -627,7 +627,7 @@ class Common {
         return String.join(" ", l);
     }
 
-    static boolean is(Element element, byte nameID, byte namespaceID) {
+    static boolean is(Element element, int nameID, int namespaceID) {
         return element.nodeNameID == nameID && element.namespaceID == namespaceID;
     }
     
@@ -635,12 +635,12 @@ class Common {
     	return element.namespaceID == Node.NAMESPACE_HTML_ID && element.nodeName.equals(name);
     }
 
-    static boolean isHtmlNS(Element element, byte nameID) {
+    static boolean isHtmlNS(Element element, int nameID) {
         return element.nodeNameID == nameID && element.namespaceID == Node.NAMESPACE_HTML_ID;
     }
 
     /** /!\ beware when using this function!, the "from"-"to" must be carefully chosen! */
-    static boolean isHtmlNSBetween(Element element, byte nameIDFrom, byte nameIDto) {
+    static boolean isHtmlNSBetween(Element element, int nameIDFrom, int nameIDto) {
         return element.nodeNameID >= nameIDFrom && element.nodeNameID <= nameIDto && element.namespaceID == Node.NAMESPACE_HTML_ID;
     }
 }

@@ -33,7 +33,7 @@ public final class DocumentType extends Node {
     }
 
     @Override
-    public byte getNodeType() {
+    public int getNodeType() {
         return DOCUMENT_TYPE_NODE;
     }
 

@@ -24,7 +24,7 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
 
 class TreeConstructorInTable {
 
-    static void inTable(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inTable(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         Element currentNodeTop = treeConstructor.getCurrentNode();
 
@@ -155,7 +155,7 @@ class TreeConstructorInTable {
 
     // ----- in table body
 
-    static void inTableBody(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inTableBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         if (Common.isStartTagNamed(tokenType, Common.ELEMENT_TR_ID, tagNameID)) {
             clearStackBackToTableBodyContext(treeConstructor);
@@ -219,7 +219,7 @@ class TreeConstructorInTable {
     private static void clearStackBackToTableBodyContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            byte nodeNameID = e.nodeNameID;
+            int nodeNameID = e.nodeNameID;
             if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
                     (
                             Common.ELEMENT_TBODY_ID == nodeNameID || //
@@ -239,7 +239,7 @@ class TreeConstructorInTable {
 
     // in table text
 
-    static void inTableText(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inTableText(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         int chr = treeConstructor.getChr();
         if (tokenType == CHARACTER && chr == Characters.NULL) {
             treeConstructor.emitParseError();
@@ -258,7 +258,7 @@ class TreeConstructorInTable {
 
                 // save tokenType and chr value
 
-                final byte currentTokenType = treeConstructor.getTokenType();
+                final int currentTokenType = treeConstructor.getTokenType();
                 final int currentChar = treeConstructor.getChr();
 
                 //
@@ -301,7 +301,7 @@ class TreeConstructorInTable {
 
     // ----- in row
 
-    static void inRow(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inRow(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         if (tokenType == START_TAG && (Common.ELEMENT_TH_ID == tagNameID || Common.ELEMENT_TD_ID == tagNameID)) {
             clearStackBackToTableRowContext(treeConstructor);
@@ -374,7 +374,7 @@ class TreeConstructorInTable {
     private static void clearStackBackToTableRowContext(TreeConstructor treeConstructor) {
         while (true) {
             Element e = treeConstructor.getCurrentNode();
-            byte nodeNameID = e.nodeNameID;
+            int nodeNameID = e.nodeNameID;
             if (Node.NAMESPACE_HTML_ID == e.namespaceID && //
                     (Common.ELEMENT_TR_ID == nodeNameID || Common.ELEMENT_TEMPLATE_ID == nodeNameID || Common.ELEMENT_HTML_ID == nodeNameID)) {
                 break;
@@ -385,7 +385,7 @@ class TreeConstructorInTable {
 
     // --------
     // in colgroup
-    static void inColumnGroup(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inColumnGroup(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
@@ -429,7 +429,7 @@ class TreeConstructorInTable {
 
     // ----
     // in cell
-    static void inCell(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inCell(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tokenType) {
         case END_TAG:
             inCellEndTag(tagName, tagNameID, treeConstructor);
@@ -443,7 +443,7 @@ class TreeConstructorInTable {
         }
     }
 
-    private static void inCellEndTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void inCellEndTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if ((Common.ELEMENT_TD_ID == tagNameID || Common.ELEMENT_TH_ID == tagNameID)) {
             if (!treeConstructor.hasElementInTableScope(tagNameID)) { // TD or TH
                 treeConstructor.emitParseError();
@@ -486,7 +486,7 @@ class TreeConstructorInTable {
         }
     }
 
-    private static void inCellStartTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void inCellStartTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (
                 Common.ELEMENT_CAPTION_ID == tagNameID || //
                 Common.ELEMENT_COL_ID == tagNameID  || //
@@ -529,7 +529,7 @@ class TreeConstructorInTable {
 
     // ---- in caption
 
-    static void inCaption(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inCaption(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 
         if (Common.isEndTagNamed(tokenType, Common.ELEMENT_CAPTION_ID, tagNameID)) {
 

@@ -186,7 +186,7 @@ class TreeConstructorActiveFormattingElements {
     }
 
     // we know we pass non zero tagNameID
-    int getBetweenLastElementAndMarkerIndex(byte tagNameID) {
+    int getBetweenLastElementAndMarkerIndex(int tagNameID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
             if (MARKER_ELEMENT.equals(e.nodeName)) {
@@ -198,7 +198,7 @@ class TreeConstructorActiveFormattingElements {
         return -1;
     }
 
-    int getBetweenLastElementAndMarkerIndex(byte tagNameID, byte namespaceID) {
+    int getBetweenLastElementAndMarkerIndex(int tagNameID, int namespaceID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
             if (MARKER_ELEMENT.equals(e.nodeName)) {

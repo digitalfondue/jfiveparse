@@ -37,7 +37,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void inBodyStartTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void inBodyStartTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tagNameID) {
             case ELEMENT_HTML_ID:
                 startHtml(treeConstructor);
@@ -301,7 +301,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void startNoembedNoscript(byte tagNameID, TreeConstructor treeConstructor) {
+    private static void startNoembedNoscript(int tagNameID, TreeConstructor treeConstructor) {
         if (ELEMENT_NOSCRIPT_ID == tagNameID && !treeConstructor.isScriptingFlag()) {
             inBodyStartTagAnythingElse(treeConstructor);
         } else {
@@ -634,7 +634,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void inBodyEndTag(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void inBodyEndTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tagNameID) {
             case ELEMENT_TEMPLATE_ID:
                 TreeConstructorAftersBeforeInitialInHead.inHead(END_TAG, tagName, tagNameID, treeConstructor);
@@ -737,7 +737,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.framesetOkToFalse();
     }
 
-    private static void endAppletObject(byte tagNameID, TreeConstructor treeConstructor) {
+    private static void endAppletObject(int tagNameID, TreeConstructor treeConstructor) {
         // we know tagNameID = applet, marquee, object
         if (!treeConstructor.hasElementInScope(tagNameID)) {
             treeConstructor.emitParseError();
@@ -753,7 +753,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void endH1H6(byte tagNameID, TreeConstructor treeConstructor) {
+    private static void endH1H6(int tagNameID, TreeConstructor treeConstructor) {
         if (!(treeConstructor.hasElementInScope(ELEMENT_H1_ID) || //
                 treeConstructor.hasElementInScope(ELEMENT_H2_ID) || //
                 treeConstructor.hasElementInScope(ELEMENT_H3_ID) || //
@@ -779,7 +779,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     // we know it's DD, DT
-    private static void endDdDt(String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void endDdDt(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (!treeConstructor.hasElementInScope(tagNameID)) {
             treeConstructor.emitParseError();
             // ignore
@@ -841,7 +841,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void endAddressUl(byte tagNameID, TreeConstructor treeConstructor) {
+    private static void endAddressUl(int tagNameID, TreeConstructor treeConstructor) {
         //we know the ID are known
         if (!treeConstructor.hasElementInScope(tagNameID)) {
             treeConstructor.emitParseError();
@@ -877,7 +877,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    static void inBody(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void inBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tokenType) {
             case CHARACTER:
                 handleInBodyCharacter(treeConstructor);
@@ -899,7 +899,7 @@ class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void inBodyEof(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    private static void inBodyEof(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (!treeConstructor.isStackTemplatesInsertionModeIsEmpty()) {
             TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, treeConstructor);
         } else {
@@ -946,7 +946,7 @@ class TreeConstructorInBodyForeignContentText {
 
     // ---------------------------
 
-    static void foreignContent(byte tokenType, String tagName, byte tagNameID, TreeConstructor treeConstructor) {
+    static void foreignContent(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == CHARACTER && treeConstructor.getChr() == Characters.NULL) {
             treeConstructor.emitParseError();
             treeConstructor.insertCharacter(Characters.REPLACEMENT_CHARACTER);
@@ -1124,7 +1124,7 @@ class TreeConstructorInBodyForeignContentText {
 
     // ----------- text
 
-    static void text(byte tokenType, TreeConstructor treeConstructor) {
+    static void text(int tokenType, TreeConstructor treeConstructor) {
         switch (tokenType) {
             case CHARACTER:
                 treeConstructor.insertCharacter();

@@ -28,7 +28,7 @@ public final class Document extends Node {
     private DocumentType doctype;
 
     @Override
-    public byte getNodeType() {
+    public int getNodeType() {
         return DOCUMENT_NODE;
     }
 

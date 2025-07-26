@@ -160,8 +160,8 @@ public class W3CDom {
         }
 
         @Override
-        public byte getNodeType() {
-            return (byte) node.getNodeType();
+        public int getNodeType() {
+            return node.getNodeType();
         }
 
         @Override

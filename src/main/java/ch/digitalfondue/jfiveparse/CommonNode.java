@@ -1,7 +1,7 @@
 package ch.digitalfondue.jfiveparse;
 
 public interface CommonNode {
-    byte getNodeType();
+    int getNodeType();
     String getNodeName();
 
     CommonNode getParentNode();
