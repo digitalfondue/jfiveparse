@@ -123,8 +123,7 @@ public class Document extends Node {
         if (this == other) {
             return true;
         }
-        if (other instanceof Document) {
-            Document otherDocument = (Document) other;
+        if (other instanceof Document otherDocument) {
             if (!Node.nodesEquals(doctype, otherDocument.doctype)) {
                 return false;
             }

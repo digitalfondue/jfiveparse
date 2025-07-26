@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-public class Element extends Node {
+public class Element extends Node implements CommonNode.CommonElement {
 
     final String nodeName;
     final String originalNodeName;
@@ -115,8 +115,21 @@ public class Element extends Node {
     /**
      * Return the namespace.
      */
+    @Override
     public String getNamespaceURI() {
         return namespaceURI;
+    }
+
+
+    // case sensitive check
+    @Override
+    public boolean containsAttribute(String name) {
+        return attributes != null && attributes.containsKey(name);
+    }
+
+    @Override
+    public String getAttributeValue(String name) {
+        return attributes != null ? attributes.getNamedItem(name) : null;
     }
 
     void setInnerHtml(List<Node> nodes) {
@@ -128,7 +141,7 @@ public class Element extends Node {
 
     private Node insertAdjacentNode(String position, Node node) {
         Objects.requireNonNull(position, "position must be not null");
-        position = position.toLowerCase(Locale.ENGLISH);
+        position = position.toLowerCase(Locale.ROOT);
         Node parentNode = getParentNode();
         switch (position) {
             case "beforebegin":
@@ -168,7 +181,7 @@ public class Element extends Node {
 
     public void insertAdjacentHTML(String position, String text) {
         Objects.requireNonNull(position, "position must be not null");
-        position = position.toLowerCase(Locale.ENGLISH);
+        position = position.toLowerCase(Locale.ROOT);
     	Parser parser = new Parser();
     	Node parentNode = getParentNode();
 
@@ -348,8 +361,7 @@ public class Element extends Node {
         if (this == other) {
             return true;
         }
-        if (other instanceof Element) {
-            Element otherElement = (Element) other;
+        if (other instanceof Element otherElement) {
             var count = getChildCount();
             var equalityCheck = Objects.equals(getNodeName(), otherElement.getNodeName()) &&
                     Objects.equals(getNamespaceURI(), otherElement.getNamespaceURI()) &&

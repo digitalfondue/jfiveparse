@@ -14,14 +14,14 @@ import java.nio.file.Paths;
 public class TestParsePerf {
 
     String file;
-    Parser parser = new Parser();
+    final Parser parser = new Parser();
 
     @BeforeEach
     void load() throws IOException {
         file = Files.readString(Paths.get("src/test/resources/test.html"));
     }
 
-    int round = 20_000_000;
+    final int round = 20_000_000;
 
     @Disabled
     @Test

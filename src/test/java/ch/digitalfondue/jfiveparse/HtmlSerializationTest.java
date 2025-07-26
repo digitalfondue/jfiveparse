@@ -73,7 +73,7 @@ class HtmlSerializationTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Writer osw = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
         HtmlSerializer.serialize(d, osw);
-        assertEquals("<html><head></head><body><div></div><span></span></body></html>", new String(baos.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals("<html><head></head><body><div></div><span></span></body></html>", baos.toString(StandardCharsets.UTF_8));
     }
 
     @Test

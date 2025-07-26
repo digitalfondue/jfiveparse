@@ -124,7 +124,7 @@ public class HtmlSerializer implements NodesVisitor {
                         e.hasChildNodes() && //
                         e.getFirstChild().getNodeType() == Node.TEXT_NODE) {
                     String text = ((Text) e.getFirstChild()).getData();
-                    if (text.length() > 0 && text.charAt(0) == Characters.LF) {
+                    if (!text.isEmpty() && text.charAt(0) == Characters.LF) {
                         appendable.append(Characters.LF);
                     }
                 }

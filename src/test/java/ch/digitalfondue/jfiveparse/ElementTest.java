@@ -168,7 +168,7 @@ class ElementTest {
         assertFalse(div.getAttributes().isEmpty());
         assertTrue(div.hasAttribute("test"));
         assertEquals("value", div.getAttributes().getNamedItem("test"));
-        assertEquals(null, div.getAttributes().getNamedItem("test2"));
+        assertNull(div.getAttributes().getNamedItem("test2"));
         div.removeAttribute("test");
         assertFalse(div.hasAttribute("test"));
         assertFalse(div.getAttributes().containsKey("test"));
