@@ -67,7 +67,6 @@ public class W3CDom {
 
         @Override
         public void start(Node node) {
-
             switch (node.getNodeType()) {
                 case Node.ELEMENT_NODE:
                     Element elem = (Element) node;

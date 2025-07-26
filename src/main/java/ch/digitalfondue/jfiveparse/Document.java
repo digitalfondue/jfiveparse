@@ -58,8 +58,8 @@ public final class Document extends Node {
         Element e = getFirstElementChild();
         if (e != null) {
             for (Node c : e.getChildNodes()) {
-                if (c instanceof Element && nodeNameMatcher.test(c.getNodeName()) && NAMESPACE_HTML_ID == (((Element) c).namespaceID)) {
-                    return (Element) c;
+                if (c instanceof Element ce && nodeNameMatcher.test(c.getNodeName()) && NAMESPACE_HTML_ID == ce.namespaceID) {
+                    return ce;
                 }
             }
         }

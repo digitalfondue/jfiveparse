@@ -176,12 +176,12 @@ public class Parser {
         return new ArrayList<>(root.getChildNodes());
     }
 
-    private static Element getFirstFormElementFrom(Node element) {
-        while (element != null) {
-            if (element instanceof Element && Common.isHtmlNS((Element) element, Common.ELEMENT_FORM_ID)) {
-                return (Element) element;
+    private static Element getFirstFormElementFrom(Node node) {
+        while (node != null) {
+            if (node instanceof Element element && Common.isHtmlNS(element, Common.ELEMENT_FORM_ID)) {
+                return element;
             }
-            element = element.parentNode;
+            node = node.parentNode;
         }
         return null;
     }

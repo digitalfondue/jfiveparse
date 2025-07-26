@@ -130,8 +130,7 @@ public class HtmlSerializer implements NodesVisitor {
                 // TODO: handle the case when the nodes are created with scripting disabled
                 Node parent = node.getParentNode();
                 boolean literalAppend = false;
-                if (parent != null && parent.getNodeType() == Node.ELEMENT_NODE) {
-                    Element p = (Element) parent;
+                if (parent != null && parent instanceof Element p) {
                     literalAppend = Node.NAMESPACE_HTML_ID == p.namespaceID
                             && (Common.isTextNodeParent(p.getNodeName()) || ("noscript".equals(p.getNodeName()) && !scriptingDisabled));
                 }
@@ -155,8 +154,7 @@ public class HtmlSerializer implements NodesVisitor {
     @Override
     public void end(Node node) {
         try {
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element e = (Element) node;
+            if (node instanceof Element e) {
                 if (!skipEndTag(e)) {
                     appendable.append("</").append(getNodeName(e)).append(">");
                 }

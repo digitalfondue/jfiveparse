@@ -280,8 +280,8 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     public Element getFirstElementChild() {
         List<Node> childs = getChildNodes();
         for (Node n : childs) {
-            if (n.getNodeType() == ELEMENT_NODE) {
-                return (Element) n;
+            if (n instanceof Element e) {
+                return e;
             }
         }
         return null;
@@ -296,8 +296,8 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
         List<Node> childs = getChildNodes();
         for (int i = childs.size() - 1; i >= 0; i--) {
             Node n = childs.get(i);
-            if (n.getNodeType() == ELEMENT_NODE) {
-                return (Element) n;
+            if (n instanceof Element e) {
+                return e;
             }
         }
         return null;
@@ -323,8 +323,8 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     public Element getPreviousElementSibling() {
         Node n = getPreviousSibling();
         while (n != null) {
-            if (n.getNodeType() == ELEMENT_NODE) {
-                return (Element) n;
+            if (n instanceof Element e) {
+                return e;
             }
             n = n.getPreviousSibling();
         }
@@ -352,8 +352,8 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     public Element getNextElementSibling() {
         Node n = getNextSibling();
         while (n != null) {
-            if (n.getNodeType() == ELEMENT_NODE) {
-                return (Element) n;
+            if (n instanceof Element e) {
+                return e;
             }
             n = n.getNextSibling();
         }
