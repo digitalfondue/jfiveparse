@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-public non-sealed class Element extends Node implements CommonNode.CommonElement {
+public final class Element extends Node implements CommonNode.CommonElement {
 
     final String nodeName;
     final String originalNodeName;
