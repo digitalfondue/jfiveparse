@@ -279,126 +279,125 @@ class Common {
         if (tagName == null) {
             return 0;
         }
-        switch (tagName) {
-            case "address": return ELEMENT_ADDRESS_ID;
-            case "applet": return ELEMENT_APPLET_ID;
-            case "area": return ELEMENT_AREA_ID;
-            case "article": return ELEMENT_ARTICLE_ID;
-            case "aside": return ELEMENT_ASIDE_ID;
-            case "base": return ELEMENT_BASE_ID;
-            case "basefont": return ELEMENT_BASEFONT_ID;
-            case "bgsound": return ELEMENT_BGSOUND_ID;
-            case "blockquote": return ELEMENT_BLOCKQUOTE_ID;
-            case "body": return ELEMENT_BODY_ID;
-            case "br": return ELEMENT_BR_ID;
-            case "button": return ELEMENT_BUTTON_ID;
-            case "caption": return ELEMENT_CAPTION_ID;
-            case "center": return ELEMENT_CENTER_ID;
-            case "col": return ELEMENT_COL_ID;
-            case "colgroup": return ELEMENT_COLGROUP_ID;
-            case "dd": return ELEMENT_DD_ID;
-            case "details": return ELEMENT_DETAILS_ID;
-            case "dir": return ELEMENT_DIR_ID;
-            case "div": return ELEMENT_DIV_ID;
-            case "dl": return ELEMENT_DL_ID;
-            case "dt": return ELEMENT_DT_ID;
-            case "embed": return ELEMENT_EMBED_ID;
-            case "fieldset": return ELEMENT_FIELDSET_ID;
-            case "figcaption": return ELEMENT_FIGCAPTION_ID;
-            case "figure": return ELEMENT_FIGURE_ID;
-            case "footer": return ELEMENT_FOOTER_ID;
-            case "form": return ELEMENT_FORM_ID;
-            case "frame": return ELEMENT_FRAME_ID;
-            case "frameset": return ELEMENT_FRAMESET_ID;
-            case "h1": return ELEMENT_H1_ID;
-            case "h2": return ELEMENT_H2_ID;
-            case "h3": return ELEMENT_H3_ID;
-            case "h4": return ELEMENT_H4_ID;
-            case "h5": return ELEMENT_H5_ID;
-            case "h6": return ELEMENT_H6_ID;
-            case "head": return ELEMENT_HEAD_ID;
-            case "header": return ELEMENT_HEADER_ID;
-            case "hgroup": return ELEMENT_HGROUP_ID;
-            case "hr": return ELEMENT_HR_ID;
-            case "html": return ELEMENT_HTML_ID;
-            case "iframe": return ELEMENT_IFRAME_ID;
-            case "img": return ELEMENT_IMG_ID;
-            case "input": return ELEMENT_INPUT_ID;
-            case "li": return ELEMENT_LI_ID;
-            case "link": return ELEMENT_LINK_ID;
-            case "listing": return ELEMENT_LISTING_ID;
-            case "main": return ELEMENT_MAIN_ID;
-            case "marquee": return ELEMENT_MARQUEE_ID;
-            case "menu": return ELEMENT_MENU_ID;
-            case "meta": return ELEMENT_META_ID;
-            case "nav": return ELEMENT_NAV_ID;
-            case "noembed": return ELEMENT_NOEMBED_ID;
-            case "noframes": return ELEMENT_NOFRAMES_ID;
-            case "noscript": return ELEMENT_NOSCRIPT_ID;
-            case "object": return ELEMENT_OBJECT_ID;
-            case "ol": return ELEMENT_OL_ID;
-            case "p": return ELEMENT_P_ID;
-            case "param": return ELEMENT_PARAM_ID;
-            case "plaintext": return ELEMENT_PLAINTEXT_ID;
-            case "pre": return ELEMENT_PRE_ID;
-            case "script": return ELEMENT_SCRIPT_ID;
-            case "section": return ELEMENT_SECTION_ID;
-            case "select": return ELEMENT_SELECT_ID;
-            case "source": return ELEMENT_SOURCE_ID;
-            case "style": return ELEMENT_STYLE_ID;
-            case "summary": return ELEMENT_SUMMARY_ID;
-            case "table": return ELEMENT_TABLE_ID;
-            case "tbody": return ELEMENT_TBODY_ID;
-            case "td": return ELEMENT_TD_ID;
-            case "template": return ELEMENT_TEMPLATE_ID;
-            case "textarea": return ELEMENT_TEXTAREA_ID;
-            case "tfoot": return ELEMENT_TFOOT_ID;
-            case "th": return ELEMENT_TH_ID;
-            case "thead": return ELEMENT_THEAD_ID;
-            case "title": return ELEMENT_TITLE_ID;
-            case "tr": return ELEMENT_TR_ID;
-            case "track": return ELEMENT_TRACK_ID;
-            case "ul": return ELEMENT_UL_ID;
-            case "wbr": return ELEMENT_WBR_ID;
-            case "xmp": return ELEMENT_XMP_ID;
+        return switch (tagName) {
+            case "address" -> ELEMENT_ADDRESS_ID;
+            case "applet" -> ELEMENT_APPLET_ID;
+            case "area" -> ELEMENT_AREA_ID;
+            case "article" -> ELEMENT_ARTICLE_ID;
+            case "aside" -> ELEMENT_ASIDE_ID;
+            case "base" -> ELEMENT_BASE_ID;
+            case "basefont" -> ELEMENT_BASEFONT_ID;
+            case "bgsound" -> ELEMENT_BGSOUND_ID;
+            case "blockquote" -> ELEMENT_BLOCKQUOTE_ID;
+            case "body" -> ELEMENT_BODY_ID;
+            case "br" -> ELEMENT_BR_ID;
+            case "button" -> ELEMENT_BUTTON_ID;
+            case "caption" -> ELEMENT_CAPTION_ID;
+            case "center" -> ELEMENT_CENTER_ID;
+            case "col" -> ELEMENT_COL_ID;
+            case "colgroup" -> ELEMENT_COLGROUP_ID;
+            case "dd" -> ELEMENT_DD_ID;
+            case "details" -> ELEMENT_DETAILS_ID;
+            case "dir" -> ELEMENT_DIR_ID;
+            case "div" -> ELEMENT_DIV_ID;
+            case "dl" -> ELEMENT_DL_ID;
+            case "dt" -> ELEMENT_DT_ID;
+            case "embed" -> ELEMENT_EMBED_ID;
+            case "fieldset" -> ELEMENT_FIELDSET_ID;
+            case "figcaption" -> ELEMENT_FIGCAPTION_ID;
+            case "figure" -> ELEMENT_FIGURE_ID;
+            case "footer" -> ELEMENT_FOOTER_ID;
+            case "form" -> ELEMENT_FORM_ID;
+            case "frame" -> ELEMENT_FRAME_ID;
+            case "frameset" -> ELEMENT_FRAMESET_ID;
+            case "h1" -> ELEMENT_H1_ID;
+            case "h2" -> ELEMENT_H2_ID;
+            case "h3" -> ELEMENT_H3_ID;
+            case "h4" -> ELEMENT_H4_ID;
+            case "h5" -> ELEMENT_H5_ID;
+            case "h6" -> ELEMENT_H6_ID;
+            case "head" -> ELEMENT_HEAD_ID;
+            case "header" -> ELEMENT_HEADER_ID;
+            case "hgroup" -> ELEMENT_HGROUP_ID;
+            case "hr" -> ELEMENT_HR_ID;
+            case "html" -> ELEMENT_HTML_ID;
+            case "iframe" -> ELEMENT_IFRAME_ID;
+            case "img" -> ELEMENT_IMG_ID;
+            case "input" -> ELEMENT_INPUT_ID;
+            case "li" -> ELEMENT_LI_ID;
+            case "link" -> ELEMENT_LINK_ID;
+            case "listing" -> ELEMENT_LISTING_ID;
+            case "main" -> ELEMENT_MAIN_ID;
+            case "marquee" -> ELEMENT_MARQUEE_ID;
+            case "menu" -> ELEMENT_MENU_ID;
+            case "meta" -> ELEMENT_META_ID;
+            case "nav" -> ELEMENT_NAV_ID;
+            case "noembed" -> ELEMENT_NOEMBED_ID;
+            case "noframes" -> ELEMENT_NOFRAMES_ID;
+            case "noscript" -> ELEMENT_NOSCRIPT_ID;
+            case "object" -> ELEMENT_OBJECT_ID;
+            case "ol" -> ELEMENT_OL_ID;
+            case "p" -> ELEMENT_P_ID;
+            case "param" -> ELEMENT_PARAM_ID;
+            case "plaintext" -> ELEMENT_PLAINTEXT_ID;
+            case "pre" -> ELEMENT_PRE_ID;
+            case "script" -> ELEMENT_SCRIPT_ID;
+            case "section" -> ELEMENT_SECTION_ID;
+            case "select" -> ELEMENT_SELECT_ID;
+            case "source" -> ELEMENT_SOURCE_ID;
+            case "style" -> ELEMENT_STYLE_ID;
+            case "summary" -> ELEMENT_SUMMARY_ID;
+            case "table" -> ELEMENT_TABLE_ID;
+            case "tbody" -> ELEMENT_TBODY_ID;
+            case "td" -> ELEMENT_TD_ID;
+            case "template" -> ELEMENT_TEMPLATE_ID;
+            case "textarea" -> ELEMENT_TEXTAREA_ID;
+            case "tfoot" -> ELEMENT_TFOOT_ID;
+            case "th" -> ELEMENT_TH_ID;
+            case "thead" -> ELEMENT_THEAD_ID;
+            case "title" -> ELEMENT_TITLE_ID;
+            case "tr" -> ELEMENT_TR_ID;
+            case "track" -> ELEMENT_TRACK_ID;
+            case "ul" -> ELEMENT_UL_ID;
+            case "wbr" -> ELEMENT_WBR_ID;
+            case "xmp" -> ELEMENT_XMP_ID;
             //
-            case "optgroup": return ELEMENT_OPTGROUP_ID;
-            case "option": return ELEMENT_OPTION_ID;
-            case "rb": return ELEMENT_RB_ID;
-            case "rp": return ELEMENT_RP_ID;
-            case "rt": return ELEMENT_RT_ID;
-            case "rtc": return ELEMENT_RTC_ID;
+            case "optgroup" -> ELEMENT_OPTGROUP_ID;
+            case "option" -> ELEMENT_OPTION_ID;
+            case "rb" -> ELEMENT_RB_ID;
+            case "rp" -> ELEMENT_RP_ID;
+            case "rt" -> ELEMENT_RT_ID;
+            case "rtc" -> ELEMENT_RTC_ID;
             //
-            case "a": return ELEMENT_A_ID;
+            case "a" -> ELEMENT_A_ID;
             //
 
-            case "dialog": return ELEMENT_DIALOG_ID;
-            case "search": return ELEMENT_SEARCH_ID;
-            case "b": return ELEMENT_B_ID;
-            case "big": return ELEMENT_BIG_ID;
-            case "code": return ELEMENT_CODE_ID;
-            case "em": return ELEMENT_EM_ID;
-            case "font": return ELEMENT_FONT_ID;
-            case "i": return ELEMENT_I_ID;
-            case "s": return ELEMENT_S_ID;
-            case "small": return ELEMENT_SMALL_ID;
-            case "strike": return ELEMENT_STRIKE_ID;
-            case "strong": return ELEMENT_STRONG_ID;
-            case "tt": return ELEMENT_TT_ID;
-            case "u": return ELEMENT_U_ID;
-            case "nobr": return ELEMENT_NO_BR_ID;
-            case "keygen": return ELEMENT_KEYGEN_ID;
-            case "image": return ELEMENT_IMAGE_ID;
-            case "math": return ELEMENT_MATH_ID;
-            case "svg": return ELEMENT_SVG_ID;
-            case "ruby": return ELEMENT_RUBY_ID;
-            case "span": return ELEMENT_SPAN_ID;
-            case "sub": return ELEMENT_SUB_ID;
-            case "sup": return ELEMENT_SUP_ID;
-            case "var": return ELEMENT_VAR_ID;
-
-            default: return 0;
-        }
+            case "dialog" -> ELEMENT_DIALOG_ID;
+            case "search" -> ELEMENT_SEARCH_ID;
+            case "b" -> ELEMENT_B_ID;
+            case "big" -> ELEMENT_BIG_ID;
+            case "code" -> ELEMENT_CODE_ID;
+            case "em" -> ELEMENT_EM_ID;
+            case "font" -> ELEMENT_FONT_ID;
+            case "i" -> ELEMENT_I_ID;
+            case "s" -> ELEMENT_S_ID;
+            case "small" -> ELEMENT_SMALL_ID;
+            case "strike" -> ELEMENT_STRIKE_ID;
+            case "strong" -> ELEMENT_STRONG_ID;
+            case "tt" -> ELEMENT_TT_ID;
+            case "u" -> ELEMENT_U_ID;
+            case "nobr" -> ELEMENT_NO_BR_ID;
+            case "keygen" -> ELEMENT_KEYGEN_ID;
+            case "image" -> ELEMENT_IMAGE_ID;
+            case "math" -> ELEMENT_MATH_ID;
+            case "svg" -> ELEMENT_SVG_ID;
+            case "ruby" -> ELEMENT_RUBY_ID;
+            case "span" -> ELEMENT_SPAN_ID;
+            case "sub" -> ELEMENT_SUB_ID;
+            case "sup" -> ELEMENT_SUP_ID;
+            case "var" -> ELEMENT_VAR_ID;
+            default -> 0;
+        };
     }
 
     // this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
@@ -543,20 +542,11 @@ class Common {
         byte tagNameID = element.nodeNameID;
     	byte namespaceID = element.namespaceID;
         if (Node.NAMESPACE_HTML_ID == namespaceID) {
-            switch (tagNameID) {
-                case ELEMENT_APPLET_ID:
-                case ELEMENT_CAPTION_ID:
-                case ELEMENT_HTML_ID:
-                case ELEMENT_MARQUEE_ID:
-                case ELEMENT_OBJECT_ID:
-                case ELEMENT_TABLE_ID:
-                case ELEMENT_TEMPLATE_ID:
-                case ELEMENT_TD_ID:
-                case ELEMENT_TH_ID:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (tagNameID) {
+                case ELEMENT_APPLET_ID, ELEMENT_CAPTION_ID, ELEMENT_HTML_ID, ELEMENT_MARQUEE_ID, ELEMENT_OBJECT_ID,
+                     ELEMENT_TABLE_ID, ELEMENT_TEMPLATE_ID, ELEMENT_TD_ID, ELEMENT_TH_ID -> true;
+                default -> false;
+            };
         } else if (Node.NAMESPACE_MATHML_ID == namespaceID) {
             return isInCommonInScopeMathMl(tagName);
         } else if (Node.NAMESPACE_SVG_ID == namespaceID) {
@@ -571,14 +561,10 @@ class Common {
     }
 
     private static boolean isInCommonInScopeSVG(String tagName) {
-        switch (tagName) {
-        case "foreignObject":
-        case "desc":
-        case "title":
-            return true;
-        default:
-            return false;
-        }
+        return switch (tagName) {
+            case "foreignObject", "desc", "title" -> true;
+            default -> false;
+        };
     }
 
     // "mi", "mo", "mn", "ms", "mtext", "annotation-xml"
@@ -587,17 +573,10 @@ class Common {
     }
 
     private static boolean isInCommonInScopeMathMl(String tagName) {
-        switch (tagName) {
-        case "mi":
-        case "mo":
-        case "mn":
-        case "ms":
-        case "mtext":
-        case "annotation-xml":
-            return true;
-        default:
-            return false;
-        }
+        return switch (tagName) {
+            case "mi", "mo", "mn", "ms", "mtext", "annotation-xml" -> true;
+            default -> false;
+        };
     }
 
     // ---------------
@@ -606,64 +585,28 @@ class Common {
         if (Node.NAMESPACE_HTML_ID != e.namespaceID) {
             return false;
         }
-        switch (e.nodeNameID) {
-            case ELEMENT_DD_ID:
-            case ELEMENT_DT_ID:
-            case ELEMENT_LI_ID:
-            case ELEMENT_OPTGROUP_ID:
-            case ELEMENT_OPTION_ID:
-            case ELEMENT_P_ID:
-            case ELEMENT_RB_ID:
-            case ELEMENT_RP_ID:
-            case ELEMENT_RT_ID:
-            case ELEMENT_RTC_ID:
-                return true;
-            default:
-                return false;
-        }
+        return switch (e.nodeNameID) {
+            case ELEMENT_DD_ID, ELEMENT_DT_ID, ELEMENT_LI_ID, ELEMENT_OPTGROUP_ID, ELEMENT_OPTION_ID, ELEMENT_P_ID,
+                 ELEMENT_RB_ID, ELEMENT_RP_ID, ELEMENT_RT_ID, ELEMENT_RTC_ID -> true;
+            default -> false;
+        };
     }
 
     // SERIALIZATION
 
     static boolean isNoEndTag(String nodeName) {
-        switch (nodeName) {
-            case "area":
-            case "base":
-            case "basefont":
-            case "bgsound":
-            case "br":
-            case "col":
-            case "embed":
-            case "frame":
-            case "hr":
-            case "img":
-            case "input":
-            case "keygen":
-            case "link":
-            case "meta":
-            case "param":
-            case "source":
-            case "track":
-            case "wbr":
-                return true;
-            default:
-                return false;
-        }
+        return switch (nodeName) {
+            case "area", "base", "basefont", "bgsound", "br", "col", "embed", "frame", "hr", "img", "input", "keygen",
+                 "link", "meta", "param", "source", "track", "wbr" -> true;
+            default -> false;
+        };
     }
 
     static boolean isTextNodeParent(String nodeName) {
-        switch (nodeName) {
-            case "style":
-            case "script":
-            case "xmp":
-            case "iframe":
-            case "noembed":
-            case "noframes":
-            case "plaintext":
-                return true;
-            default:
-                return false;
-        }
+        return switch (nodeName) {
+            case "style", "script", "xmp", "iframe", "noembed", "noframes", "plaintext" -> true;
+            default -> false;
+        };
     }
     //
 
@@ -671,29 +614,13 @@ class Common {
 
     static boolean isImpliedTagsThoroughly(Element element) {
         byte nodeNameID = element.nodeNameID;
-        switch (nodeNameID) {
-            case ELEMENT_CAPTION_ID:
-            case ELEMENT_COLGROUP_ID:
-            case ELEMENT_DD_ID:
-            case ELEMENT_DT_ID:
-            case ELEMENT_LI_ID:
-            case ELEMENT_OPTGROUP_ID:
-            case ELEMENT_OPTION_ID:
-            case ELEMENT_P_ID:
-            case ELEMENT_RB_ID:
-            case ELEMENT_RP_ID:
-            case ELEMENT_RT_ID:
-            case ELEMENT_RTC_ID:
-            case ELEMENT_TBODY_ID:
-            case ELEMENT_TD_ID:
-            case ELEMENT_TFOOT_ID:
-            case ELEMENT_TH_ID:
-            case ELEMENT_THEAD_ID:
-            case ELEMENT_TR_ID:
-                return true;
-            default:
-                return false;
-        }
+        return switch (nodeNameID) {
+            case ELEMENT_CAPTION_ID, ELEMENT_COLGROUP_ID, ELEMENT_DD_ID, ELEMENT_DT_ID, ELEMENT_LI_ID,
+                 ELEMENT_OPTGROUP_ID, ELEMENT_OPTION_ID, ELEMENT_P_ID, ELEMENT_RB_ID, ELEMENT_RP_ID, ELEMENT_RT_ID,
+                 ELEMENT_RTC_ID, ELEMENT_TBODY_ID, ELEMENT_TD_ID, ELEMENT_TFOOT_ID, ELEMENT_TH_ID, ELEMENT_THEAD_ID,
+                 ELEMENT_TR_ID -> true;
+            default -> false;
+        };
     }
 
     static String join(Iterator<String> l) {

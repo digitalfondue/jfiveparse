@@ -31,32 +31,32 @@ class CSSTest {
     @Test
     void checkDivDiv() {
         var r = CSS.parseSelector("div div");
-        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.DESCENDANT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Combinator(CSS.CombinatorType.DESCENDANT), tag("div"))), r);
     }
 
 
     @Test
     void checkDivSpaceDiv() {
         var r = CSS.parseSelector("div\t \n \tdiv");
-        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.DESCENDANT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Combinator(CSS.CombinatorType.DESCENDANT), tag("div"))), r);
     }
 
     @Test
     void checkDivPlusDiv() {
         var r = CSS.parseSelector("div + div");
-        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.ADJACENT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Combinator(CSS.CombinatorType.ADJACENT), tag("div"))), r);
     }
 
     @Test
     void checkDivSiblingDiv() {
         var r = CSS.parseSelector("div ~ div");
-        assertEquals(List.of(List.of(tag("div"), new CSS.Traversal(CSS.TraversalType.SIBLING), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("div"), new CSS.Combinator(CSS.CombinatorType.SIBLING), tag("div"))), r);
     }
 
     @Test
     void checkParent() {
         var r = CSS.parseSelector("p < div");
-        assertEquals(List.of(List.of(tag("p"), new CSS.Traversal(CSS.TraversalType.PARENT), tag("div"))), r);
+        assertEquals(List.of(List.of(tag("p"), new CSS.Combinator(CSS.CombinatorType.PARENT), tag("div"))), r);
     }
 
     // Escaped whitespace & special characters
@@ -188,6 +188,21 @@ class CSSTest {
                 ))), r);
     }
 
-    // TODO: others
-    // TODO: import https://github.com/fb55/css-what/blob/25396c36bfc08bb4839aec690a7c6625b57165de/src/__fixtures__/out.json
+    @Test
+    void checkIdSelectorWithEscapeSequence() {
+        var r = CSS.parseSelector("#\\26 B");
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, "&B", "quirks", null))), r);
+    }
+
+    @Test
+    void checkEscapedWhitespace() {
+        var r = CSS.parseSelector("#\\  > a ");
+        assertEquals(List.of(List.of(
+                new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, " ", "quirks", null),
+                new CSS.Combinator(CSS.CombinatorType.CHILD),
+                new CSS.TagSelector("a", null)
+        )), r);
+    }
+
+    // TODO: add all the missing String.raw tests
 }

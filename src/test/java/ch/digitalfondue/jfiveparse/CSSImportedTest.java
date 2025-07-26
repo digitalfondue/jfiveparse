@@ -2,7 +2,6 @@ package ch.digitalfondue.jfiveparse;
 
 import com.google.gson.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -19,7 +18,6 @@ import java.util.Map;
  */
 class CSSImportedTest {
 
-    @Disabled
     @MethodSource("data")
     @ParameterizedTest(name = "selector: \"{0}\"")
     public void check(String selector, List<List<CSS.CssSelector>> expected) {
@@ -92,12 +90,12 @@ class CSSImportedTest {
                     new CSS.PseudoElement(elem.get("name").getAsString(), fromStringOrNull(elem.get("data")));
             case "tag" -> new CSS.TagSelector(elem.get("name").getAsString(), fromStringOrNull(elem.get("namespace")));
             case "universal" -> new CSS.UniversalSelector(fromStringOrNull(elem.get("namespace")));
-            case "adjacent" -> new CSS.Traversal(CSS.TraversalType.ADJACENT);
-            case "child" -> new CSS.Traversal(CSS.TraversalType.CHILD);
-            case "descendant" -> new CSS.Traversal(CSS.TraversalType.DESCENDANT);
-            case "parent" -> new CSS.Traversal(CSS.TraversalType.PARENT);
-            case "sibling" -> new CSS.Traversal(CSS.TraversalType.SIBLING);
-            case "column-combinator" -> new CSS.Traversal(CSS.TraversalType.COLUMN_COMBINATOR);
+            case "adjacent" -> new CSS.Combinator(CSS.CombinatorType.ADJACENT);
+            case "child" -> new CSS.Combinator(CSS.CombinatorType.CHILD);
+            case "descendant" -> new CSS.Combinator(CSS.CombinatorType.DESCENDANT);
+            case "parent" -> new CSS.Combinator(CSS.CombinatorType.PARENT);
+            case "sibling" -> new CSS.Combinator(CSS.CombinatorType.SIBLING);
+            case "column-combinator" -> new CSS.Combinator(CSS.CombinatorType.COLUMN_COMBINATOR);
             default -> throw new IllegalStateException(type);
         };
     }

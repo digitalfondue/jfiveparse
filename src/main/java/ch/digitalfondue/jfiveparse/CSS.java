@@ -50,7 +50,8 @@ class CSS {
 
     sealed interface CssSelector {}
 
-    record Traversal(TraversalType type) implements CssSelector {}
+    // child '>', parent '<', sibling '~', adjacent '+', column '||', descendant 'a b'
+    record Combinator(CombinatorType type) implements CssSelector {}
 
     record TagSelector(String name, String namespace) implements CssSelector {}
 
@@ -65,7 +66,7 @@ class CSS {
 
     record UniversalSelector(String namespace) implements CssSelector {}
 
-    enum TraversalType {
+    enum CombinatorType {
         CHILD, PARENT, SIBLING, ADJACENT, COLUMN_COMBINATOR, DESCENDANT
     }
 
@@ -74,7 +75,19 @@ class CSS {
     }
 
     private static String unescapeCSS(String cssString) {
-        return cssString; //.replace(reEscape, funescape);
+        return reEscape.matcher(cssString).replaceAll((r) -> {
+            String escaped = r.group(1);
+            boolean isHexNumber = true;
+            int high = 0;
+            try {
+                high = Integer.parseInt(r.group(1).trim(), 16) - 0x1_00_00;
+            } catch (NumberFormatException nfe) {
+                isHexNumber = false;
+            }
+            boolean isWhiteSpace = r.group(2) != null;
+
+            return !isHexNumber || isWhiteSpace ? Matcher.quoteReplacement(escaped) : high < 0 ? Character.toString(high + 0x1_00_00) : Character.toString(Character.toCodePoint((char) ((high >> 10) | 0xd8_00), (char) ((high & 0x3_ff) | 0xdc_00)));
+        });
     }
 
     private static AttributeAction getActionTypes(char c) {
@@ -103,7 +116,7 @@ class CSS {
     }
 
     private static boolean isTraversal(CssSelector selector) {
-        return selector instanceof Traversal;
+        return selector instanceof Combinator;
     }
 
     private static boolean isQuote(char c) {
@@ -194,16 +207,16 @@ class CSS {
             }
         }
 
-        void addTraversal(TraversalType type) {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Traversal ct && ct.type() == TraversalType.DESCENDANT
+        void addTraversal(CombinatorType type) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CombinatorType.DESCENDANT
             ) {
-                tokens.set(tokens.size() - 1, new Traversal(type));
+                tokens.set(tokens.size() - 1, new Combinator(type));
                 return;
             }
 
             ensureNotTraversal();
 
-            tokens.add(new Traversal(type));
+            tokens.add(new Combinator(type));
         }
 
         void addSpecialAttribute(String name, AttributeAction action) {
@@ -217,7 +230,7 @@ class CSS {
         }
 
         void finalizeSubselector() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Traversal ct && ct.type() == TraversalType.DESCENDANT) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CombinatorType.DESCENDANT) {
                 tokens.remove(tokens.size()-1);
             }
 
@@ -247,9 +260,9 @@ class CSS {
                     case 32: // space
                     {
                         // check the first token is not DESCENDANT
-                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Traversal ct) || ct.type() != TraversalType.DESCENDANT)) {
+                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Combinator ct) || ct.type() != CombinatorType.DESCENDANT)) {
                             ensureNotTraversal();
-                            tokens.add(new Traversal(TraversalType.DESCENDANT));
+                            tokens.add(new Combinator(CombinatorType.DESCENDANT));
                         }
                         stripWhitespace(1);
                         break;
@@ -257,25 +270,25 @@ class CSS {
                     // Traversals
                     case '>': // GreaterThan
                     {
-                        addTraversal(TraversalType.CHILD);
+                        addTraversal(CombinatorType.CHILD);
                         stripWhitespace(1);
                         break;
                     }
                     case '<': // LessThan
                     {
-                        addTraversal(TraversalType.PARENT);
+                        addTraversal(CombinatorType.PARENT);
                         stripWhitespace(1);
                         break;
                     }
                     case '~': //Tilde
                     {
-                        addTraversal(TraversalType.SIBLING);
+                        addTraversal(CombinatorType.SIBLING);
                         stripWhitespace(1);
                         break;
                     }
                     case '+': //Plus
                     {
-                        addTraversal(TraversalType.ADJACENT);
+                        addTraversal(CombinatorType.ADJACENT);
                         stripWhitespace(1);
                         break;
                     }
@@ -449,7 +462,7 @@ class CSS {
                         } else if (firstChar == '|') {
                             name = "";
                             if (charAtIsEqual(selectorIndex + 1, '|')) {
-                                addTraversal(TraversalType.COLUMN_COMBINATOR);
+                                addTraversal(CombinatorType.COLUMN_COMBINATOR);
                                 stripWhitespace(2);
                                 break;
                             }
