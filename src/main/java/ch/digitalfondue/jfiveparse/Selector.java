@@ -178,8 +178,8 @@ public class Selector {
      * @return
      */
     public Selector element(String name, String namespace) {
-        matchers.add(node -> node.getNodeType() == Node.ELEMENT_NODE && name.equals(node.getNodeName())
-                && Objects.equals(namespace, ((CommonNode.CommonElement) node).getNamespaceURI()));
+        matchers.add(node -> node instanceof CommonNode.CommonElement ce && name.equals(ce.getNodeName())
+                && Objects.equals(namespace, ce.getNamespaceURI()));
         return this;
     }
 
@@ -231,11 +231,7 @@ public class Selector {
 
     private static NodeMatcher matchAttr(String name, BiPredicate<String, CommonNode.CommonElement> attributeValueMatcher) {
         return (node) -> {
-            if (node.getNodeType() != Node.ELEMENT_NODE) {
-                return false;
-            }
-            CommonNode.CommonElement elem = (CommonNode.CommonElement) node;
-            return elem.containsAttribute(name) && attributeValueMatcher.test(elem.getAttributeValue(name), elem);
+            return node instanceof CommonNode.CommonElement elem && elem.containsAttribute(name) && attributeValueMatcher.test(elem.getAttributeValue(name), elem);
         };
     }
 
