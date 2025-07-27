@@ -551,7 +551,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             Element current = treeConstructor.getCurrentNode();
             if (Node.NAMESPACE_HTML_ID == current.namespaceID && Common.isImpliedTagsThoroughly(current)) {
                 treeConstructor.popCurrentNode();
-                continue;
+                //continue;
             } else {
                 break;
             }

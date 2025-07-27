@@ -173,7 +173,7 @@ class Common {
         }
     }
 
-    private static final Map<String, String[]> FOREIGN_ATTRIBUTES_TO_ADJUST = new HashMap<>();
+    private static final HashMap<String, String[]> FOREIGN_ATTRIBUTES_TO_ADJUST = new HashMap<>();
     static {
         FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:actuate",   new String[] { "xlink", "actuate", Node.NAMESPACE_XLINK });
         FOREIGN_ATTRIBUTES_TO_ADJUST.put("xlink:arcrole",   new String[] {"xlink", "arcrole", Node.NAMESPACE_XLINK });//
@@ -525,9 +525,9 @@ class Common {
         if (Node.NAMESPACE_HTML_ID == nodeNameSpaceId) {
             return nodeNameID >= ELEMENT_ADDRESS_ID && nodeNameID <= ELEMENT_XMP_ID;
         } else if (Node.NAMESPACE_MATHML_ID == nodeNameSpaceId) {
-            return isSpecialElementsMathML(nodeName);
+            return isInCommonInScopeMathMl(nodeName);
         } else if (Node.NAMESPACE_SVG_ID == nodeNameSpaceId) {
-            return isSpecialElementsSVG(nodeName);
+            return isInCommonInScopeSVG(nodeName);
         } else {
             return false;
         }
@@ -555,11 +555,10 @@ class Common {
         return false;
     }
 
-    // "foreignObject", "desc", "title"
-    private static boolean isSpecialElementsSVG(String tagName) {
-        return isInCommonInScopeSVG(tagName);
-    }
+    //
 
+    // "foreignObject", "desc", "title"
+    // also valid for isSpecialElementsSVG
     private static boolean isInCommonInScopeSVG(String tagName) {
         return switch (tagName) {
             case "foreignObject", "desc", "title" -> true;
@@ -568,10 +567,7 @@ class Common {
     }
 
     // "mi", "mo", "mn", "ms", "mtext", "annotation-xml"
-    private static boolean isSpecialElementsMathML(String tagName) {
-        return isInCommonInScopeMathMl(tagName);
-    }
-
+    // also valid for isSpecialElementsMathML
     private static boolean isInCommonInScopeMathMl(String tagName) {
         return switch (tagName) {
             case "mi", "mo", "mn", "ms", "mtext", "annotation-xml" -> true;
@@ -594,17 +590,21 @@ class Common {
 
     // SERIALIZATION
 
-    static boolean isNoEndTag(String nodeName) {
+    static boolean isNoEndTag(int nodeName) {
         return switch (nodeName) {
-            case "area", "base", "basefont", "bgsound", "br", "col", "embed", "frame", "hr", "img", "input", "keygen",
-                 "link", "meta", "param", "source", "track", "wbr" -> true;
+            case ELEMENT_AREA_ID, ELEMENT_BASE_ID, ELEMENT_BASEFONT_ID, ELEMENT_BGSOUND_ID,
+                 ELEMENT_BR_ID, ELEMENT_COL_ID, ELEMENT_EMBED_ID, ELEMENT_FRAME_ID, ELEMENT_HR_ID,
+                 ELEMENT_IMG_ID, ELEMENT_INPUT_ID, ELEMENT_KEYGEN_ID,
+                 ELEMENT_LINK_ID, ELEMENT_META_ID, ELEMENT_PARAM_ID, ELEMENT_SOURCE_ID, ELEMENT_TRACK_ID,
+                 ELEMENT_WBR_ID -> true;
             default -> false;
         };
     }
 
-    static boolean isTextNodeParent(String nodeName) {
-        return switch (nodeName) {
-            case "style", "script", "xmp", "iframe", "noembed", "noframes", "plaintext" -> true;
+    static boolean isTextNodeParent(int nodeNameId) {
+        return switch (nodeNameId) {
+            case ELEMENT_STYLE_ID, ELEMENT_SCRIPT_ID, ELEMENT_XMP_ID, ELEMENT_IFRAME_ID, ELEMENT_NOEMBED_ID,
+                 ELEMENT_NOFRAMES_ID, ELEMENT_PLAINTEXT_ID -> true;
             default -> false;
         };
     }
@@ -623,16 +623,8 @@ class Common {
         };
     }
 
-    static String join(List<String> l) {
-        return String.join(" ", l);
-    }
-
     static boolean is(Element element, int nameID, int namespaceID) {
         return element.nodeNameID == nameID && element.namespaceID == namespaceID;
-    }
-    
-    static boolean isHtmlNS(Element element, String name) {
-    	return element.namespaceID == Node.NAMESPACE_HTML_ID && element.nodeName.equals(name);
     }
 
     static boolean isHtmlNS(Element element, int nameID) {

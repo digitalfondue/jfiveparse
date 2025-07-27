@@ -23,21 +23,25 @@ class TreeConstructorActiveFormattingElements {
     private final TreeConstructor treeConstructor;
     Element bookmark;
 
+
+
+    private static final Element BOOKMARK = new Element(" /BOOKMARK/ ");
+    private static final Element MARKER_ELEMENT = new Element(" /MARKER/ ");
+
     //
     TreeConstructorActiveFormattingElements(TreeConstructor treeConstructor) {
         this.treeConstructor = treeConstructor;
     }
 
-    private static final String MARKER_ELEMENT = " /MARKER/ ";
+
 
     void insertMarker() {
-        activeFormattingElements.add(new Element(MARKER_ELEMENT));
+        activeFormattingElements.add(MARKER_ELEMENT);
     }
 
     void insertBookmark(Element formattingElement) {
-        Element b = new Element(" /BOOKMARK/ ");
-        activeFormattingElements.add(activeFormattingElements.lastIndexOf(formattingElement), b);
-        this.bookmark = b;
+        activeFormattingElements.add(activeFormattingElements.lastIndexOf(formattingElement), BOOKMARK);
+        this.bookmark = BOOKMARK;
     }
 
     void removeBookmark() {
@@ -54,7 +58,7 @@ class TreeConstructorActiveFormattingElements {
 
         int lastMarkerPositionOrStart = 0;
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
-            if (MARKER_ELEMENT.equals(activeFormattingElements.get(i).nodeName)) {
+            if (MARKER_ELEMENT == activeFormattingElements.get(i)) {
                 lastMarkerPositionOrStart = i;
                 break;
             }
@@ -72,7 +76,7 @@ class TreeConstructorActiveFormattingElements {
 
         for (int i = lastMarkerPositionOrStart; i < size; i++) {
             Element current = activeFormattingElements.get(i);
-            if (!(MARKER_ELEMENT.equals(current.nodeName)) && //
+            if (!(MARKER_ELEMENT == current) && //
                     elementName.equals(current.getNodeName()) && //
                     elementNS.equals(current.getNamespaceURI()) && //
                     elementAttrs.equals(current.getAttributes())) {
@@ -101,7 +105,7 @@ class TreeConstructorActiveFormattingElements {
         // 2
         final int lastIndex = activeFormattingElements.size() - 1;
         Element last = activeFormattingElements.get(lastIndex);
-        final boolean lastIsMarker = MARKER_ELEMENT.equals(last.nodeName);
+        final boolean lastIsMarker = MARKER_ELEMENT == last;
         if (lastIsMarker || (treeConstructor.openElementsIndexOf(last) != -1)) {
             return;
         }
@@ -128,7 +132,7 @@ class TreeConstructorActiveFormattingElements {
             entryIndex--;
             entry = activeFormattingElements.get(entryIndex);
 
-            final boolean entryIsMarker = MARKER_ELEMENT.equals(entry.nodeName);
+            final boolean entryIsMarker = MARKER_ELEMENT == entry;
 
             // 6
             // If entry is neither a marker nor an element that is also in the
@@ -175,7 +179,7 @@ class TreeConstructorActiveFormattingElements {
     void clearUpToLastMarker() {
         while (!activeFormattingElements.isEmpty()) {
             Element e = activeFormattingElements.remove(activeFormattingElements.size() - 1);
-            if (MARKER_ELEMENT.equals(e.nodeName)) {
+            if (MARKER_ELEMENT == e) {
                 break;
             }
         }
@@ -189,7 +193,7 @@ class TreeConstructorActiveFormattingElements {
     int getBetweenLastElementAndMarkerIndex(int tagNameID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
-            if (MARKER_ELEMENT.equals(e.nodeName)) {
+            if (MARKER_ELEMENT == e) {
                 return -1;
             } else if (tagNameID == e.nodeNameID) {
                 return i;
@@ -201,7 +205,7 @@ class TreeConstructorActiveFormattingElements {
     int getBetweenLastElementAndMarkerIndex(int tagNameID, int namespaceID) {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
-            if (MARKER_ELEMENT.equals(e.nodeName)) {
+            if (MARKER_ELEMENT == e) {
                 return -1;
             } else if (Common.is(e, tagNameID, namespaceID)) {
                 return i;

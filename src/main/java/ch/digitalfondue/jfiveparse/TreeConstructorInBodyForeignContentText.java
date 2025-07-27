@@ -920,7 +920,8 @@ class TreeConstructorInBodyForeignContentText {
         Element node = treeConstructor.openElementAt(idx);
 
         while (true) {
-            if (Common.isHtmlNS(node, tagName)) {
+            // Common.isHtmlNS
+            if (node.namespaceID == Node.NAMESPACE_HTML_ID && node.nodeName.equals(tagName)) {
                 treeConstructor.generateImpliedEndTag(tagName, Node.NAMESPACE_HTML);
                 if (node != treeConstructor.getCurrentNode()) {
                     treeConstructor.emitParseError();
@@ -1080,7 +1081,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
 
-    private static final Map<String, String> SVG_ELEMENT_CASE_CORRECTION = new HashMap<>();
+    private static final HashMap<String, String> SVG_ELEMENT_CASE_CORRECTION = new HashMap<>();
 
     static {
         SVG_ELEMENT_CASE_CORRECTION.put("altglyph", "altGlyph");

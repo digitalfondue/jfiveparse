@@ -56,7 +56,7 @@ public final class DOMTokenList extends AbstractList<String> {
         }
         List<String> vals = attributeValues();
         vals.add(index, value);
-        element.getAttributes().put(attrName, Common.join(vals));
+        element.getAttributes().put(attrName, String.join(" ", vals));
     }
 
     public void add(String val, String... values) {
@@ -70,7 +70,7 @@ public final class DOMTokenList extends AbstractList<String> {
     public String remove(int index) {
         List<String> vals = attributeValues();
         String val = vals.remove(index);
-        element.getAttributes().put(attrName, Common.join(vals));
+        element.getAttributes().put(attrName, String.join(" ", vals));
         return val;
     }
 
@@ -79,7 +79,7 @@ public final class DOMTokenList extends AbstractList<String> {
         List<String> vals = attributeValues();
         boolean removed = vals.remove(o);
         if (removed) {
-            element.getAttributes().put(attrName, Common.join(vals));
+            element.getAttributes().put(attrName, String.join(" ", vals));
         }
         return removed;
     }
@@ -92,7 +92,7 @@ public final class DOMTokenList extends AbstractList<String> {
 
         List<String> vals = attributeValues();
         String replaced = vals.set(index, value);
-        element.getAttributes().put(attrName, Common.join(vals));
+        element.getAttributes().put(attrName, String.join(" ", vals));
         return replaced;
     }
 

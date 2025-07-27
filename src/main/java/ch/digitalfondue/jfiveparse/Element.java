@@ -295,7 +295,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
      * Get a space separated list of class names.
      */
     public String getClassName() {
-        return Common.join(getClassList());
+        return String.join(" ", getClassList());
     }
 
     /**

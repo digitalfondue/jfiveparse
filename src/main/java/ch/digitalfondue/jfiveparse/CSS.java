@@ -115,10 +115,6 @@ class CSS {
         };
     }
 
-    private static boolean isTraversal(CssSelector selector) {
-        return selector instanceof Combinator;
-    }
-
     private static boolean isQuote(char c) {
         return c == '\'' || c == '"';
     }
@@ -201,9 +197,9 @@ class CSS {
             throw new IllegalStateException("Parenthesis not matched");
         }
 
-        void ensureNotTraversal() {
-            if (!tokens.isEmpty() && isTraversal(tokens.get(tokens.size() - 1))) {
-                throw new IllegalStateException("Did not expect successive traversals.");
+        void ensureNotCombinator() {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator) {
+                throw new IllegalStateException("Did not expect successive combinators.");
             }
         }
 
@@ -214,7 +210,7 @@ class CSS {
                 return;
             }
 
-            ensureNotTraversal();
+            ensureNotCombinator();
 
             tokens.add(new Combinator(type));
         }
@@ -261,7 +257,7 @@ class CSS {
                     {
                         // check the first token is not DESCENDANT
                         if (tokens.isEmpty() || (!(tokens.get(0) instanceof Combinator ct) || ct.type() != CombinatorType.DESCENDANT)) {
-                            ensureNotTraversal();
+                            ensureNotCombinator();
                             tokens.add(new Combinator(CombinatorType.DESCENDANT));
                         }
                         stripWhitespace(1);
@@ -330,7 +326,7 @@ class CSS {
                         if (possibleAction != null) {
                             action = possibleAction;
                             if (!charAtIsEqual(selectorIndex + 1, '=')) {
-                                throw new Error("Expected `=`");
+                                throw new IllegalStateException("Expected '='");
                             }
 
                             stripWhitespace(2);
@@ -370,7 +366,7 @@ class CSS {
 
                             stripWhitespace(0);
                             switch (selector.charAt(selectorIndex) | 0x20) {
-                                // If the forceIgnore flag is set (either `i` or `s`), use that value
+                                // If the forceIgnore flag is set (either 'i' or 's'), use that value
                                 case 'i': {
                                     ignoreCase = "true";
                                     stripWhitespace(1);
@@ -395,7 +391,7 @@ class CSS {
                     case ':': {
                         if (charAtIsEqual(selectorIndex + 1, ':')) {
                             String name = getName(2).toLowerCase(Locale.ROOT);
-                            String data = canCharAt(selectorIndex) && selector.charAt(selectorIndex) == '(' ? readValueWithParenthesis() : null;
+                            String data = charAtIsEqual(selectorIndex, '(') ? readValueWithParenthesis() : null;
                             tokens.add(new PseudoElement(name, data));
                             break;
                         }

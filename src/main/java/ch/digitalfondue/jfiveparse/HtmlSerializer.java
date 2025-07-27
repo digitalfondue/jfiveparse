@@ -98,7 +98,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     protected static boolean skipEndTag(Element e) {
-        return Node.NAMESPACE_HTML_ID == e.namespaceID && Common.isNoEndTag(e.getNodeName());
+        return Node.NAMESPACE_HTML_ID == e.namespaceID && Common.isNoEndTag(e.nodeNameID);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class HtmlSerializer implements NodesVisitor {
                 boolean literalAppend = false;
                 if (parent != null && parent instanceof Element p) {
                     literalAppend = Node.NAMESPACE_HTML_ID == p.namespaceID
-                            && (Common.isTextNodeParent(p.getNodeName()) || ("noscript".equals(p.getNodeName()) && !scriptingDisabled));
+                            && (Common.isTextNodeParent(p.nodeNameID) || (Common.ELEMENT_NOSCRIPT_ID == p.nodeNameID && !scriptingDisabled));
                 }
                 appendable.append(literalAppend ? t.getData() : escapeTextData(t.getData()));
 
