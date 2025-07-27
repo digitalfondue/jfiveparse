@@ -18,6 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.Arrays;
 import java.util.EnumSet;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,6 +45,7 @@ class NodeTest {
     void nodeSibling() {
         Document doc = parser.parse("<div>1</div><div id=myid>2</div><div>3</div>");
         Element e = doc.getElementById("myid");
+        Element eAfter = (Element) e.parentNode.getChildNodes().get(2);
         assertNotNull(e);
         Node parent = e.getParentNode();
 
@@ -57,6 +59,29 @@ class NodeTest {
 
         assertEquals(parent.getChildNodes().get(0), parent.getFirstChild());
         assertEquals(parent.getChildNodes().get(0), parent.getFirstElementChild());
+
+        assertEquals(e, eAfter.getPreviousElementSibling());
+        assertEquals(e, eAfter.getPreviousSibling());
+
+        assertNull(eAfter.getNextSibling());
+        assertNull(eAfter.getNextElementSibling());
+    }
+
+    @Test
+    void nodeSibling2() {
+        Document doc = parser.parse("<div>1</div>text1<div id=myid>2</div>text2<div>3</div>");
+        Element e = doc.getElementById("myid");
+        var siblings = e.getParentNode().getChildNodes();
+        assertEquals(siblings.get(3), e.getNextSibling());
+        assertEquals(siblings.get(4), e.getNextElementSibling());
+
+        assertEquals(siblings.get(3), siblings.get(4).getPreviousSibling());
+        assertEquals(siblings.get(2), siblings.get(4).getPreviousElementSibling());
+
+        assertNull(siblings.get(0).getPreviousSibling());
+        assertNull(siblings.get(0).getPreviousElementSibling());
+        assertNull(siblings.get(4).getNextSibling());
+        assertNull(siblings.get(4).getNextElementSibling());
     }
 
     @Test
