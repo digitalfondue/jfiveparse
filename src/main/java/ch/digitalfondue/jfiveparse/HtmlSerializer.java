@@ -193,10 +193,4 @@ public class HtmlSerializer implements NodesVisitor {
         node.traverseWithCurrentNode(new HtmlSerializer(sb, options));
         return sb.toString();
     }
-
-    @Override
-    public boolean complete() {
-        return false;
-    }
-
 }

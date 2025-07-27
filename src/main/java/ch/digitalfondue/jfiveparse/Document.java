@@ -59,11 +59,11 @@ public final class Document extends Node {
         return getFirstElementChild();
     }
 
-    private Element getChildOfDocumentElementMatching(Predicate<String> nodeNameMatcher) {
+    private Element getChildOfDocumentElementMatching(int nameId1, int nameId2) {
         Element e = getFirstElementChild();
         if (e != null) {
             for (Node c : e.getRawChildNodes()) {
-                if (c instanceof Element ce && nodeNameMatcher.test(c.getNodeName()) && NAMESPACE_HTML_ID == ce.namespaceID) {
+                if (c instanceof Element ce && NAMESPACE_HTML_ID == ce.namespaceID && (ce.nodeNameID == nameId1 || ce.nodeNameID == nameId2)) {
                     return ce;
                 }
             }
@@ -75,14 +75,14 @@ public final class Document extends Node {
      * @return the "head" element if present
      */
     public Element getHead() {
-        return getChildOfDocumentElementMatching("head"::equals);
+        return getChildOfDocumentElementMatching(Common.ELEMENT_HEAD_ID, Common.ELEMENT_HEAD_ID);
     }
 
     /**
      * @return return the "body" or "frameset" element if present
      */
     public Element getBody() {
-        return getChildOfDocumentElementMatching(n -> "body".equals(n) || "frameset".equals(n));
+        return getChildOfDocumentElementMatching(Common.ELEMENT_BODY_ID, Common.ELEMENT_FRAMESET_ID);
     }
 
     /**

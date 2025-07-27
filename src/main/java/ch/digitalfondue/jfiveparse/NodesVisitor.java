@@ -19,7 +19,9 @@ public interface NodesVisitor {
 
     void start(Node node);
 
-    void end(Node node);
+    default void end(Node node) {}
     
-    boolean complete();
+    default boolean complete() {
+        return false;
+    }
 }

@@ -280,8 +280,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      */
     @Override
     public Element getFirstElementChild() {
-        List<Node> childs = getRawChildNodes();
-        for (Node n : childs) {
+        for (Node n : getRawChildNodes()) {
             if (n instanceof Element e) {
                 return e;
             }
@@ -445,7 +444,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
 
     /**
      * Get all the {@link Element} that match the given name. The elements will
-     * be returned in "tree order". The name is case sensitive.
+     * be returned in "tree order". The name is case-sensitive.
      */
     public List<Element> getElementsByTagName(String name) {
         return getAllNodesMatching(Selector.select().element(name).toMatcher());
@@ -461,7 +460,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     }
 
     /**
-     * Get the element with the given id. The id is case sensitive. If in the
+     * Get the element with the given id. The id is case-sensitive. If in the
      * documents there are more than one element with the same id, the first
      * element found during the traversal will be returned.
      */
@@ -488,12 +487,12 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
 		if (getNodeType() == TEXT_NODE) {
 			return ((Text) this).getData();
 		}
-
-        List<Text> textNodes = getAllNodesMatching((node) -> node.getNodeType() == TEXT_NODE);
         StringBuilder sb = new StringBuilder();
-        for (Text n : textNodes) {
-            sb.append(n.getData());
-        }
+        traverse((n) -> {
+            if (n instanceof Text t) {
+                sb.append(t.getData());
+            }
+        });
         return sb.toString();
     }
 
@@ -590,10 +589,10 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     }
 
 	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
-		if(concatenatedText.isEmpty()) {
-			removeChild(text);
-		} else {
-			replaceChild(new Text(concatenatedText.toString()), text);
-		}
+        if (concatenatedText.isEmpty()) {
+            removeChild(text);
+        } else {
+            replaceChild(new Text(concatenatedText.toString()), text);
+        }
 	}
 }

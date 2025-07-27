@@ -38,10 +38,6 @@ class NodeMatchers<T extends Node> implements NodesVisitor {
     }
 
     @Override
-    public void end(Node node) {
-    }
-
-    @Override
     public boolean complete() {
         return completeOnFirstMatch && !toAdd.isEmpty();
     }

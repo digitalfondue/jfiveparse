@@ -43,8 +43,8 @@ public final class Attributes implements Iterable<AttributeNode> {
             return true;
         }
 
-        if (obj instanceof Attributes) {
-            return Objects.equals(attributes, ((Attributes) obj).attributes);
+        if (obj instanceof Attributes a) {
+            return Objects.equals(attributes, a.attributes);
         }
         return false;
     }
@@ -52,7 +52,9 @@ public final class Attributes implements Iterable<AttributeNode> {
     public Attributes copy() {
         Attributes a = new Attributes();
         if (attributes != null) {
-            attributes.values().forEach(v -> a.put(new AttributeNode(v)));
+            for (var v : attributes.values()) {
+                a.put(new AttributeNode(v));
+            }
             return a;
         }
         return a;
