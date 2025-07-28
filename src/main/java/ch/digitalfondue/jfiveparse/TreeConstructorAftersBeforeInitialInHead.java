@@ -389,7 +389,7 @@ class TreeConstructorAftersBeforeInitialInHead {
                 return 2;
             }
         }
-        if ((systemId == null || "".equals(systemId)) && (
+        if ((systemId == null || systemId.isEmpty()) && (
                 publicId.startsWith("-//w3c//dtd html 4.01 frameset//") || publicId.startsWith("-//w3c//dtd html 4.01 transitional//")
         )) {
             return 2;

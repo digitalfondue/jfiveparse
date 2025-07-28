@@ -524,14 +524,14 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
 		StringBuilder concatenatedText = null;
 		for (Node n : childs) {
 			// start accumulating texts node
-			if (text == null && n.getNodeType() == Node.TEXT_NODE) {
+			if (text == null && n instanceof Text textNode) {
 				text = n;
 				concatenatedText = new StringBuilder();
-				concatenatedText.append(((Text) n).getData());
+				concatenatedText.append(textNode.getData());
 			}
 			// continue accumulating texts node
-			else if (text != null && n.getNodeType() == Node.TEXT_NODE) {
-				concatenatedText.append(((Text) n).getData());
+			else if (text != null && n instanceof Text textNode) {
+				concatenatedText.append(textNode.getData());
 				removeChild(n);
 			}
 			// stop accumulating node and add current

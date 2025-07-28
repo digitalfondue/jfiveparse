@@ -397,12 +397,9 @@ class TreeConstructor {
         // 2
         int outerLoopCounter = 0;
 
-        while (true) {
+        while (outerLoopCounter < 8) { // 3
 
-            // 3
-            if (outerLoopCounter >= 8) {
-                break;
-            }
+
 
             // 4
             outerLoopCounter++;

@@ -230,9 +230,7 @@ public class Selector {
     }
 
     private static NodeMatcher matchAttr(String name, BiPredicate<String, CommonNode.CommonElement> attributeValueMatcher) {
-        return (node) -> {
-            return node instanceof CommonNode.CommonElement elem && elem.containsAttribute(name) && attributeValueMatcher.test(elem.getAttributeValue(name), elem);
-        };
+        return (node) -> node instanceof CommonNode.CommonElement elem && elem.containsAttribute(name) && attributeValueMatcher.test(elem.getAttributeValue(name), elem);
     }
 
     /**

@@ -47,7 +47,7 @@ class Prefix {
 
             childsCompacted = new Prefix[tmpChilds.lastKey() - offset + 1];
             for (Entry<Character, Prefix> kv : tmpChilds.entrySet()) {
-                childsCompacted[kv.getKey().charValue() - offset] = kv.getValue();
+                childsCompacted[kv.getKey() - offset] = kv.getValue();
             }
         }
         tmpChilds = null;

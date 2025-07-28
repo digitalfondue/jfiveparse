@@ -140,11 +140,6 @@ public class W3CDom {
                 currentNode = currentNode.getParentNode();
             }
         }
-
-        @Override
-        public boolean complete() {
-            return false;
-        }
     }
 
     static CommonNode wrap(org.w3c.dom.Node node) {
