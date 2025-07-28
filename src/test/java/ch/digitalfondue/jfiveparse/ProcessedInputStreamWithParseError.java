@@ -45,6 +45,14 @@ final class ProcessedInputStreamWithParseError extends StringProcessedInputStrea
         return chr;
     }
 
+    private int getCharAt(int position) {
+        try {
+            return input[position];
+        } catch (IndexOutOfBoundsException s) {
+            return -1;
+        }
+    }
+
     private int getCurrentInputCharacter() {
         if (buffer.length() > 0) {
             return buffer.getCharAt(0);

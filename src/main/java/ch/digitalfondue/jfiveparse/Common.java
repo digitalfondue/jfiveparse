@@ -15,7 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Dumping ground for static functions and constants.

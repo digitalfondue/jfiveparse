@@ -16,29 +16,31 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.List;
+import java.util.stream.Stream;
 
-class NodeMatchers<T extends Node> implements NodesVisitor {
+class NodeMatchers<T extends Node> implements NodesVisitor<T> {
 
     private final NodeMatcher matcher;
-    private final List<T> toAdd;
+    private final Stream.Builder<T> toAdd;
     private final boolean completeOnFirstMatch;
+    private boolean matched;
 
-    NodeMatchers(NodeMatcher matcher, List<T> toAdd, boolean completeOnFirstMatch) {
+    NodeMatchers(NodeMatcher matcher, Stream.Builder<T> toAdd, boolean completeOnFirstMatch) {
         this.matcher = matcher;
         this.toAdd = toAdd;
         this.completeOnFirstMatch = completeOnFirstMatch;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void start(Node node) {
+    public void start(T node) {
         if (matcher.match(node)) {
-            toAdd.add((T) node);
+            matched = true;
+            toAdd.accept(node);
         }
     }
 
     @Override
     public boolean complete() {
-        return completeOnFirstMatch && !toAdd.isEmpty();
+        return completeOnFirstMatch && matched;
     }
 }

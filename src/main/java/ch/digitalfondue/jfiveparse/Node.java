@@ -15,7 +15,10 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Base class for all the nodes.
@@ -383,7 +386,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      */
     // As described in
     // http://www.drdobbs.com/database/a-generic-iterator-for-tree-traversal/184404325
-    public void traverse(NodesVisitor visitor) {
+    public void traverse(NodesVisitor<Node> visitor) {
         Node node = getFirstChild();
         while (node != null) {
             visitor.start(node);
@@ -417,7 +420,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     /**
      * Traverse this node and his child.
      */
-    public void traverseWithCurrentNode(NodesVisitor visitor) {
+    public void traverseWithCurrentNode(NodesVisitor<Node> visitor) {
         visitor.start(this);
         traverse(visitor);
         visitor.end(this);
@@ -427,7 +430,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * Get all the nodes matching the given matcher. The nodes will be returned
      * in "tree order". See {@link Selector}.
      */
-    public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher) {
+    public List<Node> getAllNodesMatching(NodeMatcher matcher) {
         return getAllNodesMatching(matcher, false);
     }
 
@@ -436,10 +439,19 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * in "tree order". If the second parameter is true, the traversal will stop
      * on the first match. See {@link Selector}.
      */
-    public <T extends Node> List<T> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
-        List<T> l = new ArrayList<>();
-        traverse(new NodeMatchers<>(matcher, l, onlyFirstMatch));
-        return l;
+    public List<Node> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
+        return getAllNodesMatchingAsStream(matcher, onlyFirstMatch).toList();
+    }
+
+
+    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher) {
+        return getAllNodesMatchingAsStream(matcher, false);
+    }
+
+    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch) {
+        var streamBuilder = Stream.<Node>builder();
+        traverse(new NodeMatchers<>(matcher, streamBuilder, onlyFirstMatch));
+        return streamBuilder.build();
     }
 
     /**
@@ -447,16 +459,20 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * be returned in "tree order". The name is case-sensitive.
      */
     public List<Element> getElementsByTagName(String name) {
-        return getAllNodesMatching(Selector.select().element(name).toMatcher());
+        return getAllNodesMatchingAsStream(Selector.select().element(name).toMatcher())
+                .map(Element.class::cast)
+                .toList();
     }
 
     /**
      * Get all the {@link Element} that match the given name and namespace. The
      * elements will be returned in "tree order". The name and namespace are
-     * case sensitive.
+     * case-sensitive.
      */
     public List<Element> getElementsByTagNameNS(String name, String namespace) {
-        return getAllNodesMatching(Selector.select().element(name, namespace).toMatcher());
+        return getAllNodesMatchingAsStream(Selector.select().element(name, namespace).toMatcher())
+                .map(Element.class::cast)
+                .toList();
     }
 
     /**
@@ -465,8 +481,8 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * element found during the traversal will be returned.
      */
     public Element getElementById(String idValue) {
-        List<Element> l = getAllNodesMatching(Selector.select().id(idValue).toMatcher(), true);
-        return l.isEmpty() ? null : l.get(0);
+        return getAllNodesMatchingAsStream(Selector.select().id(idValue).toMatcher())
+                .findFirst().map(Element.class::cast).orElse(null);
     }
 
     /**
@@ -477,7 +493,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      */
     public boolean contains(Node node) {
         // check same reference
-        return !getAllNodesMatching((n) -> n == node, true).isEmpty();
+        return getAllNodesMatchingAsStream((n) -> n == node, true).anyMatch(s -> true);
     }
 
     /**

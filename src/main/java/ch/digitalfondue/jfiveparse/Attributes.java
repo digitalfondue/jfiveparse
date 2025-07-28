@@ -15,12 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public final class Attributes implements Iterable<AttributeNode> {
 

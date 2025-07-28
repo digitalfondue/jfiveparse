@@ -20,7 +20,10 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 public class W3CDom {
 
@@ -53,7 +56,7 @@ public class W3CDom {
         }
     }
 
-    public static class W3CDNodeVisitor implements NodesVisitor {
+    public static class W3CDNodeVisitor implements NodesVisitor<Node> {
 
         protected final Document document;
         protected org.w3c.dom.Node currentNode;
@@ -234,6 +237,36 @@ public class W3CDom {
         @Override
         public String getAttributeValue(String name) {
             return node.getAttributes().getNamedItem(name).getNodeValue();
+        }
+    }
+
+    private static void traverse(org.w3c.dom.Node nodeParent, NodesVisitor<org.w3c.dom.Node> visitor) {
+        var node = nodeParent.getFirstChild();
+        while (node != null) {
+            visitor.start(node);
+            if (visitor.complete()) {
+                return;
+            }
+            if (node.hasChildNodes()) {
+                node = node.getFirstChild();
+            } else {
+                while (node != nodeParent && node.getNextSibling() == null) {
+                    visitor.end(node);
+                    if (visitor.complete()) {
+                        return;
+                    }
+                    node = node.getParentNode();
+                }
+
+                if (node == nodeParent) {
+                    break;
+                }
+                visitor.end(node);
+                if (visitor.complete()) {
+                    return;
+                }
+                node = node.getNextSibling();
+            }
         }
     }
 }

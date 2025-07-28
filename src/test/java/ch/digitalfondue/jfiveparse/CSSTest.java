@@ -1,6 +1,6 @@
 package ch.digitalfondue.jfiveparse;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

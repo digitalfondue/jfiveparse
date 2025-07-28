@@ -18,7 +18,6 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * Represent a document.

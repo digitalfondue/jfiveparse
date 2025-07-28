@@ -16,7 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static ch.digitalfondue.jfiveparse.Common.*;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.*;

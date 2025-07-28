@@ -4,11 +4,12 @@ import org.jsoup.Jsoup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // I know, completely wrong as a benchmark :D
 public class TestParsePerf {

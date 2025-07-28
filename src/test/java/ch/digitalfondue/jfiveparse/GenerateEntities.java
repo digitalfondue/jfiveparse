@@ -15,6 +15,9 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -23,9 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
-
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * Generate the file "entities-with-1-2-codepoint", used by Entities.

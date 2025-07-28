@@ -126,7 +126,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
     }
 
 
-    // case sensitive check
+    // case-sensitive check
     @Override
     public boolean containsAttribute(String name) {
         return attributes != null && attributes.containsKey(name);
@@ -238,7 +238,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
     /**
      * Get the attribute value. Return null if the attribute is not present.
      * 
-     * Case insensitive.
+     * Case-insensitive.
      * 
      * @param name
      * @return
@@ -273,7 +273,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
     /**
      * Remove the attributed with the given name.
      * 
-     * Case insensitive.
+     * Case-insensitive.
      * 
      * @param name
      */
@@ -335,7 +335,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
 
     /**
      * Return true if the Element has an attribute with the name. The comparison
-     * is case insensitive.
+     * is case-insensitive.
      * 
      * @param name
      * @return
@@ -409,7 +409,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
     }
 
     /**
-     * Get the html content of the this node and his child.
+     * Get the html content of this node and his child.
      */
     public String getOuterHTML() {
         return getOuterHTML(EnumSet.noneOf(Option.class));

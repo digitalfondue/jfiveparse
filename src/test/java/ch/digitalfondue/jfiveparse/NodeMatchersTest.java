@@ -15,9 +15,9 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +29,7 @@ class NodeMatchersTest {
     @Test
     void firstChildTest() {
         Document doc = parser.parse("<div></div><div id=myid></div><div></div>");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstChild().toMatcher());
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(0), div.get(0));
     }
@@ -38,7 +38,7 @@ class NodeMatchersTest {
     void universalTest() {
         Document doc = parser.parse("<div></div><div id=myid><span><i></i></span></div><div></div>");
         // div *
-        List<Element> universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withDescendant().universal().toMatcher());
+        List<Node> universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withDescendant().universal().toMatcher());
         assertEquals(2, universal.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0), universal.get(1));
@@ -53,7 +53,7 @@ class NodeMatchersTest {
     @Test
     void firstElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstElementChild().toMatcher());
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstElementChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1), div.get(0));
     }
@@ -61,7 +61,7 @@ class NodeMatchersTest {
     @Test
     void lastElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>text");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastElementChild().toMatcher());
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastElementChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
 
@@ -70,7 +70,7 @@ class NodeMatchersTest {
     @Test
     void lastChildTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
-        List<Element> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastChild().toMatcher());
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastChild().toMatcher());
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
     }
@@ -78,66 +78,66 @@ class NodeMatchersTest {
     @Test
     void hasAttributeValueEqTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div id=myid2></div>");
-        List<Element> divIdMyId = doc.getAllNodesMatching(Selector.select().attrValEq("id", "myid").toMatcher());
-        List<Element> divId = doc.getAllNodesMatching(Selector.select().attr("id").toMatcher());
+        List<Node> divIdMyId = doc.getAllNodesMatching(Selector.select().attrValEq("id", "myid").toMatcher());
+        List<Node> divId = doc.getAllNodesMatching(Selector.select().attr("id").toMatcher());
         assertEquals(1, divIdMyId.size());
         assertEquals(2, divId.size());
-        assertEquals("myid", divId.get(0).getAttribute("id"));
-        assertEquals("myid2", divId.get(1).getAttribute("id"));
+        assertEquals("myid", ((Element) divId.get(0)).getAttribute("id"));
+        assertEquals("myid2", ((Element) divId.get(1)).getAttribute("id"));
     }
 
     @Test
     void hasAttributeValueInListTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class1").toMatcher());
+        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class1").toMatcher());
         assertEquals(1, divClass.size());
-        assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
+        assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class2").toMatcher());
+        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class2").toMatcher());
         assertEquals(2, divClasses.size());
     }
 
     @Test
     void hasAttributeValueStartWithTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2 class1").toMatcher());
+        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2 class1").toMatcher());
         assertEquals(1, divClass.size());
-        assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
+        assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2").toMatcher());
+        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2").toMatcher());
         assertEquals(2, divClasses.size());
     }
 
     @Test
     void hasAttributeValueEndWithTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class1 class3").toMatcher());
+        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class1 class3").toMatcher());
         assertEquals(1, divClass.size());
-        assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
+        assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class3").toMatcher());
+        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class3").toMatcher());
         assertEquals(2, divClasses.size());
     }
 
     @Test
     void hasAttributeValueContainTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Element> divClass = doc.getAllNodesMatching(Selector.select().attrValContains("class", "class2 class1").toMatcher());
+        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValContains("class", "class2 class1").toMatcher());
         assertEquals(1, divClass.size());
-        assertEquals("class2 class1 class3", divClass.get(0).getAttribute("class"));
+        assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Element> divClasses = doc.getAllNodesMatching(Selector.select().attrValContains("class", "cl").toMatcher());
+        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValContains("class", "cl").toMatcher());
         assertEquals(2, divClasses.size());
     }
 
     @Test
     void hasParentMatch() {
         Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
-        List<Element> e = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withChild().toMatcher());
+        List<Node> e = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withChild().toMatcher());
         assertEquals(1, e.size());
-        assertEquals("depth2", e.get(0).getAttribute("id"));
+        assertEquals("depth2", ((Element) e.get(0)).getAttribute("id"));
 
-        List<Element> empty = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth0").withChild().toMatcher());
+        List<Node> empty = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth0").withChild().toMatcher());
         assertEquals(0, empty.size());
     }
 
@@ -148,14 +148,14 @@ class NodeMatchersTest {
         List<Node> e0 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth3").withDescendant().toMatcher());
         assertEquals(0, e0.size());
 
-        List<Element> e1 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth2").withDescendant().toMatcher());
+        List<Node> e1 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth2").withDescendant().toMatcher());
         assertEquals(1, e1.size());
-        assertEquals("depth3", e1.get(0).getAttribute("id"));
+        assertEquals("depth3", ((Element) e1.get(0)).getAttribute("id"));
 
-        List<Element> e2 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withDescendant().toMatcher());
+        List<Node> e2 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withDescendant().toMatcher());
         assertEquals(2, e2.size());
-        assertEquals("depth2", e2.get(0).getAttribute("id"));
-        assertEquals("depth3", e2.get(1).getAttribute("id"));
+        assertEquals("depth2", ((Element) e2.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((Element) e2.get(1)).getAttribute("id"));
 
         List<Node> empty = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth0").withDescendant().toMatcher());
         assertEquals(0, empty.size());
@@ -165,41 +165,41 @@ class NodeMatchersTest {
     void hasSelectorMatch() {
         // #depth1 > #depth2 > #depth3
         Document doc = parser.parse("<div id=depth1 class='a b c'><div id=depth2 class='a c'><div id=depth3 class='b c'></div></div></div>");
-        List<Element> e1 = doc.getAllNodesMatching(Selector.select().id("depth1").withChild().id("depth2").withChild().id("depth3").toMatcher());
+        List<Node> e1 = doc.getAllNodesMatching(Selector.select().id("depth1").withChild().id("depth2").withChild().id("depth3").toMatcher());
         assertEquals(1, e1.size());
-        assertEquals("depth3", e1.get(0).getAttribute("id"));
+        assertEquals("depth3", ((Element) e1.get(0)).getAttribute("id"));
 
         // div > [id]
-        List<Element> e2 = doc.getAllNodesMatching(Selector.select().element("div").withDescendant().attr("id").toMatcher());
+        List<Node> e2 = doc.getAllNodesMatching(Selector.select().element("div").withDescendant().attr("id").toMatcher());
         assertEquals(2, e2.size());
-        assertEquals("depth2", e2.get(0).getAttribute("id"));
-        assertEquals("depth3", e2.get(1).getAttribute("id"));
+        assertEquals("depth2", ((Element) e2.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((Element) e2.get(1)).getAttribute("id"));
 
         // div.a.b
-        List<Element> e3 = doc.getAllNodesMatching(Selector.select().element("div").hasClass("a", "b").toMatcher());
+        List<Node> e3 = doc.getAllNodesMatching(Selector.select().element("div").hasClass("a", "b").toMatcher());
         assertEquals(1, e3.size());
-        assertEquals("depth1", e3.get(0).getAttribute("id"));
+        assertEquals("depth1", ((Element) e3.get(0)).getAttribute("id"));
 
         // .c
-        List<Element> e4 = doc.getAllNodesMatching(Selector.select().hasClass("c").toMatcher());
+        List<Node> e4 = doc.getAllNodesMatching(Selector.select().hasClass("c").toMatcher());
         assertEquals(3, e4.size());
 
         // .b
-        List<Element> e5 = doc.getAllNodesMatching(Selector.select().hasClass("b").toMatcher());
+        List<Node> e5 = doc.getAllNodesMatching(Selector.select().hasClass("b").toMatcher());
         assertEquals(2, e5.size());
-        assertEquals("depth1", e5.get(0).getAttribute("id"));
-        assertEquals("depth3", e5.get(1).getAttribute("id"));
+        assertEquals("depth1", ((Element) e5.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((Element) e5.get(1)).getAttribute("id"));
         
         // .a .c
-        List<Element> e6 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("c").toMatcher());
+        List<Node> e6 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("c").toMatcher());
         assertEquals(2, e6.size());
-        assertEquals("depth2", e6.get(0).getAttribute("id"));
-        assertEquals("depth3", e6.get(1).getAttribute("id"));
+        assertEquals("depth2", ((Element) e6.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((Element) e6.get(1)).getAttribute("id"));
         
         // .a .a
-        List<Element> e7 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("a").toMatcher());
+        List<Node> e7 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("a").toMatcher());
         assertEquals(1, e7.size());
-        assertEquals("depth2", e7.get(0).getAttribute("id"));
+        assertEquals("depth2", ((Element) e7.get(0)).getAttribute("id"));
     }
 
     @Test
@@ -217,8 +217,8 @@ class NodeMatchersTest {
         assertEquals("text1", ((Text) nodes.get(2)).getData());
 
         // body :first-child
-        List<Text> txtNode = doc.getAllNodesMatching(Selector.select().element("body").withDescendant().isFirstChild().toMatcher());
+        List<Node> txtNode = doc.getAllNodesMatching(Selector.select().element("body").withDescendant().isFirstChild().toMatcher());
         assertEquals(1, txtNode.size());
-        assertEquals("text1", txtNode.get(0).getData());
+        assertEquals("text1", ((Text) txtNode.get(0)).getData());
     }
 }

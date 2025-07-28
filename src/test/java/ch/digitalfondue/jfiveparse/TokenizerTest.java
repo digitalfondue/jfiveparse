@@ -15,6 +15,11 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
@@ -29,12 +34,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import com.google.gson.Gson;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import com.google.gson.GsonBuilder;
 
 public class TokenizerTest {
 

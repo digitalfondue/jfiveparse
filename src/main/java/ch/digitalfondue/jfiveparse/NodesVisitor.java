@@ -15,11 +15,11 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-public interface NodesVisitor {
+public interface NodesVisitor<T> {
 
-    void start(Node node);
+    void start(T node);
 
-    default void end(Node node) {}
+    default void end(T node) {}
     
     default boolean complete() {
         return false;

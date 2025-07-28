@@ -15,12 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import static ch.digitalfondue.jfiveparse.TreeConstructor.CHARACTER;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.COMMENT;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.DOCTYPE;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.END_TAG;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.EOF;
-import static ch.digitalfondue.jfiveparse.TreeConstructor.START_TAG;
+import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
 class TreeConstructorInTable {
 

@@ -184,7 +184,7 @@ public class Selector {
     }
 
     /**
-     * Match an element with the class name. Case sensitive.
+     * Match an element with the class name. Case-sensitive.
      * <p>
      * CSS equivalent: <code>.value</code>
      * </p>

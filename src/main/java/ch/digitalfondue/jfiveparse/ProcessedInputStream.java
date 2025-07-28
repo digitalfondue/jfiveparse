@@ -35,13 +35,9 @@ abstract class ProcessedInputStream {
 
     protected abstract int read();
 
-    protected int getCharAt(int position) {
-        throw new IllegalArgumentException();
-    }
-
     static class StringProcessedInputStream extends ProcessedInputStream {
-        private int pos = 0;
-        private final char[] input;
+        protected int pos = 0;
+        protected final char[] input;
 
         StringProcessedInputStream(String input) {
             this.input = input.toCharArray();
@@ -51,15 +47,6 @@ abstract class ProcessedInputStream {
         protected int read() {
             try {
                 return input[pos++];
-            } catch (IndexOutOfBoundsException s) {
-                return -1;
-            }
-        }
-
-        @Override
-        protected int getCharAt(int position) {
-            try {
-                return input[position];
             } catch (IndexOutOfBoundsException s) {
                 return -1;
             }
@@ -87,24 +74,17 @@ abstract class ProcessedInputStream {
     //
     private int readWithCRHandling(boolean crFoundInternal, int chr) {
         if (crFoundInternal) {
-            chr = handleCrFoundInternal(chr);
+            //chr = handleCrFoundInternal(chr);
+            crFound = false;
+            if (chr == Characters.LF) {
+                chr = read();
+            }
         }
 
         if (chr == Characters.CR) {
-            chr = handleChrIsCR();
-        }
-        return chr;
-    }
-
-    private int handleChrIsCR() {
-        crFound = true;
-        return Characters.LF;
-    }
-
-    private int handleCrFoundInternal(int chr) {
-        crFound = false;
-        if (chr == Characters.LF) {
-            chr = read();
+            // handleChrIsCR
+            crFound = true;
+            chr = Characters.LF;
         }
         return chr;
     }
@@ -120,7 +100,7 @@ abstract class ProcessedInputStream {
     }
 
     /**
-     * Ideally, it's a combination of getNextInputCharacter + consume in term of
+     * Ideally, it's a combination of getNextInputCharacter + consume in terms of
      * behavior.
      * 
      * @return

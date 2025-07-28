@@ -16,10 +16,11 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.util.stream.Collectors;
 
 class OptionParseTest {
 

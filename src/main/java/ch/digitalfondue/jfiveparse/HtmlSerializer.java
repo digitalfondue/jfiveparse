@@ -27,7 +27,7 @@ import java.util.Set;
  * >https://html.spec.whatwg.org/multipage/syntax.html#serialising-html-
  * fragments</a>
  */
-public class HtmlSerializer implements NodesVisitor {
+public class HtmlSerializer implements NodesVisitor<Node> {
 
     protected final Appendable appendable;
     protected final boolean transformEntities;

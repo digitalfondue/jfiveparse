@@ -16,13 +16,11 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Test;
-
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
-import org.w3c.dom.Node;
 
 class W3CDomTest {
 

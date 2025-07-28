@@ -47,7 +47,7 @@ public enum Option {
     HIDE_EMPTY_ATTRIBUTE_VALUE,
     /**
      * <p>
-     * Serialization parameter. Print the original case case of an attribute
+     * Serialization parameter. Print the original case of an attribute
      * name. By default, the attribute names are converted in lowerCase, when
      * passing this parameter, the original case will be printed.
      * </p>
@@ -84,7 +84,7 @@ public enum Option {
      * Don't ignore start tag: "caption", "col", "colgroup", "frame", "head", "tbody", "td", "tfoot", "th", "thead", "tr"
      * when the parser is in the 'IN BODY' insertion mode.
      *
-     * This allow to have for example "tr" tag without the containing table/tbody.
+     * This allows to have for example "tr" tag without the containing table/tbody.
      * </p>
      */
     DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG,

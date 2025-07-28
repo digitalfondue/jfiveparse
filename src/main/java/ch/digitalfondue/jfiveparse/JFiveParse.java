@@ -49,7 +49,7 @@ public class JFiveParse {
     }
 
     /**
-     * Parse a full html document using a {@link Reader} as a input with the default options.
+     * Parse a full html document using a {@link Reader} as an input with the default options.
      *
      * @param input
      * @return
