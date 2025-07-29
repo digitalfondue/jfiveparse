@@ -449,9 +449,9 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     }
 
     public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch) {
-        var streamBuilder = Stream.<Node>builder();
-        traverse(new NodeMatchers<>(matcher, streamBuilder, onlyFirstMatch));
-        return streamBuilder.build();
+        var nm = new NodeMatchers<Node>(matcher, onlyFirstMatch);
+        traverse(nm);
+        return nm.result();
     }
 
     /**

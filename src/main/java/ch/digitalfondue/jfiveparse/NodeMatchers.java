@@ -20,13 +20,13 @@ import java.util.stream.Stream;
 class NodeMatchers<T extends CommonNode> implements NodesVisitor<T> {
 
     private final NodeMatcher matcher;
-    private final Stream.Builder<T> toAdd;
+    private Stream.Builder<T> toAdd;
+    private Stream<T> singleOrEmpty = Stream.empty();
     private final boolean completeOnFirstMatch;
     private boolean matched;
 
-    NodeMatchers(NodeMatcher matcher, Stream.Builder<T> toAdd, boolean completeOnFirstMatch) {
+    NodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch) {
         this.matcher = matcher;
-        this.toAdd = toAdd;
         this.completeOnFirstMatch = completeOnFirstMatch;
     }
 
@@ -34,12 +34,23 @@ class NodeMatchers<T extends CommonNode> implements NodesVisitor<T> {
     public void start(T node) {
         if (matcher.match(node)) {
             matched = true;
-            toAdd.accept(node);
+            if (completeOnFirstMatch) {
+                singleOrEmpty = Stream.of(node);
+            } else {
+                if (toAdd == null) {
+                    toAdd = Stream.builder();
+                }
+                toAdd.accept(node);
+            }
         }
     }
 
     @Override
     public boolean complete() {
         return completeOnFirstMatch && matched;
+    }
+
+    Stream<T> result() {
+        return toAdd == null ? singleOrEmpty : toAdd.build();
     }
 }
