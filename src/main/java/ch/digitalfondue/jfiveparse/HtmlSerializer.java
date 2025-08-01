@@ -21,6 +21,8 @@ import java.io.Writer;
 import java.util.EnumSet;
 import java.util.Set;
 
+import static ch.digitalfondue.jfiveparse.Common.*;
+
 /**
  * Implement (mostly) <a href=
  * "https://html.spec.whatwg.org/multipage/syntax.html#serialising-html-fragments"
@@ -98,7 +100,7 @@ public class HtmlSerializer implements NodesVisitor<Node> {
     }
 
     protected static boolean skipEndTag(Element e) {
-        return Node.NAMESPACE_HTML_ID == e.namespaceID && Common.isNoEndTag(e.nodeNameID);
+        return Node.NAMESPACE_HTML_ID == e.namespaceID && isNoEndTag(e.nodeNameID);
     }
 
     @Override
@@ -132,7 +134,7 @@ public class HtmlSerializer implements NodesVisitor<Node> {
                 boolean literalAppend = false;
                 if (parent instanceof Element p) {
                     literalAppend = Node.NAMESPACE_HTML_ID == p.namespaceID
-                            && (Common.isTextNodeParent(p.nodeNameID) || (Common.ELEMENT_NOSCRIPT_ID == p.nodeNameID && !scriptingDisabled));
+                            && (isTextNodeParent(p.nodeNameID) || (Common.ELEMENT_NOSCRIPT_ID == p.nodeNameID && !scriptingDisabled));
                 }
                 appendable.append(literalAppend ? t.getData() : escapeTextData(t.getData()));
 
@@ -192,5 +194,24 @@ public class HtmlSerializer implements NodesVisitor<Node> {
         StringBuilder sb = new StringBuilder();
         node.traverseWithCurrentNode(new HtmlSerializer(sb, options));
         return sb.toString();
+    }
+
+    private static boolean isNoEndTag(int nodeName) {
+        return switch (nodeName) {
+            case ELEMENT_AREA_ID, ELEMENT_BASE_ID, ELEMENT_BASEFONT_ID, ELEMENT_BGSOUND_ID,
+                 ELEMENT_BR_ID, ELEMENT_COL_ID, ELEMENT_EMBED_ID, ELEMENT_FRAME_ID, ELEMENT_HR_ID,
+                 ELEMENT_IMG_ID, ELEMENT_INPUT_ID, ELEMENT_KEYGEN_ID,
+                 ELEMENT_LINK_ID, ELEMENT_META_ID, ELEMENT_PARAM_ID, ELEMENT_SOURCE_ID, ELEMENT_TRACK_ID,
+                 ELEMENT_WBR_ID -> true;
+            default -> false;
+        };
+    }
+
+    private static boolean isTextNodeParent(int nodeNameId) {
+        return switch (nodeNameId) {
+            case ELEMENT_STYLE_ID, ELEMENT_SCRIPT_ID, ELEMENT_XMP_ID, ELEMENT_IFRAME_ID, ELEMENT_NOEMBED_ID,
+                 ELEMENT_NOFRAMES_ID, ELEMENT_PLAINTEXT_ID -> true;
+            default -> false;
+        };
     }
 }

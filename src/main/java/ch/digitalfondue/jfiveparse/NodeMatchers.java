@@ -21,9 +21,8 @@ class NodeMatchers<T extends CommonNode> implements NodesVisitor<T> {
 
     private final NodeMatcher matcher;
     private Stream.Builder<T> toAdd;
-    private Stream<T> singleOrEmpty = Stream.empty();
+    private Stream<T> singleOrEmpty;
     private final boolean completeOnFirstMatch;
-    private boolean matched;
 
     NodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch) {
         this.matcher = matcher;
@@ -33,7 +32,6 @@ class NodeMatchers<T extends CommonNode> implements NodesVisitor<T> {
     @Override
     public void start(T node) {
         if (matcher.match(node)) {
-            matched = true;
             if (completeOnFirstMatch) {
                 singleOrEmpty = Stream.of(node);
             } else {
@@ -47,10 +45,14 @@ class NodeMatchers<T extends CommonNode> implements NodesVisitor<T> {
 
     @Override
     public boolean complete() {
-        return completeOnFirstMatch && matched;
+        return completeOnFirstMatch && singleOrEmpty != null;
     }
 
     Stream<T> result() {
-        return toAdd == null ? singleOrEmpty : toAdd.build();
+        if (toAdd != null) {
+            return toAdd.build();
+        } else {
+            return singleOrEmpty == null ? Stream.empty() : singleOrEmpty;
+        }
     }
 }
