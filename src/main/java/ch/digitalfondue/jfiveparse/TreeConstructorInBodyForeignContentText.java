@@ -545,7 +545,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.closePElement();
         }
         Element e = treeConstructor.getCurrentNode();
-        if (Common.isHtmlNSBetween(e, ELEMENT_H1_ID, ELEMENT_H6_ID)) {
+        if (Common.isHtmlNSBetweenH1H6(e)) {
             treeConstructor.emitParseError();
             treeConstructor.popCurrentNode();
         }
@@ -770,7 +770,7 @@ class TreeConstructorInBodyForeignContentText {
 
             while (true) {
                 Element e = treeConstructor.popCurrentNode();
-                if (Common.isHtmlNSBetween(e, ELEMENT_H1_ID, ELEMENT_H6_ID)) {
+                if (Common.isHtmlNSBetweenH1H6(e)) {
                     break;
                 }
             }

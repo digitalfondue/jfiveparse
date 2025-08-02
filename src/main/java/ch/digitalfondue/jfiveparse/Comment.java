@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 public final class Comment extends Node {
 
-    ResizableCharBuilder dataBuilder;
+    private ResizableCharBuilder dataBuilder;
     private String data;
 
     public Comment(String data) {
@@ -69,8 +69,8 @@ public final class Comment extends Node {
         if (this == other) {
             return true;
         }
-        if (other instanceof Comment) {
-            return Objects.equals(getData(), ((Comment) other).getData());
+        if (other instanceof Comment c) {
+            return Objects.equals(getData(), c.getData());
         }
         return false;
     }

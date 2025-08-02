@@ -235,8 +235,8 @@ public class W3CDom {
         }
     }
 
-    private static void traverse(org.w3c.dom.Node nodeParent, NodesVisitor<org.w3c.dom.Node> visitor) {
-        var node = nodeParent.getFirstChild();
+    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<org.w3c.dom.Node> visitor) {
+        var node = rootNode.getFirstChild();
         while (node != null) {
             visitor.start(node);
             if (visitor.complete()) {
@@ -245,7 +245,7 @@ public class W3CDom {
             if (node.hasChildNodes()) {
                 node = node.getFirstChild();
             } else {
-                while (node != nodeParent && node.getNextSibling() == null) {
+                while (node != rootNode && node.getNextSibling() == null) {
                     visitor.end(node);
                     if (visitor.complete()) {
                         return;
@@ -253,7 +253,7 @@ public class W3CDom {
                     node = node.getParentNode();
                 }
 
-                if (node == nodeParent) {
+                if (node == rootNode) {
                     break;
                 }
                 visitor.end(node);

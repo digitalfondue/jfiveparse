@@ -591,9 +591,8 @@ class Common {
 
     // ---------------
 
-    static boolean isImpliedTagsThoroughly(Element element) {
-        int nodeNameID = element.nodeNameID;
-        return switch (nodeNameID) {
+    static boolean isImpliedTagsThoroughly(int nodeNameId) {
+        return switch (nodeNameId) {
             case ELEMENT_CAPTION_ID, ELEMENT_COLGROUP_ID, ELEMENT_DD_ID, ELEMENT_DT_ID, ELEMENT_LI_ID,
                  ELEMENT_OPTGROUP_ID, ELEMENT_OPTION_ID, ELEMENT_P_ID, ELEMENT_RB_ID, ELEMENT_RP_ID, ELEMENT_RT_ID,
                  ELEMENT_RTC_ID, ELEMENT_TBODY_ID, ELEMENT_TD_ID, ELEMENT_TFOOT_ID, ELEMENT_TH_ID, ELEMENT_THEAD_ID,
@@ -611,7 +610,7 @@ class Common {
     }
 
     /** /!\ beware when using this function!, the "from"-"to" must be carefully chosen! */
-    static boolean isHtmlNSBetween(Element element, int nameIDFrom, int nameIDto) {
-        return element.nodeNameID >= nameIDFrom && element.nodeNameID <= nameIDto && element.namespaceID == Node.NAMESPACE_HTML_ID;
+    static boolean isHtmlNSBetweenH1H6(Element element) {
+        return element.nodeNameID >= Common.ELEMENT_H1_ID && element.nodeNameID <= Common.ELEMENT_H6_ID && element.namespaceID == Node.NAMESPACE_HTML_ID;
     }
 }
