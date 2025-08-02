@@ -36,7 +36,7 @@ class TokenizerTagStates {
             tokenizer.setState(TokenizerState.BOGUS_COMMENT_STATE);
             break;
         default:
-            if (Common.isLowerCaseASCIILetter(chr) || Common.isUpperCaseASCIILetter(chr)) { //
+            if (Common.isUpperOrLowerCaseASCIILetter(chr)) { //
                 tokenizer.createNewStartTagToken(chr);
                 tokenizer.setState(TokenizerState.TAG_NAME_STATE);
             } else { // default
@@ -62,7 +62,7 @@ class TokenizerTagStates {
             handleEndTagOpenStateEOF(tokenizer, processedInputStream, chr);
             break;
         default:
-            if (Common.isLowerCaseASCIILetter(chr) || Common.isUpperCaseASCIILetter(chr)) {
+            if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
                 tokenizer.newEndTokenTag();
                 tokenizer.appendCurrentTagToken(chr);
                 tokenizer.setState(TokenizerState.TAG_NAME_STATE);

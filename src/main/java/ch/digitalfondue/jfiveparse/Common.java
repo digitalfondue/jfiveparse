@@ -39,6 +39,10 @@ class Common {
         return sb.toString();
     }
 
+    static boolean isUpperOrLowerCaseASCIILetter(int chr) {
+        return isLowerCaseASCIILetter(chr) || isUpperCaseASCIILetter(chr);
+    }
+
     static boolean isUpperCaseASCIILetter(int chr) {
         return chr >= Characters.LATIN_CAPITAL_LETTER_A && chr <= Characters.LATIN_CAPITAL_LETTER_Z;
     }
@@ -58,7 +62,7 @@ class Common {
     }
 
     static boolean isAlphaNumericASCII(int chr) {
-        return isLowerCaseASCIILetter(chr) || isUpperCaseASCIILetter(chr) || isASCIIDigit(chr);
+        return isUpperOrLowerCaseASCIILetter(chr) || isASCIIDigit(chr);
     }
 
     private static final char[] SYSTEM = new char[] {'s', 'y', 's', 't', 'e', 'm'}; //system

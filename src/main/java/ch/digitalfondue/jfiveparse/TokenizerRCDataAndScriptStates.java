@@ -64,7 +64,7 @@ class TokenizerRCDataAndScriptStates {
 
     static void handleRCDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
-        if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+        if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
             tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
@@ -106,7 +106,7 @@ class TokenizerRCDataAndScriptStates {
             }
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+            if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
                 tokenizer.appendCurrentTagToken(chr);
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
@@ -196,7 +196,7 @@ class TokenizerRCDataAndScriptStates {
     static void handleScriptDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
-        if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+        if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
             tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
@@ -239,7 +239,7 @@ class TokenizerRCDataAndScriptStates {
             }
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+            if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
                 tokenizer.appendCurrentTagToken(chr);
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
@@ -365,7 +365,7 @@ class TokenizerRCDataAndScriptStates {
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
             tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_END_TAG_OPEN_STATE);
-        } else if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+        } else if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
             tokenizer.createTemporaryBuffer();
             tokenizer.appendToTemporaryBuffer(chr);
             tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_START_STATE);
@@ -381,7 +381,7 @@ class TokenizerRCDataAndScriptStates {
     static void handleScriptDataEscapedEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
-        if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+        if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
             tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
@@ -423,7 +423,7 @@ class TokenizerRCDataAndScriptStates {
             }
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+            if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
                 tokenizer.appendCurrentTagToken(chr);
                 tokenizer.appendToTemporaryBuffer(chr);
             } else {
@@ -462,7 +462,7 @@ class TokenizerRCDataAndScriptStates {
             tokenizer.emitCharacter(chr);
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+            if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
                 tokenizer.appendToTemporaryBuffer(chr);
                 tokenizer.emitCharacter(chr);
             } else {
@@ -578,7 +578,7 @@ class TokenizerRCDataAndScriptStates {
             tokenizer.setStateAndEmitCharacter(state, chr);
             break;
         default:
-            if (Common.isUpperCaseASCIILetter(chr) || Common.isLowerCaseASCIILetter(chr)) {
+            if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
                 tokenizer.appendToTemporaryBuffer(chr);
                 tokenizer.emitCharacter(chr);
             } else {
