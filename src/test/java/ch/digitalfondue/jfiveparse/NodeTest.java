@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,19 +49,19 @@ class NodeTest {
         assertNotNull(e);
         Node parent = e.getParentNode();
 
-        assertEquals(parent.getChildNodes().get(0), e.getPreviousSibling());
-        assertEquals(parent.getChildNodes().get(0), e.getPreviousElementSibling());
-        assertEquals(parent.getChildNodes().get(2), e.getNextSibling());
-        assertEquals(parent.getChildNodes().get(2), e.getNextElementSibling());
+        assertSame(parent.getChildNodes().get(0), e.getPreviousSibling());
+        assertSame(parent.getChildNodes().get(0), e.getPreviousElementSibling());
+        assertSame(parent.getChildNodes().get(2), e.getNextSibling());
+        assertSame(parent.getChildNodes().get(2), e.getNextElementSibling());
 
-        assertEquals(parent.getChildNodes().get(2), parent.getLastChild());
-        assertEquals(parent.getChildNodes().get(2), parent.getLastElementChild());
+        assertSame(parent.getChildNodes().get(2), parent.getLastChild());
+        assertSame(parent.getChildNodes().get(2), parent.getLastElementChild());
 
-        assertEquals(parent.getChildNodes().get(0), parent.getFirstChild());
-        assertEquals(parent.getChildNodes().get(0), parent.getFirstElementChild());
+        assertSame(parent.getChildNodes().get(0), parent.getFirstChild());
+        assertSame(parent.getChildNodes().get(0), parent.getFirstElementChild());
 
-        assertEquals(e, eAfter.getPreviousElementSibling());
-        assertEquals(e, eAfter.getPreviousSibling());
+        assertSame(e, eAfter.getPreviousElementSibling());
+        assertSame(e, eAfter.getPreviousSibling());
 
         assertNull(eAfter.getNextSibling());
         assertNull(eAfter.getNextElementSibling());
@@ -71,11 +72,11 @@ class NodeTest {
         Document doc = parser.parse("<div>1</div>text1<div id=myid>2</div>text2<div>3</div>");
         Element e = doc.getElementById("myid");
         var siblings = e.getParentNode().getChildNodes();
-        assertEquals(siblings.get(3), e.getNextSibling());
-        assertEquals(siblings.get(4), e.getNextElementSibling());
+        assertSame(siblings.get(3), e.getNextSibling());
+        assertSame(siblings.get(4), e.getNextElementSibling());
 
-        assertEquals(siblings.get(3), siblings.get(4).getPreviousSibling());
-        assertEquals(siblings.get(2), siblings.get(4).getPreviousElementSibling());
+        assertSame(siblings.get(3), siblings.get(4).getPreviousSibling());
+        assertSame(siblings.get(2), siblings.get(4).getPreviousElementSibling());
 
         assertNull(siblings.get(0).getPreviousSibling());
         assertNull(siblings.get(0).getPreviousElementSibling());
@@ -114,7 +115,7 @@ class NodeTest {
         e.replaceChild(newNode, last);
 
         assertNull(last.getParentNode());
-        assertEquals(newNode, e.getChildNodes().get(2));
+        assertSame(newNode, e.getChildNodes().get(2));
     }
 
     @Test
@@ -125,9 +126,9 @@ class NodeTest {
         Node newNode = new Element("span");
         e.insertBefore(newNode, last);
 
-        assertEquals(newNode, e.getChildNodes().get(2));
-        assertEquals(last, e.getChildNodes().get(3));
-        assertEquals(e, newNode.getParentNode());
+        assertSame(newNode, e.getChildNodes().get(2));
+        assertSame(last, e.getChildNodes().get(3));
+        assertSame(e, newNode.getParentNode());
     }
 
     @Test
@@ -140,7 +141,7 @@ class NodeTest {
         e.getClassList().add("plop");
 
         assertEquals("plop", e.getClassName());
-        assertEquals(Arrays.asList("plop"), e.getClassList());
+        assertEquals(List.of("plop"), e.getClassList());
 
         e.getClassList().remove("plop");
         assertEquals("", e.getClassName());
@@ -151,14 +152,14 @@ class NodeTest {
         assertEquals(Arrays.asList("plop", "hurr"), e.getClassList());
 
         assertFalse(e.getClassList().toggle("plop"));
-        assertEquals(Arrays.asList("hurr"), e.getClassList());
+        assertEquals(List.of("hurr"), e.getClassList());
         assertTrue(e.getClassList().toggle("plop"));
         assertEquals(Arrays.asList("hurr", "plop"), e.getClassList());
 
         assertFalse(e.getClassList().toggle("plop", false));
         assertEquals(Arrays.asList("hurr", "plop"), e.getClassList());
         assertFalse(e.getClassList().toggle("plop", true));
-        assertEquals(Arrays.asList("hurr"), e.getClassList());
+        assertEquals(List.of("hurr"), e.getClassList());
 
         Document doc2 = parser.parse("<div id=myid class=' my class    \n abc '></div>");
         Element e2 = doc2.getElementById("myid");
