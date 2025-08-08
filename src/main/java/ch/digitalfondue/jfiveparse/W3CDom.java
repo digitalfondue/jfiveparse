@@ -20,10 +20,8 @@ import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class W3CDom {
 
@@ -142,14 +140,17 @@ public class W3CDom {
         }
     }
 
-    static CommonNode wrap(org.w3c.dom.Node node) {
+    private static CommonNode wrap(org.w3c.dom.Node node) {
+        if (node == null) {
+            return null;
+        }
         if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
             return new CommonElementWrapper((org.w3c.dom.Element) node);
         }
         return new CommonNodeWrapper(node);
     }
 
-    static class CommonNodeWrapper implements CommonNode {
+    private static class CommonNodeWrapper implements CommonNode {
 
         protected final org.w3c.dom.Node node;
 
@@ -235,32 +236,47 @@ public class W3CDom {
         }
     }
 
-    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<org.w3c.dom.Node> visitor) {
+
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher) {
+        return getAllNodesMatching(node, matcher, false);
+    }
+
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch) {
+        var nm = new NodeMatchers<>(matcher, onlyFirstMatch);
+        traverse(node, nm);
+        return nm.result().map(n -> n instanceof CommonNodeWrapper w ? w.node : null).filter(Objects::nonNull);
+    }
+
+    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<CommonNode> visitor) {
         var node = rootNode.getFirstChild();
+        CommonNode wrappedNode = wrap(node);
         while (node != null) {
-            visitor.start(node);
+            visitor.start(wrappedNode);
             if (visitor.complete()) {
                 return;
             }
             if (node.hasChildNodes()) {
                 node = node.getFirstChild();
+                wrappedNode = wrap(node);
             } else {
                 while (node != rootNode && node.getNextSibling() == null) {
-                    visitor.end(node);
+                    visitor.end(wrappedNode);
                     if (visitor.complete()) {
                         return;
                     }
                     node = node.getParentNode();
+                    wrappedNode = wrap(node);
                 }
 
                 if (node == rootNode) {
                     break;
                 }
-                visitor.end(node);
+                visitor.end(wrappedNode);
                 if (visitor.complete()) {
                     return;
                 }
                 node = node.getNextSibling();
+                wrappedNode = wrap(node);
             }
         }
     }

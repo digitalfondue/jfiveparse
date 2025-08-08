@@ -19,8 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class NodeMatchersTest {
 
@@ -28,10 +27,17 @@ class NodeMatchersTest {
 
     @Test
     void firstChildTest() {
+        var matcher = Selector.select().isFirstChild().toMatcher();
         Document doc = parser.parse("<div></div><div id=myid></div><div></div>");
-        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstChild().toMatcher());
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(matcher);
         assertEquals(1, div.size());
-        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(0), div.get(0));
+        assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(0), div.get(0));
+
+
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+        var w3cDiv = W3CDom.getAllNodesMatching(w3cDoc.getElementsByTagName("body").item(0), matcher).toList();
+        assertEquals(1, w3cDiv.size());
+        assertSame(w3cDoc.getElementsByTagName("body").item(0).getChildNodes().item(0), w3cDiv.get(0));
     }
 
     @Test
@@ -40,14 +46,14 @@ class NodeMatchersTest {
         // div *
         List<Node> universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withDescendant().universal().toMatcher());
         assertEquals(2, universal.size());
-        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
-        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0), universal.get(1));
+        assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
+        assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0), universal.get(1));
 
 
         // div > *
         universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withChild().universal().toMatcher());
         assertEquals(1, universal.size());
-        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
+        assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
     }
 
     @Test
@@ -63,7 +69,7 @@ class NodeMatchersTest {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>text");
         List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastElementChild().toMatcher());
         assertEquals(1, div.size());
-        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
+        assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
 
     }
 
@@ -72,7 +78,7 @@ class NodeMatchersTest {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
         List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastChild().toMatcher());
         assertEquals(1, div.size());
-        assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
+        assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
     }
 
     @Test
