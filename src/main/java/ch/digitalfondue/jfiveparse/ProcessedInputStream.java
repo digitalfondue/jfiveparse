@@ -72,8 +72,9 @@ abstract class ProcessedInputStream {
     }
 
     //
-    private int readWithCRHandling(boolean crFoundInternal, int chr) {
-        if (crFoundInternal) {
+    private int readWithCRHandling() {
+        int chr = read();
+        if (crFound) {
             //chr = handleCrFoundInternal(chr);
             crFound = false;
             if (chr == Characters.LF) {
@@ -93,7 +94,7 @@ abstract class ProcessedInputStream {
         if (buffer.length() < offset) {
             // fill buffer
             for (int i = buffer.length(); i < offset; i++) {
-                buffer.add(readWithCRHandling(crFound, read()));
+                buffer.add(readWithCRHandling());
             }
         }
         return buffer.getCharAt(offset);
@@ -110,7 +111,7 @@ abstract class ProcessedInputStream {
     }
 
     int consume() {
-        return !buffer.isEmpty ? buffer.removeFirst() : readWithCRHandling(crFound, read());
+        return !buffer.isEmpty ? buffer.removeFirst() : readWithCRHandling();
     }
 
     int getNextInputCharacter() {
