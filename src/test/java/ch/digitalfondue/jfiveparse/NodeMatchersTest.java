@@ -43,15 +43,25 @@ class NodeMatchersTest {
     @Test
     void universalTest() {
         Document doc = parser.parse("<div></div><div id=myid><span><i></i></span></div><div></div>");
+        var matcher = Selector.select().element("div").withDescendant().universal().toMatcher();
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
         // div *
-        List<Node> universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withDescendant().universal().toMatcher());
+        List<Node> universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(matcher);
+        var w3cUniversal = W3CDom.getAllNodesMatching(w3cDoc.getElementsByTagName("body").item(0), matcher).toList();
         assertEquals(2, universal.size());
         assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
         assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0).getChildNodes().get(0), universal.get(1));
 
+        assertEquals(2, w3cUniversal.size());
+        assertSame(w3cDoc.getElementsByTagName("body").item(0).getChildNodes().item(1).getChildNodes().item(0), w3cUniversal.get(0));
+        assertSame(w3cDoc.getElementsByTagName("body").item(0).getChildNodes().item(1).getChildNodes().item(0).getChildNodes().item(0), w3cUniversal.get(1));
 
+
+
+        matcher = Selector.select().element("div").withChild().universal().toMatcher();
         // div > *
-        universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withChild().universal().toMatcher());
+        universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(matcher);
         assertEquals(1, universal.size());
         assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(1).getChildNodes().get(0), universal.get(0));
     }
