@@ -111,14 +111,13 @@ class TreeConstructor {
     }
 
     private void setTagNameAndSaveOriginal(ResizableCharBuilder rawTagName) {
-        setTagName(rawTagName);
+        setTagName(rawTagName.toLowerCase());
         this.originalTagName = rawTagName.containsUpperCase ? rawTagName.toString() : this.tagName;
     }
 
-    void setTagName(ResizableCharBuilder rawTagName) {
-        String tagName = rawTagName.toLowerCase();
-        this.tagName = tagName;
-        this.tagNameID = Common.tagNameToID(tagName);
+    void setTagName(String lowerCasedTagName) {
+        this.tagName = lowerCasedTagName;
+        this.tagNameID = Common.tagNameToID(lowerCasedTagName);
     }
 
     //
@@ -831,7 +830,7 @@ class TreeConstructor {
     }
 
     void emitEndTagToken(ResizableCharBuilder name) {
-        setTagName(name);
+        setTagName(name.toLowerCase());
         tokenType = END_TAG;
         dispatch();
     }
