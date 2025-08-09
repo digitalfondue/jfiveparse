@@ -410,7 +410,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startA(TreeConstructor treeConstructor) {
-        final int aIdx = treeConstructor.getIndexInActiveFormattingElementsBetween(Common.ELEMENT_A_ID, Node.NAMESPACE_HTML_ID);
+        final int aIdx = treeConstructor.getIndexInActiveFormattingElementsBetweenElementANamespaceHtml();
         if (aIdx != -1) {
             Element a = treeConstructor.getActiveFormattingElementAt(aIdx);
             treeConstructor.emitParseError();
@@ -516,7 +516,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
+        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml();
         if (treeConstructor.getForm() != null && templateIsNotPresent) {
             treeConstructor.emitParseError();
             // ignore the token
@@ -595,7 +595,7 @@ class TreeConstructorInBodyForeignContentText {
 
         if (treeConstructor.openElementsSize() == 1 || //
                 !Common.isHtmlNS(treeConstructor.openElementAt(1), ELEMENT_BODY_ID) || //
-                treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
+                treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
             // ignore
         } else {
             treeConstructor.framesetOkToFalse();
@@ -614,7 +614,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.emitParseError();
 
         // we ignore the token if template is present
-        if (!treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
+        if (!treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
             Element firstInserted = treeConstructor.openElementAt(0);
             if (treeConstructor.getAttributes() != null) {
                 for (String attr : treeConstructor.getAttributes().keySet()) {
@@ -817,7 +817,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void endForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
+        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml();
         if (templateIsNotPresent) {
             Element node = treeConstructor.getForm();
             treeConstructor.setForm(null);

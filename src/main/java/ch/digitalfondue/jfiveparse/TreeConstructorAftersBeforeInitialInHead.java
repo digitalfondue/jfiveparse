@@ -484,7 +484,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
             treeConstructor.pushInStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
-            if (!treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
+            if (!treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {

@@ -44,7 +44,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     static final int NAMESPACE_XLINK_ID = 6;
 
 
-    static int toNameSpaceId(String s) {
+    static int toNamespaceId(String s) {
         if (s == null) {
             return 0;
         }

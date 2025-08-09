@@ -59,7 +59,7 @@ public final class Element extends Node implements CommonNode.CommonElement {
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
-        this(name, Common.tagNameToID(name), name, nameSpace, Node.toNameSpaceId(nameSpace), attributes);
+        this(name, Common.tagNameToID(name), name, nameSpace, Node.toNamespaceId(nameSpace), attributes);
     }
 
     Element(String name,

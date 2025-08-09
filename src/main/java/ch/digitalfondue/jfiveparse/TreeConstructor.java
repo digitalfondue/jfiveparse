@@ -292,12 +292,12 @@ class TreeConstructor {
 
     // ------------
 
-    void generateImpliedEndTag(String excludeTagName, String excludeNameSpace) {
+    void generateImpliedEndTag(String excludeTagName, String excludeNamespace) {
         for (;;) {
             Element currentNode = getCurrentNode();
             final boolean check = Common.isImpliedTag(currentNode) && //
                     ((excludeTagName == null) || //
-                    (!(currentNode.getNodeName().equals(excludeTagName) && currentNode.getNamespaceURI().equals(excludeNameSpace))));
+                    (!(currentNode.getNodeName().equals(excludeTagName) && currentNode.getNamespaceURI().equals(excludeNamespace))));
             if (check) {
                 popCurrentNode();
             } else {
@@ -635,9 +635,9 @@ class TreeConstructor {
         ))) {
 
             // 1
-            int lastTemplatePos = findLastElementPositionMatching(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID);
+            int lastTemplatePos = findLastElementPositionMatchingInNamespaceHtml(Common.ELEMENT_TEMPLATE_ID);
             // 2
-            int lastTablePos = findLastElementPositionMatching(Common.ELEMENT_TABLE_ID, Node.NAMESPACE_HTML_ID);
+            int lastTablePos = findLastElementPositionMatchingInNamespaceHtml(Common.ELEMENT_TABLE_ID);
             // 3
             if (lastTemplatePos != -1 && ((lastTablePos == -1) || (lastTemplatePos > lastTablePos))) {
                 // inside the template
@@ -661,18 +661,18 @@ class TreeConstructor {
         }
     }
 
-    private int findLastElementPositionMatching(int nameID, int namespaceID) {
+    private int findLastElementPositionMatchingInNamespaceHtml(int nameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element e = openElements.get(i);
-            if (Common.is(e, nameID, namespaceID)) {
+            if (Common.is(e, nameID, Node.NAMESPACE_HTML_ID)) {
                 return i;
             }
         }
         return -1;
     }
 
-    boolean stackOfOpenElementsContains(int nameID, int namespaceID) {
-        return findLastElementPositionMatching(nameID, namespaceID) != -1;
+    boolean stackOfOpenElementsContainsElementTemplateAndNamespaceHtml() {
+        return findLastElementPositionMatchingInNamespaceHtml(Common.ELEMENT_TEMPLATE_ID) != -1;
     }
 
     // FIXME optimize(?)
@@ -1080,8 +1080,8 @@ class TreeConstructor {
         return activeFormattingElements.getElementAtIndex(idx);
     }
 
-    int getIndexInActiveFormattingElementsBetween(int nameID, int namespaceID) {
-        return activeFormattingElements.getBetweenLastElementAndMarkerIndex(nameID, namespaceID);
+    int getIndexInActiveFormattingElementsBetweenElementANamespaceHtml() {
+        return activeFormattingElements.getBetweenLastElementAndMarkerIndexElementANamespaceHtml();
     }
 
     //

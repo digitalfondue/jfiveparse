@@ -526,12 +526,12 @@ class Common {
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;
         int nodeNameID = element.nodeNameID;
-    	int nodeNameSpaceId = element.namespaceID;
-        if (Node.NAMESPACE_HTML_ID == nodeNameSpaceId) {
+    	int nodeNamespaceId = element.namespaceID;
+        if (Node.NAMESPACE_HTML_ID == nodeNamespaceId) {
             return nodeNameID >= ELEMENT_ADDRESS_ID && nodeNameID <= ELEMENT_XMP_ID;
-        } else if (Node.NAMESPACE_MATHML_ID == nodeNameSpaceId) {
+        } else if (Node.NAMESPACE_MATHML_ID == nodeNamespaceId) {
             return isInCommonInScopeMathMl(nodeName);
-        } else if (Node.NAMESPACE_SVG_ID == nodeNameSpaceId) {
+        } else if (Node.NAMESPACE_SVG_ID == nodeNamespaceId) {
             return isInCommonInScopeSVG(nodeName);
         } else {
             return false;

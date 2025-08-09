@@ -119,7 +119,7 @@ class TreeConstructorInTable {
             }
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_FORM_ID, tagNameID)) {
             treeConstructor.emitParseError();
-            if (treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID) || treeConstructor.getForm() != null) {
+            if (treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml() || treeConstructor.getForm() != null) {
                 // ignore
             } else {
                 Element form = treeConstructor.insertHtmlElementToken();

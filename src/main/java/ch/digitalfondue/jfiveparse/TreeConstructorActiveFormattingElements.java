@@ -202,12 +202,12 @@ class TreeConstructorActiveFormattingElements {
         return -1;
     }
 
-    int getBetweenLastElementAndMarkerIndex(int tagNameID, int namespaceID) {
+    int getBetweenLastElementAndMarkerIndexElementANamespaceHtml() {
         for (int i = activeFormattingElements.size() - 1; i >= 0; i--) {
             Element e = activeFormattingElements.get(i);
             if (MARKER_ELEMENT == e) {
                 return -1;
-            } else if (Common.is(e, tagNameID, namespaceID)) {
+            } else if (Common.is(e, Common.ELEMENT_A_ID, Node.NAMESPACE_HTML_ID)) {
                 return i;
             }
         }
