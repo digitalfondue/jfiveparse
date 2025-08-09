@@ -454,10 +454,10 @@ class TreeConstructorAftersBeforeInitialInHead {
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_TITLE_ID, tagNameID)) {
             genericRCDataParsing(treeConstructor);
         } else if (tokenType == START_TAG && (//
-                (Common.ELEMENT_NOSCRIPT_ID == tagNameID && treeConstructor.isScriptingFlag()) || //
+                (Common.ELEMENT_NOSCRIPT_ID == tagNameID && treeConstructor.scriptingFlag) || //
                         (Common.ELEMENT_NOFRAMES_ID == tagNameID || Common.ELEMENT_STYLE_ID == tagNameID))) {
             genericRawTextElementParsing(treeConstructor);
-        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_NOSCRIPT_ID, tagNameID) && !treeConstructor.isScriptingFlag()) {
+        } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_NOSCRIPT_ID, tagNameID) && !treeConstructor.scriptingFlag) {
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_HEAD_NOSCRIPT);
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_SCRIPT_ID, tagNameID)) {

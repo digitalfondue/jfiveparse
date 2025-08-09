@@ -301,7 +301,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startNoembedNoscript(int tagNameID, TreeConstructor treeConstructor) {
-        if (ELEMENT_NOSCRIPT_ID == tagNameID && !treeConstructor.isScriptingFlag()) {
+        if (ELEMENT_NOSCRIPT_ID == tagNameID && !treeConstructor.scriptingFlag) {
             inBodyStartTagAnythingElse(treeConstructor);
         } else {
             genericRawTextElementParsing(treeConstructor);

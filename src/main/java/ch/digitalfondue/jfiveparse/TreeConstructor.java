@@ -34,7 +34,7 @@ class TreeConstructor {
     static final int START_TAG = 5;
 
     //
-    private boolean scriptingFlag;
+    boolean scriptingFlag;
 
     private Tokenizer tokenizer;
 
@@ -275,7 +275,7 @@ class TreeConstructor {
         generateImpliedEndTag("p", Node.NAMESPACE_HTML);
 
         Element e = getCurrentNode();
-        if (!(Common.ELEMENT_P_ID == e.nodeNameID && Node.NAMESPACE_HTML_ID == e.namespaceID)) {
+        if (!(Common.isHtmlNS(e, Common.ELEMENT_P_ID))) {
             emitParseError();
         }
 
@@ -845,14 +845,6 @@ class TreeConstructor {
 
     Document getDocument() {
         return document;
-    }
-
-    boolean isScriptingFlag() {
-        return scriptingFlag;
-    }
-
-    void setScriptingFlag(boolean scriptingFlag) {
-        this.scriptingFlag = scriptingFlag;
     }
 
     void resetInsertionModeAppropriately() {

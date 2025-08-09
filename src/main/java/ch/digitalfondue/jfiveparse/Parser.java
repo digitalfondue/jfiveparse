@@ -118,7 +118,7 @@ public class Parser {
         TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag, interpretSelfClosingAnythingElse);
         //
         tokenHandler.setHtmlFragmentParsing(true);
-        tokenHandler.setScriptingFlag(scriptingFlag);
+        tokenHandler.scriptingFlag = scriptingFlag;
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);
 
@@ -188,7 +188,7 @@ public class Parser {
 
     private Document parse(ProcessedInputStream is) {
         TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag, interpretSelfClosingAnythingElse);
-        tokenHandler.setScriptingFlag(scriptingFlag);
+        tokenHandler.scriptingFlag = scriptingFlag;
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);
         tokenizer.tokenize(is);
