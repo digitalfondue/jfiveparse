@@ -17,7 +17,6 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 class TreeConstructor {
     // optimization: when adding a new character, the char builder where the
@@ -113,7 +112,7 @@ class TreeConstructor {
 
     private void setTagNameAndSaveOriginal(ResizableCharBuilder rawTagName) {
         setTagName(rawTagName);
-        this.originalTagName = rawTagName.containsUpperCase ? rawTagName.asString() : this.tagName;
+        this.originalTagName = rawTagName.containsUpperCase ? rawTagName.toString() : this.tagName;
     }
 
     void setTagName(ResizableCharBuilder rawTagName) {

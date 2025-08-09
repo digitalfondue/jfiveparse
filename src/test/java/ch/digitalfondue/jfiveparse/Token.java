@@ -29,7 +29,7 @@ public interface Token {
 
         @Override
         public String toString() {
-            return Arrays.asList(TokenType.character, chr.asString()).toString();
+            return Arrays.asList(TokenType.character, chr.toString()).toString();
         }
     }
 

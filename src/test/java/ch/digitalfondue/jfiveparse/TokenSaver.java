@@ -41,7 +41,7 @@ class TokenSaver extends TreeConstructor {
 
     @Override
     public void emitComment(ResizableCharBuilder comment) {
-        tokens.add(new Token.CommentToken(comment.asString()));
+        tokens.add(new Token.CommentToken(comment.toString()));
     }
 
     @Override

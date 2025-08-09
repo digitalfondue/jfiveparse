@@ -44,7 +44,7 @@ public final class Text extends Node {
 
     public String getData() {
         if (dataBuilder != null) {
-            data = dataBuilder.asString();
+            data = dataBuilder.toString();
             dataBuilder = null;
         }
         return data;

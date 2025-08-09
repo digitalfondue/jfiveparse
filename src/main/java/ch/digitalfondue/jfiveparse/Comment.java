@@ -40,7 +40,7 @@ public final class Comment extends Node {
 
     public String getData() {
         if (data == null && dataBuilder != null) {
-            data = dataBuilder.asString();
+            data = dataBuilder.toString();
             dataBuilder = null;
         }
         return data;

@@ -70,7 +70,7 @@ class ResizableCharBuilder {
         if (containsUpperCase) {
             return lowerCaseInternal();
         } else {
-            return asString();
+            return toString();
         }
     }
 
@@ -84,13 +84,9 @@ class ResizableCharBuilder {
         return new String(newBuff);
     }
 
-    String asString() {
-        return new String(buff, 0, pos);
-    }
-
     @Override
     public String toString() {
-        return asString();
+        return new String(buff, 0, pos);
     }
 
     boolean equalsASCIICaseInsensitive(ResizableCharBuilder cb) {

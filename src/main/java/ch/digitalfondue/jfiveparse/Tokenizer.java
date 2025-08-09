@@ -404,7 +404,7 @@ class Tokenizer {
                 } else {
                     attributes.put(new AttributeNode(
                             curAttrName,
-                            currentAttributeName.containsUpperCase ? currentAttributeName.asString() : curAttrName,
+                            currentAttributeName.containsUpperCase ? currentAttributeName.toString() : curAttrName,
                             currentAttributeValue,
                             currentAttributeQuoteType
                     ));

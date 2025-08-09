@@ -227,7 +227,7 @@ class TokenizerCharacterReference {
     }
 
     private static char[] numberToChars(Tokenizer tokenHandler, ResizableCharBuilder sb, int radix) {
-        int parsedInt = Integer.parseInt(sb.asString(), radix);
+        int parsedInt = Integer.parseInt(sb.toString(), radix);
 
         final int characterReferenceInSubstitutionTable = isCharacterReferenceSubstitutionTable(parsedInt);
 

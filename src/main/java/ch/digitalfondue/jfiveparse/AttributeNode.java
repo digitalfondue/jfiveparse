@@ -63,7 +63,7 @@ public final class AttributeNode {
 
     public String getValue() {
         if (value == null && valueBuilder != null) {
-            value = valueBuilder.asString();
+            value = valueBuilder.toString();
             valueBuilder = null;
         }
         return value;
