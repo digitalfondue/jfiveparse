@@ -681,7 +681,7 @@ class TreeConstructor {
         List<Node> nodes;
         int position;
 
-        Node last;
+
         if (!fosterParentingEnabled) {
             toInsert = getCurrentNode();
             nodes = toInsert.getRawChildNodes();
@@ -701,8 +701,8 @@ class TreeConstructor {
 
         Text t;
 
-        if (!nodes.isEmpty() && position > 0 && (last = nodes.get(position - 1)).getNodeType() == Node.TEXT_NODE) {
-            t = (Text) last;
+        if (!nodes.isEmpty() && position > 0 && (nodes.get(position - 1)) instanceof Text lastText) {
+            t = lastText;
             t.dataBuilder.append(charToInsert);
         } else {
             t = new Text(new ResizableCharBuilder());

@@ -68,26 +68,18 @@ public class W3CDom {
 
         @Override
         public void start(Node node) {
-            switch (node.getNodeType()) {
-                case Node.ELEMENT_NODE:
-                    Element elem = (Element) node;
-                    this.xmlNamespaces.push(new HashMap<>(this.xmlNamespaces.peek()));
-                    org.w3c.dom.Element e = toElement(elem);
-                    currentNode.appendChild(e);
-                    currentNode = e;
-                    break;
-                case Node.TEXT_NODE:
-                    currentNode.appendChild(document.createTextNode(((Text) node).getData()));
-                    break;
-                case Node.COMMENT_NODE:
-                    currentNode.appendChild(document.createComment(((Comment) node).getData()));
-                    break;
-                /*case Node.DOCUMENT_TYPE_NODE:
-                    break;*/
-                default:
-                    break;
+            if (node instanceof Element elem) {
+                this.xmlNamespaces.push(new HashMap<>(this.xmlNamespaces.peek()));
+                org.w3c.dom.Element e = toElement(elem);
+                currentNode.appendChild(e);
+                currentNode = e;
+            } else if (node instanceof Text text) {
+                currentNode.appendChild(document.createTextNode(text.getData()));
+            } else if (node instanceof Comment comment) {
+                currentNode.appendChild(document.createComment(comment.getData()));
             }
         }
+
 
         private static String extractXmlnsPrefix(String xmlns) {
             int idx = xmlns.indexOf(':');

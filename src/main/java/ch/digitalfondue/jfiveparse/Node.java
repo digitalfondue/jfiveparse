@@ -500,8 +500,8 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * Get the text content of the node.
      */
     public String getTextContent() {
-		if (getNodeType() == TEXT_NODE) {
-			return ((Text) this).getData();
+		if (this instanceof Text t) {
+			return t.getData();
 		}
         StringBuilder sb = new StringBuilder();
         traverse((n) -> {
