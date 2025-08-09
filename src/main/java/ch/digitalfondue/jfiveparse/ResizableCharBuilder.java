@@ -37,6 +37,11 @@ class ResizableCharBuilder {
         pos = buff.length;
     }
 
+    void reset() {
+        pos = 0;
+        containsUpperCase = false;
+    }
+
     char at(int i) {
         return buff[i];
     }

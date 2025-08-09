@@ -22,7 +22,7 @@ public class TestParsePerf {
         file = Files.readString(Paths.get("src/test/resources/test.html"));
     }
 
-    final int round = 20_000;
+    final int round = 40_000;
 
     @Disabled
     @Test

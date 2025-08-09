@@ -36,7 +36,7 @@ class Tokenizer {
 
     // tag related
     private Attributes attributes;
-    private ResizableCharBuilder currentAttributeName;
+    private final ResizableCharBuilder currentAttributeName = new ResizableCharBuilder();
     private ResizableCharBuilder currentAttributeValue;
     private int currentAttributeQuoteType;
     private boolean selfClosing;
@@ -397,7 +397,7 @@ class Tokenizer {
     // TODO: maybe handle it better?
     void addCurrentAttributeInAttributes() {
         try {
-            if (currentAttributeName != null) {
+            if (currentAttributeName.pos() != 0) { // not empty
                 String curAttrName = currentAttributeName.toLowerCase();
                 if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
@@ -415,14 +415,14 @@ class Tokenizer {
             // initialized, will launch a npe
             tokenHandler.emitParseError();
         } finally {
-            currentAttributeName = null;
+            currentAttributeName.reset();
             currentAttributeValue = null;
         }
     }
 
     void startNewAttributeAndAppendToName(int chr) {
         addCurrentAttributeInAttributes();
-        currentAttributeName = new ResizableCharBuilder();
+        currentAttributeName.reset();
         currentAttributeValue = new ResizableCharBuilder();
         currentAttributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE;
         appendCurrentAttributeName(chr);
@@ -436,7 +436,7 @@ class Tokenizer {
         tagName = new ResizableCharBuilder();
         isEndTagToken = true;
         attributes = null;
-        currentAttributeName = null;
+        currentAttributeName.reset();
         currentAttributeValue = null;
     }
 
@@ -449,7 +449,7 @@ class Tokenizer {
         appendCurrentTagToken(chr);
         isEndTagToken = false;
         attributes = new Attributes();
-        currentAttributeName = null;
+        currentAttributeName.reset();
         currentAttributeValue = null;
         selfClosing = false;
     }
