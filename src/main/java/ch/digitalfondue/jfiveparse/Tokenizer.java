@@ -40,9 +40,9 @@ class Tokenizer {
     private ResizableCharBuilder currentAttributeValue;
     private int currentAttributeQuoteType;
     private boolean selfClosing;
-    private ResizableCharBuilder tagName;
+    private final ResizableCharBuilder tagName = new ResizableCharBuilder();
     private boolean isEndTagToken;
-    private ResizableCharBuilder lastEmittedStartTagName;
+    char[] lastEmittedStartTagName;
 
     // doctype related
     private boolean doctypeForceQuirksFlag;
@@ -82,7 +82,7 @@ class Tokenizer {
     //
 
     void createTemporaryBuffer() {
-        temporaryBuffer.reset();;
+        temporaryBuffer.reset();
     }
 
     void appendToTemporaryBuffer(int chr) {
@@ -96,7 +96,7 @@ class Tokenizer {
         }
     }
 
-    boolean isTemporaryBufferEquals(ResizableCharBuilder s) {
+    boolean isTemporaryBufferEquals(char[] s) {
         return temporaryBuffer.equalsASCIICaseInsensitive(s);
     }
 
@@ -436,7 +436,7 @@ class Tokenizer {
     }
 
     void newEndTokenTag() {
-        tagName = new ResizableCharBuilder();
+        tagName.reset();
         isEndTagToken = true;
         attributes = null;
         currentAttributeName.reset();
@@ -448,7 +448,7 @@ class Tokenizer {
     }
 
     void createNewStartTagToken(int chr) {
-        tagName = new ResizableCharBuilder();
+        tagName.reset();
         appendCurrentTagToken(chr);
         isEndTagToken = false;
         attributes = null;
@@ -466,7 +466,7 @@ class Tokenizer {
          * seems nope
          */
         if (!isEndTagToken) {
-            lastEmittedStartTagName = tagName;
+            lastEmittedStartTagName = tagName.copyBackingCharArray();
         }
 
         emitTagToken();
@@ -515,11 +515,6 @@ class Tokenizer {
     }
 
     //
-
-    // used for test purpose
-    void setLastStartTag(ResizableCharBuilder lastStartTag) {
-        this.lastEmittedStartTagName = lastStartTag;
-    }
 
     void emitEOF() {
         tokenHandler.emitEOF();
@@ -628,7 +623,8 @@ class Tokenizer {
     }
 
     void setStartToken(String tagName, Attributes attributes) {
-        this.tagName = new ResizableCharBuilder(tagName);
+        this.tagName.reset();
+        this.tagName.set(tagName);
         this.attributes = attributes;
         this.isEndTagToken = false;
     }

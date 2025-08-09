@@ -443,7 +443,7 @@ class TokenizerRCDataAndScriptStates {
         processedInputStream.reconsume(chr);
     }
 
-    private static final ResizableCharBuilder SCRIPT = new ResizableCharBuilder("script");
+    private static final char[] SCRIPT = "script".toCharArray();
 
     static void handleScriptDataDoubleEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
