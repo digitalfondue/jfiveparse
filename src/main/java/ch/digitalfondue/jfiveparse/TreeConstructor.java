@@ -91,7 +91,7 @@ class TreeConstructor {
     // skipped
     private boolean ignoreCharacterTokenLF;
     //
-    private ResizableCharBuilder pendingTableCharactersToken;
+    private final ResizableCharBuilder pendingTableCharactersToken = new ResizableCharBuilder();
     //
     private boolean quirksMode;
     private boolean inHtmlContent;
@@ -1018,7 +1018,7 @@ class TreeConstructor {
 
     // ----
     void createPendingTableCharactersToken() {
-        pendingTableCharactersToken = new ResizableCharBuilder();
+        pendingTableCharactersToken.reset();
     }
 
     void appendToPendingTableCharactersToken(int chr) {
