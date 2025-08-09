@@ -1129,7 +1129,7 @@ class TreeConstructor {
     //
 
     boolean hasAttribute(String key) {
-        return attrs.containsKey(key);
+        return attrs != null && attrs.containsKey(key);
     }
 
     AttributeNode getAttribute(String key) {
@@ -1142,10 +1142,6 @@ class TreeConstructor {
 
     void removeAttributes() {
         attrs = null;
-    }
-
-    Set<String> getKeySetOfAttributes() {
-        return attrs.keySet();
     }
 
 }

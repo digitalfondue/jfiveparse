@@ -600,9 +600,11 @@ class TreeConstructorInBodyForeignContentText {
         } else {
             treeConstructor.framesetOkToFalse();
             Element secondInserted = treeConstructor.openElementAt(1);
-            for (String attr : treeConstructor.getKeySetOfAttributes()) {
-                if (!secondInserted.getAttributes().containsKey(attr)) {
-                    secondInserted.getAttributes().put(treeConstructor.getAttribute(attr));
+            if (treeConstructor.getAttributes() != null) {
+                for (String attr : treeConstructor.getAttributes().keySet()) {
+                    if (!secondInserted.getAttributes().containsKey(attr)) {
+                        secondInserted.getAttributes().put(treeConstructor.getAttribute(attr));
+                    }
                 }
             }
         }
@@ -614,9 +616,11 @@ class TreeConstructorInBodyForeignContentText {
         // we ignore the token if template is present
         if (!treeConstructor.stackOfOpenElementsContains(Common.ELEMENT_TEMPLATE_ID, Node.NAMESPACE_HTML_ID)) {
             Element firstInserted = treeConstructor.openElementAt(0);
-            for (String attr : treeConstructor.getKeySetOfAttributes()) {
-                if (!firstInserted.getAttributes().containsKey(attr)) {
-                    firstInserted.getAttributes().put(treeConstructor.getAttribute(attr));
+            if (treeConstructor.getAttributes() != null) {
+                for (String attr : treeConstructor.getAttributes().keySet()) {
+                    if (!firstInserted.getAttributes().containsKey(attr)) {
+                        firstInserted.getAttributes().put(treeConstructor.getAttribute(attr));
+                    }
                 }
             }
         }

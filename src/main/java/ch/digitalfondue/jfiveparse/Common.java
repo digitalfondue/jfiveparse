@@ -93,7 +93,7 @@ class Common {
     // ------------
 
     static void adjustMathMLAttributes(Attributes attrs) {
-        if (attrs.containsKey("definitionurl")) {
+        if (attrs != null && attrs.containsKey("definitionurl")) {
             AttributeNode attr = attrs.get("definitionurl");
             attr.name = "definitionURL";
             attrs.put(attr);
@@ -164,7 +164,7 @@ class Common {
     }
 
     static void adjustSVGAttributes(Attributes attrs) {
-        if (attrs.isEmpty()) {
+        if (attrs == null || attrs.isEmpty()) {
             return;
         }
 
@@ -195,7 +195,7 @@ class Common {
 
     static void adjustForeignAttributes(Attributes attrs) {
 
-        if (attrs.isEmpty()) {
+        if (attrs == null || attrs.isEmpty()) {
             return;
         }
 

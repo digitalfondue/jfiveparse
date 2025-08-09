@@ -54,7 +54,7 @@ class Tokenizer {
     private ResizableCharBuilder commentToken;
 
     //
-    private ResizableCharBuilder temporaryBuffer;
+    private final ResizableCharBuilder temporaryBuffer = new ResizableCharBuilder();
 
     final boolean transformEntities;
 
@@ -82,7 +82,7 @@ class Tokenizer {
     //
 
     void createTemporaryBuffer() {
-        temporaryBuffer = new ResizableCharBuilder();
+        temporaryBuffer.reset();;
     }
 
     void appendToTemporaryBuffer(int chr) {
@@ -421,6 +421,9 @@ class Tokenizer {
     }
 
     void startNewAttributeAndAppendToName(int chr) {
+        if (attributes == null) {
+            attributes = new Attributes();
+        }
         addCurrentAttributeInAttributes();
         currentAttributeName.reset();
         currentAttributeValue = new ResizableCharBuilder();
@@ -448,7 +451,7 @@ class Tokenizer {
         tagName = new ResizableCharBuilder();
         appendCurrentTagToken(chr);
         isEndTagToken = false;
-        attributes = new Attributes();
+        attributes = null;
         currentAttributeName.reset();
         currentAttributeValue = null;
         selfClosing = false;

@@ -61,8 +61,8 @@ class ResizableCharBuilder {
 
     String toLowerCase() {
         containsUpperCase = false;
-        for (char c : buff) {
-            if (Common.isUpperCaseASCIILetter(c)) {
+        for (int i = 0; i < pos; i++) {
+            if (Common.isUpperCaseASCIILetter(buff[i])) {
                 containsUpperCase = true;
                 break;
             }

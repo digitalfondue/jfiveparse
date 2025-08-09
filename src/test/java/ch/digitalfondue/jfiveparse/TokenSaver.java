@@ -63,8 +63,10 @@ class TokenSaver extends TreeConstructor {
     @Override
     public void emitStartTagToken(ResizableCharBuilder name, Attributes attrs, boolean selfClosing) {
         Map<String, AttributeNode> m = new LinkedHashMap<>();
-        for (String key : attrs.keySet()) {
-            m.put(key, attrs.get(key));
+        if (attrs != null) {
+            for (String key : attrs.keySet()) {
+                m.put(key, attrs.get(key));
+            }
         }
         // ENSURE that name.toLowerCase() is called in the TreeConstructor!
         tokens.add(new Token.StartTagToken(name.toLowerCase(), m, selfClosing));
