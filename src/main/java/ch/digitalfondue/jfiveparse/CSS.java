@@ -40,7 +40,7 @@ class CSS {
     private static final Pattern reEscape = Pattern.compile("\\\\([\\da-f]{1,6}\\s?|(\\s)|.)", Pattern.CASE_INSENSITIVE);
 
 
-    // expose it on the JFiveParse class
+    // expose it on the JFiveParse class (?)
     static List<List<CssSelector>> parseSelector(String selector) {
         List<List<CssSelector>> subselects = new ArrayList<>();
         int endIndex = new ParseSelector(subselects, selector, 0).parse();
@@ -57,7 +57,10 @@ class CSS {
 
     record TagSelector(String name, String namespace) implements CssSelector {}
 
-    record AttributeSelector(String name, AttributeAction action, String value, String ignoreCase, String namespace) implements CssSelector {}
+
+    enum AttributeIgnoreCase { IGNORE_CASE_TRUE, IGNORE_CASE_FALSE, IGNORE_CASE_QUIRKS }
+
+    record AttributeSelector(String name, AttributeAction action, String value, AttributeIgnoreCase ignoreCase, String namespace) implements CssSelector {}
 
     record PseudoElement(String name, String data) implements CssSelector {}
 
@@ -222,7 +225,7 @@ class CSS {
                     name,
                     action,
                     getName(1),
-                    "quirks",
+                    AttributeIgnoreCase.IGNORE_CASE_QUIRKS,
                     null)
             );
         }
@@ -338,7 +341,7 @@ class CSS {
                         }
 
                         String value = "";
-                        String ignoreCase = null;
+                        AttributeIgnoreCase ignoreCase = null;
 
                         if (action != AttributeAction.EXISTS) {
                             if (isQuote(selector.charAt(selectorIndex))) {
@@ -370,12 +373,12 @@ class CSS {
                             switch (selector.charAt(selectorIndex) | 0x20) {
                                 // If the forceIgnore flag is set (either 'i' or 's'), use that value
                                 case 'i': {
-                                    ignoreCase = "true";
+                                    ignoreCase = AttributeIgnoreCase.IGNORE_CASE_TRUE;
                                     stripWhitespace(1);
                                     break;
                                 }
                                 case 's': {
-                                    ignoreCase = "false";
+                                    ignoreCase = AttributeIgnoreCase.IGNORE_CASE_FALSE;
                                     stripWhitespace(1);
                                     break;
                                 }

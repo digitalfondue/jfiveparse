@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Test the imported test cases from https://github.com/fb55/css-what/blob/25396c36bfc08bb4839aec690a7c6625b57165de/src/__fixtures__/out.json .
@@ -73,7 +74,12 @@ class CSSImportedTest {
                     elem.get("name").getAsString(),
                     ATTRIBUTE_ACTION.get(elem.get("action").getAsString()),
                     elem.get("value").getAsString(),
-                    fromStringOrNull(elem.get("ignoreCase")),
+                    Optional.ofNullable(fromStringOrNull(elem.get("ignoreCase"))).map(s -> switch (s) {
+                        case "true" -> CSS.AttributeIgnoreCase.IGNORE_CASE_TRUE;
+                        case "false" -> CSS.AttributeIgnoreCase.IGNORE_CASE_FALSE;
+                        case "quirks" -> CSS.AttributeIgnoreCase.IGNORE_CASE_QUIRKS;
+                        default -> throw new IllegalStateException("ignore case is not covered " + s);
+                    }).orElse(null),
                     fromStringOrNull(elem.get("namespace"))
             );
             case "pseudo" -> {

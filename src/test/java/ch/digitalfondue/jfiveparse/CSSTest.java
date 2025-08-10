@@ -64,7 +64,7 @@ class CSSTest {
     @Test
     void checkSpecialCharacters() {
         var r = CSS.parseSelector(".m™²³");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector("class", CSS.AttributeAction.ELEMENT, "m™²³", "quirks", null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("class", CSS.AttributeAction.ELEMENT, "m™²³", CSS.AttributeIgnoreCase.IGNORE_CASE_QUIRKS, null))), r);
     }
 
     //
@@ -104,13 +104,13 @@ class CSSTest {
     @Test
     void checkAttributeWithPreviouslyNormalizedCharacters() {
         var r = CSS.parseSelector("[name='foo ~ < > , bar' i]");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector("name", CSS.AttributeAction.EQUALS, "foo ~ < > , bar", "true", null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("name", CSS.AttributeAction.EQUALS, "foo ~ < > , bar", CSS.AttributeIgnoreCase.IGNORE_CASE_TRUE, null))), r);
     }
 
     @Test
     void idStartingWithADot() {
         var r = CSS.parseSelector("#.identifier");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, ".identifier", "quirks", null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, ".identifier", CSS.AttributeIgnoreCase.IGNORE_CASE_QUIRKS, null))), r);
     }
 
     //
@@ -191,14 +191,14 @@ class CSSTest {
     @Test
     void checkIdSelectorWithEscapeSequence() {
         var r = CSS.parseSelector("#\\26 B");
-        assertEquals(List.of(List.of(new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, "&B", "quirks", null))), r);
+        assertEquals(List.of(List.of(new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, "&B", CSS.AttributeIgnoreCase.IGNORE_CASE_QUIRKS, null))), r);
     }
 
     @Test
     void checkEscapedWhitespace() {
         var r = CSS.parseSelector("#\\  > a ");
         assertEquals(List.of(List.of(
-                new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, " ", "quirks", null),
+                new CSS.AttributeSelector("id", CSS.AttributeAction.EQUALS, " ", CSS.AttributeIgnoreCase.IGNORE_CASE_QUIRKS, null),
                 new CSS.Combinator(CSS.CombinatorType.CHILD),
                 new CSS.TagSelector("a", null)
         )), r);
