@@ -31,7 +31,7 @@ class Tokenizer {
     private int state;
 
     //
-    private int additionalAllowedCharacter;
+    int additionalAllowedCharacter;
     private int previousState;
 
     // tag related
@@ -385,7 +385,7 @@ class Tokenizer {
     // ------------
 
     boolean isAppropriateEndTagToken() {
-        return tagName != null && lastEmittedStartTagName != null && tagName.equalsASCIICaseInsensitive(lastEmittedStartTagName);
+        return tagName.pos() != 0 && lastEmittedStartTagName != null && tagName.equalsASCIICaseInsensitive(lastEmittedStartTagName);
     }
 
     // When the user agent leaves the attribute name state (and before emitting
@@ -563,14 +563,6 @@ class Tokenizer {
 
     void setPreviousState(int previousState) {
         this.previousState = previousState;
-    }
-
-    int getAdditionalAllowedCharacter() {
-        return additionalAllowedCharacter;
-    }
-
-    void setAdditionalAllowedCharacter(int additionalAllowedCharacter) {
-        this.additionalAllowedCharacter = additionalAllowedCharacter;
     }
 
     Element getAdjustedCurrentNode() {

@@ -201,7 +201,7 @@ class TokenizerAttributesState {
             tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
             //
             tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
-            tokenizer.setAdditionalAllowedCharacter(Characters.QUOTATION_MARK);
+            tokenizer.additionalAllowedCharacter = Characters.QUOTATION_MARK;
             break;
         case Characters.NULL:
             tokenizer.emitParseError();
@@ -226,7 +226,7 @@ class TokenizerAttributesState {
                     tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
                     //
                     tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
-                    tokenizer.setAdditionalAllowedCharacter(Characters.QUOTATION_MARK);
+                    tokenizer.additionalAllowedCharacter = Characters.QUOTATION_MARK;
                     return;
                 case Characters.NULL:
                     tokenizer.emitParseError();
@@ -256,7 +256,7 @@ class TokenizerAttributesState {
             tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
             //
             tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
-            tokenizer.setAdditionalAllowedCharacter(Characters.APOSTROPHE);
+            tokenizer.additionalAllowedCharacter = Characters.APOSTROPHE;
             break;
         case Characters.NULL:
             tokenizer.emitParseError();
@@ -284,7 +284,7 @@ class TokenizerAttributesState {
         case Characters.AMPERSAND:
             tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
             tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
-            tokenizer.setAdditionalAllowedCharacter(Characters.GREATERTHAN_SIGN);
+            tokenizer.additionalAllowedCharacter = Characters.GREATERTHAN_SIGN;
             break;
         case Characters.GREATERTHAN_SIGN:
             tokenizer.setState(TokenizerState.DATA_STATE);
@@ -313,7 +313,7 @@ class TokenizerAttributesState {
     }
 
     static void handleCharacterReferenceInAttributeValueState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        char[] res = TokenizerCharacterReference.consumeCharacterReference(tokenizer.getAdditionalAllowedCharacter(), true, processedInputStream, tokenizer);
+        char[] res = TokenizerCharacterReference.consumeCharacterReference(tokenizer.additionalAllowedCharacter, true, processedInputStream, tokenizer);
         if (res == null) {
             tokenizer.appendCurrentAttributeValue(Characters.AMPERSAND);
         } else {
@@ -325,7 +325,7 @@ class TokenizerAttributesState {
 
         // cleanup, maybe useless
         tokenizer.setPreviousState(-1);
-        tokenizer.setAdditionalAllowedCharacter(-1);
+        tokenizer.additionalAllowedCharacter = -1;
         //
     }
 

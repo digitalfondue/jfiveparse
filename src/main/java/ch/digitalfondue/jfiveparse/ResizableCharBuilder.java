@@ -65,14 +65,10 @@ class ResizableCharBuilder {
         for (int i = 0; i < pos; i++) {
             if (Common.isUpperCaseASCIILetter(buff[i])) {
                 containsUpperCase = true;
-                break;
+                return lowerCaseInternal();
             }
         }
-        if (containsUpperCase) {
-            return lowerCaseInternal();
-        } else {
-            return toString();
-        }
+        return toString();
     }
 
     private String lowerCaseInternal() {
