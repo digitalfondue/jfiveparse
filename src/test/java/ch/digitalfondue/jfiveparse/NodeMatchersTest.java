@@ -233,20 +233,35 @@ class NodeMatchersTest {
     @Test
     void selectorFirstLast() {
         Document doc = parser.parse("text1<div></div><div id=myid></div><div></div>text2");
+        var w3cDoc = W3CDom.toW3CDocument(doc);
         // div:first-child
-        assertTrue(doc.getAllNodesMatching(Selector.select().element("div").isFirstChild().toMatcher()).isEmpty());
+        var matcher = Selector.select().element("div").isFirstChild().toMatcher();
+        assertTrue(doc.getAllNodesMatching(matcher).isEmpty());
+        assertTrue(W3CDom.getAllNodesMatching(w3cDoc, matcher).toList().isEmpty());
 
         // :first-child
-        List<Node> nodes = doc.getAllNodesMatching(Selector.select().isFirstChild().toMatcher());
+        matcher = Selector.select().isFirstChild().toMatcher();
+        List<Node> nodes = doc.getAllNodesMatching(matcher);
         assertEquals(3, nodes.size());
         assertEquals("html", nodes.get(0).getNodeName());
         assertEquals("head", nodes.get(1).getNodeName());
         assertEquals("#text", nodes.get(2).getNodeName());
         assertEquals("text1", ((Text) nodes.get(2)).getData());
+        var w3cNodes = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(3, w3cNodes.size());
+        assertEquals("html", w3cNodes.get(0).getNodeName());
+        assertEquals("head", w3cNodes.get(1).getNodeName());
+        assertEquals("#text", w3cNodes.get(2).getNodeName());
+        assertEquals("text1", ((org.w3c.dom.Text) w3cNodes.get(2)).getData());
 
         // body :first-child
-        List<Node> txtNode = doc.getAllNodesMatching(Selector.select().element("body").withDescendant().isFirstChild().toMatcher());
+        matcher = Selector.select().element("body").withDescendant().isFirstChild().toMatcher();
+        List<Node> txtNode = doc.getAllNodesMatching(matcher);
+        var w3cTxtNode = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
         assertEquals(1, txtNode.size());
         assertEquals("text1", ((Text) txtNode.get(0)).getData());
+
+        assertEquals(1, w3cTxtNode.size());
+        assertEquals("text1", ((org.w3c.dom.Text) w3cTxtNode.get(0)).getData());
     }
 }
