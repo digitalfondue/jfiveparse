@@ -274,8 +274,13 @@ class TreeConstructorInTable {
                 treeConstructor.setChr((char) currentChar);
             } else {
                 int pos = chars.pos();
-                for (int i = 0; i < pos; i++) {
-                    treeConstructor.insertCharacter(chars.at(i));
+                ResizableCharBuilder insertCharacterPreviousTextNode = null;
+                if (pos > 0) {
+                    treeConstructor.insertCharacter(chars.at(0));
+                    insertCharacterPreviousTextNode = treeConstructor.getInsertCharacterPreviousTextNode();
+                }
+                for (int i = 1; i < pos; i++) {
+                    insertCharacterPreviousTextNode.append(chars.at(i));
                 }
             }
 
