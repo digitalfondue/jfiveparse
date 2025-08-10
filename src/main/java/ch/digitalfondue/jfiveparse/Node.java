@@ -136,7 +136,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     }
 
     /**
-     * Get the number of childs of the current node.
+     * Get the number of child of the current node.
      */
     public int getChildCount() {
         return getRawChildNodes().size();

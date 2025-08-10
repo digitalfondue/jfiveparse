@@ -123,11 +123,10 @@ class TreeConstructor {
     //
 
     Element getAdjustedCurrentNode() {
-        if (openElements.isEmpty()) {
-            return null;
-        }
         final int size = openElements.size();
-        if (isHtmlFragmentParsing && size == 1) {
+        if (size == 0) {
+            return null;
+        } else if (isHtmlFragmentParsing && size == 1) {
             return context;
         } else {
             return openElements.get(size - 1);
@@ -159,9 +158,11 @@ class TreeConstructor {
     }
 
     private boolean checkIsInHtmlContent() {
+        if (openElements.isEmpty()) {
+            return true;
+        }
         Element adjustedCurrentNode = getAdjustedCurrentNode();
-        return openElements.isEmpty()
-                || (adjustedCurrentNode != null && (Node.NAMESPACE_HTML_ID == adjustedCurrentNode.namespaceID || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
+        return (adjustedCurrentNode != null && (Node.NAMESPACE_HTML_ID == adjustedCurrentNode.namespaceID || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
                 || tokenType == EOF;
     }
 
@@ -623,7 +624,6 @@ class TreeConstructor {
 
     // appropriate place for inserting a node
     Node[] findAppropriatePlaceForInsertingNode(Element overrideTarget) {
-
         Element target = overrideTarget != null ? overrideTarget : getCurrentNode();
         int targetNameID = target.nodeNameID;
         if (fosterParentingEnabled && (Node.NAMESPACE_HTML_ID == target.namespaceID && (
@@ -730,11 +730,12 @@ class TreeConstructor {
             }
 
         } else {
-            if (openElements.isEmpty()) {
+            var size = openElements.size();
+            if (size == 0) {
                 // drop element
                 return element;
             }
-            toInsert = openElements.get(openElements.size() - 1);
+            toInsert = openElements.get(size - 1);
             position = toInsert.getChildCount();
         }
         toInsert.insertChildren(position, element);
