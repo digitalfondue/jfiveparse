@@ -25,7 +25,7 @@ class TreeConstructorInBodyForeignContentText {
     private static void handleInBodyCharacter(TreeConstructor treeConstructor) {
         int chr = treeConstructor.getChr();
         if (chr != Characters.NULL) {
-            treeConstructor.reconstructActiveFormattingElements();
+            treeConstructor.activeFormattingElements.reconstruct();
             treeConstructor.insertCharacter((char) chr);
             if (!Common.isTabLfFfCrOrSpace(chr)) {
                 treeConstructor.framesetOkToFalse();
@@ -237,7 +237,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startMath(TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
 
         Attributes attrs = treeConstructor.getAttributes();
         Common.adjustMathMLAttributes(attrs);
@@ -278,12 +278,12 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.popCurrentNode();
         }
 
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
     }
 
     private static void startSelect(TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
         treeConstructor.framesetOkToFalse();
 
@@ -317,7 +317,7 @@ class TreeConstructorInBodyForeignContentText {
         if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.framesetOkToFalse();
         genericRawTextElementParsing(treeConstructor);
     }
@@ -357,7 +357,7 @@ class TreeConstructorInBodyForeignContentText {
 
     private static void startInput(TreeConstructor treeConstructor) {
 
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         Element element = treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
@@ -368,7 +368,7 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startAreaWbr(TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
@@ -385,42 +385,42 @@ class TreeConstructorInBodyForeignContentText {
     }
 
     private static void startAppletObject(TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
-        treeConstructor.insertMarkerInActiveFormattingElements();
+        treeConstructor.activeFormattingElements.insertMarker();
         treeConstructor.framesetOkToFalse();
     }
 
     private static void startNobr(TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements(); // we know it's NOBR
+        treeConstructor.activeFormattingElements.reconstruct(); // we know it's NOBR
         if (treeConstructor.hasElementInScope(ELEMENT_NO_BR_ID)) {
             treeConstructor.emitParseError();
             treeConstructor.adoptionAgencyAlgorithm(ELEMENT_NO_BR_ID);
-            treeConstructor.reconstructActiveFormattingElements();
+            treeConstructor.activeFormattingElements.reconstruct();
         }
         Element nobr = treeConstructor.insertHtmlElementToken();
-        treeConstructor.pushInActiveFormattingElements(nobr);
+        treeConstructor.activeFormattingElements.push(nobr);
     }
 
     private static void startBU(TreeConstructor treeConstructor) {
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         Element element = treeConstructor.insertHtmlElementToken();
 
-        treeConstructor.pushInActiveFormattingElements(element);
+        treeConstructor.activeFormattingElements.push(element);
     }
 
     private static void startA(TreeConstructor treeConstructor) {
-        final int aIdx = treeConstructor.getIndexInActiveFormattingElementsBetweenElementANamespaceHtml();
+        final int aIdx = treeConstructor.activeFormattingElements.getBetweenLastElementAndMarkerIndexElementANamespaceHtml();
         if (aIdx != -1) {
-            Element a = treeConstructor.getActiveFormattingElementAt(aIdx);
+            Element a = treeConstructor.activeFormattingElements.getElementAtIndex(aIdx);
             treeConstructor.emitParseError();
             treeConstructor.adoptionAgencyAlgorithm(ELEMENT_A_ID);
-            treeConstructor.removeInActiveFormattingElements(a);
+            treeConstructor.activeFormattingElements.remove(a);
             treeConstructor.removeFromOpenElements(a);
         }
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         Element createdA = treeConstructor.insertHtmlElementToken();
-        treeConstructor.pushInActiveFormattingElements(createdA);
+        treeConstructor.activeFormattingElements.push(createdA);
     }
 
     private static void startButton(TreeConstructor treeConstructor) {
@@ -430,7 +430,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_BUTTON_ID);
         }
 
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
         treeConstructor.framesetOkToFalse();
     }
@@ -632,7 +632,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.popCurrentNode();
             treeConstructor.ackSelfClosingTagIfSet();
         } else {
-            treeConstructor.reconstructActiveFormattingElements();
+            treeConstructor.activeFormattingElements.reconstruct();
             treeConstructor.insertHtmlElementToken();
         }
     }
@@ -733,7 +733,7 @@ class TreeConstructorInBodyForeignContentText {
 
         treeConstructor.removeAttributes();
 
-        treeConstructor.reconstructActiveFormattingElements();
+        treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
@@ -752,7 +752,7 @@ class TreeConstructorInBodyForeignContentText {
                 treeConstructor.emitParseError();
             }
             treeConstructor.popOpenElementsUntilWithHtmlNS(tagNameID);
-            treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+            treeConstructor.activeFormattingElements.clearUpToLastMarker();
         }
     }
 

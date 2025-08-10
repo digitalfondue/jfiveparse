@@ -234,7 +234,7 @@ class TreeConstructorInFramesetSelectTemplate {
             } else {
                 treeConstructor.emitParseError();
                 treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_TEMPLATE_ID);
-                treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+                treeConstructor.activeFormattingElements.clearUpToLastMarker();
                 treeConstructor.popFromStackTemplatesInsertionMode();
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();

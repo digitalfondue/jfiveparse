@@ -479,7 +479,7 @@ class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.dispatch();
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_TEMPLATE_ID, tagNameID)) {
             treeConstructor.insertHtmlElementToken();
-            treeConstructor.insertMarkerInActiveFormattingElements();
+            treeConstructor.activeFormattingElements.insertMarker();
             treeConstructor.framesetOkToFalse();
             treeConstructor.setInsertionMode(IM_IN_TEMPLATE);
             treeConstructor.pushInStackTemplatesInsertionMode(IM_IN_TEMPLATE);
@@ -493,7 +493,7 @@ class TreeConstructorAftersBeforeInitialInHead {
                     treeConstructor.emitParseError();
                 }
                 treeConstructor.popOpenElementsUntilWithHtmlNS(Common.ELEMENT_TEMPLATE_ID);
-                treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+                treeConstructor.activeFormattingElements.clearUpToLastMarker();
                 treeConstructor.popFromStackTemplatesInsertionMode();
                 treeConstructor.resetInsertionModeAppropriately();
             }

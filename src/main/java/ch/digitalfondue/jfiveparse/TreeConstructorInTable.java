@@ -39,7 +39,7 @@ class TreeConstructorInTable {
             // ignore token
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_CAPTION_ID, tagNameID)) {
             cleanStackBackToTableContext(treeConstructor);
-            treeConstructor.insertMarkerInActiveFormattingElements();
+            treeConstructor.activeFormattingElements.insertMarker();
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(IM_IN_CAPTION);
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_COLGROUP_ID, tagNameID)) {
@@ -307,7 +307,7 @@ class TreeConstructorInTable {
             clearStackBackToTableRowContext(treeConstructor);
             treeConstructor.insertHtmlElementToken();
             treeConstructor.setInsertionMode(IM_IN_CELL);
-            treeConstructor.insertMarkerInActiveFormattingElements();
+            treeConstructor.activeFormattingElements.insertMarker();
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_TR_ID, tagNameID)) {
             if (!treeConstructor.hasElementInTableScope(Common.ELEMENT_TR_ID)) {
                 treeConstructor.emitParseError();
@@ -455,7 +455,7 @@ class TreeConstructorInTable {
                 }
                 treeConstructor.popOpenElementsUntilWithHtmlNS(tagNameID); // we know it TD OR TH
 
-                treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+                treeConstructor.activeFormattingElements.clearUpToLastMarker();
                 treeConstructor.setInsertionMode(IM_IN_ROW);
             }
         } else if (
@@ -523,7 +523,7 @@ class TreeConstructorInTable {
                 break;
             }
         }
-        treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+        treeConstructor.activeFormattingElements.clearUpToLastMarker();
         treeConstructor.setInsertionMode(IM_IN_ROW);
     }
 
@@ -543,7 +543,7 @@ class TreeConstructorInTable {
                 }
 
                 treeConstructor.popOpenElementsUntilWithHtmlNS(Common.ELEMENT_CAPTION_ID);
-                treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+                treeConstructor.activeFormattingElements.clearUpToLastMarker();
                 treeConstructor.setInsertionMode(IM_IN_TABLE);
             }
         } else if ((tokenType == TT_START_TAG && (
@@ -569,7 +569,7 @@ class TreeConstructorInTable {
                 }
 
                 treeConstructor.popOpenElementsUntilWithHtmlNS(Common.ELEMENT_CAPTION_ID);
-                treeConstructor.clearUpToLastMarkerActiveFormattingElements();
+                treeConstructor.activeFormattingElements.clearUpToLastMarker();
                 treeConstructor.setInsertionMode(IM_IN_TABLE);
 
                 treeConstructor.dispatch();

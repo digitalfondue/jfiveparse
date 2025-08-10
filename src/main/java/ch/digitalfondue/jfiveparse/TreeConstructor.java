@@ -45,7 +45,7 @@ class TreeConstructor {
 
     private final ArrayList<Element> openElements = new ArrayList<>();
 
-    private final TreeConstructorActiveFormattingElements activeFormattingElements = new TreeConstructorActiveFormattingElements(this);
+    final TreeConstructorActiveFormattingElements activeFormattingElements = new TreeConstructorActiveFormattingElements(this);
 
     private final ArrayList<Integer> stackTemplatesInsertionMode = new ArrayList<>();
 
@@ -1049,36 +1049,6 @@ class TreeConstructor {
     void framesetOkToFalse() {
         framesetOk = Boolean.FALSE;
     }
-
-    //
-    void clearUpToLastMarkerActiveFormattingElements() {
-        activeFormattingElements.clearUpToLastMarker();
-    }
-
-    void reconstructActiveFormattingElements() {
-        activeFormattingElements.reconstruct();
-    }
-
-    void insertMarkerInActiveFormattingElements() {
-        activeFormattingElements.insertMarker();
-    }
-
-    void pushInActiveFormattingElements(Element element) {
-        activeFormattingElements.push(element);
-    }
-
-    void removeInActiveFormattingElements(Element element) {
-        activeFormattingElements.remove(element);
-    }
-
-    Element getActiveFormattingElementAt(int idx) {
-        return activeFormattingElements.getElementAtIndex(idx);
-    }
-
-    int getIndexInActiveFormattingElementsBetweenElementANamespaceHtml() {
-        return activeFormattingElements.getBetweenLastElementAndMarkerIndexElementANamespaceHtml();
-    }
-
     //
 
     void saveInsertionMode() {
