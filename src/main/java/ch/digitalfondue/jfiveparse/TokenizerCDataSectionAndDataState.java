@@ -41,7 +41,7 @@ class TokenizerCDataSectionAndDataState {
             int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
             ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
             if (tokenizer.getState() == TokenizerState.DATA_STATE && previousInsertionMode == currentInsertionMode
-                    && (currentInsertionMode == TreeConstructionInsertionMode.IN_BODY || currentInsertionMode == TreeConstructionInsertionMode.IN_CELL)
+                    && (currentInsertionMode == TreeConstructor.IM_IN_BODY || currentInsertionMode == TreeConstructor.IM_IN_CELL)
                     && tokenizer.isTokenHandlerInHtmlContent() && textNode != null) {
 
                 for (;;) {

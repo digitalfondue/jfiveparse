@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class TreeConstructor {
+
     // optimization: when adding a new character, the char builder where the
     // character has been appended is saved in this property: it can then be
     // used in the tokenizer for appending directly, bypassing the dispatch
@@ -26,19 +27,21 @@ class TreeConstructor {
     private ResizableCharBuilder insertCharacterPreviousTextNode;
     //
 
-    static final int CHARACTER = 0;
-    static final int COMMENT = 1;
-    static final int DOCTYPE = 2;
-    static final int EOF = 3;
-    static final int END_TAG = 4;
-    static final int START_TAG = 5;
+    // token type
+    static final int TT_CHARACTER = 0;
+    static final int TT_COMMENT = 1;
+    static final int TT_DOCTYPE = 2;
+    static final int TT_EOF = 3;
+    static final int TT_END_TAG = 4;
+    static final int TT_START_TAG = 5;
 
     //
     boolean scriptingFlag;
 
     private Tokenizer tokenizer;
 
-    private int insertionMode = TreeConstructionInsertionMode.INITIAL;
+    static final int IM_INITIAL = 3;
+    private int insertionMode = IM_INITIAL;
     private int originalInsertionMode;
 
     private final ArrayList<Element> openElements = new ArrayList<>();
@@ -139,7 +142,7 @@ class TreeConstructor {
         // handle textarea "skip LF" logic
         if (ignoreCharacterTokenLF) {
             ignoreCharacterTokenLF = false;
-            if (tokenType == CHARACTER && chr == Characters.LF) {
+            if (tokenType == TT_CHARACTER && chr == Characters.LF) {
                 return;
             }
         }
@@ -163,28 +166,28 @@ class TreeConstructor {
         }
         Element adjustedCurrentNode = getAdjustedCurrentNode();
         return (adjustedCurrentNode != null && (Node.NAMESPACE_HTML_ID == adjustedCurrentNode.namespaceID || checkIsInHtmlContentSVGMathML(adjustedCurrentNode)))
-                || tokenType == EOF;
+                || tokenType == TT_EOF;
     }
 
     private boolean checkIsInHtmlContentSVGMathML(Element adjustedCurrentNode) {
-        return (Common.isMathMLIntegrationPoint(adjustedCurrentNode) && ((tokenType == START_TAG && (!"mglyph".equals(tagName) && !"malignmark".equals(tagName))) || tokenType == CHARACTER))
+        return (Common.isMathMLIntegrationPoint(adjustedCurrentNode) && ((tokenType == TT_START_TAG && (!"mglyph".equals(tagName) && !"malignmark".equals(tagName))) || tokenType == TT_CHARACTER))
                 || //
-                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML_ID == adjustedCurrentNode.namespaceID) && tokenType == START_TAG && "svg"
+                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML_ID == adjustedCurrentNode.namespaceID) && tokenType == TT_START_TAG && "svg"
                         .equals(tagName)) || //
-                (Common.isHtmlIntegrationPoint(adjustedCurrentNode) && (tokenType == START_TAG || tokenType == CHARACTER));
+                (Common.isHtmlIntegrationPoint(adjustedCurrentNode) && (tokenType == TT_START_TAG || tokenType == TT_CHARACTER));
     }
 
     void insertionModeInHtmlContent() {
 
         // most used
         switch (insertionMode) {
-        case TreeConstructionInsertionMode.TEXT:
+        case IM_TEXT:
             TreeConstructorInBodyForeignContentText.text(tokenType, this);
             break;
-        case TreeConstructionInsertionMode.IN_BODY:
+        case IM_IN_BODY:
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_CELL:
+        case IM_IN_CELL:
             TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
             break;
         // end most used
@@ -196,73 +199,73 @@ class TreeConstructor {
 
     private void insertionModeInHtmlContentAll() {
         switch (insertionMode) {
-        case TreeConstructionInsertionMode.INITIAL:
+        case IM_INITIAL:
             TreeConstructorAftersBeforeInitialInHead.initial(tokenType, this);
             break;
-        case TreeConstructionInsertionMode.BEFORE_HTML:
+        case IM_BEFORE_HTML:
             TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.BEFORE_HEAD:
+        case IM_BEFORE_HEAD:
             TreeConstructorAftersBeforeInitialInHead.beforeHead(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_HEAD:
+        case IM_IN_HEAD:
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_HEAD_NOSCRIPT:
+        case IM_IN_HEAD_NOSCRIPT:
             TreeConstructorAftersBeforeInitialInHead.inHeadNoScript(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.AFTER_HEAD:
+        case IM_AFTER_HEAD:
             TreeConstructorAftersBeforeInitialInHead.afterHead(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_BODY:
+        case IM_IN_BODY:
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.TEXT:
+        case IM_TEXT:
             TreeConstructorInBodyForeignContentText.text(tokenType, this);
             break;
-        case TreeConstructionInsertionMode.IN_TABLE:
+        case IM_IN_TABLE:
             TreeConstructorInTable.inTable(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_TABLE_TEXT:
+        case IM_IN_TABLE_TEXT:
             TreeConstructorInTable.inTableText(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_CAPTION:
+        case IM_IN_CAPTION:
             TreeConstructorInTable.inCaption(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_COLUMN_GROUP:
+        case IM_IN_COLUMN_GROUP:
             TreeConstructorInTable.inColumnGroup(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_TABLE_BODY:
+        case IM_IN_TABLE_BODY:
             TreeConstructorInTable.inTableBody(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_ROW:
+        case IM_IN_ROW:
             TreeConstructorInTable.inRow(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_CELL:
+        case IM_IN_CELL:
             TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_SELECT:
+        case IM_IN_SELECT:
             TreeConstructorInFramesetSelectTemplate.inSelect(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_SELECT_IN_TABLE:
+        case IM_IN_SELECT_IN_TABLE:
             TreeConstructorInFramesetSelectTemplate.inSelectTable(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_TEMPLATE:
+        case IM_IN_TEMPLATE:
             TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.AFTER_BODY:
+        case IM_AFTER_BODY:
             TreeConstructorAftersBeforeInitialInHead.afterBody(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.IN_FRAMESET:
+        case IM_IN_FRAMESET:
             TreeConstructorInFramesetSelectTemplate.inFrameset(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.AFTER_FRAMESET:
+        case IM_AFTER_FRAMESET:
             TreeConstructorAftersBeforeInitialInHead.afterFrameset(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.AFTER_AFTER_BODY:
+        case IM_AFTER_AFTER_BODY:
             TreeConstructorAftersBeforeInitialInHead.afterAfterBody(tokenType, tagName, tagNameID, this);
             break;
-        case TreeConstructionInsertionMode.AFTER_AFTER_FRAMESET:
+        case IM_AFTER_AFTER_FRAMESET:
             TreeConstructorAftersBeforeInitialInHead.afterAfterFrameset(tokenType, tagName, tagNameID, this);
             break;
         }
@@ -583,14 +586,14 @@ class TreeConstructor {
         treeConstructor.insertHtmlElementToken();
         treeConstructor.tokenizer.setState(TokenizerState.RAWTEXT_STATE);
         treeConstructor.originalInsertionMode = treeConstructor.insertionMode;
-        treeConstructor.insertionMode = TreeConstructionInsertionMode.TEXT;
+        treeConstructor.insertionMode = IM_TEXT;
     }
 
     static void genericRCDataParsing(TreeConstructor treeConstructor) {
         treeConstructor.insertHtmlElementToken();
         treeConstructor.tokenizer.setState(TokenizerState.RCDATA_STATE);
         treeConstructor.originalInsertionMode = treeConstructor.insertionMode;
-        treeConstructor.insertionMode = TreeConstructionInsertionMode.TEXT;
+        treeConstructor.insertionMode = IM_TEXT;
     }
 
     void ackSelfClosingTagIfSet() {
@@ -803,7 +806,7 @@ class TreeConstructor {
     }
 
     void emitCharacter(char chr) {
-        tokenType = CHARACTER;
+        tokenType = TT_CHARACTER;
         insertCharacterPreviousTextNode = null;
         this.chr = chr;
         dispatch();
@@ -811,7 +814,7 @@ class TreeConstructor {
 
     void emitComment(ResizableCharBuilder comment) {
         this.comment = comment;
-        tokenType = COMMENT;
+        tokenType = TT_COMMENT;
         dispatch();
     }
 
@@ -820,19 +823,19 @@ class TreeConstructor {
         this.doctypePublicId = doctypePublicId;
         this.doctypeSystemId = doctypeSystemId;
         this.correctness = correctness;
-        tokenType = DOCTYPE;
+        tokenType = TT_DOCTYPE;
         dispatch();
     }
 
     void emitEOF() {
-        tokenType = EOF;
+        tokenType = TT_EOF;
         dispatch();
         throw new StopParse();
     }
 
     void emitEndTagToken(ResizableCharBuilder name) {
         setTagName(name.toLowerCase());
-        tokenType = END_TAG;
+        tokenType = TT_END_TAG;
         dispatch();
     }
 
@@ -840,7 +843,7 @@ class TreeConstructor {
         setTagNameAndSaveOriginal(name);
         this.attrs = attrs;
         this.selfClosing = selfClosing;
-        tokenType = START_TAG;
+        tokenType = TT_START_TAG;
         dispatch();
     }
 
@@ -862,7 +865,7 @@ class TreeConstructor {
 
             if (Common.isHtmlNS(node, Common.ELEMENT_SELECT_ID)) {
                 if (last) {
-                    insertionMode = TreeConstructionInsertionMode.IN_SELECT;
+                    insertionMode = IM_IN_SELECT;
                     break;
                 } else {
                     int ancestorIdx = counter;
@@ -876,52 +879,52 @@ class TreeConstructor {
                         if (Common.isHtmlNS(ancestor, Common.ELEMENT_TEMPLATE_ID)) {
                             break;
                         } else if (Common.isHtmlNS(ancestor, Common.ELEMENT_TABLE_ID)) {
-                            insertionMode = TreeConstructionInsertionMode.IN_SELECT_IN_TABLE;
+                            insertionMode = IM_IN_SELECT_IN_TABLE;
                             return;
                         }
                     }
-                    insertionMode = TreeConstructionInsertionMode.IN_SELECT;
+                    insertionMode = IM_IN_SELECT;
                     break;
                 }
             } else if ((Common.isHtmlNS(node, Common.ELEMENT_TD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TH_ID)) && !last) {
-                insertionMode = TreeConstructionInsertionMode.IN_CELL;
+                insertionMode = IM_IN_CELL;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_TR_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_ROW;
+                insertionMode = IM_IN_ROW;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_TBODY_ID) || Common.isHtmlNS(node, Common.ELEMENT_THEAD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TFOOT_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_TABLE_BODY;
+                insertionMode = IM_IN_TABLE_BODY;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_CAPTION_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_CAPTION;
+                insertionMode = IM_IN_CAPTION;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_COLGROUP_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_COLUMN_GROUP;
+                insertionMode = IM_IN_COLUMN_GROUP;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_TABLE_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_TABLE;
+                insertionMode = IM_IN_TABLE;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID)) {
                 insertionMode = stackTemplatesInsertionMode.get(stackTemplatesInsertionMode.size() - 1);
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_HEAD_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_HEAD;
+                insertionMode = IM_IN_HEAD;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_BODY_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_BODY;
+                insertionMode = IM_IN_BODY;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_FRAMESET_ID)) {
-                insertionMode = TreeConstructionInsertionMode.IN_FRAMESET;
+                insertionMode = IM_IN_FRAMESET;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_HTML_ID)) {
                 if (head == null) {
-                    insertionMode = TreeConstructionInsertionMode.BEFORE_HEAD;
+                    insertionMode = IM_BEFORE_HEAD;
                 } else {
-                    insertionMode = TreeConstructionInsertionMode.AFTER_HEAD;
+                    insertionMode = IM_AFTER_HEAD;
                 }
                 break;
             } else if (last) {
-                insertionMode = TreeConstructionInsertionMode.IN_BODY;
+                insertionMode = IM_IN_BODY;
                 break;
             }
             counter--;
@@ -1134,5 +1137,30 @@ class TreeConstructor {
     void removeAttributes() {
         attrs = null;
     }
+
+    // insertion modes
+    static final int IM_TEXT = 0;
+    static final int IM_IN_BODY = 1;
+    static final int IM_IN_CELL = 2;
+    static final int IM_BEFORE_HTML = 4;
+    static final int IM_BEFORE_HEAD = 5;
+    static final int IM_IN_HEAD = 6;
+    static final int IM_IN_HEAD_NOSCRIPT = 7;
+    static final int IM_AFTER_HEAD = 8;
+    static final int IM_IN_TABLE = 9;
+    static final int IM_IN_TABLE_TEXT = 10;
+    static final int IM_IN_CAPTION = 11;
+    static final int IM_IN_COLUMN_GROUP = 12;
+    static final int IM_IN_TABLE_BODY = 13;
+    static final int IM_IN_ROW = 14;
+    static final int IM_IN_SELECT = 15;
+    static final int IM_IN_SELECT_IN_TABLE = 16;
+    static final int IM_IN_TEMPLATE = 17;
+    static final int IM_AFTER_BODY = 18;
+    static final int IM_IN_FRAMESET = 19;
+    static final int IM_AFTER_FRAMESET = 20;
+    static final int IM_AFTER_AFTER_BODY = 21;
+    static final int IM_AFTER_AFTER_FRAMESET = 22;
+    //
 
 }

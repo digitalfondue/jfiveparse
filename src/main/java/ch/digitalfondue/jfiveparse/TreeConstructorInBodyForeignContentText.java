@@ -51,7 +51,7 @@ class TreeConstructorInBodyForeignContentText {
             case ELEMENT_STYLE_ID:
             case ELEMENT_TEMPLATE_ID:
             case ELEMENT_TITLE_ID:
-                TreeConstructorAftersBeforeInitialInHead.inHead(START_TAG, tagName, tagNameID, treeConstructor);
+                TreeConstructorAftersBeforeInitialInHead.inHead(TT_START_TAG, tagName, tagNameID, treeConstructor);
                 break;
             case ELEMENT_BODY_ID:
                 startBody(treeConstructor);
@@ -289,14 +289,14 @@ class TreeConstructorInBodyForeignContentText {
 
         final int insertionMode = treeConstructor.getInsertionMode();
 
-        if (insertionMode == TreeConstructionInsertionMode.IN_TABLE || //
-                insertionMode == TreeConstructionInsertionMode.IN_CAPTION || //
-                insertionMode == TreeConstructionInsertionMode.IN_TABLE_BODY || //
-                insertionMode == TreeConstructionInsertionMode.IN_ROW || //
-                insertionMode == TreeConstructionInsertionMode.IN_CELL) {
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_SELECT_IN_TABLE);
+        if (insertionMode == IM_IN_TABLE || //
+                insertionMode == IM_IN_CAPTION || //
+                insertionMode == IM_IN_TABLE_BODY || //
+                insertionMode == IM_IN_ROW || //
+                insertionMode == IM_IN_CELL) {
+            treeConstructor.setInsertionMode(IM_IN_SELECT_IN_TABLE);
         } else {
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_SELECT);
+            treeConstructor.setInsertionMode(IM_IN_SELECT);
         }
     }
 
@@ -329,7 +329,7 @@ class TreeConstructorInBodyForeignContentText {
         treeConstructor.saveInsertionMode();
 
         treeConstructor.framesetOkToFalse();
-        treeConstructor.setInsertionMode(TreeConstructionInsertionMode.TEXT);
+        treeConstructor.setInsertionMode(IM_TEXT);
         treeConstructor.ignoreCharacterTokenLF();
     }
 
@@ -381,7 +381,7 @@ class TreeConstructorInBodyForeignContentText {
         }
         treeConstructor.insertHtmlElementToken();
         treeConstructor.framesetOkToFalse();
-        treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_TABLE);
+        treeConstructor.setInsertionMode(IM_IN_TABLE);
     }
 
     private static void startAppletObject(TreeConstructor treeConstructor) {
@@ -586,7 +586,7 @@ class TreeConstructorInBodyForeignContentText {
             //
 
             treeConstructor.insertHtmlElementToken();
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.IN_FRAMESET);
+            treeConstructor.setInsertionMode(IM_IN_FRAMESET);
         }
     }
 
@@ -640,7 +640,7 @@ class TreeConstructorInBodyForeignContentText {
     private static void inBodyEndTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tagNameID) {
             case ELEMENT_TEMPLATE_ID:
-                TreeConstructorAftersBeforeInitialInHead.inHead(END_TAG, tagName, tagNameID, treeConstructor);
+                TreeConstructorAftersBeforeInitialInHead.inHead(TT_END_TAG, tagName, tagNameID, treeConstructor);
                 break;
             case ELEMENT_BODY_ID:
                 endBody(treeConstructor);
@@ -865,7 +865,7 @@ class TreeConstructorInBodyForeignContentText {
             // ignore token
         } else {
             // FIXME
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_BODY);
+            treeConstructor.setInsertionMode(IM_AFTER_BODY);
             treeConstructor.dispatch();
         }
     }
@@ -876,28 +876,28 @@ class TreeConstructorInBodyForeignContentText {
             // ignore token
         } else {
             // FIXME
-            treeConstructor.setInsertionMode(TreeConstructionInsertionMode.AFTER_BODY);
+            treeConstructor.setInsertionMode(IM_AFTER_BODY);
         }
     }
 
     static void inBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tokenType) {
-            case CHARACTER:
+            case TT_CHARACTER:
                 handleInBodyCharacter(treeConstructor);
                 return;
-            case COMMENT:
+            case TT_COMMENT:
                 treeConstructor.insertComment();
                 return;
-            case DOCTYPE:
+            case TT_DOCTYPE:
                 treeConstructor.emitParseError(); // ignore
                 return;
-            case EOF:
+            case TT_EOF:
                 inBodyEof(tokenType, tagName, tagNameID,treeConstructor);
                 return;
-            case END_TAG:
+            case TT_END_TAG:
                 inBodyEndTag(tagName, tagNameID, treeConstructor);
                 break;
-            case START_TAG:
+            case TT_START_TAG:
                 inBodyStartTag(tagName, tagNameID, treeConstructor);
         }
     }
@@ -951,20 +951,20 @@ class TreeConstructorInBodyForeignContentText {
     // ---------------------------
 
     static void foreignContent(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        if (tokenType == CHARACTER && treeConstructor.getChr() == Characters.NULL) {
+        if (tokenType == TT_CHARACTER && treeConstructor.getChr() == Characters.NULL) {
             treeConstructor.emitParseError();
             treeConstructor.insertCharacter(Characters.REPLACEMENT_CHARACTER);
-        } else if (tokenType == CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
+        } else if (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
-        } else if (tokenType == CHARACTER) {
+        } else if (tokenType == TT_CHARACTER) {
             treeConstructor.insertCharacter();
             treeConstructor.framesetOkToFalse();
-        } else if (tokenType == COMMENT) {
+        } else if (tokenType == TT_COMMENT) {
             treeConstructor.insertComment();
-        } else if (tokenType == DOCTYPE) {
+        } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore token
-        } else if (tokenType == START_TAG && (
+        } else if (tokenType == TT_START_TAG && (
                 (
                 ELEMENT_B_ID == tagNameID || //
                 ELEMENT_BIG_ID == tagNameID || //
@@ -1014,7 +1014,7 @@ class TreeConstructorInBodyForeignContentText {
                 (ELEMENT_FONT_ID == tagNameID && (treeConstructor.hasAttribute("color") || //
                         treeConstructor.hasAttribute("face") ||
                         treeConstructor.hasAttribute("size")))) ||
-                (tokenType == END_TAG && (ELEMENT_BR_ID == tagNameID || ELEMENT_P_ID == tagNameID))) {
+                (tokenType == TT_END_TAG && (ELEMENT_BR_ID == tagNameID || ELEMENT_P_ID == tagNameID))) {
             treeConstructor.emitParseError();
 
             while (true) {
@@ -1025,12 +1025,12 @@ class TreeConstructorInBodyForeignContentText {
                 treeConstructor.popCurrentNode();
             }
             treeConstructor.insertionModeInHtmlContent();
-        } else if (tokenType == START_TAG) {
+        } else if (tokenType == TT_START_TAG) {
             anyOtherStartTag(tagName, treeConstructor);
-        } else if (tokenType == END_TAG && Common.is(treeConstructor.getCurrentNode(), ELEMENT_SCRIPT_ID, Node.NAMESPACE_SVG_ID)) {
+        } else if (tokenType == TT_END_TAG && Common.is(treeConstructor.getCurrentNode(), ELEMENT_SCRIPT_ID, Node.NAMESPACE_SVG_ID)) {
             // we don't execute scripts
             treeConstructor.popCurrentNode();
-        } else if (tokenType == END_TAG) {
+        } else if (tokenType == TT_END_TAG) {
 
             Element node = treeConstructor.getCurrentNode();
             if (!tagName.equals(Common.convertToAsciiLowerCase(node.getNodeName()))) {
@@ -1130,13 +1130,13 @@ class TreeConstructorInBodyForeignContentText {
 
     static void text(int tokenType, TreeConstructor treeConstructor) {
         switch (tokenType) {
-            case CHARACTER:
+            case TT_CHARACTER:
                 treeConstructor.insertCharacter();
                 break;
-            case EOF:
+            case TT_EOF:
                 textEof(treeConstructor);
                 break;
-            case END_TAG:
+            case TT_END_TAG:
                 textEndTag(treeConstructor);
                 break;
         }

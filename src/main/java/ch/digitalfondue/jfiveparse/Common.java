@@ -273,11 +273,11 @@ class Common {
     }
 
     static boolean isStartTagNamed(int tokenType, int namedID, int tagNameID) {
-        return tokenType == TreeConstructor.START_TAG && namedID == tagNameID;
+        return tokenType == TreeConstructor.TT_START_TAG && namedID == tagNameID;
     }
 
     static boolean isEndTagNamed(int tokenType, int namedID, int tagNameID) {
-        return tokenType == TreeConstructor.END_TAG && namedID == tagNameID;
+        return tokenType == TreeConstructor.TT_END_TAG && namedID == tagNameID;
     }
 
     static int tagNameToID(String tagName) {

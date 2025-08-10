@@ -157,7 +157,7 @@ public class Parser {
 
         // 8
         if (Common.isHtmlNS(node, Common.ELEMENT_TEMPLATE_ID)) {
-            tokenHandler.pushIntoStackTemplatesInsertionMode(TreeConstructionInsertionMode.IN_TEMPLATE);
+            tokenHandler.pushIntoStackTemplatesInsertionMode(TreeConstructor.IM_IN_TEMPLATE);
         }
 
         // 9
