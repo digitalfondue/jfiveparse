@@ -150,84 +150,167 @@ class NodeMatchersTest {
     @Test
     void hasAttributeValueContainTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValContains("class", "class2 class1").toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
+        var matcher = Selector.select().attrValContains("class", "class2 class1").toMatcher();
+        List<Node> divClass = doc.getAllNodesMatching(matcher);
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValContains("class", "cl").toMatcher());
+        var w3cDivClass = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3cDivClass.size());
+        assertEquals("class2 class1 class3", ((org.w3c.dom.Element) w3cDivClass.get(0)).getAttribute("class"));
+
+        matcher = Selector.select().attrValContains("class", "cl").toMatcher();
+        List<Node> divClasses = doc.getAllNodesMatching(matcher);
         assertEquals(2, divClasses.size());
+
+        var w3cDivClasses = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3cDivClasses.size());
     }
 
     @Test
     void hasParentMatch() {
         Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
-        List<Node> e = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withChild().toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
+        var matcher = Selector.select().attrValEq("id", "depth1").withChild().toMatcher();
+        List<Node> e = doc.getAllNodesMatching(matcher);
         assertEquals(1, e.size());
         assertEquals("depth2", ((Element) e.get(0)).getAttribute("id"));
 
-        List<Node> empty = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth0").withChild().toMatcher());
+        var w3ce = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3ce.size());
+        assertEquals("depth2", ((org.w3c.dom.Element) w3ce.get(0)).getAttribute("id"));
+
+        matcher = Selector.select().attrValEq("id", "depth0").withChild().toMatcher();
+        List<Node> empty = doc.getAllNodesMatching(matcher);
         assertEquals(0, empty.size());
+
+        assertEquals(0, W3CDom.getAllNodesMatching(w3cDoc, matcher).toList().size());
     }
 
     @Test
     void hasAncestorMatch() {
         Document doc = parser.parse("<div id=depth1><div id=depth2><div id=depth3></div></div></div>");
+        var w3cDoc = W3CDom.toW3CDocument(doc);
 
-        List<Node> e0 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth3").withDescendant().toMatcher());
+        var matcher = Selector.select().attrValEq("id", "depth3").withDescendant().toMatcher();
+
+        List<Node> e0 = doc.getAllNodesMatching(matcher);
         assertEquals(0, e0.size());
 
-        List<Node> e1 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth2").withDescendant().toMatcher());
+        var w3ce0 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(0, w3ce0.size());
+
+
+        matcher = Selector.select().attrValEq("id", "depth2").withDescendant().toMatcher();
+        List<Node> e1 = doc.getAllNodesMatching(matcher);
         assertEquals(1, e1.size());
         assertEquals("depth3", ((Element) e1.get(0)).getAttribute("id"));
 
-        List<Node> e2 = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth1").withDescendant().toMatcher());
+        var w3ce1 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3ce1.size());
+        assertEquals("depth3", ((org.w3c.dom.Element) w3ce1.get(0)).getAttribute("id"));
+
+
+        matcher = Selector.select().attrValEq("id", "depth1").withDescendant().toMatcher();
+        List<Node> e2 = doc.getAllNodesMatching(matcher);
         assertEquals(2, e2.size());
         assertEquals("depth2", ((Element) e2.get(0)).getAttribute("id"));
         assertEquals("depth3", ((Element) e2.get(1)).getAttribute("id"));
 
-        List<Node> empty = doc.getAllNodesMatching(Selector.select().attrValEq("id", "depth0").withDescendant().toMatcher());
+        var w3ce2 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3ce2.size());
+        assertEquals("depth2", ((org.w3c.dom.Element) w3ce2.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((org.w3c.dom.Element) w3ce2.get(1)).getAttribute("id"));
+
+        matcher = Selector.select().attrValEq("id", "depth0").withDescendant().toMatcher();
+        List<Node> empty = doc.getAllNodesMatching(matcher);
         assertEquals(0, empty.size());
+
+        var w3cEmpty = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(0, w3cEmpty.size());
     }
 
     @Test
     void hasSelectorMatch() {
         // #depth1 > #depth2 > #depth3
         Document doc = parser.parse("<div id=depth1 class='a b c'><div id=depth2 class='a c'><div id=depth3 class='b c'></div></div></div>");
-        List<Node> e1 = doc.getAllNodesMatching(Selector.select().id("depth1").withChild().id("depth2").withChild().id("depth3").toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+        var matcher = Selector.select().id("depth1").withChild().id("depth2").withChild().id("depth3").toMatcher();
+        List<Node> e1 = doc.getAllNodesMatching(matcher);
         assertEquals(1, e1.size());
         assertEquals("depth3", ((Element) e1.get(0)).getAttribute("id"));
 
+        var w3ce1 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3ce1.size());
+        assertEquals("depth3", ((org.w3c.dom.Element) w3ce1.get(0)).getAttribute("id"));
+
+
         // div > [id]
-        List<Node> e2 = doc.getAllNodesMatching(Selector.select().element("div").withDescendant().attr("id").toMatcher());
+        matcher = Selector.select().element("div").withDescendant().attr("id").toMatcher();
+        List<Node> e2 = doc.getAllNodesMatching(matcher);
         assertEquals(2, e2.size());
         assertEquals("depth2", ((Element) e2.get(0)).getAttribute("id"));
         assertEquals("depth3", ((Element) e2.get(1)).getAttribute("id"));
 
+        var w3ce2 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3ce2.size());
+        assertEquals("depth2", ((org.w3c.dom.Element) w3ce2.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((org.w3c.dom.Element) w3ce2.get(1)).getAttribute("id"));
+
         // div.a.b
-        List<Node> e3 = doc.getAllNodesMatching(Selector.select().element("div").hasClass("a", "b").toMatcher());
+        matcher = Selector.select().element("div").hasClass("a", "b").toMatcher();
+        List<Node> e3 = doc.getAllNodesMatching(matcher);
         assertEquals(1, e3.size());
         assertEquals("depth1", ((Element) e3.get(0)).getAttribute("id"));
 
+        var w3ce3 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3ce3.size());
+        assertEquals("depth1", ((org.w3c.dom.Element) w3ce3.get(0)).getAttribute("id"));
+
         // .c
-        List<Node> e4 = doc.getAllNodesMatching(Selector.select().hasClass("c").toMatcher());
+        matcher = Selector.select().hasClass("c").toMatcher();
+        List<Node> e4 = doc.getAllNodesMatching(matcher);
         assertEquals(3, e4.size());
 
+        var w3ce4 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(3, w3ce4.size());
+
         // .b
-        List<Node> e5 = doc.getAllNodesMatching(Selector.select().hasClass("b").toMatcher());
+        matcher = Selector.select().hasClass("b").toMatcher();
+        List<Node> e5 = doc.getAllNodesMatching(matcher);
         assertEquals(2, e5.size());
         assertEquals("depth1", ((Element) e5.get(0)).getAttribute("id"));
         assertEquals("depth3", ((Element) e5.get(1)).getAttribute("id"));
+
+        var w3ce5 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3ce5.size());
+        assertEquals("depth1", ((org.w3c.dom.Element) w3ce5.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((org.w3c.dom.Element) w3ce5.get(1)).getAttribute("id"));
         
         // .a .c
-        List<Node> e6 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("c").toMatcher());
+        matcher = Selector.select().hasClass("a").withDescendant().hasClass("c").toMatcher();
+        List<Node> e6 = doc.getAllNodesMatching(matcher);
         assertEquals(2, e6.size());
         assertEquals("depth2", ((Element) e6.get(0)).getAttribute("id"));
         assertEquals("depth3", ((Element) e6.get(1)).getAttribute("id"));
+
+        var w3ce6 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3ce6.size());
+        assertEquals("depth2", ((org.w3c.dom.Element) w3ce6.get(0)).getAttribute("id"));
+        assertEquals("depth3", ((org.w3c.dom.Element) w3ce6.get(1)).getAttribute("id"));
         
         // .a .a
-        List<Node> e7 = doc.getAllNodesMatching(Selector.select().hasClass("a").withDescendant().hasClass("a").toMatcher());
+        matcher = Selector.select().hasClass("a").withDescendant().hasClass("a").toMatcher();
+        List<Node> e7 = doc.getAllNodesMatching(matcher);
         assertEquals(1, e7.size());
         assertEquals("depth2", ((Element) e7.get(0)).getAttribute("id"));
+
+        var w3ce7 = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3ce7.size());
+        assertEquals("depth2", ((org.w3c.dom.Element) w3ce7.get(0)).getAttribute("id"));
     }
 
     @Test
