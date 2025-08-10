@@ -98,53 +98,110 @@ class NodeMatchersTest {
     @Test
     void lastChildTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
-        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastChild().toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
+        var matcher = Selector.select().isLastChild().toMatcher();
+
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(matcher);
         assertEquals(1, div.size());
         assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
+
+        var w3cDiv = W3CDom.getAllNodesMatching(w3cDoc.getElementsByTagName("body").item(0), matcher).toList();
+        assertEquals(1, w3cDiv.size());
+        assertSame(w3cDoc.getElementsByTagName("body").item(0).getChildNodes().item(3), w3cDiv.get(0));
     }
 
     @Test
     void hasAttributeValueEqTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div id=myid2></div>");
-        List<Node> divIdMyId = doc.getAllNodesMatching(Selector.select().attrValEq("id", "myid").toMatcher());
-        List<Node> divId = doc.getAllNodesMatching(Selector.select().attr("id").toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
+        var matcher = Selector.select().attrValEq("id", "myid").toMatcher();
+        List<Node> divIdMyId = doc.getAllNodesMatching(matcher);
         assertEquals(1, divIdMyId.size());
+
+        var w3cDivIdMyId = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3cDivIdMyId.size());
+
+
+        matcher = Selector.select().attr("id").toMatcher();
+        List<Node> divId = doc.getAllNodesMatching(matcher);
         assertEquals(2, divId.size());
         assertEquals("myid", ((Element) divId.get(0)).getAttribute("id"));
         assertEquals("myid2", ((Element) divId.get(1)).getAttribute("id"));
+
+        var w3cDivId = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3cDivId.size());
+        assertEquals("myid", ((org.w3c.dom.Element) w3cDivId.get(0)).getAttribute("id"));
+        assertEquals("myid2", ((org.w3c.dom.Element) w3cDivId.get(1)).getAttribute("id"));
     }
 
     @Test
     void hasAttributeValueInListTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class1").toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
+        var matcher = Selector.select().attrValInList("class", "class1").toMatcher();
+
+        List<Node> divClass = doc.getAllNodesMatching(matcher);
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValInList("class", "class2").toMatcher());
+        var w3cDivClass = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3cDivClass.size());
+        assertEquals("class2 class1 class3", ((org.w3c.dom.Element) w3cDivClass.get(0)).getAttribute("class"));
+
+        matcher = Selector.select().attrValInList("class", "class2").toMatcher();
+        List<Node> divClasses = doc.getAllNodesMatching(matcher);
         assertEquals(2, divClasses.size());
+
+        var w3cDivClasses = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3cDivClasses.size());
     }
 
     @Test
     void hasAttributeValueStartWithTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2 class1").toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
+        var matcher = Selector.select().attrValStartWith("class", "class2 class1").toMatcher();
+
+        List<Node> divClass = doc.getAllNodesMatching(matcher);
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValStartWith("class", "class2").toMatcher());
+        var w3cDivClass = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3cDivClass.size());
+        assertEquals("class2 class1 class3", ((org.w3c.dom.Element) w3cDivClass.get(0)).getAttribute("class"));
+
+        matcher = Selector.select().attrValStartWith("class", "class2").toMatcher();
+        List<Node> divClasses = doc.getAllNodesMatching(matcher);
         assertEquals(2, divClasses.size());
+
+        var w3cDivClasses = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3cDivClasses.size());
     }
 
     @Test
     void hasAttributeValueEndWithTest() {
         Document doc = parser.parse("text<div class='class2 class3'></div><div class='class2 class1 class3'></div><div id=myid2></div>");
-        List<Node> divClass = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class1 class3").toMatcher());
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+
+        var matcher = Selector.select().attrValEndWith("class", "class1 class3").toMatcher();
+        List<Node> divClass = doc.getAllNodesMatching(matcher);
         assertEquals(1, divClass.size());
         assertEquals("class2 class1 class3", ((Element) divClass.get(0)).getAttribute("class"));
 
-        List<Node> divClasses = doc.getAllNodesMatching(Selector.select().attrValEndWith("class", "class3").toMatcher());
+        var w3cDivClass = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(1, w3cDivClass.size());
+        assertEquals("class2 class1 class3", ((org.w3c.dom.Element) w3cDivClass.get(0)).getAttribute("class"));
+
+        matcher = Selector.select().attrValEndWith("class", "class3").toMatcher();
+        List<Node> divClasses = doc.getAllNodesMatching(matcher);
         assertEquals(2, divClasses.size());
+
+        var w3cDivClasses = W3CDom.getAllNodesMatching(w3cDoc, matcher).toList();
+        assertEquals(2, w3cDivClasses.size());
     }
 
     @Test

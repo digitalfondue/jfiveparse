@@ -229,11 +229,20 @@ public class W3CDom {
     }
 
 
+    /**
+     * Match {@link org.w3c.dom.Node} using a {@link NodeMatcher}.
+     *
+     * @param node
+     * @param matcher
+     * @return
+     */
     public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher) {
         return getAllNodesMatching(node, matcher, false);
     }
 
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch) {
+
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher,
+                                                               boolean onlyFirstMatch) {
         var nm = new NodeMatchers<>(matcher, onlyFirstMatch);
         traverse(node, nm);
         return nm.result().map(n -> n instanceof CommonNodeWrapper w ? w.node : null).filter(Objects::nonNull);
