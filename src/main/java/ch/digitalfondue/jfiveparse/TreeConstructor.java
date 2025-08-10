@@ -40,7 +40,6 @@ class TreeConstructor {
 
     private Tokenizer tokenizer;
 
-    static final int IM_INITIAL = 3;
     private int insertionMode = IM_INITIAL;
     private int originalInsertionMode;
 
@@ -1142,6 +1141,7 @@ class TreeConstructor {
     static final int IM_TEXT = 0;
     static final int IM_IN_BODY = 1;
     static final int IM_IN_CELL = 2;
+    static final int IM_INITIAL = 3;
     static final int IM_BEFORE_HTML = 4;
     static final int IM_BEFORE_HEAD = 5;
     static final int IM_IN_HEAD = 6;

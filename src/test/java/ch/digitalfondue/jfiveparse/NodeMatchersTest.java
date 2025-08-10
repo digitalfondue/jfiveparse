@@ -69,18 +69,30 @@ class NodeMatchersTest {
     @Test
     void firstElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
-        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isFirstElementChild().toMatcher());
+        var matcher = Selector.select().isFirstElementChild().toMatcher();
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(matcher);
         assertEquals(1, div.size());
         assertEquals(doc.getElementsByTagName("body").get(0).getChildNodes().get(1), div.get(0));
+
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+        var w3cDiv = W3CDom.getAllNodesMatching(w3cDoc.getElementsByTagName("body").item(0), matcher).toList();
+        assertEquals(1, w3cDiv.size());
+        assertEquals(w3cDoc.getElementsByTagName("body").item(0).getChildNodes().item(1), w3cDiv.get(0));
     }
 
     @Test
     void lastElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>text");
-        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().isLastElementChild().toMatcher());
+        var matcher = Selector.select().isLastElementChild().toMatcher();
+        List<Node> div = doc.getElementsByTagName("body").get(0).getAllNodesMatching(matcher);
         assertEquals(1, div.size());
         assertSame(doc.getElementsByTagName("body").get(0).getChildNodes().get(3), div.get(0));
 
+
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+        var w3cDiv = W3CDom.getAllNodesMatching(w3cDoc.getElementsByTagName("body").item(0), matcher).toList();
+        assertEquals(1, w3cDiv.size());
+        assertSame(w3cDoc.getElementsByTagName("body").item(0).getChildNodes().item(3), w3cDiv.get(0));
     }
 
     @Test
