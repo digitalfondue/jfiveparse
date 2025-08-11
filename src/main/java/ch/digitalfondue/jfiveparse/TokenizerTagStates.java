@@ -87,33 +87,36 @@ class TokenizerTagStates {
     }
 
     static void handleTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        int chr = processedInputStream.getNextInputCharacterAndConsume();
-        switch (chr) {
-        case Characters.TAB:
-        case Characters.LF:
-        case Characters.FF:
-        case Characters.SPACE:
-            tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
-            break;
-        case Characters.SOLIDUS:
-            tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
-            break;
-        case Characters.GREATERTHAN_SIGN:
-            tokenizer.setState(TokenizerState.DATA_STATE);
-            tokenizer.addCurrentAttributeAndEmitToken();
-            break;
-        case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER);
-            break;
-        case Characters.EOF:
-            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
-            processedInputStream.reconsume(chr);
-            break;
-        default:
-            tokenizer.appendCurrentTagToken(chr);
-            break;
-        }
+        // bypass and optimization, as we are accumulating the tag name, we can do it here
+        // in a single loop, avoiding method calls
+        do {
+            int chr = processedInputStream.getNextInputCharacterAndConsume();
+            switch (chr) {
+                case Characters.TAB:
+                case Characters.LF:
+                case Characters.FF:
+                case Characters.SPACE:
+                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                    return;
+                case Characters.SOLIDUS:
+                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    return;
+                case Characters.GREATERTHAN_SIGN:
+                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.addCurrentAttributeAndEmitToken();
+                    return;
+                case Characters.NULL:
+                    tokenizer.emitParseError();
+                    tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER);
+                    return;
+                case Characters.EOF:
+                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    processedInputStream.reconsume(chr);
+                    return;
+                default:
+                    tokenizer.tagName.append((char) chr);
+            }
+        } while (true);
     }
 
     static void handleSelfClosingStartTagState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
