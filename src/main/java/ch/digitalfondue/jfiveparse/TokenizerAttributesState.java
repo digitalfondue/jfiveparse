@@ -56,42 +56,45 @@ class TokenizerAttributesState {
     }
 
     static void handleAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        int chr = processedInputStream.getNextInputCharacterAndConsume();
-        switch (chr) {
-        case Characters.TAB:
-        case Characters.LF:
-        case Characters.FF:
-        case Characters.SPACE:
-            tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_NAME_STATE);
-            break;
-        case Characters.SOLIDUS:
-            tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
-            break;
-        case Characters.EQUALS_SIGN:
-            tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_VALUE_STATE);
-            break;
-        case Characters.GREATERTHAN_SIGN:
-            tokenizer.setState(TokenizerState.DATA_STATE);
-            tokenizer.addCurrentAttributeAndEmitToken();
-            break;
-        case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.appendCurrentAttributeName(Characters.REPLACEMENT_CHARACTER);
-            break;
-        case Characters.QUOTATION_MARK:
-        case Characters.APOSTROPHE:
-        case Characters.LESSTHAN_SIGN:
-            tokenizer.emitParseError();
-            tokenizer.appendCurrentAttributeName(chr);
-            break;
-        case Characters.EOF:
-            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
-            processedInputStream.reconsume(chr);
-            break;
-        default:
-            tokenizer.appendCurrentAttributeName(chr);
-            break;
-        }
+        // vvv optimization vvv, we try to bypass as much as possible for the case "appendCurrentAttributeName"
+        do {
+            int chr = processedInputStream.getNextInputCharacterAndConsume();
+            switch (chr) {
+                case Characters.TAB:
+                case Characters.LF:
+                case Characters.FF:
+                case Characters.SPACE:
+                    tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_NAME_STATE);
+                    return;
+                case Characters.SOLIDUS:
+                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    return;
+                case Characters.EQUALS_SIGN:
+                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_VALUE_STATE);
+                    return;
+                case Characters.GREATERTHAN_SIGN:
+                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.addCurrentAttributeAndEmitToken();
+                    return;
+                case Characters.NULL:
+                    tokenizer.emitParseError();
+                    tokenizer.appendCurrentAttributeName(Characters.REPLACEMENT_CHARACTER);
+                    return;
+                case Characters.QUOTATION_MARK:
+                case Characters.APOSTROPHE:
+                case Characters.LESSTHAN_SIGN:
+                    tokenizer.emitParseError();
+                    tokenizer.appendCurrentAttributeName(chr);
+                    return;
+                case Characters.EOF:
+                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    processedInputStream.reconsume(chr);
+                    return;
+                default:
+                    tokenizer.appendCurrentAttributeName(chr);
+                    break;
+            }
+        } while (true);
     }
 
     static void handleAfterAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
@@ -191,33 +194,10 @@ class TokenizerAttributesState {
     }
 
     static void handleAttributeValueDoubleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        int chr = processedInputStream.getNextInputCharacterAndConsume();
-        switch (chr) {
-        case Characters.QUOTATION_MARK:
-            tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
-            break;
-        case Characters.AMPERSAND:
-            // save current state
-            tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
-            //
-            tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
-            tokenizer.additionalAllowedCharacter = Characters.QUOTATION_MARK;
-            break;
-        case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
-            break;
-        case Characters.EOF:
-            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
-            processedInputStream.reconsume(chr);
-            break;
-        default:
-            ResizableCharBuilder currAttrValue = tokenizer.getCurrentAttributeValue();
-            currAttrValue.append((char) chr);
-            // vvv optimization vvv
-            for (;;) {
-                int nextChr = processedInputStream.getNextInputCharacterAndConsume();
-                switch (nextChr) {
+        // vvv optimization vvv, we try to append as much as possible
+        do {
+            int chr = processedInputStream.getNextInputCharacterAndConsume();
+            switch (chr) {
                 case Characters.QUOTATION_MARK:
                     tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
                     return;
@@ -230,19 +210,17 @@ class TokenizerAttributesState {
                     return;
                 case Characters.NULL:
                     tokenizer.emitParseError();
-                    currAttrValue.append(Characters.REPLACEMENT_CHARACTER);
-                    break;
+                    tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
+                    return;
                 case Characters.EOF:
                     tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
-                    processedInputStream.reconsume(nextChr);
+                    processedInputStream.reconsume(chr);
                     return;
                 default:
-                    currAttrValue.append((char) nextChr);
+                    tokenizer.appendCurrentAttributeValue(chr);
                     break;
-                }
             }
-        }
-
+        } while (true);
     }
 
     static void handleAttributeValueSingleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {

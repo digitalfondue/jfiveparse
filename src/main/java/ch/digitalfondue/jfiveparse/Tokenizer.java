@@ -621,8 +621,4 @@ class Tokenizer {
         this.attributes = attributes;
         this.isEndTagToken = false;
     }
-
-    ResizableCharBuilder getCurrentAttributeValue() {
-        return currentAttributeValue;
-    }
 }
