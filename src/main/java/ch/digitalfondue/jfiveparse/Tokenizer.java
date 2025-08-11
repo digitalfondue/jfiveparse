@@ -40,7 +40,7 @@ class Tokenizer {
     private ResizableCharBuilder currentAttributeValue;
     private int currentAttributeQuoteType;
     private boolean selfClosing;
-    private final ResizableCharBuilder tagName = new ResizableCharBuilder();
+    final ResizableCharBuilder tagName = new ResizableCharBuilder();
     private boolean isEndTagToken;
     char[] lastEmittedStartTagName;
 
@@ -443,6 +443,7 @@ class Tokenizer {
         currentAttributeValue = null;
     }
 
+
     void appendCurrentTagToken(int chr) {
         tagName.append((char) chr);
     }
@@ -619,9 +620,5 @@ class Tokenizer {
         this.tagName.set(tagName);
         this.attributes = attributes;
         this.isEndTagToken = false;
-    }
-
-    ResizableCharBuilder getCurrentAttributeValue() {
-        return currentAttributeValue;
     }
 }
