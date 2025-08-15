@@ -105,7 +105,7 @@ class TokenizerCharacterReference {
         boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.at(tentativelyMatchedLength - 1) == Characters.SEMICOLON;
         if (emitParseError) {
             for (int i = 0; emitParseError && i < tentativelyMatchedLength - 1; i++) {
-                emitParseError = emitParseError && Common.isAlphaNumericASCII(chr);
+                emitParseError = Common.isAlphaNumericASCII(chr);
             }
         }
 
@@ -276,72 +276,43 @@ class TokenizerCharacterReference {
 
     // TODO: use a support array!
     private static int handleRange9x(int chr) {
-        switch (chr) {
-        case 0x91:
-            return Characters.LEFT_SINGLE_QUOTATION_MARK;
-        case 0x92:
-            return Characters.RIGHT_SINGLE_QUOTATION_MARK;
-        case 0x93:
-            return Characters.LEFT_DOUBLE_QUOTATION_MARK;
-        case 0x94:
-            return Characters.RIGHT_DOUBLE_QUOTATION_MARK;
-        case 0x95:
-            return Characters.BULLET;
-        case 0x96:
-            return Characters.EN_DASH;
-        case 0x97:
-            return Characters.EM_DASH;
-        case 0x98:
-            return Characters.SMALL_TILDE;
-        case 0x99:
-            return Characters.TRADE_MARK_SIGN;
-        case 0x9A:
-            return Characters.LATIN_SMALL_LETTER_S_WITH_CARON;
-        case 0x9B:
-            return Characters.SINGLE_RIGHT_POINTING_ANGLE_QUOTATION_MARK;
-        case 0x9C:
-            return Characters.LATIN_SMALL_LIGATURE_OE;
-        case 0x9E:
-            return Characters.LATIN_SMALL_LETTER_Z_WITH_CARON;
-        case 0x9F:
-            return Characters.LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS;
+        return switch (chr) {
+            case 0x91 -> Characters.LEFT_SINGLE_QUOTATION_MARK;
+            case 0x92 -> Characters.RIGHT_SINGLE_QUOTATION_MARK;
+            case 0x93 -> Characters.LEFT_DOUBLE_QUOTATION_MARK;
+            case 0x94 -> Characters.RIGHT_DOUBLE_QUOTATION_MARK;
+            case 0x95 -> Characters.BULLET;
+            case 0x96 -> Characters.EN_DASH;
+            case 0x97 -> Characters.EM_DASH;
+            case 0x98 -> Characters.SMALL_TILDE;
+            case 0x99 -> Characters.TRADE_MARK_SIGN;
+            case 0x9A -> Characters.LATIN_SMALL_LETTER_S_WITH_CARON;
+            case 0x9B -> Characters.SINGLE_RIGHT_POINTING_ANGLE_QUOTATION_MARK;
+            case 0x9C -> Characters.LATIN_SMALL_LIGATURE_OE;
+            case 0x9E -> Characters.LATIN_SMALL_LETTER_Z_WITH_CARON;
+            case 0x9F -> Characters.LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS;
             // -----
-        default:
-            return -1;
-        }
+            default -> -1;
+        };
     }
 
     // TODO: use a support array!
     private static int handleRange8X(int chr) {
-        switch (chr) {
-        case 0x80:
-            return Characters.EURO_SIGN;
-        case 0x82:
-            return Characters.SINGLE_LOW_9_QUOTATION_MARK;
-        case 0x83:
-            return Characters.LATIN_SMALL_LETTER_F_WITH_HOOK;
-        case 0x84:
-            return Characters.DOUBLE_LOW_9_QUOTATION_MARK;
-        case 0x85:
-            return Characters.HORIZONTAL_ELLIPSIS;
-        case 0x86:
-            return Characters.DAGGER;
-        case 0x87:
-            return Characters.DOUBLE_DAGGER;
-        case 0x88:
-            return Characters.MODIFIER_LETTER_CIRCUMFLEX_ACCENT;
-        case 0x89:
-            return Characters.PER_MILLE_SIGN;
-        case 0x8A:
-            return Characters.LATIN_CAPITAL_LETTER_S_WITH_CARON;
-        case 0x8B:
-            return Characters.SINGLE_LEFT_POINTING_ANGLE_QUOTATION_MARK;
-        case 0x8C:
-            return Characters.LATIN_CAPITAL_LIGATURE_OE;
-        case 0x8E:
-            return Characters.LATIN_CAPITAL_LETTER_Z_WITH_CARON;
-        default:
-            return -1;
-        }
+        return switch (chr) {
+            case 0x80 -> Characters.EURO_SIGN;
+            case 0x82 -> Characters.SINGLE_LOW_9_QUOTATION_MARK;
+            case 0x83 -> Characters.LATIN_SMALL_LETTER_F_WITH_HOOK;
+            case 0x84 -> Characters.DOUBLE_LOW_9_QUOTATION_MARK;
+            case 0x85 -> Characters.HORIZONTAL_ELLIPSIS;
+            case 0x86 -> Characters.DAGGER;
+            case 0x87 -> Characters.DOUBLE_DAGGER;
+            case 0x88 -> Characters.MODIFIER_LETTER_CIRCUMFLEX_ACCENT;
+            case 0x89 -> Characters.PER_MILLE_SIGN;
+            case 0x8A -> Characters.LATIN_CAPITAL_LETTER_S_WITH_CARON;
+            case 0x8B -> Characters.SINGLE_LEFT_POINTING_ANGLE_QUOTATION_MARK;
+            case 0x8C -> Characters.LATIN_CAPITAL_LIGATURE_OE;
+            case 0x8E -> Characters.LATIN_CAPITAL_LETTER_Z_WITH_CARON;
+            default -> -1;
+        };
     }
 }
