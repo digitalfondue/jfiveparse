@@ -198,10 +198,6 @@ and tag names.
 ## TODO:
 - additional doc
 - expand the typesafe matcher api
-- expand the Node api
-  - https://developer.mozilla.org/en/docs/Web/API/Node
-- add some methods from jquery too 
-- cleanup code: but beware, no measurable slowdown is acceptable 
 - keep track of lines, eventually chars too
 - profile
   - various optimizations...
