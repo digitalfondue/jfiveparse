@@ -72,24 +72,25 @@ class TokenizerCommentStates {
     }
 
     static void handleCommentState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        int chr = processedInputStream.getNextInputCharacterAndConsume();
-        switch (chr) {
-        case Characters.HYPHEN_MINUS:
-            tokenizer.setState(TokenizerState.COMMENT_END_DASH_STATE);
-            break;
-        case Characters.NULL:
-            tokenizer.emitParseError();
-            tokenizer.appendCommentCharacter(Characters.REPLACEMENT_CHARACTER);
-            break;
-        case Characters.EOF:
-            tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
-            tokenizer.emitComment();
-            processedInputStream.reconsume(chr);
-            break;
-        default:
-            tokenizer.appendCommentCharacter(chr);
-            break;
-        }
+        do {
+            int chr = processedInputStream.getNextInputCharacterAndConsume();
+            switch (chr) {
+                case Characters.HYPHEN_MINUS:
+                    tokenizer.setState(TokenizerState.COMMENT_END_DASH_STATE);
+                    return;
+                case Characters.NULL:
+                    tokenizer.emitParseError();
+                    tokenizer.appendCommentCharacter(Characters.REPLACEMENT_CHARACTER);
+                    return;
+                case Characters.EOF:
+                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitComment();
+                    processedInputStream.reconsume(chr);
+                    return;
+                default:
+                    tokenizer.appendCommentCharacter(chr);
+            }
+        } while (true);
     }
 
     static void handleCommentEndDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
