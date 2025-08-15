@@ -605,8 +605,8 @@ class Common {
         };
     }
 
-    static boolean is(Element element, int nameID, int namespaceID) {
-        return element.nodeNameID == nameID && element.namespaceID == namespaceID;
+    static boolean isScriptSVGNS(Element element) {
+        return element.nodeNameID == Common.ELEMENT_SCRIPT_ID && element.namespaceID == Node.NAMESPACE_SVG_ID;
     }
 
     static boolean isHtmlNS(Element element, int nameID) {

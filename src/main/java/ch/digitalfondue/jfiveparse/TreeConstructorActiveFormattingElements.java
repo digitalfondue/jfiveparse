@@ -207,7 +207,7 @@ class TreeConstructorActiveFormattingElements {
             Element e = activeFormattingElements.get(i);
             if (MARKER_ELEMENT == e) {
                 return -1;
-            } else if (Common.is(e, Common.ELEMENT_A_ID, Node.NAMESPACE_HTML_ID)) {
+            } else if (Common.isHtmlNS(e, Common.ELEMENT_A_ID)) {
                 return i;
             }
         }

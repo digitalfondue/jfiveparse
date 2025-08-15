@@ -1027,7 +1027,7 @@ class TreeConstructorInBodyForeignContentText {
             treeConstructor.insertionModeInHtmlContent();
         } else if (tokenType == TT_START_TAG) {
             anyOtherStartTag(tagName, treeConstructor);
-        } else if (tokenType == TT_END_TAG && Common.is(treeConstructor.getCurrentNode(), ELEMENT_SCRIPT_ID, Node.NAMESPACE_SVG_ID)) {
+        } else if (tokenType == TT_END_TAG && Common.isScriptSVGNS(treeConstructor.getCurrentNode())) {
             // we don't execute scripts
             treeConstructor.popCurrentNode();
         } else if (tokenType == TT_END_TAG) {

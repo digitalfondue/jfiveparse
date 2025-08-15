@@ -666,7 +666,7 @@ class TreeConstructor {
     private int findLastElementPositionMatchingInNamespaceHtml(int nameID) {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element e = openElements.get(i);
-            if (Common.is(e, nameID, Node.NAMESPACE_HTML_ID)) {
+            if (Common.isHtmlNS(e, nameID)) {
                 return i;
             }
         }
