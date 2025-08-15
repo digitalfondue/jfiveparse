@@ -123,20 +123,20 @@ public class Parser {
         tokenHandler.setTokenizer(tokenizer);
 
         int namespaceID = node.namespaceID;
-        String name = node.nodeName;
+        int nameId = node.nodeNameID;
 
         // 4
         if (Node.NAMESPACE_HTML_ID == namespaceID) {
 
-            if ("title".equals(name) || "textarea".equals(name)) {
+            if (Common.ELEMENT_TITLE_ID == nameId || Common.ELEMENT_TEXTAREA_ID == nameId) {
                 tokenizer.setState(TokenizerState.RCDATA_STATE);
-            } else if ("style".equals(name) || "xmp".equals(name) || "iframe".equals(name) || "noembed".equals(name) || "noframes".equals(name)) {
+            } else if (Common.ELEMENT_STYLE_ID == nameId || Common.ELEMENT_XMP_ID == nameId || Common.ELEMENT_IFRAME_ID == nameId || Common.ELEMENT_NOEMBED_ID == nameId || Common.ELEMENT_NOFRAMES_ID == nameId) {
                 tokenizer.setState(TokenizerState.RAWTEXT_STATE);
-            } else if ("script".equals(name)) {
+            } else if (Common.ELEMENT_SCRIPT_ID == nameId) {
                 tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
-            } else if ("noscript".equals(name) && scriptingFlag) {
+            } else if (Common.ELEMENT_NOSCRIPT_ID == nameId && scriptingFlag) {
                 tokenizer.setState(TokenizerState.RAWTEXT_STATE);
-            } else if ("plaintext".equals(name)) {
+            } else if (Common.ELEMENT_PLAINTEXT_ID == nameId) {
                 tokenizer.setState(TokenizerState.PLAINTEXT_STATE);
             } else {
                 tokenizer.setState(TokenizerState.DATA_STATE);

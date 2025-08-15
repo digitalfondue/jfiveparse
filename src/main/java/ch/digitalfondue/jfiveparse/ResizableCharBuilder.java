@@ -32,6 +32,7 @@ class ResizableCharBuilder {
         buff = new char[16];
     }
 
+    // reset and set the given string
     void set(String s) {
         buff = s.toCharArray();
         pos = buff.length;

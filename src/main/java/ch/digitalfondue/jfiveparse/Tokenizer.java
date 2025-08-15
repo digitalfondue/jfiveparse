@@ -616,7 +616,6 @@ class Tokenizer {
     }
 
     void setStartToken(String tagName, Attributes attributes) {
-        this.tagName.reset();
         this.tagName.set(tagName);
         this.attributes = attributes;
         this.isEndTagToken = false;
