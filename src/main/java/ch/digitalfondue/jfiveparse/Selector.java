@@ -136,6 +136,20 @@ public class Selector {
 
     private final List<NodeMatcher> matchers = new ArrayList<>();
 
+    public static NodeMatcher parseSelector(String selector) {
+        List<List<CSS.CssSelector>> cssSelectors = CSS.parseSelector(selector);
+        List<NodeMatcher> res = new ArrayList<>();
+        for (List<CSS.CssSelector> cssSelector : cssSelectors) {
+            res.add(toNodeMatcher(cssSelector));
+        }
+        return res.size() == 1 ? res.get(0) : orMatchers(res);
+    }
+
+    private static NodeMatcher toNodeMatcher(List<CSS.CssSelector> selector) {
+        return n -> true; // FIXME
+    }
+
+
     /**
      * Static factory method. Build a selector builder.
      * 
@@ -429,6 +443,17 @@ public class Selector {
                 }
             }
             return true;
+        };
+    }
+
+    private static NodeMatcher orMatchers(List<NodeMatcher> nodeMatchers) {
+        return (node) -> {
+            for (NodeMatcher m : nodeMatchers) {
+                if (m.match(node)) {
+                    return true;
+                }
+            }
+            return false;
         };
     }
 

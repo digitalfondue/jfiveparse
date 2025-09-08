@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 // EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class CSS {
 
-    private static final Pattern reName = Pattern.compile("^[^#\\\\]?(?:\\\\(?:[\\da-f]{1,6}\\s?|.)|[\\w\\u00B0-\\uFFFF-])+");
-    private static final Pattern reEscape = Pattern.compile("\\\\([\\da-f]{1,6}\\s?|(\\s)|.)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RE_NAME = Pattern.compile("^[^#\\\\]?(?:\\\\(?:[\\da-f]{1,6}\\s?|.)|[\\w\\u00B0-\\uFFFF-])+");
+    private static final Pattern RE_ESCAPE = Pattern.compile("\\\\([\\da-f]{1,6}\\s?|(\\s)|.)", Pattern.CASE_INSENSITIVE);
 
 
     // expose it on the JFiveParse class (?)
@@ -80,7 +80,7 @@ class CSS {
     }
 
     private static String unescapeCSS(String cssString) {
-        return reEscape.matcher(cssString).replaceAll((r) -> {
+        return RE_ESCAPE.matcher(cssString).replaceAll((r) -> {
             String escaped = r.group(1);
             boolean isHexNumber = true;
             int high = 0;
@@ -158,7 +158,7 @@ class CSS {
 
 
         String getName(int offset) {
-            Matcher matcher = reName.matcher(selector.substring(selectorIndex + offset));
+            Matcher matcher = RE_NAME.matcher(selector.substring(selectorIndex + offset));
             if (!matcher.find()) {
                 throw new IllegalStateException("Expected name, found " + selector.substring(selectorIndex));
             }
@@ -467,7 +467,7 @@ class CSS {
                                 stripWhitespace(2);
                                 break;
                             }
-                        } else if (reName.matcher(selector.substring(selectorIndex)).find()) {
+                        } else if (RE_NAME.matcher(selector.substring(selectorIndex)).find()) {
                             name = getName(0);
                         } else {
                             break loop;
