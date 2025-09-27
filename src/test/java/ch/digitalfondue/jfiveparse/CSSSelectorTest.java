@@ -166,6 +166,46 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("#name\\+value", "name+value");
     }
 
+    @Test
+    void sizzleElementClass() {
+        // Class Selector
+        sizzleCheckMatcherIds(".blog", "mark", "simon");
+        // Class Selector
+        sizzleCheckMatcherIds(".GROUPS", "groups");
+        // Class Selector
+        sizzleCheckMatcherIds(".blog.link", "simon");
+        // Class Selector w/ Element
+        sizzleCheckMatcherIds("a.blog", "mark", "simon");
+        // Parent Class Selector
+        sizzleCheckMatcherIds("p .blog", "mark", "simon");
+
+        // Class selector using UTF8
+        sizzleCheckMatcherIds(".台北Táiběi", "utf8class1");
+        // Class selector using UTF8
+        sizzleCheckMatcherIds(".台北", "utf8class1", "utf8class2");
+        // Class selector using UTF8
+        sizzleCheckMatcherIds(".台北Táiběi.台北", "utf8class1");
+        // Class selector using UTF8
+        sizzleCheckMatcherIds(".台北Táiběi, .台北", "utf8class1", "utf8class2");
+        // Descendant class selector using UTF8
+        sizzleCheckMatcherIds("div .台北Táiběi", "utf8class1");
+        // Child class selector using UTF8
+        sizzleCheckMatcherIds("form > .台北Táiběi", "utf8class1");
+
+        // Escaped Class
+        sizzleCheckMatcherIds(".foo\\:bar", "foo:bar");
+        // Escaped Class
+        sizzleCheckMatcherIds(".test\\.foo\\[5\\]bar", "test.foo[5]bar");
+        // Descendant escaped Class
+        sizzleCheckMatcherIds("div .foo\\:bar", "foo:bar");
+        // Descendant escaped Class
+        sizzleCheckMatcherIds("div .test\\.foo\\[5\\]bar", "test.foo[5]bar");
+        // Child escaped Class
+        sizzleCheckMatcherIds("form > .foo\\:bar", "foo:bar");
+        // Child escaped Class
+        sizzleCheckMatcherIds("form > .test\\.foo\\[5\\]bar", "test.foo[5]bar");
+    }
+
 
     private static Document loadDocument(String name) {
         try {

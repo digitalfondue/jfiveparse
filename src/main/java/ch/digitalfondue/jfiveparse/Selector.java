@@ -159,6 +159,8 @@ public class Selector {
             } else if (part instanceof CSS.AttributeSelector a) {
                 if (a.action() == CSS.AttributeAction.EQUALS) {
                     res = res.attrValEq(a.name(), a.value());
+                } else if (a.action() == CSS.AttributeAction.ELEMENT && "class".equals(a.name())) {
+                    res = res.hasClass(a.value());
                 } else {
                     throw new IllegalStateException("to implement");
                 }
