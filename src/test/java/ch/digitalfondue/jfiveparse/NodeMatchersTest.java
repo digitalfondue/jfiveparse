@@ -67,6 +67,15 @@ class NodeMatchersTest {
     }
 
     @Test
+    void universalWithSpaces() {
+        Document doc = parser.parse(" <div> </div> <div id=myid> <span> <i> </i> </span> </div> <div> </div> ");
+        // div > *
+        var universal = doc.getElementsByTagName("body").get(0).getAllNodesMatching(Selector.select().element("div").withChild().universal().toMatcher());
+        assertEquals(1, universal.size());
+        assertEquals("span", universal.get(0).getNodeName());
+    }
+
+    @Test
     void firstElementTest() {
         Document doc = parser.parse("text<div></div><div id=myid></div><div></div>");
         var matcher = Selector.select().isFirstElementChild().toMatcher();
