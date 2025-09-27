@@ -10,7 +10,8 @@ jfiveparse pass all the non-scripted tests for the tokenizer and tree constructi
 It provides both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
 
-Requires java 17 (previous version 1.1.3 requires at least java 11).
+Version 1.1.4 and older require Java 11.
+Future 2.x.x versions will require Java 17.
 
 [Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
@@ -35,14 +36,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>1.1.3</version>
+    <version>1.1.4</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.1.3'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.1.4'
 ```
 
 ## Use:
