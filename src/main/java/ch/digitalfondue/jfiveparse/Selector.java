@@ -160,12 +160,12 @@ public class Selector {
     }
 
     /**
-     * Universal selector "*". It matches any node.
+     * Universal selector "*". It matches any _element_ node.
      *
      * @return
      */
     public Selector universal() {
-        matchers.add(n -> true);
+        matchers.add(n -> n.getNodeType() == Node.ELEMENT_NODE);
         return this;
     }
 
