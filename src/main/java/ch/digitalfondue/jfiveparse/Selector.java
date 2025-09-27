@@ -146,7 +146,27 @@ public class Selector {
     }
 
     private static NodeMatcher toNodeMatcher(List<CSS.CssSelector> selector) {
-        return n -> true; // FIXME
+        var res = Selector.select();
+        for (var part : selector) {
+            if (part instanceof CSS.Combinator c) {
+                res = switch (c.type()) {
+                    case DESCENDANT -> res.withDescendant();
+                    case CHILD -> res.withChild();
+                    case ADJACENT, PARENT, SIBLING, COLUMN_COMBINATOR -> throw new IllegalStateException("to implement");
+                };
+            } else if (part instanceof CSS.TagSelector t) {
+                res = t.namespace() == null ? res.element(t.name()) : res.element(t.name(), t.namespace());
+            } else if (part instanceof CSS.AttributeSelector a) {
+                throw new IllegalStateException("to implement");
+            } else if (part instanceof CSS.PseudoElement pe) {
+                throw new IllegalStateException("to implement");
+            } else if (part instanceof CSS.PseudoSelector ps) {
+                throw new IllegalStateException("to implement");
+            } else if (part instanceof CSS.UniversalSelector u) {
+                res = res.universal();
+            }
+        }
+        return res.toMatcher();
     }
 
 
