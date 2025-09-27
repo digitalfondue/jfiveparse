@@ -157,7 +157,11 @@ public class Selector {
             } else if (part instanceof CSS.TagSelector t) {
                 res = t.namespace() == null ? res.element(t.name()) : res.element(t.name(), t.namespace());
             } else if (part instanceof CSS.AttributeSelector a) {
-                throw new IllegalStateException("to implement");
+                if (a.action() == CSS.AttributeAction.EQUALS) {
+                    res = res.attrValEq(a.name(), a.value());
+                } else {
+                    throw new IllegalStateException("to implement");
+                }
             } else if (part instanceof CSS.PseudoElement pe) {
                 throw new IllegalStateException("to implement");
             } else if (part instanceof CSS.PseudoSelector ps) {
@@ -194,12 +198,12 @@ public class Selector {
     }
 
     /**
-     * Universal selector "*". It matches any node.
+     * Universal selector "*". It matches any _element_ node.
      *
      * @return
      */
     public Selector universal() {
-        matchers.add(n -> true);
+        matchers.add(n -> n.getNodeType() == Node.ELEMENT_NODE);
         return this;
     }
 
