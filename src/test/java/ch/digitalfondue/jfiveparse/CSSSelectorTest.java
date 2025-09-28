@@ -572,6 +572,22 @@ class CSSSelectorTest {
     }
 
 
+    @Test
+    void sizzlePseudoEmpty() {
+        sizzleCheckMatcherIds("ul:empty", "firstUL");
+        // Empty with comment node
+        sizzleCheckMatcherIds("ol:empty", "empty");
+        // FIXME check, Is A Parent jquery extension
+        /*sizzleCheckMatcherIds("#qunit-fixture p:parent",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );*/
+    }
+
 
     private static Document loadDocument(String name) {
         try {

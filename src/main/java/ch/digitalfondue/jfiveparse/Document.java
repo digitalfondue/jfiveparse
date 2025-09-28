@@ -18,6 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Represent a document.
@@ -34,6 +35,11 @@ public final class Document extends Node {
     @Override
     public List<Node> getChildNodes() {
         return Collections.unmodifiableList(childNodes);
+    }
+
+    @Override
+    public Stream<CommonNode> childNodes() {
+        return childNodes.stream().map(CommonNode.class::cast);
     }
 
     @Override

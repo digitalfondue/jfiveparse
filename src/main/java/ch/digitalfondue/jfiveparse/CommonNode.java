@@ -1,5 +1,7 @@
 package ch.digitalfondue.jfiveparse;
 
+import java.util.stream.Stream;
+
 public interface CommonNode {
     int getNodeType();
     String getNodeName();
@@ -10,6 +12,7 @@ public interface CommonNode {
     CommonElement getFirstElementChild();
     CommonElement getLastElementChild();
     CommonElement getPreviousElementSibling();
+    Stream<CommonNode> childNodes();
 
     String getTextContent();
 

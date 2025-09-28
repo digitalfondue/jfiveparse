@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
@@ -88,6 +89,11 @@ public final class Element extends Node implements CommonNode.CommonElement {
     @Override
     public List<Node> getChildNodes() {
         return childNodes == null ? EMPTY_LIST : Collections.unmodifiableList(childNodes);
+    }
+
+    @Override
+    public Stream<CommonNode> childNodes() {
+        return childNodes == null ? Stream.empty() : childNodes.stream().map(CommonNode.class::cast);
     }
 
     @Override

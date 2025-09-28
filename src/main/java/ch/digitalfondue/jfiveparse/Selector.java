@@ -195,8 +195,10 @@ public class Selector {
                     res = res.isFirstElementChild();
                 } else if ("last-child".equals(name)) {
                     res = res.isLastElementChild();
+                } else if ("empty".equals(name)) {
+                    res = res.isEmpty();
                 } else {
-                    throw new IllegalStateException("to implement");
+                    throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
             } else if (part instanceof CSS.UniversalSelector u) {
                 res = res.universal();
@@ -464,6 +466,18 @@ public class Selector {
      */
     public Selector isLastElementChild() {
         matchers.add(node -> node.getParentNode() != null && node.isSameNode(node.getParentNode().getLastElementChild()));
+        return this;
+    }
+
+    /**
+     * Match only the element which is empty (does not have any element or text nodes).
+     * <p>
+     * CSS equivalent: <code>:empty</code>
+     * </p>
+     * @return
+     */
+    public Selector isEmpty() {
+        matchers.add(node -> node.childNodes().noneMatch(s -> s.getNodeType() == Node.ELEMENT_NODE || s.getNodeType() == Node.TEXT_NODE));
         return this;
     }
 

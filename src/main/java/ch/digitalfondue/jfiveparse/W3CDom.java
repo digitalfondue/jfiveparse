@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class W3CDom {
@@ -168,6 +169,13 @@ public class W3CDom {
         @Override
         public CommonNode getFirstChild() {
             return wrap(node.getFirstChild());
+        }
+
+        @Override
+        public Stream<CommonNode> childNodes() {
+            var childNodes = node.getChildNodes();
+            var count = childNodes.getLength();
+            return IntStream.range(0, count).mapToObj(i -> wrap(childNodes.item(i)));
         }
 
         @Override

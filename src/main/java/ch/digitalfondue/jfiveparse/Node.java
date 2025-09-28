@@ -260,6 +260,11 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
         return EMPTY_LIST;
     }
 
+    @Override
+    public Stream<CommonNode> childNodes() {
+        return Stream.empty();
+    }
+
     /**
      * Get the first child, if present or else null.
      */
