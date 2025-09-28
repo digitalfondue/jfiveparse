@@ -167,10 +167,21 @@ public class Selector {
             } else if (part instanceof CSS.TagSelector t) {
                 res = t.namespace() == null ? res.element(t.name()) : res.element(t.name(), t.namespace());
             } else if (part instanceof CSS.AttributeSelector a) {
-                if (a.action() == CSS.AttributeAction.EQUALS) {
-                    res = res.attrValEq(a.name(), a.value());
-                } else if (a.action() == CSS.AttributeAction.ELEMENT && "class".equals(a.name())) {
-                    res = res.hasClass(a.value());
+                var action = a.action();
+                var name = a.name();
+                var value = a.value();
+                if (action == CSS.AttributeAction.EQUALS) {
+                    res = res.attrValEq(name, value);
+                } else if (action == CSS.AttributeAction.ELEMENT && "class".equals(name)) {
+                    res = res.hasClass(value);
+                } else if (action == CSS.AttributeAction.EXISTS) {
+                    res = res.attr(name);
+                } else if (action == CSS.AttributeAction.START) {
+                    res = res.attrValStartWith(name, value);
+                } else if (action == CSS.AttributeAction.ANY) {
+                    res = res.attrValContains(name, value);
+                } else if (action == CSS.AttributeAction.END) {
+                    res = res.attrValEndWith(name, value);
                 } else {
                     throw new IllegalStateException("to implement");
                 }
@@ -307,11 +318,18 @@ public class Selector {
     }
 
     private static NodeMatcher matchAttr(String name, BiPredicate<String, CommonNode.CommonElement> attributeValueMatcher) {
-        return (node) -> node instanceof CommonNode.CommonElement elem && elem.containsAttribute(name) && attributeValueMatcher.test(elem.getAttributeValue(name), elem);
+        return (node) -> {
+            if (node instanceof CommonNode.CommonElement elem) {
+                var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
+                var toCompareAttr = isHtml ? Common.convertToAsciiLowerCase(name) : name;
+                return elem.containsAttribute(toCompareAttr) && attributeValueMatcher.test(elem.getAttributeValue(toCompareAttr), elem);
+            }
+            return false;
+        };
     }
 
     /**
-     * Match only the element with an attribute named "name". Case sensitive.
+     * Match only the element with an attribute named "name". Case insensitive for html element.
      * <p>
      * CSS equivalent: <code>[name]</code>
      * </p>

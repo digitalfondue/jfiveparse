@@ -1,6 +1,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -9,7 +10,13 @@ import java.nio.file.Path;
 
 class CSSSelectorTest {
 
-    private final Document sizzle = loadDocument("sizzle.html");
+    private Document sizzle;
+
+    @BeforeEach
+    void reloadDocs() {
+        sizzle = loadDocument("sizzle.html");
+    }
+
 
 
     // see https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L15
@@ -225,6 +232,7 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("#tName2ID", "tName2ID");
     }
 
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L508
     @Test
     void sizzleMultiple() {
         // Comma Support
@@ -295,6 +303,7 @@ class CSSSelectorTest {
         );
     }
 
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L579
     @Test
     void sizzleChildAndAdjacent() {
         // Child
@@ -387,6 +396,181 @@ class CSSSelectorTest {
         // Non-existant ancestors
         sizzleCheckMatcherIds(".fototab > .thumbnails > a");
     }
+
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L703
+    @Test
+    void sizzleAttributes() {
+        // Attribute Exists
+        sizzleCheckMatcherIds("#qunit-fixture a[title]", "google");
+        // Attribute Exists (case-insensitive)
+        sizzleCheckMatcherIds("#qunit-fixture a[TITLE]", "google");
+        // Attribute Exists
+        sizzleCheckMatcherIds("#qunit-fixture *[title]", "google");
+        // Attribute Exists
+        sizzleCheckMatcherIds("#qunit-fixture [title]", "google");
+        // Attribute Exists
+        sizzleCheckMatcherIds("#qunit-fixture a[ title ]", "google");
+
+        // Boolean attribute exists
+        sizzleCheckMatcherIds("#select2 option[selected]", "option2d");
+        // Boolean attribute equals
+        sizzleCheckMatcherIds("#select2 option[selected='selected']", "option2d");
+
+        // Attribute Equals
+        sizzleCheckMatcherIds("#qunit-fixture a[rel='bookmark']", "simon1");
+        // Attribute Equals
+        sizzleCheckMatcherIds("#qunit-fixture a[rel='bookmark']", "simon1");
+        // Attribute Equals
+        sizzleCheckMatcherIds("#qunit-fixture a[rel=bookmark]", "simon1");
+        // Attribute Equals
+        sizzleCheckMatcherIds("#qunit-fixture a[href='http://www.google.com/']", "google");
+        // Attribute Equals
+        sizzleCheckMatcherIds("#qunit-fixture a[ rel = 'bookmark' ]", "simon1");
+        // Attribute Equals Number
+        sizzleCheckMatcherIds("#qunit-fixture option[value=1]",
+                "option1b",
+                "option2b",
+                "option3b",
+                "option4b",
+                "option5c"
+        );
+        // Attribute Equals Number
+        sizzleCheckMatcherIds("#qunit-fixture li[tabIndex=-1]", "foodWithNegativeTabIndex");
+
+        sizzle.getElementById("anchor2").setAttribute("href", "#2");
+        // `href` Attribute
+        sizzleCheckMatcherIds("p a[href^=#]", "anchor2");
+        sizzleCheckMatcherIds("p a[href*=#]", "simon1", "anchor2");
+
+        // `for` Attribute
+        sizzleCheckMatcherIds("form label[for]", "label-for");
+        // `for` Attribute in form
+        sizzleCheckMatcherIds("#form [for=action]", "label-for");
+
+        // Attribute containing []
+        sizzleCheckMatcherIds("input[name^='foo[']", "hidden2");
+        // Attribute containing []
+        sizzleCheckMatcherIds("input[name^='foo[bar]']", "hidden2");
+        // Attribute containing []
+        sizzleCheckMatcherIds("input[name*='[bar]']", "hidden2");
+        // Attribute containing []
+        sizzleCheckMatcherIds("input[name$='bar]']", "hidden2");
+        // Attribute containing []
+        sizzleCheckMatcherIds("input[name$='[bar]']", "hidden2");
+        // Attribute containing []
+        sizzleCheckMatcherIds("input[name$='foo[bar]']", "hidden2");
+        // Attribute containing []
+        sizzleCheckMatcherIds("input[name*='foo[bar]']", "hidden2");
+        // Without context, double-quoted attribute containing ','
+        sizzleCheckMatcherIds("input[data-comma=\"0,1\"]", "el12087");
+
+        // Multiple Attribute Equals
+        sizzleCheckMatcherIds("#form input[type='radio'], #form input[type='hidden']",
+                "radio1",
+                "radio2",
+                "hidden1"
+        );
+        // Multiple Attribute Equals
+        sizzleCheckMatcherIds("#form input[type='radio'], #form input[type=\"hidden\"]",
+                "radio1",
+                "radio2",
+                "hidden1"
+        );
+        // Multiple Attribute Equals
+        sizzleCheckMatcherIds("#form input[type='radio'], #form input[type=hidden]",
+                "radio1",
+                "radio2",
+                "hidden1"
+        );
+
+        // Attribute selector using UTF8
+        sizzleCheckMatcherIds("span[lang=中文]", "台北");
+
+        // Attribute Begins With
+        sizzleCheckMatcherIds("a[href ^= 'http://www']", "google", "yahoo");
+        // Attribute Ends With
+        sizzleCheckMatcherIds("a[href $= 'org/']", "mark");
+        // Attribute Contains
+        sizzleCheckMatcherIds("a[href *= 'google']", "google", "groups");
+        // Attribute Is Not Equal
+
+        // FIXME not standard
+        // sizzleCheckMatcherIds("#ap a[hreflang!='en']", "google", "groups", "anchor1");
+
+        // Empty values
+        sizzleCheckMatcherIds("#select1 option[value='']", "option1a");
+        // Empty values
+        // FIXME not standard
+        //sizzleCheckMatcherIds("#select1 option[value!='']", "option1b", "option1c", "option1d");
+
+        // Select options via :selected
+        // sizzleCheckMatcherIds("#select1 option:selected", "option1a");
+        // Select options via :selected
+        // sizzleCheckMatcherIds("#select2 option:selected", "option2d");
+        // Select options via :selected
+        // sizzleCheckMatcherIds("#select3 option:selected", "option3b", "option3c");
+        // Select options via :selected
+        // sizzleCheckMatcherIds("select[name='select2'] option:selected", "option2d");
+
+        // Grouped Form Elements
+        sizzleCheckMatcherIds("input[name='foo[bar]']", "hidden2");
+
+        // Underscores don't need escaping
+        sizzleCheckMatcherIds("input[id=types_all]", "types_all");
+
+        // FIXME added in document
+        // Escaped space
+        //sizzleCheckMatcherIds("input[name=foo\\ bar]", "attrbad_space");
+        // Escaped dot
+        //sizzleCheckMatcherIds("input[name=foo\\.baz]", "attrbad_dot");
+        // Escaped brackets
+        //sizzleCheckMatcherIds("input[name=foo\\[baz\\]]", "attrbad_brackets");
+
+        // Escaped quote + right bracket
+        //sizzleCheckMatcherIds("input[data-attr='foo_baz\\']']", "attrbad_injection");
+
+        // Quoted quote
+        //sizzleCheckMatcherIds("input[data-attr='\\'']", "attrbad_quote");
+        // Quoted backslash
+        //sizzleCheckMatcherIds("input[data-attr='\\\\']", "attrbad_backslash");
+        // Quoted backslash quote
+        //sizzleCheckMatcherIds("input[data-attr='\\\\\\'']", "attrbad_backslash_quote");
+        // Quoted backslash backslash
+        //sizzleCheckMatcherIds("input[data-attr='\\\\\\\\']", "attrbad_backslash_backslash");
+
+        // Quoted backslash backslash (numeric escape)
+        //sizzleCheckMatcherIds("input[data-attr='\\5C\\\\']", "attrbad_backslash_backslash");
+        // Quoted backslash backslash (numeric escape with trailing space)
+        //sizzleCheckMatcherIds("input[data-attr='\\5C \\\\']", "attrbad_backslash_backslash");
+        // Quoted backslash backslash (numeric escape with trailing tab)
+        //sizzleCheckMatcherIds("input[data-attr='\\5C\t\\\\']", "attrbad_backslash_backslash");
+        // Long numeric escape (BMP)
+        //sizzleCheckMatcherIds("input[data-attr='\\04e00']", "attrbad_unicode");
+
+        // `input[type=text]`
+        sizzleCheckMatcherIds("#form input[type=text]", "text1", "text2", "hidden2", "name");
+        // `input[type=search]`
+        sizzleCheckMatcherIds("#form input[type=search]", "search");
+        // `script[src]` (jQuery #13777)
+        sizzleCheckMatcherIds("#moretests script[src]", "script-src");
+
+        var foo = sizzle.getElementById("foo");
+        // Object.prototype property "constructor" (negative)',
+        sizzleCheckMatcherIds("[constructor]");
+        // Gecko Object.prototype property "watch" (negative)',
+        sizzleCheckMatcherIds("[watch]");
+
+        foo.setAttribute("constructor", "foo");
+        foo.setAttribute("watch", "bar");
+        // Object.prototype property "constructor"',
+        sizzleCheckMatcherIds("[constructor='foo']", "foo");
+        // Gecko Object.prototype property "watch"',
+        sizzleCheckMatcherIds("[watch='bar']", "foo");
+
+        // Value attribute is retrieved correctly
+        sizzleCheckMatcherIds("input[value=Test]", "text1", "text2");
+    }
+
 
 
     private static Document loadDocument(String name) {
