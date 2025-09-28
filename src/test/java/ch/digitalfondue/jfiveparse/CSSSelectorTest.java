@@ -6,25 +6,13 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 class CSSSelectorTest {
 
     private final Document sizzle = loadDocument("sizzle.html");
 
 
-    private void sizzleCheckMatcherIds(String selector, String... ids) {
-        var found = sizzle.getAllNodesMatching(Selector.parseSelector(selector));
-        Assertions.assertEquals(ids.length, found.size());
-        for (int i = 0; i < ids.length; i++) {
-            Assertions.assertInstanceOf(Element.class, found.get(i));
-            Element e = (Element) found.get(i);
-            Assertions.assertEquals(ids[i], e.getAttribute("id"));
-        }
-    }
-
-
-    // see https://github.com/fb55/css-select/blob/master/test/sizzle.ts
+    // see https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L15
     @Test
     void sizzleElementTest() {
         //
@@ -89,8 +77,9 @@ class CSSSelectorTest {
         // TODO:
     }
 
+    // see https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L265
     @Test
-    void sizzleElementId() {
+    void sizzleId() {
         // ID Selector
         sizzleCheckMatcherIds("#body", "body");
         // ID Selector w/ Element
@@ -166,8 +155,9 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("#name\\+value", "name+value");
     }
 
+    // see https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L380
     @Test
-    void sizzleElementClass() {
+    void sizzleClass() {
         // Class Selector
         sizzleCheckMatcherIds(".blog", "mark", "simon");
         // Class Selector
@@ -206,6 +196,105 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("form > .test\\.foo\\[5\\]bar", "test.foo[5]bar");
     }
 
+    // see https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L466
+    @Test
+    void sizzleName() {
+        // Name selector
+        sizzleCheckMatcherIds("input[name=action]", "text1");
+        // Name selector with single quotes
+        sizzleCheckMatcherIds("input[name='action']", "text1");
+        // Name selector with double quotes
+        sizzleCheckMatcherIds("input[name=\"action\"]", "text1");
+
+        // Name selector non-input
+        sizzleCheckMatcherIds("[name=example]", "name-is-example");
+        // Name selector non-input
+        sizzleCheckMatcherIds("[name=div]", "name-is-div");
+        // Name selector non-input
+        sizzleCheckMatcherIds("*[name=iframe]", "iframe");
+
+        // Name selector for grouped input
+        sizzleCheckMatcherIds("input[name='types[]']", "types_all", "types_anime", "types_movie");
+
+
+        // Find elements that have similar IDs
+        sizzleCheckMatcherIds("[name=tName1]", "tName1ID");
+        // Find elements that have similar IDs
+        sizzleCheckMatcherIds("[name=tName2]", "tName2ID");
+        // Find elements that have similar IDs
+        sizzleCheckMatcherIds("#tName2ID", "tName2ID");
+    }
+
+    @Test
+    void sizzleMultiple() {
+        // Comma Support
+        sizzleCheckMatcherIds("h2, #qunit-fixture p",
+                "qunit-banner",
+                "qunit-userAgent",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // Comma Support
+        sizzleCheckMatcherIds("h2 , #qunit-fixture p",
+                "qunit-banner",
+                "qunit-userAgent",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // Comma Support
+        sizzleCheckMatcherIds("h2 , #qunit-fixture p",
+                "qunit-banner",
+                "qunit-userAgent",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // Comma Support
+        sizzleCheckMatcherIds("h2,#qunit-fixture p",
+                "qunit-banner",
+                "qunit-userAgent",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // Comma Support
+        sizzleCheckMatcherIds("h2,#qunit-fixture p ",
+                "qunit-banner",
+                "qunit-userAgent",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // Comma Support
+        sizzleCheckMatcherIds("h2\t,\r#qunit-fixture p\n",
+                "qunit-banner",
+                "qunit-userAgent",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+    }
+
 
     private static Document loadDocument(String name) {
         try {
@@ -217,5 +306,17 @@ class CSSSelectorTest {
 
     private static String load(String name) throws IOException {
         return Files.readString(Path.of("src/test/resources/css/" + name));
+    }
+
+
+    // check if the given selector is able to find all the elements with the given id (with the specified order)
+    private void sizzleCheckMatcherIds(String selector, String... ids) {
+        var found = sizzle.getAllNodesMatching(Selector.parseSelector(selector));
+        Assertions.assertEquals(ids.length, found.size());
+        for (int i = 0; i < ids.length; i++) {
+            Assertions.assertInstanceOf(Element.class, found.get(i));
+            Element e = (Element) found.get(i);
+            Assertions.assertEquals(ids[i], e.getAttribute("id"));
+        }
     }
 }
