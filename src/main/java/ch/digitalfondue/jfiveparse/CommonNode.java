@@ -9,6 +9,9 @@ public interface CommonNode {
     CommonNode getLastChild();
     CommonElement getFirstElementChild();
     CommonElement getLastElementChild();
+    CommonElement getPreviousElementSibling();
+
+    String getTextContent();
 
     boolean isSameNode(CommonNode node);
 

@@ -295,6 +295,99 @@ class CSSSelectorTest {
         );
     }
 
+    @Test
+    void sizzleChildAndAdjacent() {
+        // Child
+        sizzleCheckMatcherIds("p > a", "simon1", "google", "groups", "mark", "yahoo", "simon");
+        // Child
+        sizzleCheckMatcherIds("p> a", "simon1", "google", "groups", "mark", "yahoo", "simon");
+        // Child
+        sizzleCheckMatcherIds("p >a", "simon1", "google", "groups", "mark", "yahoo", "simon");
+        // Child
+        sizzleCheckMatcherIds("p>a", "simon1", "google", "groups", "mark", "yahoo", "simon");
+        // Child w/ Class
+        sizzleCheckMatcherIds("p > a.blog", "mark", "simon");
+        // All Children
+        sizzleCheckMatcherIds("code > *", "anchor1", "anchor2");
+        // All Grandchildren
+        sizzleCheckMatcherIds("p > * > *", "anchor1", "anchor2");
+        // Adjacent
+        sizzleCheckMatcherIds("#qunit-fixture a + a", "groups", "tName2ID");
+        // Adjacent
+        sizzleCheckMatcherIds("#qunit-fixture a +a", "groups", "tName2ID");
+        // Adjacent
+        sizzleCheckMatcherIds("#qunit-fixture a+ a", "groups", "tName2ID");
+        // Adjacent
+        sizzleCheckMatcherIds("#qunit-fixture a+a", "groups", "tName2ID");
+        // Adjacent
+        sizzleCheckMatcherIds("p + p", "ap", "en", "sap");
+        // Adjacent
+        sizzleCheckMatcherIds("p#firstp + p", "ap");
+        // Adjacent
+        sizzleCheckMatcherIds("p[lang=en] + p", "sap");
+        // Adjacent
+        sizzleCheckMatcherIds("a.GROUPS + code + a", "mark");
+        // Comma, Child, and Adjacent
+        sizzleCheckMatcherIds("#qunit-fixture a + a, code > a",
+                "groups",
+                "anchor1",
+                "anchor2",
+                "tName2ID"
+        );
+        // Element Preceded By
+        sizzleCheckMatcherIds("#qunit-fixture p ~ div",
+                "foo",
+                "nothiddendiv",
+                "moretests",
+                "tabindex-tests",
+                "liveHandlerOrder",
+                "siblingTest"
+        );
+        // Element Preceded By
+        sizzleCheckMatcherIds("#first ~ div",
+                "moretests",
+                "tabindex-tests",
+                "liveHandlerOrder",
+                "siblingTest"
+        );
+        // Element Preceded By
+        sizzleCheckMatcherIds("#groups ~ a", "mark");
+        // Element Preceded By
+        sizzleCheckMatcherIds("#length ~ input", "idTest");
+        // Element Preceded By
+        sizzleCheckMatcherIds("#siblingfirst ~ em", "siblingnext", "siblingthird");
+        // Element Preceded By (multiple)
+        sizzleCheckMatcherIds("#siblingTest em ~ em ~ em ~ span", "siblingspan");
+        // Element Preceded By, Containing
+        sizzleCheckMatcherIds("#liveHandlerOrder ~ div em:contains('1')", "siblingfirst");
+
+        // Multiple combinators selects all levels
+        sizzleCheckMatcherIds("#siblingTest em *",
+                "siblingchild",
+                "siblinggrandchild",
+                "siblinggreatgrandchild"
+        );
+        // Multiple combinators selects all levels
+        sizzleCheckMatcherIds("#siblingTest > em *",
+                "siblingchild",
+                "siblinggrandchild",
+                "siblinggreatgrandchild"
+        );
+        // Multiple sibling combinators doesn't miss general siblings
+        sizzleCheckMatcherIds("#siblingTest > em:first-child + em ~ span", "siblingspan");
+        // Combinators are not skipped when mixing general and specific
+        sizzleCheckMatcherIds("#siblingTest > em:contains('x') + em ~ span");
+
+        // Verify deep class selector
+        sizzleCheckMatcherIds("div.blah > p > a");
+
+        // No element deep selector
+        sizzleCheckMatcherIds("div.foo > span > a");
+
+        // Non-existant ancestors
+        sizzleCheckMatcherIds(".fototab > .thumbnails > a");
+    }
+
 
     private static Document loadDocument(String name) {
         try {

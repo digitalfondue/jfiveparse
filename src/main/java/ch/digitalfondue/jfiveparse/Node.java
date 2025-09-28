@@ -499,6 +499,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     /**
      * Get the text content of the node.
      */
+    @Override
     public String getTextContent() {
 		if (this instanceof Text t) {
 			return t.getData();

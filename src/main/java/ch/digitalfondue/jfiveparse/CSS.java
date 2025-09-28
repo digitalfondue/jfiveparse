@@ -72,7 +72,12 @@ class CSS {
     record UniversalSelector(String namespace) implements CssSelector {}
 
     enum CombinatorType {
-        CHILD, PARENT, SIBLING, ADJACENT, COLUMN_COMBINATOR, DESCENDANT
+        CHILD,
+        PARENT,
+        SIBLING, // subsequent-sibling combinator: "~"
+        ADJACENT, // next-sibling combinator: "+"
+        COLUMN_COMBINATOR,
+        DESCENDANT
     }
 
     enum AttributeAction {

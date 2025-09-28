@@ -44,6 +44,14 @@ import java.util.function.BiPredicate;
  * <td><code>Selector.select().hasClass("className1").withDescendant().hasClass("className2").toMatcher()</code></td>
  * </tr>
  * <tr>
+ * <td>div + p</td>
+ * <td><code>Selector.select().element("div").nextSibling().element("p").toMatcher()</code></td>
+ * </tr>
+ * <tr>
+ * <td>div ~ p</td>
+ * <td><code>Selector.select().element("div").subsequentSibling().element("p").toMatcher()</code></td>
+ * </tr>
+ * <tr>
  * <td>div.className</td>
  * <td>
  * <code>Selector.select().element("div").hasClass("className").toMatcher()</code>
@@ -109,13 +117,13 @@ import java.util.function.BiPredicate;
  * <tr>
  * <td>span:first-child</td>
  * <td>
- * <code>Selector.select().element("span").isFirstChild().toMatcher()</code>
+ * <code>Selector.select().element("span").isFirstElementChild().toMatcher()</code>
  * </td>
  * </tr>
  * <tr>
  * <td>span:last-child</td>
  * <td>
- * <code>Selector.select().element("span").isLastChild().toMatcher()</code>
+ * <code>Selector.select().element("span").isLastElementChild().toMatcher()</code>
  * </td>
  * </tr>
  * <tr>
@@ -152,7 +160,9 @@ public class Selector {
                 res = switch (c.type()) {
                     case DESCENDANT -> res.withDescendant();
                     case CHILD -> res.withChild();
-                    case ADJACENT, PARENT, SIBLING, COLUMN_COMBINATOR -> throw new IllegalStateException("to implement");
+                    case ADJACENT -> res.nextSibling();
+                    case SIBLING -> res.subsequentSibling();
+                    case PARENT, COLUMN_COMBINATOR -> throw new IllegalStateException("to implement");
                 };
             } else if (part instanceof CSS.TagSelector t) {
                 res = t.namespace() == null ? res.element(t.name()) : res.element(t.name(), t.namespace());
@@ -167,12 +177,39 @@ public class Selector {
             } else if (part instanceof CSS.PseudoElement pe) {
                 throw new IllegalStateException("to implement");
             } else if (part instanceof CSS.PseudoSelector ps) {
-                throw new IllegalStateException("to implement");
+                String name = ps.name();
+                if ("contains".equals(name) && ps.data() instanceof CSS.DataString ds) {
+                    res = res.contains(ds.value());
+                } else if ("first-child".equals(name)) {
+                    res = res.isFirstElementChild();
+                } else if ("last-child".equals(name)) {
+                    res = res.isLastElementChild();
+                } else {
+                    throw new IllegalStateException("to implement");
+                }
             } else if (part instanceof CSS.UniversalSelector u) {
                 res = res.universal();
             }
         }
         return res.toMatcher();
+    }
+
+    /**
+     * Pseudo selector: div:contains('text').
+     * See <a href="https://api.jquery.com/contains-selector/#contains1">https://api.jquery.com/contains-selector/#contains1</a>.
+     *
+     * @param value
+     * @return
+     */
+    public Selector contains(String value) {
+        matchers.add((node) -> {
+            if (node instanceof CommonNode.CommonElement e) {
+                var textContent = e.getTextContent();
+                return textContent != null && textContent.contains(value);
+            }
+            return false;
+        });
+        return this;
     }
 
 
@@ -370,10 +407,6 @@ public class Selector {
     /**
      * Match only the node which is a first child.
      * 
-     * <p>
-     * CSS equivalent: <code>:first-child</code>
-     * </p>
-     * 
      * @return
      */
     public Selector isFirstChild() {
@@ -383,6 +416,10 @@ public class Selector {
 
     /**
      * Match only the element which is a first child.
+     *
+     * <p>
+     * CSS equivalent: <code>:first-child</code>
+     * </p>
      * 
      * @return
      */
@@ -394,10 +431,6 @@ public class Selector {
     /**
      * Match only the node which is a last child.
      * 
-     * <p>
-     * CSS equivalent: <code>:last-child</code>
-     * </p>
-     * 
      * @return
      */
     public Selector isLastChild() {
@@ -407,7 +440,9 @@ public class Selector {
 
     /**
      * Match only the element which is a last child.
-     * 
+     * <p>
+     * CSS equivalent: <code>:last-child</code>
+     * </p>
      * @return
      */
     public Selector isLastElementChild() {
@@ -434,6 +469,50 @@ public class Selector {
         var rules = andMatchers(copyAndClear());
         NodeMatcher hasParentMatching = (node) -> node.getParentNode() != null && rules.match(node.getParentNode());
         matchers.add(hasParentMatching);
+        return this;
+    }
+
+    /**
+     * Next sibling combinator (+).
+     *
+     * <p>
+     * CSS equivalent: <code>img + p</code>
+     * </p>
+     *
+     * @return
+     */
+    public Selector nextSibling() {
+        var rules = andMatchers(copyAndClear());
+        NodeMatcher nextSibling = (node) -> {
+            var previousElementSibling = node.getPreviousElementSibling();
+            return previousElementSibling != null && rules.match(previousElementSibling);
+        };
+        matchers.add(nextSibling);
+        return this;
+    }
+
+    /**
+     * Subsequent sibling combinator (~).
+     *
+     * <p>
+     * CSS equivalent: <code>img ~ p</code>
+     * </p>
+     *
+     * @return
+     */
+    public Selector subsequentSibling() {
+        var rules = andMatchers(copyAndClear());
+        NodeMatcher subsequentSibling = (node) -> {
+            var previousElementSibling = node.getPreviousElementSibling();
+            while(previousElementSibling != null) {
+                if (rules.match(previousElementSibling)) {
+                    return true;
+                }
+                previousElementSibling = previousElementSibling.getPreviousElementSibling();
+            };
+            return false;
+        };
+        matchers.add(subsequentSibling);
         return this;
     }
 

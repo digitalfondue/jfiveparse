@@ -201,8 +201,22 @@ public class W3CDom {
         }
 
         @Override
+        public CommonElement getPreviousElementSibling() {
+            var previous = node.getPreviousSibling();
+            while (previous != null && previous.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
+                previous = previous.getPreviousSibling();
+            }
+            return previous != null ? new CommonElementWrapper((org.w3c.dom.Element) previous) : null;
+        }
+
+        @Override
         public boolean isSameNode(CommonNode otherNode) {
             return otherNode instanceof CommonNodeWrapper cnw && node.isSameNode(cnw.node);
+        }
+
+        @Override
+        public String getTextContent() {
+            return node.getTextContent();
         }
     }
 
