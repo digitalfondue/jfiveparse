@@ -329,7 +329,7 @@ public class Selector {
     }
 
     /**
-     * Match only the element with an attribute named "name". Case insensitive for html element.
+     * Match only the element with an attribute named "name". Case-insensitive for html element.
      * <p>
      * CSS equivalent: <code>[name]</code>
      * </p>
@@ -344,7 +344,6 @@ public class Selector {
 
     /**
      * Match only the element with an attribute named "name" with value "value".
-     * Case sensitive.
      * <p>
      * CSS equivalent: <code>[name=value]</code>
      * </p>
@@ -360,7 +359,7 @@ public class Selector {
 
     /**
      * Match only the element with an attribute named "name" with "value"
-     * present in the list of white space delimited values. Case sensitive.
+     * present in the list of white space delimited values.
      * <p>
      * CSS equivalent: <code>[name~=value]</code>
      * </p>
