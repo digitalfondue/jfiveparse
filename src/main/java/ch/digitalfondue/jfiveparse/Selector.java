@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -199,6 +200,10 @@ public class Selector {
                     res = res.isEmpty();
                 } else if ("only-child".equals(name)) {
                     res = res.isOnlyChild();
+                } else if ("first-of-type".equals(name)) {
+                    res = res.isFirstOfType();
+                } else if ("last-of-type".equals(name)) {
+                    res = res.isLastOfType();
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
@@ -209,6 +214,25 @@ public class Selector {
         return res.toMatcher();
     }
 
+    public Selector isLastOfType() {
+        return this;
+    }
+
+    public Selector isFirstOfType() {
+        matchers.add(node -> {
+            if (node.getParentNode() != null) {
+                var nodeName = node.getNodeName();
+                var res = node.getParentNode()
+                        .childNodes()
+                        .filter(e -> IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName))
+                        .findFirst();
+                return res.isPresent() && res.get().isSameNode(node);
+            }
+            return false;
+        });
+        return this;
+    }
+
     /**
      * Pseudo selector: div:contains('text').
      * See <a href="https://api.jquery.com/contains-selector/#contains1">https://api.jquery.com/contains-selector/#contains1</a>.
@@ -217,7 +241,7 @@ public class Selector {
      * @return
      */
     public Selector contains(String value) {
-        matchers.add((node) -> {
+        matchers.add(node -> {
             if (node instanceof CommonNode.CommonElement e) {
                 var textContent = e.getTextContent();
                 return textContent != null && textContent.contains(value);
@@ -237,6 +261,8 @@ public class Selector {
         return new Selector();
     }
 
+    private static final Predicate<CommonNode> IS_ELEMENT = node -> node.getNodeType() == Node.ELEMENT_NODE;
+
     /**
      * Match an element with the given name.
      * <p>
@@ -247,7 +273,7 @@ public class Selector {
      * @return
      */
     public Selector element(String name) {
-        matchers.add(node -> node.getNodeType() == Node.ELEMENT_NODE && name.equals(node.getNodeName()));
+        matchers.add(node -> IS_ELEMENT.test(node) && name.equals(node.getNodeName()));
         return this;
     }
 
@@ -257,7 +283,7 @@ public class Selector {
      * @return
      */
     public Selector universal() {
-        matchers.add(n -> n.getNodeType() == Node.ELEMENT_NODE);
+        matchers.add(IS_ELEMENT::test);
         return this;
     }
 
@@ -479,7 +505,7 @@ public class Selector {
      * @return
      */
     public Selector isEmpty() {
-        matchers.add(node -> node.childNodes().noneMatch(s -> s.getNodeType() == Node.ELEMENT_NODE || s.getNodeType() == Node.TEXT_NODE));
+        matchers.add(node -> node.childNodes().noneMatch(s -> IS_ELEMENT.test(s) || s.getNodeType() == Node.TEXT_NODE));
         return this;
     }
 
@@ -495,7 +521,7 @@ public class Selector {
     public Selector isOnlyChild() {
         matchers.add(node -> node.getParentNode() == null ||
                 (node.getParentNode().childNodes()
-                        .filter(s -> s.getNodeType() == Node.ELEMENT_NODE)
+                        .filter(IS_ELEMENT)
                         .allMatch(n -> n.isSameNode(node))));
         return this;
     }

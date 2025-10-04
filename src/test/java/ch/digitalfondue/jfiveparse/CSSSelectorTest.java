@@ -574,6 +574,7 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("ol:empty", "empty");
     }
 
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L984
     @Test
     void sizzlePseudoFirstLastOnlyChildOfType() {
         // First Child
@@ -588,6 +589,7 @@ class CSSSelectorTest {
         // Last Child
         sizzleCheckMatcherIds("p:last-child", "sap");
         // Last Child (leading id)
+
         sizzleCheckMatcherIds("#qunit-fixture a:last-child",
                 "simon1",
                 "anchor1",
@@ -610,9 +612,23 @@ class CSSSelectorTest {
                 "liveLink2"
         );
 
-        // TODO: complete
-    }
 
+        // First-of-type
+        sizzleCheckMatcherIds("#qunit-fixture > p:first-of-type", "firstp");
+
+        // FIXME
+        // Last-of-type
+        /*sizzleCheckMatcherIds("#qunit-fixture > p:last-of-type", "first");
+        // Only-of-type
+        sizzleCheckMatcherIds("#qunit-fixture > :only-of-type",
+                "name+value",
+                "firstUL",
+                "empty",
+                "floatTest",
+                "iframe",
+                "table"
+        );*/
+    }
 
     private static Document loadDocument(String name) {
         try {
