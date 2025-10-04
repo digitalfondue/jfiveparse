@@ -30,7 +30,7 @@ public final class DOMTokenList extends AbstractList<String> {
 
     private static final Pattern SPACES = Pattern.compile("\\s+");
 
-    static List<String> extractValues(CommonNode.CommonElement element, String attrName) {
+    static List<String> extractValues(SelectableNode.SelectableElement element, String attrName) {
         List<String> vals = new ArrayList<>();
         if (element.containsAttribute(attrName)) {
             String value = element.getAttributeValue(attrName);

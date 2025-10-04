@@ -21,7 +21,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class W3CDom {
@@ -133,21 +132,21 @@ public class W3CDom {
         }
     }
 
-    private static CommonNode wrap(org.w3c.dom.Node node) {
+    private static SelectableNode wrap(org.w3c.dom.Node node) {
         if (node == null) {
             return null;
         }
         if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-            return new CommonElementWrapper((org.w3c.dom.Element) node);
+            return new SelectableElementWrapper((org.w3c.dom.Element) node);
         }
-        return new CommonNodeWrapper(node);
+        return new SelectableNodeWrapper(node);
     }
 
-    private static class CommonNodeWrapper implements CommonNode {
+    private static class SelectableNodeWrapper implements SelectableNode {
 
         protected final org.w3c.dom.Node node;
 
-        CommonNodeWrapper(org.w3c.dom.Node node) {
+        SelectableNodeWrapper(org.w3c.dom.Node node) {
             this.node = node;
         }
 
@@ -162,64 +161,63 @@ public class W3CDom {
         }
 
         @Override
-        public CommonNode getParentNode() {
+        public SelectableNode getParentNode() {
             return wrap(node.getParentNode());
         }
 
         @Override
-        public CommonNode getFirstChild() {
+        public SelectableNode getFirstChild() {
             return wrap(node.getFirstChild());
         }
 
         @Override
-        public Stream<CommonNode> childNodes() {
+        public List<SelectableNode> childNodes() {
             var childNodes = node.getChildNodes();
-            var count = childNodes.getLength();
-            return IntStream.range(0, count).mapToObj(i -> wrap(childNodes.item(i)));
+            return new ReadOnlyCommonNodeList((i) -> wrap(childNodes.item(i)), childNodes.getLength());
         }
 
         @Override
-        public CommonNode getLastChild() {
+        public SelectableNode getLastChild() {
             return wrap(node.getLastChild());
         }
 
         @Override
-        public CommonElement getFirstElementChild() {
+        public SelectableElement getFirstElementChild() {
             var childNodes = node.getChildNodes();
             var count = childNodes.getLength();
             for (int i = 0; i < count; i++) {
                 var childNode = childNodes.item(i);
                 if (childNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    return new CommonElementWrapper((org.w3c.dom.Element) childNode);
+                    return new SelectableElementWrapper((org.w3c.dom.Element) childNode);
                 }
             }
             return null;
         }
 
         @Override
-        public CommonElement getLastElementChild() {
+        public SelectableElement getLastElementChild() {
             var childNodes = node.getChildNodes();
             for (int i = childNodes.getLength() - 1; i >= 0; i--) {
                 var childNode = childNodes.item(i);
                 if (childNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    return new CommonElementWrapper((org.w3c.dom.Element) childNode);
+                    return new SelectableElementWrapper((org.w3c.dom.Element) childNode);
                 }
             }
             return null;
         }
 
         @Override
-        public CommonElement getPreviousElementSibling() {
+        public SelectableElement getPreviousElementSibling() {
             var previous = node.getPreviousSibling();
             while (previous != null && previous.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 previous = previous.getPreviousSibling();
             }
-            return previous != null ? new CommonElementWrapper((org.w3c.dom.Element) previous) : null;
+            return previous != null ? new SelectableElementWrapper((org.w3c.dom.Element) previous) : null;
         }
 
         @Override
-        public boolean isSameNode(CommonNode otherNode) {
-            return otherNode instanceof CommonNodeWrapper cnw && node.isSameNode(cnw.node);
+        public boolean isSameNode(SelectableNode otherNode) {
+            return otherNode instanceof SelectableNodeWrapper cnw && node.isSameNode(cnw.node);
         }
 
         @Override
@@ -228,9 +226,9 @@ public class W3CDom {
         }
     }
 
-    static final class CommonElementWrapper extends CommonNodeWrapper implements CommonNode.CommonElement {
+    static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement {
 
-        CommonElementWrapper(org.w3c.dom.Element node) {
+        SelectableElementWrapper(org.w3c.dom.Element node) {
             super(node);
         }
 
@@ -267,12 +265,12 @@ public class W3CDom {
                                                                boolean onlyFirstMatch) {
         var nm = new NodeMatchers<>(matcher, onlyFirstMatch);
         traverse(node, nm);
-        return nm.result().map(n -> n instanceof CommonNodeWrapper w ? w.node : null).filter(Objects::nonNull);
+        return nm.result().map(n -> n instanceof SelectableNodeWrapper w ? w.node : null).filter(Objects::nonNull);
     }
 
-    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<CommonNode> visitor) {
+    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<SelectableNode> visitor) {
         var node = rootNode.getFirstChild();
-        CommonNode wrappedNode = wrap(node);
+        SelectableNode wrappedNode = wrap(node);
         while (node != null) {
             visitor.start(wrappedNode);
             if (visitor.complete()) {

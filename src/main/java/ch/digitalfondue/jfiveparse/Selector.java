@@ -224,6 +224,7 @@ public class Selector {
                 var nodeName = node.getNodeName();
                 var res = node.getParentNode()
                         .childNodes()
+                        .stream()
                         .filter(e -> IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName))
                         .findFirst();
                 return res.isPresent() && res.get().isSameNode(node);
@@ -242,7 +243,7 @@ public class Selector {
      */
     public Selector contains(String value) {
         matchers.add(node -> {
-            if (node instanceof CommonNode.CommonElement e) {
+            if (node instanceof SelectableNode.SelectableElement e) {
                 var textContent = e.getTextContent();
                 return textContent != null && textContent.contains(value);
             }
@@ -261,7 +262,7 @@ public class Selector {
         return new Selector();
     }
 
-    private static final Predicate<CommonNode> IS_ELEMENT = node -> node.getNodeType() == Node.ELEMENT_NODE;
+    private static final Predicate<SelectableNode> IS_ELEMENT = node -> node.getNodeType() == Node.ELEMENT_NODE;
 
     /**
      * Match an element with the given name.
@@ -296,7 +297,7 @@ public class Selector {
      * @return
      */
     public Selector element(String name, String namespace) {
-        matchers.add(node -> node instanceof CommonNode.CommonElement ce && name.equals(ce.getNodeName())
+        matchers.add(node -> node instanceof SelectableNode.SelectableElement ce && name.equals(ce.getNodeName())
                 && Objects.equals(namespace, ce.getNamespaceURI()));
         return this;
     }
@@ -347,9 +348,9 @@ public class Selector {
         return attrValEq("id", value);
     }
 
-    private static NodeMatcher matchAttr(String name, BiPredicate<String, CommonNode.CommonElement> attributeValueMatcher) {
+    private static NodeMatcher matchAttr(String name, BiPredicate<String, SelectableNode.SelectableElement> attributeValueMatcher) {
         return (node) -> {
-            if (node instanceof CommonNode.CommonElement elem) {
+            if (node instanceof SelectableNode.SelectableElement elem) {
                 var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
                 var toCompareAttr = isHtml ? Common.convertToAsciiLowerCase(name) : name;
                 return elem.containsAttribute(toCompareAttr) && attributeValueMatcher.test(elem.getAttributeValue(toCompareAttr), elem);
@@ -505,7 +506,7 @@ public class Selector {
      * @return
      */
     public Selector isEmpty() {
-        matchers.add(node -> node.childNodes().noneMatch(s -> IS_ELEMENT.test(s) || s.getNodeType() == Node.TEXT_NODE));
+        matchers.add(node -> node.childNodes().stream().noneMatch(s -> IS_ELEMENT.test(s) || s.getNodeType() == Node.TEXT_NODE));
         return this;
     }
 
@@ -521,6 +522,7 @@ public class Selector {
     public Selector isOnlyChild() {
         matchers.add(node -> node.getParentNode() == null ||
                 (node.getParentNode().childNodes()
+                        .stream()
                         .filter(IS_ELEMENT)
                         .allMatch(n -> n.isSameNode(node))));
         return this;

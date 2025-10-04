@@ -16,12 +16,11 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-public final class Element extends Node implements CommonNode.CommonElement {
+public final class Element extends Node implements SelectableNode.SelectableElement {
 
     final String nodeName;
     final String originalNodeName;
@@ -92,8 +91,8 @@ public final class Element extends Node implements CommonNode.CommonElement {
     }
 
     @Override
-    public Stream<CommonNode> childNodes() {
-        return childNodes == null ? Stream.empty() : childNodes.stream().map(CommonNode.class::cast);
+    public List<SelectableNode> childNodes() {
+        return childNodes == null ? List.of() : new ReadOnlyCommonNodeList(childNodes::get, childNodes.size());
     }
 
     @Override

@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 /**
  * Base class for all the nodes.
  */
-public sealed abstract class Node implements CommonNode permits Comment, Document, DocumentType, Element, Text {
+public sealed abstract class Node implements SelectableNode permits Comment, Document, DocumentType, Element, Text {
 
     static final List<Node> EMPTY_LIST = List.of();
 
@@ -261,8 +261,8 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
     }
 
     @Override
-    public Stream<CommonNode> childNodes() {
-        return Stream.empty();
+    public List<SelectableNode> childNodes() {
+        return List.of();
     }
 
     /**
@@ -573,7 +573,7 @@ public sealed abstract class Node implements CommonNode permits Comment, Documen
      * @return
      */
     @Override
-    public boolean isSameNode(CommonNode other) {
+    public boolean isSameNode(SelectableNode other) {
         return this == other;
     }
 

@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.stream.Stream;
 
-class NodeMatchers<T extends CommonNode> implements NodesVisitor<T> {
+class NodeMatchers<T extends SelectableNode> implements NodesVisitor<T> {
 
     private final NodeMatcher matcher;
     private Stream.Builder<T> toAdd;
