@@ -162,7 +162,7 @@ public class Selector {
                     case CHILD -> res.withChild();
                     case ADJACENT -> res.nextSibling();
                     case SIBLING -> res.subsequentSibling();
-                    case PARENT, COLUMN_COMBINATOR -> throw new IllegalStateException("to implement");
+                    case PARENT, COLUMN_COMBINATOR -> throw new IllegalArgumentException("Combinator " + c + " is not supported");
                 };
             } else if (part instanceof CSS.TagSelector t) {
                 res = t.namespace() == null ? res.element(t.name()) : res.element(t.name(), t.namespace());
@@ -183,7 +183,7 @@ public class Selector {
                 } else if (action == CSS.AttributeAction.END) {
                     res = res.attrValEndWith(name, value);
                 } else {
-                    throw new IllegalStateException("to implement");
+                    throw new IllegalArgumentException("AttributeSelector " + a + " is not supported");
                 }
             } else if (part instanceof CSS.PseudoElement pe) {
                 throw new IllegalStateException("to implement");
@@ -197,10 +197,12 @@ public class Selector {
                     res = res.isLastElementChild();
                 } else if ("empty".equals(name)) {
                     res = res.isEmpty();
+                } else if ("only-child".equals(name)) {
+                    res = res.isOnlyChild();
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
-            } else if (part instanceof CSS.UniversalSelector u) {
+            } else if (part instanceof CSS.UniversalSelector) {
                 res = res.universal();
             }
         }
@@ -478,6 +480,23 @@ public class Selector {
      */
     public Selector isEmpty() {
         matchers.add(node -> node.childNodes().noneMatch(s -> s.getNodeType() == Node.ELEMENT_NODE || s.getNodeType() == Node.TEXT_NODE));
+        return this;
+    }
+
+    /**
+     * Match elements that don't have siblings (only element siblings are considered).
+     *
+     * <p>
+     * CSS equivalent: <code>:only-child</code>
+     * </p>
+     *
+     * @return
+     */
+    public Selector isOnlyChild() {
+        matchers.add(node -> node.getParentNode() == null ||
+                (node.getParentNode().childNodes()
+                        .filter(s -> s.getNodeType() == Node.ELEMENT_NODE)
+                        .allMatch(n -> n.isSameNode(node))));
         return this;
     }
 

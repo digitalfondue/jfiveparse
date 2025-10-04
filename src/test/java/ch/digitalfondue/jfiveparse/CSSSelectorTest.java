@@ -492,16 +492,10 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("a[href $= 'org/']", "mark");
         // Attribute Contains
         sizzleCheckMatcherIds("a[href *= 'google']", "google", "groups");
-        // Attribute Is Not Equal
-
-        // FIXME not standard
-        // sizzleCheckMatcherIds("#ap a[hreflang!='en']", "google", "groups", "anchor1");
 
         // Empty values
         sizzleCheckMatcherIds("#select1 option[value='']", "option1a");
         // Empty values
-        // FIXME not standard
-        //sizzleCheckMatcherIds("#select1 option[value!='']", "option1b", "option1c", "option1d");
 
         // Select options via :selected
         // sizzleCheckMatcherIds("#select1 option:selected", "option1a");
@@ -572,20 +566,51 @@ class CSSSelectorTest {
     }
 
 
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L967
     @Test
     void sizzlePseudoEmpty() {
         sizzleCheckMatcherIds("ul:empty", "firstUL");
         // Empty with comment node
         sizzleCheckMatcherIds("ol:empty", "empty");
-        // FIXME check, Is A Parent jquery extension
-        /*sizzleCheckMatcherIds("#qunit-fixture p:parent",
-                "firstp",
-                "ap",
-                "sndp",
-                "en",
-                "sap",
-                "first"
-        );*/
+    }
+
+    @Test
+    void sizzlePseudoFirstLastOnlyChildOfType() {
+        // First Child
+        sizzleCheckMatcherIds("p:first-child", "firstp", "sndp");
+        // First Child (leading id)
+        sizzleCheckMatcherIds("#qunit-fixture p:first-child", "firstp", "sndp");
+        // First Child (leading class)
+        sizzleCheckMatcherIds(".nothiddendiv div:first-child", "nothiddendivchild");
+        // First Child (case-insensitive)
+        sizzleCheckMatcherIds("#qunit-fixture p:FIRST-CHILD", "firstp", "sndp");
+
+        // Last Child
+        sizzleCheckMatcherIds("p:last-child", "sap");
+        // Last Child (leading id)
+        sizzleCheckMatcherIds("#qunit-fixture a:last-child",
+                "simon1",
+                "anchor1",
+                "mark",
+                "yahoo",
+                "anchor2",
+                "simon",
+                "liveLink1",
+                "liveLink2"
+        );
+
+
+        // Only Child
+        sizzleCheckMatcherIds("#qunit-fixture a:only-child",
+                "simon1",
+                "anchor1",
+                "yahoo",
+                "anchor2",
+                "liveLink1",
+                "liveLink2"
+        );
+
+        // TODO: complete
     }
 
 
