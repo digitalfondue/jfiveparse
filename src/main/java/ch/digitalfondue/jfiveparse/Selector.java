@@ -215,6 +215,19 @@ public class Selector {
     }
 
     public Selector isLastOfType() {
+        matchers.add(node -> {
+            if (node.getParentNode() != null) {
+                var nodeName = node.getNodeName();
+                var childNodes = node.getParentNode().childNodes();
+                for (int i = childNodes.size() - 1; i >= 0; i--) {
+                    var e = childNodes.get(i);
+                    if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
+                        return node.isSameNode(e);
+                    }
+                }
+            }
+            return false;
+        });
         return this;
     }
 
@@ -222,12 +235,12 @@ public class Selector {
         matchers.add(node -> {
             if (node.getParentNode() != null) {
                 var nodeName = node.getNodeName();
-                var res = node.getParentNode()
-                        .childNodes()
-                        .stream()
-                        .filter(e -> IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName))
-                        .findFirst();
-                return res.isPresent() && res.get().isSameNode(node);
+                var childNodes = node.getParentNode().childNodes();
+                for (SelectableNode e : childNodes) {
+                    if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
+                        return node.isSameNode(e);
+                    }
+                }
             }
             return false;
         });

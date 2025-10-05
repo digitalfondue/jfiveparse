@@ -616,11 +616,13 @@ class CSSSelectorTest {
         // First-of-type
         sizzleCheckMatcherIds("#qunit-fixture > p:first-of-type", "firstp");
 
-        // FIXME
+
         // Last-of-type
-        /*sizzleCheckMatcherIds("#qunit-fixture > p:last-of-type", "first");
+        sizzleCheckMatcherIds("#qunit-fixture > p:last-of-type", "first");
+
+        // FIXME
         // Only-of-type
-        sizzleCheckMatcherIds("#qunit-fixture > :only-of-type",
+        /*sizzleCheckMatcherIds("#qunit-fixture > :only-of-type",
                 "name+value",
                 "firstUL",
                 "empty",
