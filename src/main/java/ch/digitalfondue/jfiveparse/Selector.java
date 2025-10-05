@@ -558,8 +558,7 @@ public class Selector {
      */
     public Selector withChild() {
         var rules = andMatchers(collectMatchers());
-        NodeMatcher hasParentMatching = (node) -> node.getParentNode() != null && rules.match(node.getParentNode());
-        matchers.add(hasParentMatching);
+        matchers.add((node) -> node.getParentNode() != null && rules.match(node.getParentNode()));
         return this;
     }
 
@@ -574,11 +573,10 @@ public class Selector {
      */
     public Selector nextSibling() {
         var rules = andMatchers(collectMatchers());
-        NodeMatcher nextSibling = (node) -> {
+        matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
             return previousElementSibling != null && rules.match(previousElementSibling);
-        };
-        matchers.add(nextSibling);
+        });
         return this;
     }
 
@@ -593,17 +591,16 @@ public class Selector {
      */
     public Selector subsequentSibling() {
         var rules = andMatchers(collectMatchers());
-        NodeMatcher subsequentSibling = (node) -> {
+        matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
             while(previousElementSibling != null) {
                 if (rules.match(previousElementSibling)) {
                     return true;
                 }
                 previousElementSibling = previousElementSibling.getPreviousElementSibling();
-            };
+            }
             return false;
-        };
-        matchers.add(subsequentSibling);
+        });
         return this;
     }
 
@@ -618,7 +615,7 @@ public class Selector {
      */
     public Selector withDescendant() {
         var ancestorMatcher = andMatchers(collectMatchers());
-        NodeMatcher hasAncestorMatching = (node) -> {
+        matchers.add((node) -> {
             while (node.getParentNode() != null) {
                 node = node.getParentNode();
                 if (ancestorMatcher.match(node)) {
@@ -626,8 +623,7 @@ public class Selector {
                 }
             }
             return false;
-        };
-        matchers.add(hasAncestorMatching);
+        });
         return this;
     }
 
