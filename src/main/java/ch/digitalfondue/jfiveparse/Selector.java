@@ -143,7 +143,7 @@ import java.util.function.Predicate;
  */
 public class Selector {
 
-    private final List<NodeMatcher> matchers = new ArrayList<>();
+    private List<NodeMatcher> matchers = new ArrayList<>();
 
     public static NodeMatcher parseSelector(String selector) {
         List<List<CSS.CssSelector>> cssSelectors = CSS.parseSelector(selector);
@@ -541,10 +541,10 @@ public class Selector {
         return this;
     }
 
-    private List<NodeMatcher> copyAndClear() {
-        var copyMatchers = new ArrayList<>(matchers);
-        matchers.clear();
-        return copyMatchers;
+    private List<NodeMatcher> collectMatchers() {
+        var matcherToHandle = matchers;
+        matchers = new ArrayList<>();
+        return matcherToHandle;
     }
 
     /**
@@ -557,7 +557,7 @@ public class Selector {
      * @return
      */
     public Selector withChild() {
-        var rules = andMatchers(copyAndClear());
+        var rules = andMatchers(collectMatchers());
         NodeMatcher hasParentMatching = (node) -> node.getParentNode() != null && rules.match(node.getParentNode());
         matchers.add(hasParentMatching);
         return this;
@@ -573,7 +573,7 @@ public class Selector {
      * @return
      */
     public Selector nextSibling() {
-        var rules = andMatchers(copyAndClear());
+        var rules = andMatchers(collectMatchers());
         NodeMatcher nextSibling = (node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
             return previousElementSibling != null && rules.match(previousElementSibling);
@@ -592,7 +592,7 @@ public class Selector {
      * @return
      */
     public Selector subsequentSibling() {
-        var rules = andMatchers(copyAndClear());
+        var rules = andMatchers(collectMatchers());
         NodeMatcher subsequentSibling = (node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
             while(previousElementSibling != null) {
@@ -617,7 +617,7 @@ public class Selector {
      * @return
      */
     public Selector withDescendant() {
-        var ancestorMatcher = andMatchers(copyAndClear());
+        var ancestorMatcher = andMatchers(collectMatchers());
         NodeMatcher hasAncestorMatching = (node) -> {
             while (node.getParentNode() != null) {
                 node = node.getParentNode();
