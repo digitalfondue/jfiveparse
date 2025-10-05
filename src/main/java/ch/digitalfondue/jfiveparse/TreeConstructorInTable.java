@@ -430,16 +430,12 @@ class TreeConstructorInTable {
     // ----
     // in cell
     static void inCell(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        switch (tokenType) {
-        case TT_END_TAG:
+        if (tokenType == TT_END_TAG) {
             inCellEndTag(tagName, tagNameID, treeConstructor);
-            break;
-        case TT_START_TAG:
+        } else if (tokenType == TT_START_TAG) {
             inCellStartTag(tagName, tagNameID, treeConstructor);
-            break;
-        default:
+        } else {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-            break;
         }
     }
 

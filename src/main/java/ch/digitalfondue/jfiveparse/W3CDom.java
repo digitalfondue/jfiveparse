@@ -173,7 +173,7 @@ public class W3CDom {
         @Override
         public List<SelectableNode> childNodes() {
             var childNodes = node.getChildNodes();
-            return new ReadOnlyCommonNodeList((i) -> wrap(childNodes.item(i)), childNodes.getLength());
+            return new SelectableNodeList((i) -> wrap(childNodes.item(i)), childNodes.getLength());
         }
 
         @Override

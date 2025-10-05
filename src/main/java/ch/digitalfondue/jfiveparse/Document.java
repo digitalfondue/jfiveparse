@@ -38,7 +38,7 @@ public final class Document extends Node {
 
     @Override
     public List<SelectableNode> childNodes() {
-        return new ReadOnlyCommonNodeList(childNodes::get, childNodes.size());
+        return new SelectableNodeList(childNodes::get, childNodes.size());
     }
 
     @Override

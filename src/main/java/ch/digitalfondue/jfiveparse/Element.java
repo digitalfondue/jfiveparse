@@ -92,7 +92,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
 
     @Override
     public List<SelectableNode> childNodes() {
-        return childNodes == null ? List.of() : new ReadOnlyCommonNodeList(childNodes::get, childNodes.size());
+        return childNodes == null ? List.of() : new SelectableNodeList(childNodes::get, childNodes.size());
     }
 
     @Override

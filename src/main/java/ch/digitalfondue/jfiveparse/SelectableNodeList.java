@@ -3,12 +3,12 @@ package ch.digitalfondue.jfiveparse;
 import java.util.AbstractList;
 import java.util.function.IntFunction;
 
-final class ReadOnlyCommonNodeList extends AbstractList<SelectableNode> {
+final class SelectableNodeList extends AbstractList<SelectableNode> {
 
     private final IntFunction<SelectableNode> get;
     private final int size;
 
-    ReadOnlyCommonNodeList(IntFunction<SelectableNode> get, int size) {
+    SelectableNodeList(IntFunction<SelectableNode> get, int size) {
         this.get = get;
         this.size = size;
     }
