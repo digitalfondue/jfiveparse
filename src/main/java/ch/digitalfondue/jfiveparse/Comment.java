@@ -66,12 +66,6 @@ public final class Comment extends Node {
 
     @Override
     public boolean isEqualNode(Node other) {
-        if (this == other) {
-            return true;
-        }
-        if (other instanceof Comment c) {
-            return Objects.equals(getData(), c.getData());
-        }
-        return false;
+        return this == other || (other instanceof Comment c && Objects.equals(getData(), c.getData()));
     }
 }

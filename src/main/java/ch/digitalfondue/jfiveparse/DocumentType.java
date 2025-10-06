@@ -64,14 +64,10 @@ public final class DocumentType extends Node {
 
     @Override
     public boolean isEqualNode(Node other) {
-        if (this == other) {
-            return true;
-        }
-        if (other instanceof DocumentType otherDocType) {
-            return Objects.equals(name, otherDocType.name) &&
-                    Objects.equals(publicId, otherDocType.publicId) &&
-                    Objects.equals(systemId, otherDocType.systemId);
-        }
-        return false;
+        return this == other || (other instanceof DocumentType dt &&
+                Objects.equals(name, dt.name) &&
+                Objects.equals(publicId, dt.publicId) &&
+                Objects.equals(systemId, dt.systemId)
+        );
     }
 }

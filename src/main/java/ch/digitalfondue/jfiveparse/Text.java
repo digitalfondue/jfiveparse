@@ -70,12 +70,6 @@ public final class Text extends Node {
 
     @Override
     public boolean isEqualNode(Node other) {
-        if (this == other) {
-            return true;
-        }
-        if (other instanceof Text) {
-            return Objects.equals(getData(), ((Text) other).getData());
-        }
-        return false;
+        return this == other || (other instanceof Text t && Objects.equals(getData(), t.getData()));
     }
 }
