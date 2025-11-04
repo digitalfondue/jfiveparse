@@ -208,6 +208,8 @@ public class Selector {
                 } else if ("root".equals(name)) {
                     res.matchers.add(ROOT);
                 } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
+                    // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
+                    // TODO: add a descendant combinator if the first of each CssSelector is not an explicit combinator
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
                     res.collectMatchers();
                     throw new IllegalArgumentException("todo");
