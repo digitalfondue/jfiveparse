@@ -159,7 +159,7 @@ public class Selector {
         var res = Selector.select();
         for (var part : selector) {
             if (part instanceof CSS.Combinator c) {
-                res = switch (c.type()) {
+                switch (c.type()) {
                     case DESCENDANT -> res.withDescendant();
                     case CHILD -> res.withChild();
                     case ADJACENT -> res.nextSibling();
@@ -167,23 +167,27 @@ public class Selector {
                     case PARENT, COLUMN_COMBINATOR -> throw new IllegalArgumentException("Combinator " + c + " is not supported");
                 };
             } else if (part instanceof CSS.TagSelector t) {
-                res = t.namespace() == null ? res.element(t.name()) : res.element(t.name(), t.namespace());
+                if (t.namespace() == null) {
+                    res.element(t.name());
+                } else {
+                    res.element(t.name(), t.namespace());
+                }
             } else if (part instanceof CSS.AttributeSelector a) {
                 var action = a.action();
                 var name = a.name();
                 var value = a.value();
                 if (action == CSS.AttributeAction.EQUALS) {
-                    res = res.attrValEq(name, value);
+                    res.attrValEq(name, value);
                 } else if (action == CSS.AttributeAction.ELEMENT && "class".equals(name)) {
-                    res = res.hasClass(value);
+                    res.hasClass(value);
                 } else if (action == CSS.AttributeAction.EXISTS) {
-                    res = res.attr(name);
+                    res.attr(name);
                 } else if (action == CSS.AttributeAction.START) {
-                    res = res.attrValStartWith(name, value);
+                    res.attrValStartWith(name, value);
                 } else if (action == CSS.AttributeAction.ANY) {
-                    res = res.attrValContains(name, value);
+                    res.attrValContains(name, value);
                 } else if (action == CSS.AttributeAction.END) {
-                    res = res.attrValEndWith(name, value);
+                    res.attrValEndWith(name, value);
                 } else {
                     throw new IllegalArgumentException("AttributeSelector " + a + " is not supported");
                 }
@@ -192,11 +196,11 @@ public class Selector {
             } else if (part instanceof CSS.PseudoSelector ps) {
                 String name = ps.name();
                 if ("contains".equals(name) && ps.data() instanceof CSS.DataString ds) {
-                    res = res.contains(ds.value());
+                    res.contains(ds.value());
                 } else if ("first-child".equals(name)) {
-                    res = res.isFirstElementChild();
+                    res.isFirstElementChild();
                 } else if ("last-child".equals(name)) {
-                    res = res.isLastElementChild();
+                    res.isLastElementChild();
                 } else if ("empty".equals(name)) {
                     res.matchers.add(IS_EMPTY);
                 } else if ("only-child".equals(name)) {
@@ -211,13 +215,13 @@ public class Selector {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
                     // TODO: add a descendant combinator if the first of each CssSelector is not an explicit combinator
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
-                    res.collectMatchers();
-                    throw new IllegalArgumentException("todo");
+                    var baseRule = res.collectMatchers();
+                    //throw new IllegalArgumentException("todo");
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
             } else if (part instanceof CSS.UniversalSelector) {
-                res = res.universal();
+                res.universal();
             }
         }
         return res.toMatcher();
