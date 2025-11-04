@@ -214,9 +214,10 @@ public class Selector {
                 } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
                     // TODO: add a descendant combinator if the first of each CssSelector is not an explicit combinator
+                    //       we must combine the base rule with the hasMatcher -> use the combinator to check from which element it must start
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
                     var baseRule = res.collectMatchers();
-                    //throw new IllegalArgumentException("todo");
+                    res.matchers.add(baseRule);
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
