@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -143,7 +142,7 @@ import java.util.function.Predicate;
  */
 public class Selector {
 
-    private static final Predicate<SelectableNode> IS_ELEMENT = node -> node.getNodeType() == Node.ELEMENT_NODE;
+    private static final NodeMatcher IS_ELEMENT = node -> node.getNodeType() == Node.ELEMENT_NODE;
 
     private List<NodeMatcher> matchers = new ArrayList<>();
 
@@ -230,7 +229,7 @@ public class Selector {
             var childNodes = node.getParentNode().childNodes();
             for (int i = childNodes.size() - 1; i >= 0; i--) {
                 var e = childNodes.get(i);
-                if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
+                if (IS_ELEMENT.match(e) && e.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
                 }
             }
@@ -243,7 +242,7 @@ public class Selector {
             var nodeName = node.getNodeName();
             var childNodes = node.getParentNode().childNodes();
             for (SelectableNode e : childNodes) {
-                if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
+                if (IS_ELEMENT.match(e) && e.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
                 }
             }
@@ -254,10 +253,10 @@ public class Selector {
     private static final NodeMatcher ONLY_CHILD = node -> node.getParentNode() == null ||
             (node.getParentNode().childNodes()
                     .stream()
-                    .filter(IS_ELEMENT)
+                    .filter(IS_ELEMENT::match)
                     .allMatch(n -> n.isSameNode(node)));
 
-    private static final NodeMatcher IS_EMPTY = node -> node.childNodes().stream().noneMatch(s -> IS_ELEMENT.test(s) || s.getNodeType() == Node.TEXT_NODE);
+    private static final NodeMatcher IS_EMPTY = node -> node.childNodes().stream().noneMatch(s -> IS_ELEMENT.match(s) || s.getNodeType() == Node.TEXT_NODE);
 
     /**
      * Pseudo selector: div:contains('text').
@@ -297,7 +296,7 @@ public class Selector {
      * @return
      */
     public Selector element(String name) {
-        matchers.add(node -> IS_ELEMENT.test(node) && name.equals(node.getNodeName()));
+        matchers.add(node -> IS_ELEMENT.match(node) && name.equals(node.getNodeName()));
         return this;
     }
 
@@ -307,7 +306,7 @@ public class Selector {
      * @return
      */
     public Selector universal() {
-        matchers.add(IS_ELEMENT::test);
+        matchers.add(IS_ELEMENT);
         return this;
     }
 
