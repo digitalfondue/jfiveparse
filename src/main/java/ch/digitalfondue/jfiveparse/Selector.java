@@ -208,8 +208,8 @@ public class Selector {
                 } else if ("root".equals(name)) {
                     res.matchers.add(ROOT);
                 } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
-                    var hasMatchers = ds.value().stream().map(Selector::toNodeMatcher).toList();
-                    //res = res.has();
+                    var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
+                    res.collectMatchers();
                     throw new IllegalArgumentException("todo");
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
@@ -520,10 +520,10 @@ public class Selector {
         return this;
     }
 
-    private List<NodeMatcher> collectMatchers() {
+    private NodeMatcher collectMatchers() {
         var matcherToHandle = matchers;
         matchers = new ArrayList<>();
-        return matcherToHandle;
+        return andMatchers(matcherToHandle);
     }
 
     /**
@@ -536,7 +536,7 @@ public class Selector {
      * @return
      */
     public Selector withChild() {
-        var rules = andMatchers(collectMatchers());
+        var rules = collectMatchers();
         matchers.add((node) -> node.getParentNode() != null && rules.match(node.getParentNode()));
         return this;
     }
@@ -551,7 +551,7 @@ public class Selector {
      * @return
      */
     private Selector nextSibling() {
-        var rules = andMatchers(collectMatchers());
+        var rules = collectMatchers();
         matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
             return previousElementSibling != null && rules.match(previousElementSibling);
@@ -569,7 +569,7 @@ public class Selector {
      * @return
      */
     private Selector subsequentSibling() {
-        var rules = andMatchers(collectMatchers());
+        var rules = collectMatchers();
         matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
             while(previousElementSibling != null) {
@@ -593,7 +593,7 @@ public class Selector {
      * @return
      */
     public Selector withDescendant() {
-        var ancestorMatcher = andMatchers(collectMatchers());
+        var ancestorMatcher = collectMatchers();
         matchers.add((node) -> {
             while (node.getParentNode() != null) {
                 node = node.getParentNode();
@@ -607,6 +607,10 @@ public class Selector {
     }
 
     private static NodeMatcher andMatchers(List<NodeMatcher> nodeMatchers) {
+        if (nodeMatchers.size() == 1) {
+            return nodeMatchers.get(0);
+        }
+
         return (node) -> {
             for (NodeMatcher m : nodeMatchers) {
                 if (!m.match(node)) {
@@ -618,6 +622,10 @@ public class Selector {
     }
 
     private static NodeMatcher orMatchers(List<NodeMatcher> nodeMatchers) {
+        if (nodeMatchers.size() == 1) {
+            return nodeMatchers.get(0);
+        }
+
         return (node) -> {
             for (NodeMatcher m : nodeMatchers) {
                 if (m.match(node)) {
