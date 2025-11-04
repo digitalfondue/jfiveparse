@@ -143,6 +143,8 @@ import java.util.function.Predicate;
  */
 public class Selector {
 
+    private static final Predicate<SelectableNode> IS_ELEMENT = node -> node.getNodeType() == Node.ELEMENT_NODE;
+
     private List<NodeMatcher> matchers = new ArrayList<>();
 
     public static NodeMatcher parseSelector(String selector) {
@@ -197,13 +199,19 @@ public class Selector {
                 } else if ("last-child".equals(name)) {
                     res = res.isLastElementChild();
                 } else if ("empty".equals(name)) {
-                    res = res.isEmpty();
+                    res.matchers.add(IS_EMPTY);
                 } else if ("only-child".equals(name)) {
-                    res = res.isOnlyChild();
+                    res.matchers.add(ONLY_CHILD);
                 } else if ("first-of-type".equals(name)) {
-                    res = res.isFirstOfType();
+                    res.matchers.add(FIRST_OF_TYPE);
                 } else if ("last-of-type".equals(name)) {
-                    res = res.isLastOfType();
+                    res.matchers.add(LAST_OF_TYPE);
+                } else if ("root".equals(name)) {
+                    res.matchers.add(ROOT);
+                } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
+                    var hasMatchers = ds.value().stream().map(Selector::toNodeMatcher).toList();
+                    //res = res.has();
+                    throw new IllegalArgumentException("todo");
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
@@ -214,38 +222,42 @@ public class Selector {
         return res.toMatcher();
     }
 
-    public Selector isLastOfType() {
-        matchers.add(node -> {
-            if (node.getParentNode() != null) {
-                var nodeName = node.getNodeName();
-                var childNodes = node.getParentNode().childNodes();
-                for (int i = childNodes.size() - 1; i >= 0; i--) {
-                    var e = childNodes.get(i);
-                    if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
-                        return node.isSameNode(e);
-                    }
-                }
-            }
-            return false;
-        });
-        return this;
-    }
+    private static final NodeMatcher ROOT = n -> (n.getParentNode() == null || n.getParentNode().getNodeType() == Node.DOCUMENT_NODE) && n.getNodeType() == Node.ELEMENT_NODE;
 
-    public Selector isFirstOfType() {
-        matchers.add(node -> {
-            if (node.getParentNode() != null) {
-                var nodeName = node.getNodeName();
-                var childNodes = node.getParentNode().childNodes();
-                for (SelectableNode e : childNodes) {
-                    if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
-                        return node.isSameNode(e);
-                    }
+    private static final NodeMatcher LAST_OF_TYPE = node -> {
+        if (node.getParentNode() != null) {
+            var nodeName = node.getNodeName();
+            var childNodes = node.getParentNode().childNodes();
+            for (int i = childNodes.size() - 1; i >= 0; i--) {
+                var e = childNodes.get(i);
+                if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
+                    return node.isSameNode(e);
                 }
             }
-            return false;
-        });
-        return this;
-    }
+        }
+        return false;
+    };
+
+    private static final NodeMatcher FIRST_OF_TYPE = node -> {
+        if (node.getParentNode() != null) {
+            var nodeName = node.getNodeName();
+            var childNodes = node.getParentNode().childNodes();
+            for (SelectableNode e : childNodes) {
+                if (IS_ELEMENT.test(e) && e.getNodeName().equals(nodeName)) {
+                    return node.isSameNode(e);
+                }
+            }
+        }
+        return false;
+    };
+
+    private static final NodeMatcher ONLY_CHILD = node -> node.getParentNode() == null ||
+            (node.getParentNode().childNodes()
+                    .stream()
+                    .filter(IS_ELEMENT)
+                    .allMatch(n -> n.isSameNode(node)));
+
+    private static final NodeMatcher IS_EMPTY = node -> node.childNodes().stream().noneMatch(s -> IS_ELEMENT.test(s) || s.getNodeType() == Node.TEXT_NODE);
 
     /**
      * Pseudo selector: div:contains('text').
@@ -274,8 +286,6 @@ public class Selector {
     public static Selector select() {
         return new Selector();
     }
-
-    private static final Predicate<SelectableNode> IS_ELEMENT = node -> node.getNodeType() == Node.ELEMENT_NODE;
 
     /**
      * Match an element with the given name.
@@ -511,36 +521,6 @@ public class Selector {
         return this;
     }
 
-    /**
-     * Match only the element which is empty (does not have any element or text nodes).
-     * <p>
-     * CSS equivalent: <code>:empty</code>
-     * </p>
-     * @return
-     */
-    public Selector isEmpty() {
-        matchers.add(node -> node.childNodes().stream().noneMatch(s -> IS_ELEMENT.test(s) || s.getNodeType() == Node.TEXT_NODE));
-        return this;
-    }
-
-    /**
-     * Match elements that don't have siblings (only element siblings are considered).
-     *
-     * <p>
-     * CSS equivalent: <code>:only-child</code>
-     * </p>
-     *
-     * @return
-     */
-    public Selector isOnlyChild() {
-        matchers.add(node -> node.getParentNode() == null ||
-                (node.getParentNode().childNodes()
-                        .stream()
-                        .filter(IS_ELEMENT)
-                        .allMatch(n -> n.isSameNode(node))));
-        return this;
-    }
-
     private List<NodeMatcher> collectMatchers() {
         var matcherToHandle = matchers;
         matchers = new ArrayList<>();
@@ -571,7 +551,7 @@ public class Selector {
      *
      * @return
      */
-    public Selector nextSibling() {
+    private Selector nextSibling() {
         var rules = andMatchers(collectMatchers());
         matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
@@ -589,7 +569,7 @@ public class Selector {
      *
      * @return
      */
-    public Selector subsequentSibling() {
+    private Selector subsequentSibling() {
         var rules = andMatchers(collectMatchers());
         matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();

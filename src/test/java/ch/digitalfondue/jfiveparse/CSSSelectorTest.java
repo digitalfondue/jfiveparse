@@ -2,6 +2,7 @@ package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -630,6 +631,25 @@ class CSSSelectorTest {
                 "iframe",
                 "table"
         );*/
+    }
+
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1336
+    @Disabled
+    @Test
+    void sizzleHas() {
+        sizzleCheckMatcherIds("p:has(a)", "firstp", "ap", "en", "sap");
+        // Basic test (irrelevant whitespace)
+        sizzleCheckMatcherIds("p:has( a )", "firstp", "ap", "en", "sap");
+        // Nested with overlapping candidates
+        sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
+    }
+
+
+
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1738
+    @Test
+    void sizzleRoot() {
+        sizzleCheckMatcherIds(":root", "html");
     }
 
     private static Document loadDocument(String name) {
