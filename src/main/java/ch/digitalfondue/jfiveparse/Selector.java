@@ -215,8 +215,10 @@ public class Selector {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
                     // TODO: add a descendant combinator if the first of each CssSelector is not an explicit combinator
                     //       we must combine the base rule with the hasMatcher -> use the combinator to check from which element it must start
+                    //       we must expose getAllNodesMatchingAsStream as a public method in the selectable node interface
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
                     var baseRule = res.collectMatchers();
+                    //res.matchers.add((node) -> {baseRule.match(node) && });
                     res.matchers.add(baseRule);
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
@@ -557,13 +559,12 @@ public class Selector {
      *
      * @return
      */
-    private Selector nextSibling() {
+    private void nextSibling() {
         var rules = collectMatchers();
         matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
             return previousElementSibling != null && rules.match(previousElementSibling);
         });
-        return this;
     }
 
     /**
@@ -575,7 +576,7 @@ public class Selector {
      *
      * @return
      */
-    private Selector subsequentSibling() {
+    private void subsequentSibling() {
         var rules = collectMatchers();
         matchers.add((node) -> {
             var previousElementSibling = node.getPreviousElementSibling();
@@ -587,7 +588,6 @@ public class Selector {
             }
             return false;
         });
-        return this;
     }
 
     /**
