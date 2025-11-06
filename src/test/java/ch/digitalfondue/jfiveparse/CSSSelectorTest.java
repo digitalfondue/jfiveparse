@@ -644,14 +644,6 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
     }
 
-    // TODO: add
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-basic.html#L64
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-relative-argument.html
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/query/query-is.html
-
-
-
     // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1738
     @Test
     void sizzleRoot() {
