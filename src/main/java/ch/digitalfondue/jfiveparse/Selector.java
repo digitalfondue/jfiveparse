@@ -216,8 +216,10 @@ public class Selector {
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
                     var baseRule = res.collectMatchers();
                     // TODO: wip, need to handle the combinator more correctly
+                    //       remove combinator if present at index 0 and add correct match, for example:
+                    //       is child (>) getAllNodesMatchingAsStream(n -> node.isSameNode(n.getParentNode()) && hasMatchers.match(n)
                     var expectedCount = "not".equals(name) ? 0 : 1;
-                    res.matchers.add((node) -> baseRule.match(node) && (node.getAllNodesMatchingAsStream(hasMatchers, true).count() == expectedCount));
+                    res.matchers.add((node) -> baseRule.match(node) && node.getAllNodesMatchingAsStream(hasMatchers, true).count() == expectedCount);
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }

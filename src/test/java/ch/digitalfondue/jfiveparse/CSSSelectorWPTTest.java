@@ -1,6 +1,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -69,11 +70,19 @@ class CSSSelectorWPTTest {
         checkWithIdFirst(".sibling:has(.descendant)", "c");
     }
 
+    @Disabled
+    @Test
+    void testFailing() {
+        // we load: "a", "b", "f", "h"
+        checkWithIds(":has(> .target)", "b", "f", "h");
+    }
+
 
     private static void checkWithIds(String selector, String... ids) {
         var main = HAS_BASIC.getElementById("main");
         var byIds = Arrays.stream(ids).map(main::getElementById).toList();
         var bySelector = main.getAllNodesMatching(Selector.parseSelector(selector));
+        // var idsSel = bySelector.stream().map(Element.class::cast).map(Element::getId).toList();
         Assertions.assertEquals(byIds, bySelector);
     }
 
