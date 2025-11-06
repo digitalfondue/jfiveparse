@@ -37,11 +37,6 @@ public final class Document extends Node {
     }
 
     @Override
-    public List<SelectableNode> childNodes() {
-        return new SelectableNodeList(childNodes::get, childNodes.size());
-    }
-
-    @Override
     List<Node> getMutableChildNodes() {
         return childNodes;
     }

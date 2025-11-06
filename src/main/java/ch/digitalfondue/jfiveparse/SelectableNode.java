@@ -12,7 +12,9 @@ public interface SelectableNode {
     SelectableElement getFirstElementChild();
     SelectableElement getLastElementChild();
     SelectableElement getPreviousElementSibling();
-    List<SelectableNode> childNodes();
+    List<? extends SelectableNode> getChildNodes();
+
+    // Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst);
 
     String getTextContent();
 

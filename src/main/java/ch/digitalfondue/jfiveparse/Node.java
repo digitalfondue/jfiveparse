@@ -260,11 +260,6 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
         return EMPTY_LIST;
     }
 
-    @Override
-    public List<SelectableNode> childNodes() {
-        return List.of();
-    }
-
     /**
      * Get the first child, if present or else null.
      */

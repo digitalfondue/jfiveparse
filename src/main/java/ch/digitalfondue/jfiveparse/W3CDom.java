@@ -171,7 +171,7 @@ public class W3CDom {
         }
 
         @Override
-        public List<SelectableNode> childNodes() {
+        public List<SelectableNode> getChildNodes() {
             var childNodes = node.getChildNodes();
             return new SelectableNodeList((i) -> wrap(childNodes.item(i)), childNodes.getLength());
         }

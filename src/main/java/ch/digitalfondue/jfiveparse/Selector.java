@@ -235,7 +235,7 @@ public class Selector {
     private static final NodeMatcher LAST_OF_TYPE = node -> {
         if (node.getParentNode() != null) {
             var nodeName = node.getNodeName();
-            var childNodes = node.getParentNode().childNodes();
+            var childNodes = node.getParentNode().getChildNodes();
             for (int i = childNodes.size() - 1; i >= 0; i--) {
                 var e = childNodes.get(i);
                 if (IS_ELEMENT.match(e) && e.getNodeName().equals(nodeName)) {
@@ -249,7 +249,7 @@ public class Selector {
     private static final NodeMatcher FIRST_OF_TYPE = node -> {
         if (node.getParentNode() != null) {
             var nodeName = node.getNodeName();
-            var childNodes = node.getParentNode().childNodes();
+            var childNodes = node.getParentNode().getChildNodes();
             for (SelectableNode e : childNodes) {
                 if (IS_ELEMENT.match(e) && e.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
@@ -260,12 +260,12 @@ public class Selector {
     };
 
     private static final NodeMatcher ONLY_CHILD = node -> node.getParentNode() == null ||
-            (node.getParentNode().childNodes()
+            (node.getParentNode().getChildNodes()
                     .stream()
                     .filter(IS_ELEMENT::match)
                     .allMatch(n -> n.isSameNode(node)));
 
-    private static final NodeMatcher IS_EMPTY = node -> node.childNodes().stream().noneMatch(s -> IS_ELEMENT.match(s) || s.getNodeType() == Node.TEXT_NODE);
+    private static final NodeMatcher IS_EMPTY = node -> node.getChildNodes().stream().noneMatch(s -> IS_ELEMENT.match(s) || s.getNodeType() == Node.TEXT_NODE);
 
     /**
      * Pseudo selector: div:contains('text').
