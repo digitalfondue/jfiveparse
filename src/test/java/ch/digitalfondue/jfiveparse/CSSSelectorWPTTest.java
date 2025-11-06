@@ -78,6 +78,7 @@ class CSSSelectorWPTTest {
 
     @Disabled
     @Test
+    // TODO: we need to add a "base" node to the NodeMatcher
     void testFailing2() {
         // we load d48, 249, d50, d51, d52
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
