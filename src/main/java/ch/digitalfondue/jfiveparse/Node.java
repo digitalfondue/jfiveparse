@@ -256,6 +256,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
     /**
      * Get the child nodes. The list is <strong>not</strong> modifiable.
      */
+    @Override
     public List<Node> getChildNodes() {
         return EMPTY_LIST;
     }
@@ -448,6 +449,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
         return getAllNodesMatchingAsStream(matcher, false);
     }
 
+    @Override
     public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch) {
         var nm = new NodeMatchers<Node>(matcher, onlyFirstMatch);
         traverse(nm);

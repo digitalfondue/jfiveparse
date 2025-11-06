@@ -634,14 +634,15 @@ class CSSSelectorTest {
     }
 
     // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1336
-    @Disabled
     @Test
     void sizzleHas() {
         sizzleCheckMatcherIds("p:has(a)", "firstp", "ap", "en", "sap");
         // Basic test (irrelevant whitespace)
-        //sizzleCheckMatcherIds("p:has( a )", "firstp", "ap", "en", "sap");
+        sizzleCheckMatcherIds("p:has( a )", "firstp", "ap", "en", "sap");
+
+        // FIXME implement :not
         // Nested with overlapping candidates
-        //sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
+        // sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
     }
 
 

@@ -177,6 +177,11 @@ public class W3CDom {
         }
 
         @Override
+        public Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst) {
+            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst);
+        }
+
+        @Override
         public SelectableNode getLastChild() {
             return wrap(node.getLastChild());
         }
@@ -260,12 +265,16 @@ public class W3CDom {
         return getAllNodesMatching(node, matcher, false);
     }
 
+    private static Stream<SelectableNode> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch) {
+        var nm = new NodeMatchers<>(matcher, onlyFirstMatch);
+        traverse(node, nm);
+        return nm.result().filter(Objects::nonNull);
+    }
+
 
     public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher,
                                                                boolean onlyFirstMatch) {
-        var nm = new NodeMatchers<>(matcher, onlyFirstMatch);
-        traverse(node, nm);
-        return nm.result().map(n -> n instanceof SelectableNodeWrapper w ? w.node : null).filter(Objects::nonNull);
+        return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch).map(n -> n instanceof SelectableNodeWrapper w ? w.node : null);
     }
 
     private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<SelectableNode> visitor) {

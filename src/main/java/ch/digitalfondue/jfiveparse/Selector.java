@@ -213,13 +213,10 @@ public class Selector {
                     res.matchers.add(ROOT);
                 } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
-                    // TODO: add a descendant combinator if the first of each CssSelector is not an explicit combinator
-                    //       we must combine the base rule with the hasMatcher -> use the combinator to check from which element it must start
-                    //       we must expose getAllNodesMatchingAsStream as a public method in the selectable node interface
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
                     var baseRule = res.collectMatchers();
-                    //res.matchers.add((node) -> {baseRule.match(node) && });
-                    res.matchers.add(baseRule);
+                    // TODO: wip, need to handle the combinator more correctly
+                    res.matchers.add((node) -> baseRule.match(node) && node.getAllNodesMatchingAsStream(hasMatchers, true).count() == 1);
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
