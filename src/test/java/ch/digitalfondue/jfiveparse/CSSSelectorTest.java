@@ -640,9 +640,8 @@ class CSSSelectorTest {
         // Basic test (irrelevant whitespace)
         sizzleCheckMatcherIds("p:has( a )", "firstp", "ap", "en", "sap");
 
-        // FIXME implement :not
         // Nested with overlapping candidates
-        // sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
+        sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
     }
 
 

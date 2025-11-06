@@ -211,12 +211,13 @@ public class Selector {
                     res.matchers.add(LAST_OF_TYPE);
                 } else if ("root".equals(name)) {
                     res.matchers.add(ROOT);
-                } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
+                } else if (("has".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
                     var baseRule = res.collectMatchers();
                     // TODO: wip, need to handle the combinator more correctly
-                    res.matchers.add((node) -> baseRule.match(node) && node.getAllNodesMatchingAsStream(hasMatchers, true).count() == 1);
+                    var expectedCount = "not".equals(name) ? 0 : 1;
+                    res.matchers.add((node) -> baseRule.match(node) && (node.getAllNodesMatchingAsStream(hasMatchers, true).count() == expectedCount));
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
