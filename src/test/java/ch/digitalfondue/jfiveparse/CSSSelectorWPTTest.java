@@ -12,7 +12,6 @@ class CSSSelectorWPTTest {
     // TODO: add
     //
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-relative-argument.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/query/query-is.html
 
     private static final Document HAS_BASIC = JFiveParse.parse("""
@@ -233,8 +232,6 @@ class CSSSelectorWPTTest {
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .a + .b .c)", "d18", "d19", "d21", "d24", "d28", "d32");
 */
 
-
-        // FIXME, this should work
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e) .f", "d54");
 
@@ -268,7 +265,6 @@ class CSSSelectorWPTTest {
         var main = doc.getElementById("main");
         var byIds = Arrays.stream(ids).map(main::getElementById).toList();
         var bySelector = main.getAllNodesMatching(Selector.parseSelector(selector));
-        var idsSel = bySelector.stream().map(Element.class::cast).map(Element::getId).toList();
         Assertions.assertEquals(byIds, bySelector);
     }
 

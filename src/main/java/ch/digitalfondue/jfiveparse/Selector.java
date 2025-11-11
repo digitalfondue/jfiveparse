@@ -152,7 +152,7 @@ public class Selector {
         for (List<CSS.CssSelector> cssSelector : cssSelectors) {
             res.add(toNodeMatcher(cssSelector));
         }
-        return res.size() == 1 ? res.get(0) : orMatchers(res);
+        return andMatchers(List.of(IS_ELEMENT, res.size() == 1 ? res.get(0) : orMatchers(res)));
     }
 
     private static NodeMatcher toNodeMatcher(List<CSS.CssSelector> selector) {
@@ -239,7 +239,7 @@ public class Selector {
                 res.universal();
             }
         }
-        return res.toMatcher();
+        return andMatchers(List.of(IS_ELEMENT, res.toMatcher()));
     }
 
     private static final NodeMatcher ROOT = (n, base) -> (n.getParentNode() == null || n.getParentNode().getNodeType() == Node.DOCUMENT_NODE) && n.getNodeType() == Node.ELEMENT_NODE;
