@@ -230,6 +230,7 @@ public class Selector {
                     }).toList());
                     var baseRule = res.collectMatchers();
                     var expectedCount = "not".equals(name) ? 0 : 1;
+                    // TODO: handle relative '+' and '~' combinator
                     res.matchers.add((node, base) -> baseRule.match(node, base) && node.getAllNodesMatchingAsStream(hasMatchers, true).count() == expectedCount);
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
@@ -557,7 +558,7 @@ public class Selector {
      */
     public Selector withChild() {
         var rules = collectMatchers();
-        matchers.add((node, base) -> node.getParentNode() != null && !node.getParentNode().isSameNode(base) && rules.match(node.getParentNode(), base));
+        matchers.add((node, base) -> node.getParentNode() != null && rules.match(node.getParentNode(), base));
         return this;
     }
 

@@ -56,10 +56,10 @@ class CSSSelectorWPTTest {
         checkWithIds(HAS_BASIC, ".parent:has(:is(.target ~ .sibling .descendant))", "h");
         checkWithIds(HAS_BASIC, ".sibling:has(.descendant) ~ .target", "e");
 
-        // checkWithIds(HAS_BASIC, ":has(> .parent)", "a");
+         checkWithIds(HAS_BASIC, ":has(> .parent)", "a");
         // FIXME
-        //checkWithIds(HAS_BASIC, ":has(> .target)", "b", "f", "h");
-        //checkWithIds(HAS_BASIC, ":has(> .parent, > .target)", "a", "b", "f", "h");
+        checkWithIds(HAS_BASIC, ":has(> .target)", "b", "f", "h");
+        checkWithIds(HAS_BASIC, ":has(> .parent, > .target)", "a", "b", "f", "h");
 
         // FIXME
         //checkWithIds(":has(+ #h)", "f");
@@ -79,8 +79,6 @@ class CSSSelectorWPTTest {
     @Disabled
     @Test
     void testFailing() {
-        // we load:
-        checkWithIds(HAS_BASIC, ":has(> .target)", "b", "f", "h");
     }
 
     private static final Document RELATIVE_ARGUMENT = JFiveParse.parse("""
@@ -213,13 +211,13 @@ class CSSSelectorWPTTest {
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.a + .b)", "d12");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.a ~ .b)", "d02", "d12");
 
-        /* FIXME
+
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a)", "d02", "d07", "d09", "d12");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a > .b)", "d09");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a .b)", "d09", "d12");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a + .b)", "d12");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a ~ .b)", "d02", "d12");
-
+        /* FIXME
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .a)", "d19", "d21", "d24", "d28", "d32", "d37", "d40", "d46");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .a > .b)", "d21");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .a .b)", "d21", "d24");
@@ -239,34 +237,29 @@ class CSSSelectorWPTTest {
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e) .f", "d54");
 
-        // FIXME, this should work!
-        /*
+
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .d)", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .d) .f", "d54");
+        // FIXME, this should work!
+        /*
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .d ~ .e)", "d48", "d55", "d56");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .d ~ .e) ~ .f", "d60");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .d ~ .e)", "d55", "d56");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .d ~ .e) ~ .f", "d60");
-
-        checkWithIds(RELATIVE_ARGUMENT, ".y:has(> .g .h)", "d63", "d71");*/
+*/
+        checkWithIds(RELATIVE_ARGUMENT, ".y:has(> .g .h)", "d63", "d71");
 
         checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h)", "d63", "d68", "d71");
 
-        // FIXME this should work
-        /*checkWithIds(RELATIVE_ARGUMENT, ".y:has(> .g .h) .i", "d67", "d75");
-         */
+
+        checkWithIds(RELATIVE_ARGUMENT, ".y:has(> .g .h) .i", "d67", "d75");
+
         checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h) .i", "d67", "d75");
 
         checkWithIds(RELATIVE_ARGUMENT, ".d .x:has(.e)", "d51", "d52");
 
+        // FIXME this should work
         // checkWithIds(RELATIVE_ARGUMENT, ".d ~ .x:has(~ .e)", "d57", "d58");
-    }
-
-    @Disabled
-    @Test
-    void checkFailureUseBase() {
-        checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
-        checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h)", "d63", "d68", "d71");
     }
 
 
