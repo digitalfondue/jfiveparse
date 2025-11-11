@@ -79,6 +79,7 @@ class CSSSelectorWPTTest {
     @Disabled
     @Test
     void testFailing() {
+        checkWithIds(HAS_BASIC, ":has(+ #h)", "f");
     }
 
     private static final Document RELATIVE_ARGUMENT = JFiveParse.parse("""
