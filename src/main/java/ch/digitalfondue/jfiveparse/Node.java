@@ -451,7 +451,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
 
     @Override
     public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch) {
-        var nm = new NodeMatchers<Node>(matcher, onlyFirstMatch);
+        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, this);
         traverse(nm);
         return nm.result();
     }
@@ -495,7 +495,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
      */
     public boolean contains(Node node) {
         // check same reference
-        return getAllNodesMatchingAsStream((n) -> n == node, true).anyMatch(s -> true);
+        return getAllNodesMatchingAsStream((n, b) -> n == node, true).anyMatch(s -> true);
     }
 
     /**

@@ -266,7 +266,7 @@ public class W3CDom {
     }
 
     private static Stream<SelectableNode> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch) {
-        var nm = new NodeMatchers<>(matcher, onlyFirstMatch);
+        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, wrap(node));
         traverse(node, nm);
         return nm.result().filter(Objects::nonNull);
     }

@@ -17,6 +17,5 @@ package ch.digitalfondue.jfiveparse;
 
 @FunctionalInterface
 public interface NodeMatcher {
-    // FIXME, we need to pass the "base" node.
-    boolean match(SelectableNode node);
+    boolean match(SelectableNode node, SelectableNode base);
 }

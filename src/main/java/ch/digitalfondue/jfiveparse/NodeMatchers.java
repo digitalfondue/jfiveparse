@@ -20,18 +20,20 @@ import java.util.stream.Stream;
 class NodeMatchers<T extends SelectableNode> implements NodesVisitor<T> {
 
     private final NodeMatcher matcher;
+    private final T baseNode;
     private Stream.Builder<T> toAdd;
     private Stream<T> singleOrEmpty;
     private final boolean completeOnFirstMatch;
 
-    NodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch) {
+    NodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch, T baseNode) {
         this.matcher = matcher;
         this.completeOnFirstMatch = completeOnFirstMatch;
+        this.baseNode = baseNode;
     }
 
     @Override
     public void start(T node) {
-        if (matcher.match(node)) {
+        if (matcher.match(node, baseNode)) {
             if (completeOnFirstMatch) {
                 singleOrEmpty = Stream.of(node);
             } else {
