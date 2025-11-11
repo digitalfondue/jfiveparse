@@ -211,6 +211,10 @@ public class Selector {
                     res.matchers.add(LAST_OF_TYPE);
                 } else if ("root".equals(name)) {
                     res.matchers.add(ROOT);
+                } else if ("is".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
+                    var isMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
+                    var baseRule = res.collectMatchers();
+                    res.matchers.add((node, base) -> baseRule.match(node, base) && isMatchers.match(node, base));
                 } else if (("has".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
                     var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());

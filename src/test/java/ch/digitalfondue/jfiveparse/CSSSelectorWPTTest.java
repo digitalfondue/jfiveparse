@@ -69,6 +69,20 @@ class CSSSelectorWPTTest {
         checkWithIdFirst(HAS_BASIC, ".sibling:has(.descendant)", "c");
     }
 
+    @Test
+    void testIs() {
+        checkWithIds(HAS_BASIC,":is(.target ~ .sibling .descendant)", "k");
+        checkWithIds(HAS_BASIC,":has(:is(#k))", "a", "h", "j");
+    }
+
+    @Disabled
+    @Test
+    void testFailingIs() {
+        // we are not matching "j"
+        // check _which_ condition fails
+        checkWithIds(HAS_BASIC,":has(:is(.target ~ .sibling .descendant))", "a", "h", "j");
+    }
+
     @Disabled
     @Test
     void testFailing() {
@@ -227,10 +241,12 @@ class CSSSelectorWPTTest {
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .a + .b .c)", "d18", "d19", "d21", "d24", "d28", "d32");
 */
 
-        // FIXME, this should work!
+
 
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e) .f", "d54");
+
+        // FIXME, this should work!
         /*
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .d)", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .d) .f", "d54");
