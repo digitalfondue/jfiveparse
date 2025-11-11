@@ -608,9 +608,6 @@ public class Selector {
         matchers.add((node, base) -> {
             while (node.getParentNode() != null) {
                 node = node.getParentNode();
-                if (base.isSameNode(node)) {
-                    return false;
-                }
                 if (ancestorMatcher.match(node, base)) {
                     return true;
                 }
