@@ -193,6 +193,8 @@ public class Selector {
                 }
             } else if (part instanceof CSS.PseudoElement pe) {
                 throw new IllegalStateException("to implement");
+            } else if (part instanceof CSS.InternalSelector is && "base".equals(is.name())) {
+                res.matchers.add((node, base) -> base.isSameNode(node));
             } else if (part instanceof CSS.PseudoSelector ps) {
                 String name = ps.name();
                 if ("contains".equals(name) && ps.data() instanceof CSS.DataString ds) {
@@ -217,11 +219,16 @@ public class Selector {
                     res.matchers.add((node, base) -> baseRule.match(node, base) && isMatchers.match(node, base));
                 } else if (("has".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
-                    var hasMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
+                    var hasMatchers = orMatchers(ds.value().stream().map(s -> {
+                        var r = new ArrayList<CSS.CssSelector>(s.size() + 2);
+                        r.add(new CSS.InternalSelector("base"));
+                        if (!s.isEmpty() && !(s.get(0) instanceof CSS.Combinator)) {
+                            r.add(new CSS.Combinator(CSS.CombinatorType.DESCENDANT));
+                        }
+                        r.addAll(s);
+                        return Selector.toNodeMatcher(r);
+                    }).toList());
                     var baseRule = res.collectMatchers();
-                    // TODO: wip, need to handle the combinator more correctly
-                    //       remove combinator if present at index 0 and add correct match, for example:
-                    //       is child (>) getAllNodesMatchingAsStream(n -> node.isSameNode(n.getParentNode()) && hasMatchers.match(n)
                     var expectedCount = "not".equals(name) ? 0 : 1;
                     res.matchers.add((node, base) -> baseRule.match(node, base) && node.getAllNodesMatchingAsStream(hasMatchers, true).count() == expectedCount);
                 } else {
@@ -594,6 +601,18 @@ public class Selector {
         });
     }
 
+    private static NodeMatcher withDescendant(NodeMatcher ancestorMatcher) {
+        return (node, base) -> {
+            while (node.getParentNode() != null) {
+                node = node.getParentNode();
+                if (ancestorMatcher.match(node, base)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+    }
+
     /**
      * Match a descendant node with another set of matchers.
      * 
@@ -605,15 +624,7 @@ public class Selector {
      */
     public Selector withDescendant() {
         var ancestorMatcher = collectMatchers();
-        matchers.add((node, base) -> {
-            while (node.getParentNode() != null) {
-                node = node.getParentNode();
-                if (ancestorMatcher.match(node, base)) {
-                    return true;
-                }
-            }
-            return false;
-        });
+        matchers.add(withDescendant(ancestorMatcher));
         return this;
     }
 

@@ -79,7 +79,7 @@ class CSSSelectorWPTTest {
     @Disabled
     @Test
     void testFailing() {
-        // we load: "a", "b", "f", "h"
+        // we load:
         checkWithIds(HAS_BASIC, ":has(> .target)", "b", "f", "h");
     }
 
@@ -236,7 +236,7 @@ class CSSSelectorWPTTest {
 
 
         // FIXME, this should work
-        //checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
+        checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e) .f", "d54");
 
         // FIXME, this should work!
@@ -250,12 +250,12 @@ class CSSSelectorWPTTest {
 
         checkWithIds(RELATIVE_ARGUMENT, ".y:has(> .g .h)", "d63", "d71");*/
 
-        // checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h)", "d63", "d68", "d71");
+        checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h)", "d63", "d68", "d71");
 
         // FIXME this should work
         /*checkWithIds(RELATIVE_ARGUMENT, ".y:has(> .g .h) .i", "d67", "d75");
          */
-        //checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h) .i", "d67", "d75");
+        checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h) .i", "d67", "d75");
 
         checkWithIds(RELATIVE_ARGUMENT, ".d .x:has(.e)", "d51", "d52");
 

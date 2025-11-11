@@ -68,6 +68,7 @@ class CSS {
     record DataString(String value) implements DataPseudo {}
     record DataSelectors(List<List<CssSelector>> value) implements DataPseudo {}
     record PseudoSelector(String name, DataPseudo data) implements CssSelector {}
+    record InternalSelector(String name) implements CssSelector {}
 
     record UniversalSelector(String namespace) implements CssSelector {}
 
