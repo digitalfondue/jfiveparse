@@ -178,7 +178,12 @@ public class W3CDom {
 
         @Override
         public Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst) {
-            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst);
+            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, wrap(node));
+        }
+
+        @Override
+        public Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base) {
+            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, base);
         }
 
         @Override
@@ -265,8 +270,8 @@ public class W3CDom {
         return getAllNodesMatching(node, matcher, false);
     }
 
-    private static Stream<SelectableNode> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch) {
-        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, wrap(node));
+    private static Stream<SelectableNode> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch, SelectableNode base) {
+        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, base);
         traverse(node, nm);
         return nm.result().filter(Objects::nonNull);
     }
@@ -274,7 +279,7 @@ public class W3CDom {
 
     public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher,
                                                                boolean onlyFirstMatch) {
-        return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch).map(n -> n instanceof SelectableNodeWrapper w ? w.node : null);
+        return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, wrap(node)).map(n -> n instanceof SelectableNodeWrapper w ? w.node : null);
     }
 
     private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<SelectableNode> visitor) {

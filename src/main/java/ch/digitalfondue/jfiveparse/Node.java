@@ -451,7 +451,13 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
 
     @Override
     public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch) {
-        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, this);
+        return getAllNodesMatchingAsStream(matcher, onlyFirstMatch, this);
+    }
+
+    @Override
+    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch, SelectableNode base) {
+        // TODO: CHECK type
+        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, (Node) base);
         traverse(nm);
         return nm.result();
     }

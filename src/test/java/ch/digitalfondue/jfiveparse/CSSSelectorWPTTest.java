@@ -56,13 +56,13 @@ class CSSSelectorWPTTest {
         checkWithIds(HAS_BASIC, ".sibling:has(.descendant) ~ .target", "e");
 
          checkWithIds(HAS_BASIC, ":has(> .parent)", "a");
-        // FIXME
+
         checkWithIds(HAS_BASIC, ":has(> .target)", "b", "f", "h");
         checkWithIds(HAS_BASIC, ":has(> .parent, > .target)", "a", "b", "f", "h");
 
-        // FIXME
-        //checkWithIds(":has(+ #h)", "f");
-        //checkWithIds(".parent:has(~ #h)", "b", "f");
+
+        checkWithIds(HAS_BASIC,":has(+ #h)", "f");
+        checkWithIds(HAS_BASIC,".parent:has(~ #h)", "b", "f");
         //
 
         checkWithIdFirst(HAS_BASIC, ".sibling:has(.descendant)", "c");
@@ -73,13 +73,6 @@ class CSSSelectorWPTTest {
         checkWithIds(HAS_BASIC,":is(.target ~ .sibling .descendant)", "k");
         checkWithIds(HAS_BASIC,":has(:is(#k))", "a", "h", "j");
         checkWithIds(HAS_BASIC,":has(:is(.target ~ .sibling .descendant))", "a", "h", "j");
-    }
-
-    @Disabled
-    @Test
-    void testFailing() {
-        // checkWithIds(HAS_BASIC, ":has(.ancestor)", "a");
-        checkWithIds(HAS_BASIC, ":has(+ #h)", "f");
     }
 
     private static final Document RELATIVE_ARGUMENT = JFiveParse.parse("""
@@ -218,7 +211,7 @@ class CSSSelectorWPTTest {
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a .b)", "d09", "d12");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a + .b)", "d12");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .a ~ .b)", "d02", "d12");
-        /* FIXME
+
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .a)", "d19", "d21", "d24", "d28", "d32", "d37", "d40", "d46");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .a > .b)", "d21");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .a .b)", "d21", "d24");
@@ -231,7 +224,7 @@ class CSSSelectorWPTTest {
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .a + .b)", "d18", "d19", "d21", "d24", "d28", "d32", "d37");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .a + .b > .c)", "d18", "d19", "d21", "d24", "d28");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .a + .b .c)", "d18", "d19", "d21", "d24", "d28", "d32");
-*/
+
 
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e)", "d48", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(.d .e) .f", "d54");
@@ -239,13 +232,12 @@ class CSSSelectorWPTTest {
 
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .d)", "d49", "d50");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(> .d) .f", "d54");
-        // FIXME, this should work!
-        /*
+
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .d ~ .e)", "d48", "d55", "d56");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(~ .d ~ .e) ~ .f", "d60");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .d ~ .e)", "d55", "d56");
         checkWithIds(RELATIVE_ARGUMENT, ".x:has(+ .d ~ .e) ~ .f", "d60");
-*/
+
         checkWithIds(RELATIVE_ARGUMENT, ".y:has(> .g .h)", "d63", "d71");
 
         checkWithIds(RELATIVE_ARGUMENT, ".y:has(.g .h)", "d63", "d68", "d71");
@@ -258,7 +250,7 @@ class CSSSelectorWPTTest {
         checkWithIds(RELATIVE_ARGUMENT, ".d .x:has(.e)", "d51", "d52");
 
         // FIXME this should work
-        // checkWithIds(RELATIVE_ARGUMENT, ".d ~ .x:has(~ .e)", "d57", "d58");
+        checkWithIds(RELATIVE_ARGUMENT, ".d ~ .x:has(~ .e)", "d57", "d58");
     }
 
 

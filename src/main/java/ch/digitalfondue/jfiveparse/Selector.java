@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -232,12 +233,13 @@ public class Selector {
                         var nm = Selector.toNodeMatcher(r);
                         // TODO: handle relative '+' and '~' combinator
                         return switch (comb) {
-                            case CHILD, DESCENDANT ->(NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true).count() == expectedCount;
+                            case CHILD, DESCENDANT -> (NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true).count() == expectedCount;
+                            case SIBLING, ADJACENT -> (NodeMatcher) (node, base) -> node.getParentNode().getAllNodesMatchingAsStream(nm, true, base).count() == expectedCount;
                             default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has/:not");
                         };
                     }).toList());
                     var baseRule = res.collectMatchers();
-                    res.matchers.add((node, base) -> baseRule.match(node, base) && hasMatchers.match(node, base));
+                    res.matchers.add((node, base) -> baseRule.match(node, base) && hasMatchers.match(node, node));
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
