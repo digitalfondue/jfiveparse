@@ -219,19 +219,25 @@ public class Selector {
                     res.matchers.add((node, base) -> baseRule.match(node, base) && isMatchers.match(node, base));
                 } else if (("has".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
+                    var expectedCount = "not".equals(name) ? 0 : 1;
                     var hasMatchers = orMatchers(ds.value().stream().map(s -> {
                         var r = new ArrayList<CSS.CssSelector>(s.size() + 2);
                         r.add(new CSS.InternalSelector("base"));
-                        if (!s.isEmpty() && !(s.get(0) instanceof CSS.Combinator)) {
-                            r.add(new CSS.Combinator(CSS.CombinatorType.DESCENDANT));
+                        var comb = !s.isEmpty() && s.get(0) instanceof CSS.Combinator combinator ? combinator.type() : null;
+                        if (comb == null) {
+                            comb = CSS.CombinatorType.DESCENDANT;
+                            r.add(new CSS.Combinator(comb));
                         }
                         r.addAll(s);
-                        return Selector.toNodeMatcher(r);
+                        var nm = Selector.toNodeMatcher(r);
+                        // TODO: handle relative '+' and '~' combinator
+                        return switch (comb) {
+                            case CHILD, DESCENDANT ->(NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true).count() == expectedCount;
+                            default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has/:not");
+                        };
                     }).toList());
                     var baseRule = res.collectMatchers();
-                    var expectedCount = "not".equals(name) ? 0 : 1;
-                    // TODO: handle relative '+' and '~' combinator
-                    res.matchers.add((node, base) -> baseRule.match(node, base) && node.getAllNodesMatchingAsStream(hasMatchers, true).count() == expectedCount);
+                    res.matchers.add((node, base) -> baseRule.match(node, base) && hasMatchers.match(node, base));
                 } else {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
@@ -633,7 +639,6 @@ public class Selector {
         if (nodeMatchers.size() == 1) {
             return nodeMatchers.get(0);
         }
-
         return (node, base) -> {
             for (NodeMatcher m : nodeMatchers) {
                 if (!m.match(node, base)) {

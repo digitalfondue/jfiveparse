@@ -78,6 +78,7 @@ class CSSSelectorWPTTest {
     @Disabled
     @Test
     void testFailing() {
+        // checkWithIds(HAS_BASIC, ":has(.ancestor)", "a");
         checkWithIds(HAS_BASIC, ":has(+ #h)", "f");
     }
 
