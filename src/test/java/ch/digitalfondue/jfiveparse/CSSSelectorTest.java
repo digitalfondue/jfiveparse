@@ -641,16 +641,148 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds("p:has( a )", "firstp", "ap", "en", "sap");
 
         // Nested with overlapping candidates
-        // FIXME implement not
-        // sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
+        sizzleCheckMatcherIds("#qunit-fixture div:has(div:has(div:not([id])))", "moretests", "t2037");
     }
 
     // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1463
     @Test
-    @Disabled
     void sizzleNot() {
-        // FIXME implement not
         sizzleCheckMatcherIds("a.blog:not(.link)", "mark");
+
+        // sizzleCheckMatcherIds("#form option:not(:not(:selected))[id^='option3']", "option3b", "option3c");
+
+        sizzleCheckMatcherIds("#qunit-fixture p:not(.foo)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+
+        sizzleCheckMatcherIds("#qunit-fixture p:not(div.foo)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not() failing interior
+        sizzleCheckMatcherIds("#qunit-fixture p:not(p.foo)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not() failing interior
+        sizzleCheckMatcherIds("#qunit-fixture p:not(#blargh)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not() failing interior
+        sizzleCheckMatcherIds("#qunit-fixture p:not(div#blargh)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not() failing interior
+        sizzleCheckMatcherIds("#qunit-fixture p:not(p#blargh)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+
+        // :not Multiple
+        sizzleCheckMatcherIds("#qunit-fixture p:not(a)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not Multiple
+        sizzleCheckMatcherIds("#qunit-fixture p:not( a )",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not Multiple
+        sizzleCheckMatcherIds("#qunit-fixture p:not( p )");
+        // :not Multiple
+        sizzleCheckMatcherIds("#qunit-fixture p:not(a, b)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not Multiple
+        sizzleCheckMatcherIds("#qunit-fixture p:not(a, b, div)",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "sap",
+                "first"
+        );
+        // :not Multiple
+        sizzleCheckMatcherIds("p:not(p)");
+        // :not Multiple
+        sizzleCheckMatcherIds("p:not(a,p)");
+        // :not Multiple
+        sizzleCheckMatcherIds("p:not(p,a)");
+        // :not Multiple
+        sizzleCheckMatcherIds("p:not(a,p,b)");
+
+        sizzleCheckMatcherIds(".container div:not(.excluded) div");
+
+        // :not() Existing attribute
+        sizzleCheckMatcherIds("#form select:not([multiple])", "select1", "select2", "select5");
+        // :not() Equals attribute
+        sizzleCheckMatcherIds("#form select:not([name=select1])",
+                "select2",
+                "select3",
+                "select4",
+                "select5"
+        );
+        // :not() Equals quoted attribute
+        sizzleCheckMatcherIds("#form select:not([name='select1'])",
+                "select2",
+                "select3",
+                "select4",
+                "select5"
+        );
+
+        // :not() Multiple Class
+        sizzleCheckMatcherIds("#foo a:not(.blog)", "yahoo", "anchor2");
+        // :not() Multiple Class
+        sizzleCheckMatcherIds("#foo a:not(.link)", "yahoo", "anchor2");
+        // :not() Multiple Class
+        sizzleCheckMatcherIds("#foo a:not(.blog.link)", "yahoo", "anchor2");
+
+        // :not chaining (compound)
+        sizzleCheckMatcherIds("#qunit-fixture div[id]:not(:has(div, span)):not(:has(*))",
+                "nothiddendivchild",
+                "divWithNoTabIndex"
+        );
     }
 
     // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1738
