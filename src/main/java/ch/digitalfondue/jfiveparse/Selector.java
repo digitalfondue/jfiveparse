@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -218,9 +217,8 @@ public class Selector {
                     var isMatchers = orMatchers(ds.value().stream().map(Selector::toNodeMatcher).toList());
                     var baseRule = res.collectMatchers();
                     res.matchers.add((node, base) -> baseRule.match(node, base) && isMatchers.match(node, base));
-                } else if (("has".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
+                } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
-                    var expectedCount = "not".equals(name) ? 0 : 1;
                     var hasMatchers = orMatchers(ds.value().stream().map(s -> {
                         var r = new ArrayList<CSS.CssSelector>(s.size() + 2);
                         r.add(new CSS.InternalSelector("base"));
@@ -232,8 +230,8 @@ public class Selector {
                         r.addAll(s);
                         var nm = Selector.toNodeMatcher(r);
                         return switch (comb) {
-                            case CHILD, DESCENDANT -> (NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true).count() == expectedCount;
-                            case SIBLING, ADJACENT -> (NodeMatcher) (node, base) -> node.getParentNode().getAllNodesMatchingAsStream(nm, true, base).count() == expectedCount;
+                            case CHILD, DESCENDANT -> (NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true).count() == 1;
+                            case SIBLING, ADJACENT -> (NodeMatcher) (node, base) -> node.getParentNode().getAllNodesMatchingAsStream(nm, true, base).count() == 1;
                             default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has/:not");
                         };
                     }).toList());
@@ -244,6 +242,8 @@ public class Selector {
                 }
             } else if (part instanceof CSS.UniversalSelector) {
                 res.universal();
+            } else {
+                throw new IllegalArgumentException(part + " is not supported");
             }
         }
         return andMatchers(List.of(IS_ELEMENT, res.toMatcher()));

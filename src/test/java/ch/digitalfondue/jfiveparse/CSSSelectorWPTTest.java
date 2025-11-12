@@ -13,6 +13,8 @@ class CSSSelectorWPTTest {
     //
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/query/query-is.html
+    //
+    // https://github.com/web-platform-tests/wpt/blob/e6ba136b87cdbabb117809c1f53d8c1eb9e6aeb0/css/selectors/not-complex.html#L27 not
 
     private static final Document HAS_BASIC = JFiveParse.parse("""
             <main id=main>
