@@ -1,7 +1,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -10,7 +9,10 @@ import java.util.stream.Stream;
 class CSSSelectorWPTTest {
 
     // TODO: add
-    //
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-basic.html
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-not.html
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/last-child.html
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/only-child.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/query/query-is.html
     //
@@ -251,7 +253,6 @@ class CSSSelectorWPTTest {
 
         checkWithIds(RELATIVE_ARGUMENT, ".d .x:has(.e)", "d51", "d52");
 
-        // FIXME this should work
         checkWithIds(RELATIVE_ARGUMENT, ".d ~ .x:has(~ .e)", "d57", "d58");
     }
 

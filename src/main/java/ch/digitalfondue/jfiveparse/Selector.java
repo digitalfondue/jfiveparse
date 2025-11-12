@@ -147,11 +147,7 @@ public class Selector {
     private List<NodeMatcher> matchers = new ArrayList<>();
 
     public static NodeMatcher parseSelector(String selector) {
-        List<List<CSS.CssSelector>> cssSelectors = CSS.parseSelector(selector);
-        List<NodeMatcher> res = new ArrayList<>();
-        for (List<CSS.CssSelector> cssSelector : cssSelectors) {
-            res.add(toNodeMatcher(cssSelector));
-        }
+        var res = CSS.parseSelector(selector).stream().map(Selector::toNodeMatcher).toList();
         return andMatchers(List.of(IS_ELEMENT, res.size() == 1 ? res.get(0) : orMatchers(res)));
     }
 
@@ -231,9 +227,9 @@ public class Selector {
                         r.addAll(s);
                         var nm = Selector.toNodeMatcher(r);
                         return switch (comb) {
-                            case CHILD, DESCENDANT -> (NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true).count() == 1;
+                            case CHILD, DESCENDANT -> (NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true, base).count() == 1;
                             case SIBLING, ADJACENT -> (NodeMatcher) (node, base) -> node.getParentNode().getAllNodesMatchingAsStream(nm, true, base).count() == 1;
-                            default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has/:not");
+                            default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has");
                         };
                     }).toList());
                     var baseRule = res.collectMatchers();
@@ -641,6 +637,12 @@ public class Selector {
         if (nodeMatchers.size() == 1) {
             return nodeMatchers.get(0);
         }
+        if (nodeMatchers.size() == 2) {
+            var v1 = nodeMatchers.get(0);
+            var v2 = nodeMatchers.get(1);
+            return (node, base) -> v1.match(node, base) && v2.match(node, base);
+        }
+
         return (node, base) -> {
             for (NodeMatcher m : nodeMatchers) {
                 if (!m.match(node, base)) {
@@ -654,6 +656,11 @@ public class Selector {
     private static NodeMatcher orMatchers(List<NodeMatcher> nodeMatchers) {
         if (nodeMatchers.size() == 1) {
             return nodeMatchers.get(0);
+        }
+        if (nodeMatchers.size() == 2) {
+            var v1 = nodeMatchers.get(0);
+            var v2 = nodeMatchers.get(1);
+            return (node, base) -> v1.match(node, base) || v2.match(node, base);
         }
 
         return (node, base) -> {
