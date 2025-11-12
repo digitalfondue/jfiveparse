@@ -176,22 +176,22 @@ public class W3CDom {
         }
 
         @Override
-        public Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst) {
+        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst) {
             return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, wrap(node));
         }
 
         @Override
-        public Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base) {
+        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base) {
             return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, (SelectableNodeWrapper) base);
         }
 
         @Override
-        public SelectableNode getLastChild() {
+        public SelectableNodeWrapper getLastChild() {
             return wrap(node.getLastChild());
         }
 
         @Override
-        public SelectableElement getFirstElementChild() {
+        public SelectableElementWrapper getFirstElementChild() {
             var childNodes = node.getChildNodes();
             var count = childNodes.getLength();
             for (int i = 0; i < count; i++) {
@@ -204,7 +204,7 @@ public class W3CDom {
         }
 
         @Override
-        public SelectableElement getLastElementChild() {
+        public SelectableElementWrapper getLastElementChild() {
             var childNodes = node.getChildNodes();
             for (int i = childNodes.getLength() - 1; i >= 0; i--) {
                 var childNode = childNodes.item(i);
@@ -216,7 +216,7 @@ public class W3CDom {
         }
 
         @Override
-        public SelectableElement getPreviousElementSibling() {
+        public SelectableElementWrapper getPreviousElementSibling() {
             var previous = node.getPreviousSibling();
             while (previous != null && previous.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 previous = previous.getPreviousSibling();
