@@ -231,7 +231,6 @@ public class Selector {
                         }
                         r.addAll(s);
                         var nm = Selector.toNodeMatcher(r);
-                        // TODO: handle relative '+' and '~' combinator
                         return switch (comb) {
                             case CHILD, DESCENDANT -> (NodeMatcher) (node, base) -> node.getAllNodesMatchingAsStream(nm, true).count() == expectedCount;
                             case SIBLING, ADJACENT -> (NodeMatcher) (node, base) -> node.getParentNode().getAllNodesMatchingAsStream(nm, true, base).count() == expectedCount;
