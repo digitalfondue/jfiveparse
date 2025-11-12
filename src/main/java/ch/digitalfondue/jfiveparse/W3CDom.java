@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 public class W3CDom {
@@ -101,8 +102,7 @@ public class W3CDom {
         }
 
         protected org.w3c.dom.Element toElement(Element elem) {
-            for (String attrName : elem.getAttributes().keySet()) {
-                AttributeNode attr = elem.getAttributeNode(attrName);
+            for (AttributeNode attr : elem.getAttributes()) {
                 if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
                     xmlNamespaces.peek().put(extractXmlnsPrefix(attr.getName()), attr.getValue());
                 }
@@ -110,8 +110,7 @@ public class W3CDom {
 
             org.w3c.dom.Element e = buildNamespacedElement(elem);
 
-            for (String attrName : elem.getAttributes().keySet()) {
-                AttributeNode attr = elem.getAttributeNode(attrName);
+            for (AttributeNode attr : elem.getAttributes()) {
                 if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
                     e.setAttributeNS("http://www.w3.org/2000/xmlns/", attr.getName(), attr.getValue());
                 } else {
@@ -132,7 +131,7 @@ public class W3CDom {
         }
     }
 
-    private static SelectableNode wrap(org.w3c.dom.Node node) {
+    private static SelectableNodeWrapper wrap(org.w3c.dom.Node node) {
         if (node == null) {
             return null;
         }
@@ -161,17 +160,17 @@ public class W3CDom {
         }
 
         @Override
-        public SelectableNode getParentNode() {
+        public SelectableNodeWrapper getParentNode() {
             return wrap(node.getParentNode());
         }
 
         @Override
-        public SelectableNode getFirstChild() {
+        public SelectableNodeWrapper getFirstChild() {
             return wrap(node.getFirstChild());
         }
 
         @Override
-        public List<SelectableNode> getChildNodes() {
+        public List<SelectableNodeWrapper> getChildNodes() {
             var childNodes = node.getChildNodes();
             return new SelectableNodeList((i) -> wrap(childNodes.item(i)), childNodes.getLength());
         }
@@ -183,7 +182,7 @@ public class W3CDom {
 
         @Override
         public Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base) {
-            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, base);
+            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, (SelectableNodeWrapper) base);
         }
 
         @Override
@@ -270,7 +269,7 @@ public class W3CDom {
         return getAllNodesMatching(node, matcher, false);
     }
 
-    private static Stream<SelectableNode> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch, SelectableNode base) {
+    private static Stream<SelectableNodeWrapper> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch, SelectableNodeWrapper base) {
         var nm = new NodeMatchers<>(matcher, onlyFirstMatch, base);
         traverse(node, nm);
         return nm.result().filter(Objects::nonNull);
@@ -279,12 +278,12 @@ public class W3CDom {
 
     public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher,
                                                                boolean onlyFirstMatch) {
-        return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, wrap(node)).map(n -> n instanceof SelectableNodeWrapper w ? w.node : null);
+        return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, wrap(node)).map(n -> n != null ? n.node : null);
     }
 
-    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<SelectableNode> visitor) {
+    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<SelectableNodeWrapper> visitor) {
         var node = rootNode.getFirstChild();
-        SelectableNode wrappedNode = wrap(node);
+        SelectableNodeWrapper wrappedNode = wrap(node);
         while (node != null) {
             visitor.start(wrappedNode);
             if (visitor.complete()) {
@@ -315,4 +314,26 @@ public class W3CDom {
             }
         }
     }
+
+    private static final class SelectableNodeList extends AbstractList<SelectableNodeWrapper> {
+
+        private final IntFunction<SelectableNodeWrapper> get;
+        private final int size;
+
+        SelectableNodeList(IntFunction<SelectableNodeWrapper> get, int size) {
+            this.get = get;
+            this.size = size;
+        }
+
+        @Override
+        public SelectableNodeWrapper get(int index) {
+            return get.apply(index);
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+    }
+
 }
