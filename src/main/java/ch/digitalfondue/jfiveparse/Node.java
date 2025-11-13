@@ -441,17 +441,12 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
      * on the first match. See {@link Selector}.
      */
     public List<Node> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
-        return getAllNodesMatchingAsStream(matcher, onlyFirstMatch).toList();
+        return getAllNodesMatchingAsStream(matcher, onlyFirstMatch, this).toList();
     }
 
 
     public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher) {
-        return getAllNodesMatchingAsStream(matcher, false);
-    }
-
-    @Override
-    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch) {
-        return getAllNodesMatchingAsStream(matcher, onlyFirstMatch, this);
+        return getAllNodesMatchingAsStream(matcher, false, this);
     }
 
     @Override
@@ -507,7 +502,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
      */
     public boolean contains(Node node) {
         // check same reference
-        return getAllNodesMatchingAsStream((n, b) -> n == node, true).anyMatch(s -> true);
+        return getAllNodesMatchingAsStream((n, b) -> n.isSameNode(node), true, this).anyMatch(s -> true);
     }
 
     /**

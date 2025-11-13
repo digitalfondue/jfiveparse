@@ -176,11 +176,6 @@ public class W3CDom {
         }
 
         @Override
-        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst) {
-            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, wrap(node));
-        }
-
-        @Override
         public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base) {
             return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, (SelectableNodeWrapper) base);
         }
