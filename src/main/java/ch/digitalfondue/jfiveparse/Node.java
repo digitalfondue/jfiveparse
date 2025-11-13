@@ -387,7 +387,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
      */
     // As described in
     // http://www.drdobbs.com/database/a-generic-iterator-for-tree-traversal/184404325
-    public void traverse(NodesVisitor<Node> visitor) {
+    public void traverse(NodesVisitor visitor) {
         Node node = getFirstChild();
         while (node != null) {
             visitor.start(node);
@@ -421,7 +421,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
     /**
      * Traverse this node and his child.
      */
-    public void traverseWithCurrentNode(NodesVisitor<Node> visitor) {
+    public void traverseWithCurrentNode(NodesVisitor visitor) {
         visitor.start(this);
         traverse(visitor);
         visitor.end(this);
@@ -457,9 +457,15 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
     @Override
     public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch, SelectableNode base) {
         // TODO: CHECK type
-        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, (Node) base);
+        var nm = new InternalNodeMatchers(matcher, onlyFirstMatch, (Node) base);
         traverse(nm);
         return nm.result();
+    }
+
+    private static class InternalNodeMatchers extends NodeMatchers<Node> implements NodesVisitor {
+        InternalNodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch, Node baseNode) {
+            super(matcher, completeOnFirstMatch, baseNode);
+        }
     }
 
     /**

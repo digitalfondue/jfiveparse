@@ -55,7 +55,7 @@ public class W3CDom {
         }
     }
 
-    public static class W3CDNodeVisitor implements NodesVisitor<Node> {
+    public static class W3CDNodeVisitor implements NodesVisitor {
 
         protected final Document document;
         protected org.w3c.dom.Node currentNode;
@@ -281,7 +281,7 @@ public class W3CDom {
         return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, wrap(node)).map(n -> n != null ? n.node : null);
     }
 
-    private static void traverse(org.w3c.dom.Node rootNode, NodesVisitor<SelectableNodeWrapper> visitor) {
+    private static void traverse(org.w3c.dom.Node rootNode, BaseNodesVisitor<SelectableNodeWrapper> visitor) {
         var node = rootNode.getFirstChild();
         SelectableNodeWrapper wrappedNode = wrap(node);
         while (node != null) {

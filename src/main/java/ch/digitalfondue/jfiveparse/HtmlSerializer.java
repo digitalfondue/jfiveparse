@@ -29,7 +29,7 @@ import static ch.digitalfondue.jfiveparse.Common.*;
  * >https://html.spec.whatwg.org/multipage/syntax.html#serialising-html-
  * fragments</a>
  */
-public class HtmlSerializer implements NodesVisitor<Node> {
+public class HtmlSerializer implements NodesVisitor {
 
     protected final Appendable appendable;
     protected final boolean transformEntities;
