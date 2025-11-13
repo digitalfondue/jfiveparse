@@ -16,6 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 @FunctionalInterface
-public interface NodeMatcher {
-    boolean match(SelectableNode node, SelectableNode base);
+public interface NodeMatcher<T extends SelectableNode<T>> {
+    boolean match(T node, T base);
 }

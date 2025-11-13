@@ -3,24 +3,24 @@ package ch.digitalfondue.jfiveparse;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface SelectableNode {
+public interface SelectableNode<T extends SelectableNode<T>> {
     int getNodeType();
     String getNodeName();
 
-    SelectableNode getParentNode();
-    SelectableNode getFirstChild();
-    SelectableNode getLastChild();
-    SelectableElement getFirstElementChild();
-    SelectableElement getLastElementChild();
-    SelectableElement getPreviousElementSibling();
-    List<? extends SelectableNode> getChildNodes();
-    Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base);
+    T getParentNode();
+    T getFirstChild();
+    T getLastChild();
+    SelectableElement<T> getFirstElementChild();
+    SelectableElement<T> getLastElementChild();
+    SelectableElement<T> getPreviousElementSibling();
+    List<T> getChildNodes();
+    Stream<T> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, T base);
 
     String getTextContent();
 
-    boolean isSameNode(SelectableNode node);
+    boolean isSameNode(T node);
 
-    interface SelectableElement extends SelectableNode {
+    interface SelectableElement<T extends SelectableNode<T>> extends SelectableNode<T> {
         String getNamespaceURI();
 
         boolean containsAttribute(String name);

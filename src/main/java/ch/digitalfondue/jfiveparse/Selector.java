@@ -266,7 +266,7 @@ public class Selector {
         if (node.getParentNode() != null) {
             var nodeName = node.getNodeName();
             var childNodes = node.getParentNode().getChildNodes();
-            for (SelectableNode e : childNodes) {
+            for (var e : childNodes) {
                 if (IS_ELEMENT.match(e, base) && e.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
                 }

@@ -141,7 +141,7 @@ public class W3CDom {
         return new SelectableNodeWrapper(node);
     }
 
-    private static class SelectableNodeWrapper implements SelectableNode {
+    private static class SelectableNodeWrapper implements SelectableNode<SelectableNodeWrapper> {
 
         protected final org.w3c.dom.Node node;
 
@@ -176,7 +176,7 @@ public class W3CDom {
         }
 
         @Override
-        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base) {
+        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNodeWrapper base) {
             return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, (SelectableNodeWrapper) base);
         }
 
@@ -220,8 +220,8 @@ public class W3CDom {
         }
 
         @Override
-        public boolean isSameNode(SelectableNode otherNode) {
-            return otherNode instanceof SelectableNodeWrapper cnw && node.isSameNode(cnw.node);
+        public boolean isSameNode(SelectableNodeWrapper otherNode) {
+            return  node.isSameNode(otherNode.node);
         }
 
         @Override
@@ -230,7 +230,7 @@ public class W3CDom {
         }
     }
 
-    static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement {
+    static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement<SelectableNodeWrapper> {
 
         SelectableElementWrapper(org.w3c.dom.Element node) {
             super(node);

@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-public final class Element extends Node implements SelectableNode.SelectableElement {
+public final class Element extends Node implements SelectableNode.SelectableElement<Node> {
 
     final String nodeName;
     final String originalNodeName;

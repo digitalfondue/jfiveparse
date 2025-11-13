@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 /**
  * Base class for all the nodes.
  */
-public sealed abstract class Node implements SelectableNode permits Comment, Document, DocumentType, Element, Text {
+public sealed abstract class Node implements SelectableNode<Node> permits Comment, Document, DocumentType, Element, Text {
 
     static final List<Node> EMPTY_LIST = List.of();
 
@@ -450,9 +450,8 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
     }
 
     @Override
-    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch, SelectableNode base) {
-        // TODO: CHECK type
-        var nm = new InternalNodeMatchers(matcher, onlyFirstMatch, (Node) base);
+    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch, Node base) {
+        var nm = new InternalNodeMatchers(matcher, onlyFirstMatch, base);
         traverse(nm);
         return nm.result();
     }
@@ -577,7 +576,7 @@ public sealed abstract class Node implements SelectableNode permits Comment, Doc
      * @return
      */
     @Override
-    public boolean isSameNode(SelectableNode other) {
+    public boolean isSameNode(Node other) {
         return this == other;
     }
 
