@@ -10,11 +10,11 @@ public interface SelectableNode<T extends SelectableNode<T>> {
     T getParentNode();
     T getFirstChild();
     T getLastChild();
-    SelectableElement<T> getFirstElementChild();
-    SelectableElement<T> getLastElementChild();
-    SelectableElement<T> getPreviousElementSibling();
+    T getFirstElementChild();
+    T getLastElementChild();
+    T getPreviousElementSibling();
     List<T> getChildNodes();
-    Stream<T> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, T base);
+    Stream<T> getAllNodesMatchingAsStream(NodeMatcher<T> matcher, boolean onlyFirst, T base);
 
     String getTextContent();
 
