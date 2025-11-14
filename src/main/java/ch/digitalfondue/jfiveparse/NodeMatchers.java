@@ -17,15 +17,15 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.stream.Stream;
 
-class NodeMatchers<T extends SelectableNode> implements BaseNodesVisitor<T> {
+class NodeMatchers<T extends SelectableNode<T>> implements BaseNodesVisitor<T> {
 
-    private final NodeMatcher matcher;
+    private final BaseNodeMatcher<T> matcher;
     private final T baseNode;
     private Stream.Builder<T> toAdd;
     private Stream<T> singleOrEmpty;
     private final boolean completeOnFirstMatch;
 
-    NodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch, T baseNode) {
+    NodeMatchers(BaseNodeMatcher<T> matcher, boolean completeOnFirstMatch, T baseNode) {
         this.matcher = matcher;
         this.completeOnFirstMatch = completeOnFirstMatch;
         this.baseNode = baseNode;

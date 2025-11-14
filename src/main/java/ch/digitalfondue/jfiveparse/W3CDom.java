@@ -176,7 +176,7 @@ public class W3CDom {
         }
 
         @Override
-        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNodeWrapper base) {
+        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(BaseNodeMatcher<SelectableNodeWrapper> matcher, boolean onlyFirst, SelectableNodeWrapper base) {
             return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, (SelectableNodeWrapper) base);
         }
 
@@ -252,7 +252,6 @@ public class W3CDom {
         }
     }
 
-
     /**
      * Match {@link org.w3c.dom.Node} using a {@link NodeMatcher}.
      *
@@ -260,18 +259,18 @@ public class W3CDom {
      * @param matcher
      * @return
      */
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher) {
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BaseNodeMatcher<SelectableNodeWrapper> matcher) {
         return getAllNodesMatching(node, matcher, false);
     }
 
-    private static Stream<SelectableNodeWrapper> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher matcher, boolean onlyFirstMatch, SelectableNodeWrapper base) {
+    private static Stream<SelectableNodeWrapper> getAllNodesMatchingWrapped(org.w3c.dom.Node node, BaseNodeMatcher<SelectableNodeWrapper> matcher, boolean onlyFirstMatch, SelectableNodeWrapper base) {
         var nm = new NodeMatchers<>(matcher, onlyFirstMatch, base);
         traverse(node, nm);
         return nm.result().filter(Objects::nonNull);
     }
 
 
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher matcher,
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BaseNodeMatcher<SelectableNodeWrapper> matcher,
                                                                boolean onlyFirstMatch) {
         return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, wrap(node)).map(n -> n != null ? n.node : null);
     }

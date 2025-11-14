@@ -3,7 +3,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface SelectableNode<T extends SelectableNode<T>> {
+interface SelectableNode<T extends SelectableNode<T>> {
     int getNodeType();
     String getNodeName();
 
@@ -14,7 +14,7 @@ public interface SelectableNode<T extends SelectableNode<T>> {
     T getLastElementChild();
     T getPreviousElementSibling();
     List<T> getChildNodes();
-    Stream<T> getAllNodesMatchingAsStream(NodeMatcher<T> matcher, boolean onlyFirst, T base);
+    Stream<T> getAllNodesMatchingAsStream(BaseNodeMatcher<T> matcher, boolean onlyFirst, T base);
 
     String getTextContent();
 

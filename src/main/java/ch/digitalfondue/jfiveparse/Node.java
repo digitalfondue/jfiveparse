@@ -450,8 +450,8 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     }
 
     @Override
-    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirstMatch, Node base) {
-        var nm = new InternalNodeMatchers(matcher, onlyFirstMatch, base);
+    public Stream<Node> getAllNodesMatchingAsStream(BaseNodeMatcher<Node> matcher, boolean onlyFirstMatch, Node base) {
+        var nm = new InternalNodeMatchers(matcher::match, onlyFirstMatch, base);
         traverse(nm);
         return nm.result();
     }
