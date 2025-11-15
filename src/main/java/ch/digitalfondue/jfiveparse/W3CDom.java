@@ -27,6 +27,9 @@ import java.util.stream.Stream;
 
 public class W3CDom {
 
+    private W3CDom() {
+    }
+
     public static Document toW3CDocument(ch.digitalfondue.jfiveparse.Document doc) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

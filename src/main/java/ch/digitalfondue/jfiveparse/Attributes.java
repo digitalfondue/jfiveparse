@@ -44,6 +44,11 @@ public final class Attributes implements Iterable<AttributeNode> {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(attributes);
+    }
+
     public Attributes copy() {
         Attributes a = new Attributes();
         if (attributes != null) {
