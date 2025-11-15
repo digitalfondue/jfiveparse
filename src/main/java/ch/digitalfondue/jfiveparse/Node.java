@@ -389,6 +389,10 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     // As described in
     // http://www.drdobbs.com/database/a-generic-iterator-for-tree-traversal/184404325
     public void traverse(NodesVisitor visitor) {
+        traverse((BaseNodesVisitor<Node>) visitor);
+    }
+
+    private void traverse(BaseNodesVisitor<Node> visitor) {
         Node node = getFirstChild();
         while (node != null) {
             visitor.start(node);
@@ -432,7 +436,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * Get all the nodes matching the given matcher. The nodes will be returned
      * in "tree order". See {@link Selector}.
      */
-    public List<Node> getAllNodesMatching(NodeMatcher matcher) {
+    public List<Node> getAllNodesMatching(NodeMatcher<Node> matcher) {
         return getAllNodesMatching(matcher, false);
     }
 
@@ -441,26 +445,20 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * in "tree order". If the second parameter is true, the traversal will stop
      * on the first match. See {@link Selector}.
      */
-    public List<Node> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
+    public List<Node> getAllNodesMatching(NodeMatcher<Node> matcher, boolean onlyFirstMatch) {
         return getAllNodesMatchingAsStream(matcher, onlyFirstMatch, this).toList();
     }
 
 
-    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher) {
+    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher<Node> matcher) {
         return getAllNodesMatchingAsStream(matcher, false, this);
     }
 
     @Override
-    public Stream<Node> getAllNodesMatchingAsStream(BiPredicate<Node, Node> matcher, boolean onlyFirstMatch, Node base) {
-        var nm = new InternalNodeMatchers(matcher::test, onlyFirstMatch, base);
+    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher<Node> matcher, boolean onlyFirstMatch, Node base) {
+        var nm = new NodeMatchers<>(matcher.matcher::test, onlyFirstMatch, base);
         traverse(nm);
         return nm.result();
-    }
-
-    private static class InternalNodeMatchers extends NodeMatchers<Node> implements NodesVisitor {
-        InternalNodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch, Node baseNode) {
-            super(matcher, completeOnFirstMatch, baseNode);
-        }
     }
 
     /**
@@ -502,7 +500,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public boolean contains(Node node) {
         // check same reference
-        return getAllNodesMatchingAsStream((n, b) -> n.isSameNode(node), true, this).anyMatch(s -> true);
+        return getAllNodesMatchingAsStream(new NodeMatcher<>((n, b) -> n.isSameNode(node)), true, this).anyMatch(s -> true);
     }
 
     /**

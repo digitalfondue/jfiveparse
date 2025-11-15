@@ -243,10 +243,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                         }
                         r.addAll(s);
                         var nm = toBaseNodeMatcher(r, stateSupplier);
-                        BiPredicate<T, T> wrappedNm = (wn, wb) -> nm.test(wrapper.apply(wn), wrapper.apply(wb));
                         return switch (comb) {
-                            case CHILD, DESCENDANT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> node.getAllNodesMatchingAsStream(wrappedNm, true, unwrapper.apply(base)).count() == 1;
-                            case SIBLING, ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> wrapper.apply(node.getParentNode()).getAllNodesMatchingAsStream(wrappedNm, true, unwrapper.apply(base)).count() == 1;
+                            case CHILD, DESCENDANT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> node.getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
+                            case SIBLING, ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> wrapper.apply(node.getParentNode()).getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
                             default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has");
                         };
                     }).toList());

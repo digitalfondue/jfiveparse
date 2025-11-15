@@ -46,9 +46,9 @@ public class W3CDom {
             return select();
         }
 
-        public BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> toMatcher() {
-            var res = internalToMatcher();
-            return (node, base) -> res.test(wrap(node), wrap(base));
+        public NodeMatcher<org.w3c.dom.Node> toMatcher() {
+            var res = this.internalToMatcher();
+            return new NodeMatcher<>(res);
         }
     }
 
@@ -162,7 +162,7 @@ public class W3CDom {
     }
 
     private static org.w3c.dom.Node unwrap(SelectableNode<org.w3c.dom.Node> toUnwrap) {
-        // we know we can do that, ugly, but at least it's ina single place
+        // we know we can do that, ugly, but at least it's in a single place
         return toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node;
     }
 
@@ -211,7 +211,7 @@ public class W3CDom {
         }
 
         @Override
-        public Stream<org.w3c.dom.Node> getAllNodesMatchingAsStream(BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher, boolean onlyFirst, org.w3c.dom.Node base) {
+        public Stream<org.w3c.dom.Node> getAllNodesMatchingAsStream(NodeMatcher<org.w3c.dom.Node> matcher, boolean onlyFirst, org.w3c.dom.Node base) {
             return getAllNodesMatchingWrapped(node, matcher, onlyFirst, base);
         }
 
@@ -294,16 +294,16 @@ public class W3CDom {
      * @param matcher
      * @return
      */
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher) {
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher<org.w3c.dom.Node> matcher) {
         return getAllNodesMatching(node, matcher, false);
     }
 
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher, boolean onlyFirstMatch) {
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, NodeMatcher<org.w3c.dom.Node> matcher, boolean onlyFirstMatch) {
         return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, node);
     }
 
-    private static Stream<org.w3c.dom.Node> getAllNodesMatchingWrapped(org.w3c.dom.Node node, BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher, boolean onlyFirstMatch, org.w3c.dom.Node base) {
-        var nm = new NodeMatchers<>(matcher, onlyFirstMatch, base);
+    private static Stream<org.w3c.dom.Node> getAllNodesMatchingWrapped(org.w3c.dom.Node node, NodeMatcher<org.w3c.dom.Node> matcher, boolean onlyFirstMatch, org.w3c.dom.Node base) {
+        var nm = new NodeMatchers<>((n, b) -> matcher.matcher.test(wrap(n), wrap(b)), onlyFirstMatch, base);
         traverse(node, nm);
         return nm.result().filter(Objects::nonNull);
     }
@@ -311,7 +311,6 @@ public class W3CDom {
 
     private static void traverse(org.w3c.dom.Node rootNode, BaseNodesVisitor<org.w3c.dom.Node> visitor) {
         var node = rootNode.getFirstChild();
-        //SelectableNodeWrapper wrappedNode = wrap(node);
         while (node != null) {
             visitor.start(node);
             if (visitor.complete()) {
@@ -319,7 +318,6 @@ public class W3CDom {
             }
             if (node.hasChildNodes()) {
                 node = node.getFirstChild();
-                //wrappedNode = wrap(node);
             } else {
                 while (node != rootNode && node.getNextSibling() == null) {
                     visitor.end(node);
@@ -327,7 +325,6 @@ public class W3CDom {
                         return;
                     }
                     node = node.getParentNode();
-                    //wrappedNode = wrap(node);
                 }
 
                 if (node == rootNode) {
@@ -338,7 +335,6 @@ public class W3CDom {
                     return;
                 }
                 node = node.getNextSibling();
-                //wrappedNode = wrap(node);
             }
         }
     }
