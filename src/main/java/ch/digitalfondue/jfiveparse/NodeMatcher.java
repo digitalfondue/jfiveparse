@@ -17,6 +17,10 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.function.BiPredicate;
 
-@FunctionalInterface
-public interface NodeMatcher extends BiPredicate<Node, Node> {
+public final class NodeMatcher<T> {
+    final BiPredicate<T, T> matchers;
+
+    NodeMatcher(BiPredicate<T, T> matchers) {
+        this.matchers = matchers;
+    }
 }
