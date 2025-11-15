@@ -1,26 +1,27 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
-public interface SelectableNode {
+interface SelectableNode<T> {
     int getNodeType();
     String getNodeName();
 
-    SelectableNode getParentNode();
-    SelectableNode getFirstChild();
-    SelectableNode getLastChild();
-    SelectableElement getFirstElementChild();
-    SelectableElement getLastElementChild();
-    SelectableElement getPreviousElementSibling();
-    List<? extends SelectableNode> getChildNodes();
-    Stream<? extends SelectableNode> getAllNodesMatchingAsStream(NodeMatcher matcher, boolean onlyFirst, SelectableNode base);
+    T getParentNode();
+    T getFirstChild();
+    T getLastChild();
+    T getFirstElementChild();
+    T getLastElementChild();
+    T getPreviousElementSibling();
+    List<T> getChildNodes();
+    Stream<T> getAllNodesMatchingAsStream(BiPredicate<T, T> matcher, boolean onlyFirst, T base);
 
     String getTextContent();
 
-    boolean isSameNode(SelectableNode node);
+    boolean isSameNode(T node);
 
-    interface SelectableElement extends SelectableNode {
+    interface SelectableElement<T> extends SelectableNode<T> {
         String getNamespaceURI();
 
         boolean containsAttribute(String name);
