@@ -30,6 +30,29 @@ public class W3CDom {
     private W3CDom() {
     }
 
+    public static class W3CDomSelector extends BaseSelectorState<SelectableNodeWrapper, W3CDomSelector> {
+
+        private static final BaseSelector<SelectableNodeWrapper> NODE_BASE_SELECTOR = new BaseSelector<>();
+
+        W3CDomSelector() {
+            super(NODE_BASE_SELECTOR);
+        }
+
+        @Override
+        W3CDomSelector inst() {
+            return this;
+        }
+
+        @Override
+        W3CDomSelector newInst() {
+            return select();
+        }
+    }
+
+    public static W3CDomSelector select() {
+        return new W3CDomSelector();
+    }
+
     public static Document toW3CDocument(ch.digitalfondue.jfiveparse.Document doc) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
