@@ -56,7 +56,7 @@ public class TokenizerTest {
                 if (suite.tests != null) {
                     for (TokenizerTestDescriptor test : suite.tests) {
 
-                        List<TokenizerStateForTest> states = Arrays.asList(TokenizerStateForTest.DATA_STATE);
+                        List<TokenizerStateForTest> states = List.of(TokenizerStateForTest.DATA_STATE);
                         if (test.initialStates != null) {
                             states = new ArrayList<>();
                             for (String state : test.initialStates) {
@@ -121,13 +121,11 @@ public class TokenizerTest {
         assertEquals(desc.output.toString(), tokens.toString());
     }
 
-    @SuppressWarnings("unchecked")
     private static boolean isCharacterToken(Object t) {
         if (t == null) {
             return false;
         }
-        if (t instanceof List) {
-            List<Object> token = (List<Object>) t;
+        if (t instanceof List<?> token) {
             if (token.size() == 2 && token.get(0).equals(TokenType.character)) {
                 return true;
             }
@@ -135,13 +133,11 @@ public class TokenizerTest {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     private static boolean isCommentToken(Object t) {
         if (t == null) {
             return false;
         }
-        if (t instanceof List) {
-            List<Object> token = (List<Object>) t;
+        if (t instanceof List<?> token) {
             if (token.size() == 2 && token.get(0).equals(TokenType.comment)) {
                 return true;
             }

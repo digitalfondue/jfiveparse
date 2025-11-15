@@ -135,15 +135,10 @@ package ch.digitalfondue.jfiveparse;
  * </tr>
  * </table>
  */
-public final class Selector extends BaseSelectorState<Node, Selector> {
+public final class Selector extends BaseSelector<Node, Selector> {
 
     private Selector() {
-        super(NODE_BASE_SELECTOR);
     }
-
-    private static final BaseSelector<Node> NODE_BASE_SELECTOR = new BaseSelector<>();
-
-
 
     public static Selector select() {
         return new Selector();

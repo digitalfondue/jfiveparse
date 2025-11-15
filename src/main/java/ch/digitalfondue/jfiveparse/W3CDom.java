@@ -23,7 +23,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class W3CDom {
@@ -33,12 +32,9 @@ public class W3CDom {
 
     // FIXME: still one point to fix...
     // FIXME: class ch.digitalfondue.jfiveparse.W3CDom.SelectableNodeWrapper in module ch.digitalfondue.jfiveparse is not accessible to clients that require this module
-    public static class W3CDomSelector extends BaseSelectorState<SelectableNodeWrapper, W3CDomSelector> {
-
-        private static final BaseSelector<SelectableNodeWrapper> NODE_BASE_SELECTOR = new BaseSelector<>();
+    public static class W3CDomSelector extends BaseSelector<SelectableNodeWrapper, W3CDomSelector> {
 
         private W3CDomSelector() {
-            super(NODE_BASE_SELECTOR);
         }
 
         @Override
@@ -54,11 +50,6 @@ public class W3CDom {
         public BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> toMatcher() {
             var res = internalToMatcher();
             return (node, base) -> res.test(wrap(node), wrap(base));
-        }
-
-        @Override
-        BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> toBaseNodeMatcher(List<CSS.CssSelector> selector, Supplier<BaseSelectorState<SelectableNodeWrapper, W3CDomSelector>> baseSelectorStateSupplier) {
-            return super.toBaseNodeMatcher(selector, baseSelectorStateSupplier);
         }
     }
 
