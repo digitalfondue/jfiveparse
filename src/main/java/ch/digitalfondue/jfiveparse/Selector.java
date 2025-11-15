@@ -16,7 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.List;
-import java.util.function.BiPredicate;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -138,115 +137,115 @@ import java.util.function.BiPredicate;
  * </tr>
  * </table>
  */
-public final class Selector<T> {
-
-    private static final BaseSelector<Node> NODE_BASE_SELECTOR = new BaseSelector<>();
-    private final BaseSelector.BaseSelectorState<Node> state;
+public final class Selector {
 
     private Selector() {
-        state = new BaseSelector.BaseSelectorState<>(NODE_BASE_SELECTOR);
     }
 
-    public static Selector<Node> select() {
-        return new Selector<>();
+    private static final BaseSelector<Node> NODE_BASE_SELECTOR = new BaseSelector<>();
+
+    private final BaseSelector.BaseSelectorState<Node> state = new BaseSelector.BaseSelectorState<>(NODE_BASE_SELECTOR);
+
+    public static Selector select() {
+        return new Selector();
     }
 
-    public static NodeMatcher<Node> parseSelector(String selector) {
+    public static NodeMatcher parseSelector(String selector) {
         var res = CSS.parseSelector(selector).stream().map(NODE_BASE_SELECTOR::toBaseNodeMatcher).toList();
-        return new NodeMatcher<>(NODE_BASE_SELECTOR.andMatchers(List.of(NODE_BASE_SELECTOR.IS_ELEMENT, res.size() == 1 ? res.get(0) : NODE_BASE_SELECTOR.orMatchers(res))));
+        return NODE_BASE_SELECTOR.andMatchers(List.of(NODE_BASE_SELECTOR.IS_ELEMENT, res.size() == 1 ? res.get(0) : NODE_BASE_SELECTOR.orMatchers(res)))::test;
     }
 
-    public Selector<T> element(String name) {
+    public Selector element(String name) {
         state.element(name);
         return this;
     }
 
 
-    public NodeMatcher<Node> toMatcher() {
-        return new NodeMatcher<>(state.toMatcher());
+    public NodeMatcher toMatcher() {
+        return state.toMatcher()::test;
     }
 
-    public Selector<T> element(String name, String namespace) {
+    public Selector element(String name, String namespace) {
         state.element(name, namespace);
         return this;
     }
 
-    public Selector<T> id(String id) {
+    public Selector id(String id) {
         state.id(id);
         return this;
     }
 
-    public Selector<T> withChild() {
+    public Selector withChild() {
         state.withChild();
         return this;
     }
 
-    public Selector<T> withDescendant() {
+    public Selector withDescendant() {
         state.withDescendant();
         return this;
     }
 
-    public Selector<T> universal() {
+    public Selector universal() {
         state.universal();
         return this;
     }
 
-    public Selector<T> attrValEq(String attr, String val) {
+    public Selector attrValEq(String attr, String val) {
         state.attrValEq(attr, val);
         return this;
     }
 
-    public Selector<T> attr(String attr) {
+    public Selector attr(String attr) {
         state.attr(attr);
         return this;
     }
 
-    public Selector<T> hasClass(String value) {
+    public Selector hasClass(String value) {
         state.hasClass(value);
         return this;
     }
 
-    public Selector<T> isFirstChild() {
+    public Selector isFirstChild() {
         state.matchers.add(NODE_BASE_SELECTOR.IS_FIRST_CHILD);
         return this;
     }
 
-    public Selector<T> hasClass(String value, String... others) {
+    public Selector hasClass(String value, String... others) {
         state.hasClass(value, others);
         return this;
     }
 
-    public Selector<T> isFirstElementChild() {
+    public Selector isFirstElementChild() {
         state.matchers.add(NODE_BASE_SELECTOR.IS_FIRST_ELEMENT_CHILD);
         return this;
     }
 
-    public Selector<T> isLastElementChild() {
+    public Selector isLastElementChild() {
         state.matchers.add(NODE_BASE_SELECTOR.IS_LAST_ELEMENT_CHILD);
         return this;
     }
 
-    public Selector<T> isLastChild() {
+    public Selector isLastChild() {
         state.matchers.add(NODE_BASE_SELECTOR.IS_LAST_CHILD);
         return this;
     }
 
-    public Selector<T> attrValInList(String name, String value) {
+    public Selector attrValInList(String name, String value) {
         state.attrValInList(name, value);
         return this;
     }
 
-    public Selector<T> attrValStartWith(String name, String value) {
+    public Selector attrValStartWith(String name, String value) {
         state.attrValStartWith(name, value);
         return this;
     }
 
-    public Selector<T> attrValEndWith(String name, String value) {
+    public Selector attrValEndWith(String name, String value) {
         state.attrValEndWith(name, value);
         return this;
     }
 
-    public Selector<T> attrValContains(String name, String value) {
+    public Selector attrValContains(String name, String value) {
         state.attrValContains(name, value);
         return this;
     }

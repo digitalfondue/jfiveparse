@@ -56,7 +56,7 @@ public class TokenizerTest {
                 if (suite.tests != null) {
                     for (TokenizerTestDescriptor test : suite.tests) {
 
-                        List<TokenizerStateForTest> states = List.of(TokenizerStateForTest.DATA_STATE);
+                        List<TokenizerStateForTest> states = Arrays.asList(TokenizerStateForTest.DATA_STATE);
                         if (test.initialStates != null) {
                             states = new ArrayList<>();
                             for (String state : test.initialStates) {
@@ -121,22 +121,30 @@ public class TokenizerTest {
         assertEquals(desc.output.toString(), tokens.toString());
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean isCharacterToken(Object t) {
         if (t == null) {
             return false;
         }
-        if (t instanceof List<?> token) {
-            return token.size() == 2 && token.get(0).equals(TokenType.character);
+        if (t instanceof List) {
+            List<Object> token = (List<Object>) t;
+            if (token.size() == 2 && token.get(0).equals(TokenType.character)) {
+                return true;
+            }
         }
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean isCommentToken(Object t) {
         if (t == null) {
             return false;
         }
-        if (t instanceof List<?> token) {
-            return token.size() == 2 && token.get(0).equals(TokenType.comment);
+        if (t instanceof List) {
+            List<Object> token = (List<Object>) t;
+            if (token.size() == 2 && token.get(0).equals(TokenType.comment)) {
+                return true;
+            }
         }
         return false;
     }
@@ -147,7 +155,7 @@ public class TokenizerTest {
 
         for (Token t : tokens) {
             Token lastRes = res.isEmpty() ? null : res.get(res.size() - 1);
-            if (t instanceof Token.CharacterToken currentChar && lastRes instanceof Token.CharacterToken lastResChar) {
+            if (t != null && lastRes != null && t instanceof Token.CharacterToken currentChar && lastRes instanceof Token.CharacterToken lastResChar) {
                 for (int i = 0; i < currentChar.chr.pos(); i++) {
                     lastResChar.chr.append(currentChar.chr.at(i));
                 }
@@ -160,7 +168,8 @@ public class TokenizerTest {
     }
 
     private static boolean isCharacter(Object o) {
-        if(o instanceof List<?> l) {
+        if(o!= null && o instanceof List) {
+            List<Object> l = (List<Object>) o;
             return !l.isEmpty() && l.get(0).equals("Character");
         }
         return false;

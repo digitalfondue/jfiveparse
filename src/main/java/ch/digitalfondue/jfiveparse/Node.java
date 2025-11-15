@@ -432,7 +432,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * Get all the nodes matching the given matcher. The nodes will be returned
      * in "tree order". See {@link Selector}.
      */
-    public List<Node> getAllNodesMatching(NodeMatcher<Node> matcher) {
+    public List<Node> getAllNodesMatching(NodeMatcher matcher) {
         return getAllNodesMatching(matcher, false);
     }
 
@@ -441,25 +441,25 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * in "tree order". If the second parameter is true, the traversal will stop
      * on the first match. See {@link Selector}.
      */
-    public List<Node> getAllNodesMatching(NodeMatcher<Node> matcher, boolean onlyFirstMatch) {
-        return getAllNodesMatchingAsStream(matcher.matchers, onlyFirstMatch, this).toList();
+    public List<Node> getAllNodesMatching(NodeMatcher matcher, boolean onlyFirstMatch) {
+        return getAllNodesMatchingAsStream(matcher, onlyFirstMatch, this).toList();
     }
 
 
-    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher<Node> matcher) {
-        return getAllNodesMatchingAsStream(matcher.matchers, false, this);
+    public Stream<Node> getAllNodesMatchingAsStream(NodeMatcher matcher) {
+        return getAllNodesMatchingAsStream(matcher, false, this);
     }
 
     @Override
     public Stream<Node> getAllNodesMatchingAsStream(BiPredicate<Node, Node> matcher, boolean onlyFirstMatch, Node base) {
-        var nm = new InternalNodeMatchers(new NodeMatcher<>(matcher), onlyFirstMatch, base);
+        var nm = new InternalNodeMatchers(matcher::test, onlyFirstMatch, base);
         traverse(nm);
         return nm.result();
     }
 
     private static class InternalNodeMatchers extends NodeMatchers<Node> implements NodesVisitor {
-        InternalNodeMatchers(NodeMatcher<Node> matcher, boolean completeOnFirstMatch, Node baseNode) {
-            super(matcher.matchers, completeOnFirstMatch, baseNode);
+        InternalNodeMatchers(NodeMatcher matcher, boolean completeOnFirstMatch, Node baseNode) {
+            super(matcher, completeOnFirstMatch, baseNode);
         }
     }
 
@@ -468,7 +468,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * be returned in "tree order". The name is case-sensitive.
      */
     public List<Element> getElementsByTagName(String name) {
-        return getAllNodesMatchingAsStream(Selector.select().element(name).toMatcher().matchers, false, this)
+        return getAllNodesMatchingAsStream(Selector.select().element(name).toMatcher())
                 .map(Element.class::cast)
                 .toList();
     }
@@ -479,7 +479,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * case-sensitive.
      */
     public List<Element> getElementsByTagNameNS(String name, String namespace) {
-        return getAllNodesMatchingAsStream(Selector.select().element(name, namespace).toMatcher().matchers, false, this)
+        return getAllNodesMatchingAsStream(Selector.select().element(name, namespace).toMatcher())
                 .map(Element.class::cast)
                 .toList();
     }
@@ -490,7 +490,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * element found during the traversal will be returned.
      */
     public Element getElementById(String idValue) {
-        return getAllNodesMatchingAsStream(Selector.select().id(idValue).toMatcher().matchers, false, this)
+        return getAllNodesMatchingAsStream(Selector.select().id(idValue).toMatcher())
                 .findFirst().map(Element.class::cast).orElse(null);
     }
 
