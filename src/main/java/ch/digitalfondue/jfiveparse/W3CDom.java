@@ -32,9 +32,10 @@ public class W3CDom {
 
     // FIXME: still one point to fix...
     // FIXME: class ch.digitalfondue.jfiveparse.W3CDom.SelectableNodeWrapper in module ch.digitalfondue.jfiveparse is not accessible to clients that require this module
-    public static class W3CDomSelector extends BaseSelector<SelectableNodeWrapper, W3CDomSelector> {
+    public static class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
 
         private W3CDomSelector() {
+            super(n -> wrap(n));
         }
 
         @Override
@@ -162,7 +163,7 @@ public class W3CDom {
         }
     }
 
-    private static SelectableNodeWrapper wrap(org.w3c.dom.Node node) {
+    private static SelectableNode<org.w3c.dom.Node> wrap(org.w3c.dom.Node node) {
         if (node == null) {
             return null;
         }
@@ -172,7 +173,7 @@ public class W3CDom {
         return new SelectableNodeWrapper(node);
     }
 
-    private static class SelectableNodeWrapper implements SelectableNode<SelectableNodeWrapper> {
+    private static class SelectableNodeWrapper implements SelectableNode<org.w3c.dom.Node> {
 
         protected final org.w3c.dom.Node node;
 

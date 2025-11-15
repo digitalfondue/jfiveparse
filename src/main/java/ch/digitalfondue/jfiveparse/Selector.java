@@ -15,6 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.function.Function;
+
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
  * to CSS.
@@ -138,6 +140,7 @@ package ch.digitalfondue.jfiveparse;
 public final class Selector extends BaseSelector<Node, Selector> {
 
     private Selector() {
+        super((node) -> node);
     }
 
     public static Selector select() {
