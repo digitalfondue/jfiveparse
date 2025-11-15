@@ -30,12 +30,10 @@ public class W3CDom {
     private W3CDom() {
     }
 
-    // FIXME: still one point to fix...
-    // FIXME: class ch.digitalfondue.jfiveparse.W3CDom.SelectableNodeWrapper in module ch.digitalfondue.jfiveparse is not accessible to clients that require this module
-    public static class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
+   public static class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
 
         private W3CDomSelector() {
-            super(n -> wrap(n));
+            super(W3CDom::wrap, W3CDom::unwrap);
         }
 
         @Override
@@ -163,6 +161,11 @@ public class W3CDom {
         }
     }
 
+    private static org.w3c.dom.Node unwrap(SelectableNode<org.w3c.dom.Node> toUnwrap) {
+        // we know we can do that, ugly, but at least it's ina single place
+        return toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node;
+    }
+
     private static SelectableNode<org.w3c.dom.Node> wrap(org.w3c.dom.Node node) {
         if (node == null) {
             return null;
@@ -192,68 +195,68 @@ public class W3CDom {
         }
 
         @Override
-        public SelectableNodeWrapper getParentNode() {
-            return wrap(node.getParentNode());
+        public org.w3c.dom.Node getParentNode() {
+            return node.getParentNode();
         }
 
         @Override
-        public SelectableNodeWrapper getFirstChild() {
-            return wrap(node.getFirstChild());
+        public org.w3c.dom.Node getFirstChild() {
+            return node.getFirstChild();
         }
 
         @Override
-        public List<SelectableNodeWrapper> getChildNodes() {
+        public List<org.w3c.dom.Node> getChildNodes() {
             var childNodes = node.getChildNodes();
-            return new SelectableNodeList((i) -> wrap(childNodes.item(i)), childNodes.getLength());
+            return new SelectableNodeList(childNodes::item, childNodes.getLength());
         }
 
         @Override
-        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher, boolean onlyFirst, SelectableNodeWrapper base) {
+        public Stream<org.w3c.dom.Node> getAllNodesMatchingAsStream(BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher, boolean onlyFirst, org.w3c.dom.Node base) {
             return getAllNodesMatchingWrapped(node, matcher, onlyFirst, base);
         }
 
         @Override
-        public SelectableNodeWrapper getLastChild() {
-            return wrap(node.getLastChild());
+        public org.w3c.dom.Node getLastChild() {
+            return node.getLastChild();
         }
 
         @Override
-        public SelectableElementWrapper getFirstElementChild() {
+        public org.w3c.dom.Element getFirstElementChild() {
             var childNodes = node.getChildNodes();
             var count = childNodes.getLength();
             for (int i = 0; i < count; i++) {
                 var childNode = childNodes.item(i);
                 if (childNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    return new SelectableElementWrapper((org.w3c.dom.Element) childNode);
+                    return (org.w3c.dom.Element) childNode;
                 }
             }
             return null;
         }
 
         @Override
-        public SelectableElementWrapper getLastElementChild() {
+        public org.w3c.dom.Element getLastElementChild() {
             var childNodes = node.getChildNodes();
             for (int i = childNodes.getLength() - 1; i >= 0; i--) {
                 var childNode = childNodes.item(i);
                 if (childNode.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
-                    return new SelectableElementWrapper((org.w3c.dom.Element) childNode);
+                    return (org.w3c.dom.Element) childNode;
                 }
             }
             return null;
         }
 
         @Override
-        public SelectableElementWrapper getPreviousElementSibling() {
+        public org.w3c.dom.Element getPreviousElementSibling() {
             var previous = node.getPreviousSibling();
             while (previous != null && previous.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 previous = previous.getPreviousSibling();
             }
-            return previous != null ? new SelectableElementWrapper((org.w3c.dom.Element) previous) : null;
+            return previous != null ? (org.w3c.dom.Element) previous : null;
         }
 
         @Override
-        public boolean isSameNode(SelectableNodeWrapper otherNode) {
-            return  node.isSameNode(otherNode.node);
+        public boolean isSameNode(org.w3c.dom.Node otherNode) {
+            return  node.isSameNode(otherNode);
         }
 
         @Override
@@ -262,7 +265,7 @@ public class W3CDom {
         }
     }
 
-    static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement<SelectableNodeWrapper> {
+    static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement<org.w3c.dom.Node> {
 
         SelectableElementWrapper(org.w3c.dom.Element node) {
             super(node);
@@ -296,62 +299,62 @@ public class W3CDom {
     }
 
     public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher, boolean onlyFirstMatch) {
-        return getAllNodesMatchingWrapped(node, (n, b) -> matcher.test(n.node, b.node), onlyFirstMatch, wrap(node)).map(n -> n != null ? n.node : null);
+        return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, node);
     }
 
-    private static Stream<SelectableNodeWrapper> getAllNodesMatchingWrapped(org.w3c.dom.Node node, BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher, boolean onlyFirstMatch, SelectableNodeWrapper base) {
+    private static Stream<org.w3c.dom.Node> getAllNodesMatchingWrapped(org.w3c.dom.Node node, BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher, boolean onlyFirstMatch, org.w3c.dom.Node base) {
         var nm = new NodeMatchers<>(matcher, onlyFirstMatch, base);
         traverse(node, nm);
         return nm.result().filter(Objects::nonNull);
     }
 
 
-    private static void traverse(org.w3c.dom.Node rootNode, BaseNodesVisitor<SelectableNodeWrapper> visitor) {
+    private static void traverse(org.w3c.dom.Node rootNode, BaseNodesVisitor<org.w3c.dom.Node> visitor) {
         var node = rootNode.getFirstChild();
-        SelectableNodeWrapper wrappedNode = wrap(node);
+        //SelectableNodeWrapper wrappedNode = wrap(node);
         while (node != null) {
-            visitor.start(wrappedNode);
+            visitor.start(node);
             if (visitor.complete()) {
                 return;
             }
             if (node.hasChildNodes()) {
                 node = node.getFirstChild();
-                wrappedNode = wrap(node);
+                //wrappedNode = wrap(node);
             } else {
                 while (node != rootNode && node.getNextSibling() == null) {
-                    visitor.end(wrappedNode);
+                    visitor.end(node);
                     if (visitor.complete()) {
                         return;
                     }
                     node = node.getParentNode();
-                    wrappedNode = wrap(node);
+                    //wrappedNode = wrap(node);
                 }
 
                 if (node == rootNode) {
                     break;
                 }
-                visitor.end(wrappedNode);
+                visitor.end(node);
                 if (visitor.complete()) {
                     return;
                 }
                 node = node.getNextSibling();
-                wrappedNode = wrap(node);
+                //wrappedNode = wrap(node);
             }
         }
     }
 
-    private static final class SelectableNodeList extends AbstractList<SelectableNodeWrapper> {
+    private static final class SelectableNodeList extends AbstractList<org.w3c.dom.Node> {
 
-        private final IntFunction<SelectableNodeWrapper> get;
+        private final IntFunction<org.w3c.dom.Node> get;
         private final int size;
 
-        SelectableNodeList(IntFunction<SelectableNodeWrapper> get, int size) {
+        SelectableNodeList(IntFunction<org.w3c.dom.Node> get, int size) {
             this.get = get;
             this.size = size;
         }
 
         @Override
-        public SelectableNodeWrapper get(int index) {
+        public org.w3c.dom.Node get(int index) {
             return get.apply(index);
         }
 

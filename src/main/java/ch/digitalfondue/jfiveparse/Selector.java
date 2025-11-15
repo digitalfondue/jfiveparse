@@ -140,7 +140,7 @@ import java.util.function.Function;
 public final class Selector extends BaseSelector<Node, Selector> {
 
     private Selector() {
-        super((node) -> node);
+        super(node-> node, node -> (Node) node);
     }
 
     public static Selector select() {
