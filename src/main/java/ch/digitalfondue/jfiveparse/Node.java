@@ -18,6 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 /**
@@ -450,8 +451,8 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     }
 
     @Override
-    public Stream<Node> getAllNodesMatchingAsStream(BaseNodeMatcher<Node> matcher, boolean onlyFirstMatch, Node base) {
-        var nm = new InternalNodeMatchers(matcher::match, onlyFirstMatch, base);
+    public Stream<Node> getAllNodesMatchingAsStream(BiPredicate<Node, Node> matcher, boolean onlyFirstMatch, Node base) {
+        var nm = new InternalNodeMatchers(matcher::test, onlyFirstMatch, base);
         traverse(nm);
         return nm.result();
     }

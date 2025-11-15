@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
@@ -176,7 +177,7 @@ public class W3CDom {
         }
 
         @Override
-        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(BaseNodeMatcher<SelectableNodeWrapper> matcher, boolean onlyFirst, SelectableNodeWrapper base) {
+        public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher, boolean onlyFirst, SelectableNodeWrapper base) {
             return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, (SelectableNodeWrapper) base);
         }
 
@@ -259,18 +260,18 @@ public class W3CDom {
      * @param matcher
      * @return
      */
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BaseNodeMatcher<SelectableNodeWrapper> matcher) {
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher) {
         return getAllNodesMatching(node, matcher, false);
     }
 
-    private static Stream<SelectableNodeWrapper> getAllNodesMatchingWrapped(org.w3c.dom.Node node, BaseNodeMatcher<SelectableNodeWrapper> matcher, boolean onlyFirstMatch, SelectableNodeWrapper base) {
+    private static Stream<SelectableNodeWrapper> getAllNodesMatchingWrapped(org.w3c.dom.Node node, BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher, boolean onlyFirstMatch, SelectableNodeWrapper base) {
         var nm = new NodeMatchers<>(matcher, onlyFirstMatch, base);
         traverse(node, nm);
         return nm.result().filter(Objects::nonNull);
     }
 
 
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BaseNodeMatcher<SelectableNodeWrapper> matcher,
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher,
                                                                boolean onlyFirstMatch) {
         return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, wrap(node)).map(n -> n != null ? n.node : null);
     }

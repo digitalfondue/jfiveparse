@@ -15,10 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.BiPredicate;
 
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
@@ -140,7 +137,10 @@ import java.util.function.BiPredicate;
  * </tr>
  * </table>
  */
-public class Selector {
+public final class Selector {
+
+    private Selector() {
+    }
 
     private static final BaseSelector<Node> NODE_BASE_SELECTOR = new BaseSelector<>();
 
@@ -152,7 +152,7 @@ public class Selector {
 
     public static NodeMatcher parseSelector(String selector) {
         var res = CSS.parseSelector(selector).stream().map(NODE_BASE_SELECTOR::toBaseNodeMatcher).toList();
-        return (node, base) -> NODE_BASE_SELECTOR.andMatchers(List.of(NODE_BASE_SELECTOR.IS_ELEMENT, res.size() == 1 ? res.get(0) : NODE_BASE_SELECTOR.orMatchers(res))).match(node, base);
+        return NODE_BASE_SELECTOR.andMatchers(List.of(NODE_BASE_SELECTOR.IS_ELEMENT, res.size() == 1 ? res.get(0) : NODE_BASE_SELECTOR.orMatchers(res)))::test;
     }
 
     public Selector element(String name) {
@@ -162,7 +162,7 @@ public class Selector {
 
 
     public NodeMatcher toMatcher() {
-        return (node, base) -> state.toMatcher().match(node, base);
+        return state.toMatcher()::test;
     }
 
     public Selector element(String name, String namespace) {
@@ -206,7 +206,7 @@ public class Selector {
     }
 
     public Selector isFirstChild() {
-        state.isFirstChild();
+        state.matchers.add(NODE_BASE_SELECTOR.IS_FIRST_CHILD);
         return this;
     }
 
@@ -216,17 +216,17 @@ public class Selector {
     }
 
     public Selector isFirstElementChild() {
-        state.isFirstElementChild();
+        state.matchers.add(NODE_BASE_SELECTOR.IS_FIRST_ELEMENT_CHILD);
         return this;
     }
 
     public Selector isLastElementChild() {
-        state.isLastElementChild();
+        state.matchers.add(NODE_BASE_SELECTOR.IS_LAST_ELEMENT_CHILD);
         return this;
     }
 
     public Selector isLastChild() {
-        state.isLastChild();
+        state.matchers.add(NODE_BASE_SELECTOR.IS_LAST_CHILD);
         return this;
     }
 

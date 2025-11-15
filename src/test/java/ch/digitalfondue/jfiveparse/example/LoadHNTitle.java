@@ -1,6 +1,9 @@
 package ch.digitalfondue.jfiveparse.example;
 
-import ch.digitalfondue.jfiveparse.*;
+import ch.digitalfondue.jfiveparse.Element;
+import ch.digitalfondue.jfiveparse.JFiveParse;
+import ch.digitalfondue.jfiveparse.NodeMatcher;
+import ch.digitalfondue.jfiveparse.Selector;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

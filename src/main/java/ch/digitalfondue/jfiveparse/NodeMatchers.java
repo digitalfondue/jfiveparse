@@ -15,17 +15,18 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 class NodeMatchers<T extends SelectableNode<T>> implements BaseNodesVisitor<T> {
 
-    private final BaseNodeMatcher<T> matcher;
+    private final BiPredicate<T, T> matcher;
     private final T baseNode;
     private Stream.Builder<T> toAdd;
     private Stream<T> singleOrEmpty;
     private final boolean completeOnFirstMatch;
 
-    NodeMatchers(BaseNodeMatcher<T> matcher, boolean completeOnFirstMatch, T baseNode) {
+    NodeMatchers(BiPredicate<T, T> matcher, boolean completeOnFirstMatch, T baseNode) {
         this.matcher = matcher;
         this.completeOnFirstMatch = completeOnFirstMatch;
         this.baseNode = baseNode;
@@ -33,7 +34,7 @@ class NodeMatchers<T extends SelectableNode<T>> implements BaseNodesVisitor<T> {
 
     @Override
     public void start(T node) {
-        if (matcher.match(node, baseNode)) {
+        if (matcher.test(node, baseNode)) {
             if (completeOnFirstMatch) {
                 singleOrEmpty = Stream.of(node);
             } else {
