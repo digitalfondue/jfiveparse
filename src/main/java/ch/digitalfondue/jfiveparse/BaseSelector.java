@@ -9,7 +9,7 @@ class BaseSelector<T extends SelectableNode<T>> {
 
     static class BaseSelectorState<T extends SelectableNode<T>> {
         List<BiPredicate<T, T>> matchers = new ArrayList<>();
-        private final BaseSelector<T> baseSelector;
+        final BaseSelector<T> baseSelector;
 
         BaseSelectorState(BaseSelector<T> baseSelector) {
             this.baseSelector = baseSelector;
@@ -29,10 +29,6 @@ class BaseSelector<T extends SelectableNode<T>> {
             });
         }
 
-        void universal() {
-            matchers.add(baseSelector.IS_ELEMENT);
-        }
-
         void element(String name) {
             matchers.add((node, base) -> baseSelector.IS_ELEMENT.test(node, base) && name.equals(node.getNodeName()));
         }
@@ -45,8 +41,6 @@ class BaseSelector<T extends SelectableNode<T>> {
         void hasClass(String value) {
             attrValInList("class", value);
         }
-
-
 
         void hasClass(String value, String... others) {
             hasClass(value);
@@ -130,6 +124,11 @@ class BaseSelector<T extends SelectableNode<T>> {
             var matcherToHandle = matchers;
             matchers = new ArrayList<>();
             return baseSelector.andMatchers(matcherToHandle);
+        }
+
+        BiPredicate<T, T> parseSelector(String selector) {
+            var res = CSS.parseSelector(selector).stream().map(baseSelector::toBaseNodeMatcher).toList();
+            return baseSelector.andMatchers(List.of(baseSelector.IS_ELEMENT, res.size() == 1 ? res.get(0) : baseSelector.orMatchers(res)));
         }
     }
 
@@ -288,7 +287,7 @@ class BaseSelector<T extends SelectableNode<T>> {
                     throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
                 }
             } else if (part instanceof CSS.UniversalSelector) {
-                res.universal();
+                res.matchers.add(res.baseSelector.IS_ELEMENT);
             } else {
                 throw new IllegalArgumentException(part + " is not supported");
             }

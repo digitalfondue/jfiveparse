@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
-interface SelectableNode<T extends SelectableNode<T>> {
+interface SelectableNode<T> {
     int getNodeType();
     String getNodeName();
 
@@ -21,7 +21,7 @@ interface SelectableNode<T extends SelectableNode<T>> {
 
     boolean isSameNode(T node);
 
-    interface SelectableElement<T extends SelectableNode<T>> extends SelectableNode<T> {
+    interface SelectableElement<T> extends SelectableNode<T> {
         String getNamespaceURI();
 
         boolean containsAttribute(String name);

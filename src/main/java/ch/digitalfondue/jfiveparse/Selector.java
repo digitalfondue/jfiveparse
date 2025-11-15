@@ -15,8 +15,6 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.List;
-
 /**
  * Selector is a type safe builder of node/element selectors. The API is similar
  * to CSS.
@@ -151,8 +149,7 @@ public final class Selector {
     }
 
     public static NodeMatcher parseSelector(String selector) {
-        var res = CSS.parseSelector(selector).stream().map(NODE_BASE_SELECTOR::toBaseNodeMatcher).toList();
-        return NODE_BASE_SELECTOR.andMatchers(List.of(NODE_BASE_SELECTOR.IS_ELEMENT, res.size() == 1 ? res.get(0) : NODE_BASE_SELECTOR.orMatchers(res)))::test;
+        return select().state.parseSelector(selector)::test;
     }
 
     public Selector element(String name) {
@@ -186,7 +183,7 @@ public final class Selector {
     }
 
     public Selector universal() {
-        state.universal();
+        state.matchers.add(state.baseSelector.IS_ELEMENT);
         return this;
     }
 
@@ -206,7 +203,7 @@ public final class Selector {
     }
 
     public Selector isFirstChild() {
-        state.matchers.add(NODE_BASE_SELECTOR.IS_FIRST_CHILD);
+        state.matchers.add(state.baseSelector.IS_FIRST_CHILD);
         return this;
     }
 
@@ -216,17 +213,17 @@ public final class Selector {
     }
 
     public Selector isFirstElementChild() {
-        state.matchers.add(NODE_BASE_SELECTOR.IS_FIRST_ELEMENT_CHILD);
+        state.matchers.add(state.baseSelector.IS_FIRST_ELEMENT_CHILD);
         return this;
     }
 
     public Selector isLastElementChild() {
-        state.matchers.add(NODE_BASE_SELECTOR.IS_LAST_ELEMENT_CHILD);
+        state.matchers.add(state.baseSelector.IS_LAST_ELEMENT_CHILD);
         return this;
     }
 
     public Selector isLastChild() {
-        state.matchers.add(NODE_BASE_SELECTOR.IS_LAST_CHILD);
+        state.matchers.add(state.baseSelector.IS_LAST_CHILD);
         return this;
     }
 
