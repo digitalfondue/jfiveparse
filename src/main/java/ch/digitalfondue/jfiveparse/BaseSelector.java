@@ -4,13 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<T, R>> {
+abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
-    private List<BiPredicate<T, T>> matchers = new ArrayList<>();
 
-    R contains(String value) {
+    private List<BiPredicate<SelectableNode<T>, SelectableNode<T>>> matchers = new ArrayList<>();
+    private final Function<T, SelectableNode<T>> wrapper;
+    private final Function<SelectableNode<T>, T> unwrapper;
+
+    BaseSelector(Function<T, SelectableNode<T>> wrapper, Function<SelectableNode<T>, T> unwrapper) {
+        this.wrapper = wrapper;
+        this.unwrapper = unwrapper;
+    }
+
+    private void contains(String value) {
         matchers.add((node, base) -> {
             if (node instanceof SelectableNode.SelectableElement<?> e) {
                 var textContent = e.getTextContent();
@@ -18,7 +27,6 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
             }
             return false;
         });
-        return inst();
     }
 
     public R element(String name) {
@@ -90,31 +98,30 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
 
     public R withChild() {
         var rules = collectMatchers();
-        matchers.add((node, base) -> node.getParentNode() != null && rules.test(node.getParentNode(), base));
+        matchers.add((node, base) -> node.getParentNode() != null && rules.test(wrapper.apply(node.getParentNode()), base));
         return inst();
     }
 
-    R nextSibling() {
+    private void nextSibling() {
         var rules = collectMatchers();
         matchers.add((node, base) -> {
-            var previousElementSibling = node.getPreviousElementSibling();
+            var previousElementSibling = wrapper.apply(node.getPreviousElementSibling());
             return previousElementSibling != null && rules.test(previousElementSibling, base);
         });
-        return inst();
     }
 
-    BiPredicate<T, T> collectMatchers() {
+    private BiPredicate<SelectableNode<T>, SelectableNode<T>> collectMatchers() {
         var matcherToHandle = matchers;
         matchers = new ArrayList<>();
         return andMatchers(matcherToHandle);
     }
 
-    BiPredicate<T, T> parseSelectorInstance(String selector) {
+    BiPredicate<SelectableNode<T>, SelectableNode<T>> parseSelectorInstance(String selector) {
         var res = CSS.parseSelector(selector).stream().map(l -> toBaseNodeMatcher(l, this::newInst)).toList();
         return andMatchers(List.of(BaseSelector::isElement, res.size() == 1 ? res.get(0) : orMatchers(res)));
     }
 
-    BiPredicate<T, T> internalToMatcher() {
+    BiPredicate<SelectableNode<T>, SelectableNode<T>> internalToMatcher() {
         return matchers.size() == 1 ? matchers.get(0) : andMatchers(matchers);
     }
 
@@ -128,40 +135,40 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
     }
 
     public R isFirstChild() {
-        matchers.add(BaseSelector::isFirstChild);
+        matchers.add(this::isFirstChild);
         return inst();
     }
 
     public R isFirstElementChild() {
-        matchers.add(BaseSelector::isFirstElementChild);
+        matchers.add(this::isFirstElementChild);
         return inst();
     }
 
     public R isLastElementChild() {
-        matchers.add(BaseSelector::isLastElementChild);
+        matchers.add(this::isLastElementChild);
         return inst();
     }
 
     public R isLastChild() {
-        matchers.add(BaseSelector::isLastChild);
+        matchers.add(this::isLastChild);
         return inst();
     }
 
     private void subsequentSibling() {
         var rules = collectMatchers();
         matchers.add((node, base) -> {
-            var previousElementSibling = node.getPreviousElementSibling();
+            var previousElementSibling = wrapper.apply(node.getPreviousElementSibling());
             while(previousElementSibling != null) {
                 if (rules.test(previousElementSibling, base)) {
                     return true;
                 }
-                previousElementSibling = previousElementSibling.getPreviousElementSibling();
+                previousElementSibling = wrapper.apply(previousElementSibling.getPreviousElementSibling());
             }
             return false;
         });
     }
 
-    BiPredicate<T, T> toBaseNodeMatcher(List<CSS.CssSelector> selector, Supplier<BaseSelector<T, R>> stateSupplier) {
+    BiPredicate<SelectableNode<T>, SelectableNode<T>> toBaseNodeMatcher(List<CSS.CssSelector> selector, Supplier<BaseSelector<T, R>> stateSupplier) {
         var res = stateSupplier.get();
         for (var part : selector) {
             if (part instanceof CSS.Combinator c) {
@@ -200,25 +207,25 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
             } else if (part instanceof CSS.PseudoElement pe) {
                 throw new IllegalStateException("to implement");
             } else if (part instanceof CSS.InternalSelector is && "base".equals(is.name())) {
-                res.matchers.add((node, base) -> base.isSameNode(node));
+                res.matchers.add((node, base) -> base.isSameNode(unwrapper.apply(node)));
             } else if (part instanceof CSS.PseudoSelector ps) {
                 String name = ps.name();
                 if ("contains".equals(name) && ps.data() instanceof CSS.DataString ds) {
                     res.contains(ds.value());
                 } else if ("first-child".equals(name)) {
-                    res.matchers.add(BaseSelector::isFirstElementChild);
+                    res.matchers.add(this::isFirstElementChild);
                 } else if ("last-child".equals(name)) {
-                    res.matchers.add(BaseSelector::isLastElementChild);
+                    res.matchers.add(this::isLastElementChild);
                 } else if ("empty".equals(name)) {
-                    res.matchers.add(BaseSelector::isEmpty);
+                    res.matchers.add(this::isEmpty);
                 } else if ("only-child".equals(name)) {
-                    res.matchers.add(BaseSelector::isOnlyChild);
+                    res.matchers.add(this::isOnlyChild);
                 } else if ("first-of-type".equals(name)) {
-                    res.matchers.add(BaseSelector::isFirstOfType);
+                    res.matchers.add(this::isFirstOfType);
                 } else if ("last-of-type".equals(name)) {
-                    res.matchers.add(BaseSelector::isLastOfType);
+                    res.matchers.add(this::isLastOfType);
                 } else if ("root".equals(name)) {
-                    res.matchers.add(BaseSelector::isRoot);
+                    res.matchers.add(this::isRoot);
                 } else if (("is".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
                     var isMatchers = orMatchers(ds.value().stream().map((l) -> toBaseNodeMatcher(l, stateSupplier)).toList());
                     var baseRule = res.collectMatchers();
@@ -226,7 +233,7 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
                     res.matchers.add((node, base) -> baseRule.test(node, base) && isMatchers.test(node, base) == mustMatch);
                 } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
-                    BiPredicate<T, T> hasMatchers = orMatchers(ds.value().stream().map(s -> {
+                    var hasMatchers = orMatchers(ds.value().stream().map(s -> {
                         var r = new ArrayList<CSS.CssSelector>(s.size() + 2);
                         r.add(new CSS.InternalSelector("base"));
                         var comb = !s.isEmpty() && s.get(0) instanceof CSS.Combinator combinator ? combinator.type() : null;
@@ -236,9 +243,10 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
                         }
                         r.addAll(s);
                         var nm = toBaseNodeMatcher(r, stateSupplier);
+                        BiPredicate<T, T> wrappedNm = (wn, wb) -> nm.test(wrapper.apply(wn), wrapper.apply(wb));
                         return switch (comb) {
-                            case CHILD, DESCENDANT -> (BiPredicate<T, T>) (node, base) -> node.getAllNodesMatchingAsStream(nm, true, base).count() == 1;
-                            case SIBLING, ADJACENT -> (BiPredicate<T, T>) (node, base) -> node.getParentNode().getAllNodesMatchingAsStream(nm, true, base).count() == 1;
+                            case CHILD, DESCENDANT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> node.getAllNodesMatchingAsStream(wrappedNm, true, unwrapper.apply(base)).count() == 1;
+                            case SIBLING, ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> wrapper.apply(node.getParentNode()).getAllNodesMatchingAsStream(wrappedNm, true, unwrapper.apply(base)).count() == 1;
                             default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has");
                         };
                     }).toList());
@@ -257,37 +265,38 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
     }
 
     //
-    private static <T extends SelectableNode<T>> boolean isFirstChild(T node, T base) {
-        return node.getParentNode() != null && node.isSameNode(node.getParentNode().getFirstChild());
+    private boolean isFirstChild(SelectableNode<T> node, SelectableNode<T> base) {
+        return node.getParentNode() != null && node.isSameNode(wrapper.apply(node.getParentNode()).getFirstChild());
     }
 
-    private static <T extends SelectableNode<T>> boolean isFirstElementChild(T node, T base) {
-        return node.getParentNode() != null && node.isSameNode(node.getParentNode().getFirstElementChild());
+    private boolean isFirstElementChild(SelectableNode<T> node, SelectableNode<T> base) {
+        return node.getParentNode() != null && node.isSameNode(wrapper.apply(node.getParentNode()).getFirstElementChild());
     }
 
-    private static <T extends SelectableNode<T>> boolean isLastChild(T node, T base) {
-        return node.getParentNode() != null && node.isSameNode(node.getParentNode().getLastChild());
+    private boolean isLastChild(SelectableNode<T> node, SelectableNode<T> base) {
+        return node.getParentNode() != null && node.isSameNode(wrapper.apply(node.getParentNode()).getLastChild());
     }
 
-    private static <T extends SelectableNode<T>> boolean isLastElementChild(T node, T base) {
-        return node.getParentNode() != null && node.isSameNode(node.getParentNode().getLastElementChild());
+    private boolean isLastElementChild(SelectableNode<T> node, SelectableNode<T> base) {
+        return node.getParentNode() != null && node.isSameNode(wrapper.apply(node.getParentNode()).getLastElementChild());
     }
 
-    private static <T extends SelectableNode<T>> boolean isElement(T node, T base) {
+    private static <T> boolean isElement(SelectableNode<T> node, SelectableNode<T> base) {
         return node.getNodeType() == Node.ELEMENT_NODE;
     }
 
-    private static <T extends SelectableNode<T>> boolean isRoot(T n, T base) {
-        return (n.getParentNode() == null || n.getParentNode().getNodeType() == Node.DOCUMENT_NODE) && n.getNodeType() == Node.ELEMENT_NODE;
+    private boolean isRoot(SelectableNode<T> n, SelectableNode<T> base) {
+        return (n.getParentNode() == null || wrapper.apply(n.getParentNode()).getNodeType() == Node.DOCUMENT_NODE) && n.getNodeType() == Node.ELEMENT_NODE;
     }
 
-    private static <T extends SelectableNode<T>> boolean isLastOfType(T node, T base) {
+    private boolean isLastOfType(SelectableNode<T> node, SelectableNode<T> base) {
         if (node.getParentNode() != null) {
             var nodeName = node.getNodeName();
-            var childNodes = node.getParentNode().getChildNodes();
+            var childNodes = wrapper.apply(node.getParentNode()).getChildNodes();
             for (int i = childNodes.size() - 1; i >= 0; i--) {
                 var e = childNodes.get(i);
-                if (isElement(e, base) && e.getNodeName().equals(nodeName)) {
+                var we = wrapper.apply(e);
+                if (isElement(we, base) && we.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
                 }
             }
@@ -295,12 +304,13 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
         return false;
     }
 
-    private static <T extends SelectableNode<T>> boolean isFirstOfType(T node, T base) {
+    private boolean isFirstOfType(SelectableNode<T> node, SelectableNode<T> base) {
         if (node.getParentNode() != null) {
             var nodeName = node.getNodeName();
-            var childNodes = node.getParentNode().getChildNodes();
+            var childNodes = wrapper.apply(node.getParentNode()).getChildNodes();
             for (var e : childNodes) {
-                if (isElement(e, base) && e.getNodeName().equals(nodeName)) {
+                var we = wrapper.apply(e);
+                if (isElement(we, base) && we.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
                 }
             }
@@ -308,22 +318,26 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
         return false;
     }
 
-    private static <T extends SelectableNode<T>> boolean isOnlyChild(T node, T base) {
+    private boolean isOnlyChild(SelectableNode<T> node, SelectableNode<T> base) {
         return node.getParentNode() == null ||
-                (node.getParentNode().getChildNodes()
+                (wrapper.apply(node.getParentNode()).getChildNodes()
                         .stream()
+                        .map(wrapper)
                         .filter(f -> isElement(f, base))
-                        .allMatch(n -> n.isSameNode(node)));
+                        .allMatch(n -> n.isSameNode(unwrapper.apply(node))));
     }
 
-    private static <T extends SelectableNode<T>> boolean isEmpty(T node, T base) {
-        return node.getChildNodes().stream().noneMatch(s -> isElement(s, base) || s.getNodeType() == Node.TEXT_NODE);
+    private boolean isEmpty(SelectableNode<T> node, SelectableNode<T> base) {
+        return node.getChildNodes().stream().noneMatch(s -> {
+            var ws = wrapper.apply(s);
+            return isElement(ws, base) || ws.getNodeType() == Node.TEXT_NODE;
+        });
     }
 
-    private static <T extends SelectableNode<T>> BiPredicate<T, T> withDescendant(BiPredicate<T, T> ancestorMatcher) {
+    private BiPredicate<SelectableNode<T>, SelectableNode<T>> withDescendant(BiPredicate<SelectableNode<T>, SelectableNode<T>> ancestorMatcher) {
         return (node, base) -> {
             while (node.getParentNode() != null) {
-                node = node.getParentNode();
+                node = wrapper.apply(node.getParentNode());
                 if (ancestorMatcher.test(node, base)) {
                     return true;
                 }
@@ -332,7 +346,7 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
         };
     }
 
-    private static <T extends SelectableNode<T>> BiPredicate<T, T> orMatchers(List<BiPredicate<T, T>> BaseNodeMatchers) {
+    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> orMatchers(List<BiPredicate<SelectableNode<T>, SelectableNode<T>>> BaseNodeMatchers) {
         if (BaseNodeMatchers.size() == 1) {
             return BaseNodeMatchers.get(0);
         }
@@ -352,7 +366,7 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
         };
     }
 
-    private static <T extends SelectableNode<T>> BiPredicate<T, T> andMatchers(List<BiPredicate<T, T>> BaseNodeMatchers) {
+    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> andMatchers(List<BiPredicate<SelectableNode<T>, SelectableNode<T>>> BaseNodeMatchers) {
         if (BaseNodeMatchers.size() == 1) {
             return BaseNodeMatchers.get(0);
         }
@@ -372,7 +386,7 @@ abstract class BaseSelector<T extends SelectableNode<T>, R extends BaseSelector<
         };
     }
 
-    private static <T extends SelectableNode<T>> BiPredicate<T, T> matchAttr(String name, BiPredicate<String, SelectableNode.SelectableElement<?>> attributeValueMatcher) {
+    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name, BiPredicate<String, SelectableNode.SelectableElement<?>> attributeValueMatcher) {
         return (node, base) -> {
             if (node instanceof SelectableNode.SelectableElement<?> elem) {
                 var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
