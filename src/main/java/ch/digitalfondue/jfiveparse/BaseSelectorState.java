@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 
 abstract class BaseSelectorState<T extends SelectableNode<T>, R extends BaseSelectorState<T, R>> {
 
-    final BaseSelector<T> baseSelector;
-    List<BiPredicate<T, T>> matchers = new ArrayList<>();
+    private final BaseSelector<T> baseSelector;
+    private List<BiPredicate<T, T>> matchers = new ArrayList<>();
 
     BaseSelectorState(BaseSelector<T> baseSelector) {
         this.baseSelector = baseSelector;
