@@ -135,115 +135,36 @@ package ch.digitalfondue.jfiveparse;
  * </tr>
  * </table>
  */
-public final class Selector {
+public final class Selector extends BaseSelectorState<Node, Selector> {
 
     private Selector() {
+        super(NODE_BASE_SELECTOR);
     }
 
     private static final BaseSelector<Node> NODE_BASE_SELECTOR = new BaseSelector<>();
 
-    private final BaseSelector.BaseSelectorState<Node> state = new BaseSelector.BaseSelectorState<>(NODE_BASE_SELECTOR);
+
 
     public static Selector select() {
         return new Selector();
     }
 
     public static NodeMatcher parseSelector(String selector) {
-        return select().state.parseSelector(selector)::test;
+        return select().parseSelectorInstance(selector)::test;
     }
 
-    public Selector element(String name) {
-        state.element(name);
+    @Override
+    Selector inst() {
         return this;
     }
 
+    @Override
+    Selector newInst() {
+        return select();
+    }
 
+    @Override
     public NodeMatcher toMatcher() {
-        return state.toMatcher()::test;
-    }
-
-    public Selector element(String name, String namespace) {
-        state.element(name, namespace);
-        return this;
-    }
-
-    public Selector id(String id) {
-        state.id(id);
-        return this;
-    }
-
-    public Selector withChild() {
-        state.withChild();
-        return this;
-    }
-
-    public Selector withDescendant() {
-        state.withDescendant();
-        return this;
-    }
-
-    public Selector universal() {
-        state.matchers.add(state.baseSelector.IS_ELEMENT);
-        return this;
-    }
-
-    public Selector attrValEq(String attr, String val) {
-        state.attrValEq(attr, val);
-        return this;
-    }
-
-    public Selector attr(String attr) {
-        state.attr(attr);
-        return this;
-    }
-
-    public Selector hasClass(String value) {
-        state.hasClass(value);
-        return this;
-    }
-
-    public Selector isFirstChild() {
-        state.matchers.add(state.baseSelector.IS_FIRST_CHILD);
-        return this;
-    }
-
-    public Selector hasClass(String value, String... others) {
-        state.hasClass(value, others);
-        return this;
-    }
-
-    public Selector isFirstElementChild() {
-        state.matchers.add(state.baseSelector.IS_FIRST_ELEMENT_CHILD);
-        return this;
-    }
-
-    public Selector isLastElementChild() {
-        state.matchers.add(state.baseSelector.IS_LAST_ELEMENT_CHILD);
-        return this;
-    }
-
-    public Selector isLastChild() {
-        state.matchers.add(state.baseSelector.IS_LAST_CHILD);
-        return this;
-    }
-
-    public Selector attrValInList(String name, String value) {
-        state.attrValInList(name, value);
-        return this;
-    }
-
-    public Selector attrValStartWith(String name, String value) {
-        state.attrValStartWith(name, value);
-        return this;
-    }
-
-    public Selector attrValEndWith(String name, String value) {
-        state.attrValEndWith(name, value);
-        return this;
-    }
-
-    public Selector attrValContains(String name, String value) {
-        state.attrValContains(name, value);
-        return this;
+        return super.toMatcher()::test;
     }
 }

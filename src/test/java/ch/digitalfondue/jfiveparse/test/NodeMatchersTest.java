@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.digitalfondue.jfiveparse;
+package ch.digitalfondue.jfiveparse.test;
 
+import ch.digitalfondue.jfiveparse.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -25,7 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class NodeMatchersTest {
 
     final Parser parser = new Parser();
-/*
+
+    /*
+
     @Test
     void firstChildTest() {
         var matcher = Selector.select().isFirstChild().toMatcher();
@@ -414,6 +417,5 @@ class NodeMatchersTest {
         assertEquals(1, w3cTxtNode.size());
         assertEquals("text1", ((org.w3c.dom.Text) w3cTxtNode.get(0)).getData());
     }
-
- */
+*/
 }
