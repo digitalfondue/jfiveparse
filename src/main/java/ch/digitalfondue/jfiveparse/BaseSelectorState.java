@@ -119,7 +119,7 @@ abstract class BaseSelectorState<T extends SelectableNode<T>, R extends BaseSele
         return baseSelector.andMatchers(List.of(baseSelector.IS_ELEMENT, res.size() == 1 ? res.get(0) : baseSelector.orMatchers(res)));
     }
 
-    public BiPredicate<T, T> toMatcher() {
+    BiPredicate<T, T> internalToMatcher() {
         return matchers.size() == 1 ? matchers.get(0) : baseSelector.andMatchers(matchers);
     }
 
@@ -258,6 +258,6 @@ abstract class BaseSelectorState<T extends SelectableNode<T>, R extends BaseSele
                 throw new IllegalArgumentException(part + " is not supported");
             }
         }
-        return baseSelector.andMatchers(List.of(baseSelector.IS_ELEMENT, res.toMatcher()));
+        return baseSelector.andMatchers(List.of(baseSelector.IS_ELEMENT, res.internalToMatcher()));
     }
 }

@@ -163,8 +163,8 @@ public final class Selector extends BaseSelectorState<Node, Selector> {
         return select();
     }
 
-    @Override
+
     public NodeMatcher toMatcher() {
-        return super.toMatcher()::test;
+        return super.internalToMatcher()::test;
     }
 }

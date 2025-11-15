@@ -23,6 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class W3CDom {
@@ -30,11 +31,13 @@ public class W3CDom {
     private W3CDom() {
     }
 
+    // FIXME: still one point to fix...
+    // FIXME: class ch.digitalfondue.jfiveparse.W3CDom.SelectableNodeWrapper in module ch.digitalfondue.jfiveparse is not accessible to clients that require this module
     public static class W3CDomSelector extends BaseSelectorState<SelectableNodeWrapper, W3CDomSelector> {
 
         private static final BaseSelector<SelectableNodeWrapper> NODE_BASE_SELECTOR = new BaseSelector<>();
 
-        W3CDomSelector() {
+        private W3CDomSelector() {
             super(NODE_BASE_SELECTOR);
         }
 
@@ -46,6 +49,16 @@ public class W3CDom {
         @Override
         W3CDomSelector newInst() {
             return select();
+        }
+
+        public BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> toMatcher() {
+            var res = internalToMatcher();
+            return (node, base) -> res.test(wrap(node), wrap(base));
+        }
+
+        @Override
+        BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> toBaseNodeMatcher(List<CSS.CssSelector> selector, Supplier<BaseSelectorState<SelectableNodeWrapper, W3CDomSelector>> baseSelectorStateSupplier) {
+            return super.toBaseNodeMatcher(selector, baseSelectorStateSupplier);
         }
     }
 
@@ -204,7 +217,7 @@ public class W3CDom {
 
         @Override
         public Stream<SelectableNodeWrapper> getAllNodesMatchingAsStream(BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher, boolean onlyFirst, SelectableNodeWrapper base) {
-            return W3CDom.getAllNodesMatchingWrapped(node, matcher, onlyFirst, (SelectableNodeWrapper) base);
+            return getAllNodesMatchingWrapped(node, matcher, onlyFirst, base);
         }
 
         @Override
@@ -286,8 +299,12 @@ public class W3CDom {
      * @param matcher
      * @return
      */
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher) {
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher) {
         return getAllNodesMatching(node, matcher, false);
+    }
+
+    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<org.w3c.dom.Node, org.w3c.dom.Node> matcher, boolean onlyFirstMatch) {
+        return getAllNodesMatchingWrapped(node, (n, b) -> matcher.test(n.node, b.node), onlyFirstMatch, wrap(node)).map(n -> n != null ? n.node : null);
     }
 
     private static Stream<SelectableNodeWrapper> getAllNodesMatchingWrapped(org.w3c.dom.Node node, BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher, boolean onlyFirstMatch, SelectableNodeWrapper base) {
@@ -296,11 +313,6 @@ public class W3CDom {
         return nm.result().filter(Objects::nonNull);
     }
 
-
-    public static Stream<org.w3c.dom.Node> getAllNodesMatching(org.w3c.dom.Node node, BiPredicate<SelectableNodeWrapper, SelectableNodeWrapper> matcher,
-                                                               boolean onlyFirstMatch) {
-        return getAllNodesMatchingWrapped(node, matcher, onlyFirstMatch, wrap(node)).map(n -> n != null ? n.node : null);
-    }
 
     private static void traverse(org.w3c.dom.Node rootNode, BaseNodesVisitor<SelectableNodeWrapper> visitor) {
         var node = rootNode.getFirstChild();
