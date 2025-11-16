@@ -13,7 +13,6 @@ class CSSSelectorWPTTest {
     // TODO: add
     //
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-not.html
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/last-child.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/only-child.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/query/query-is.html
@@ -324,6 +323,44 @@ class CSSSelectorWPTTest {
         checkWithIds(IS_WHERE_BASIC, ":is(#a, #b) + div", "b", "c");
     }
 
+
+    private static final Document LAST_CHILD = JFiveParse.parse("""
+            <div id="main">
+            <div>
+              <div id="target1">Whitespace nodes should be ignored.</div>
+            </div>
+            
+            <div>
+              <blockquote></blockquote>
+              <div id="target2">There is a prior child element.</div>
+            </div>
+            
+            <div>
+              <div id="target3">A comment node should be ignored.</div>
+              <!-- -->
+            </div>
+            
+            <div>
+              <div id="target4">Non-whitespace text node should be ignored.</div>
+              .
+            </div>
+            
+            <div>
+              <div id="target5" data-expected="false">The first child should not be matched.</div>
+              <blockquote></blockquote>
+            </div>
+            </div>
+            """);
+
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/last-child.html
+    @Test
+    void checkLastChild() {
+        checkWithIds(LAST_CHILD, "#target1:last-child", "target1");
+        checkWithIds(LAST_CHILD, "#target2:last-child", "target2");
+        checkWithIds(LAST_CHILD, "#target3:last-child", "target3");
+        checkWithIds(LAST_CHILD, "#target4:last-child", "target4");
+        checkWithIds(LAST_CHILD, "#target5:last-child");
+    }
 
 
     private static void checkWithIds(Document doc, String selector, String... ids) {

@@ -30,7 +30,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R element(String name) {
-        matchers.add((node, base) -> isElement(node, base) && name.equals(node.getNodeName()));
+        matchers.add((node, base) -> isElement(node) && name.equals(node.getNodeName()));
         return inst();
     }
 
@@ -284,8 +284,12 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return node.getParentNode() != null && node.isSameNode(wrapper.apply(node.getParentNode()).getLastElementChild());
     }
 
-    private static <T> boolean isElement(SelectableNode<T> node, SelectableNode<T> base) {
+    private static <T> boolean isElement(SelectableNode<T> node) {
         return node.getNodeType() == Node.ELEMENT_NODE;
+    }
+
+    private static <T> boolean isElement(SelectableNode<T> node, SelectableNode<T> base) {
+        return isElement(node);
     }
 
     private boolean isRoot(SelectableNode<T> n, SelectableNode<T> base) {
@@ -299,7 +303,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             for (int i = childNodes.size() - 1; i >= 0; i--) {
                 var e = childNodes.get(i);
                 var we = wrapper.apply(e);
-                if (isElement(we, base) && we.getNodeName().equals(nodeName)) {
+                if (isElement(we) && we.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
                 }
             }
@@ -313,7 +317,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             var childNodes = wrapper.apply(node.getParentNode()).getChildNodes();
             for (var e : childNodes) {
                 var we = wrapper.apply(e);
-                if (isElement(we, base) && we.getNodeName().equals(nodeName)) {
+                if (isElement(we) && we.getNodeName().equals(nodeName)) {
                     return node.isSameNode(e);
                 }
             }
@@ -322,18 +326,20 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private boolean isOnlyChild(SelectableNode<T> node, SelectableNode<T> base) {
-        return node.getParentNode() == null ||
-                (wrapper.apply(node.getParentNode()).getChildNodes()
+        if (node.getParentNode() == null) {
+            return true;
+        }
+        var found = wrapper.apply(node.getParentNode()).getChildNodes()
                         .stream()
                         .map(wrapper)
-                        .filter(f -> isElement(f, base))
-                        .allMatch(n -> n.isSameNode(unwrapper.apply(node))));
+                        .filter(BaseSelector::isElement).toList();
+        return found.size() == 1 && found.get(0).isSameNode(unwrapper.apply(node));
     }
 
     private boolean isEmpty(SelectableNode<T> node, SelectableNode<T> base) {
         return node.getChildNodes().stream().noneMatch(s -> {
             var ws = wrapper.apply(s);
-            return isElement(ws, base) || ws.getNodeType() == Node.TEXT_NODE;
+            return isElement(ws) || ws.getNodeType() == Node.TEXT_NODE;
         });
     }
 

@@ -52,31 +52,30 @@ If you use it as a module, remember to add `requires ch.digitalfondue.jfiveparse
 If you are using the W3CDom class (and the various inner classes), you may also need to require the `java.xml` module, as it's an optional dependency.
 
 ```java
-import ch.digitalfondue.jfiveparse.Document;
+import ch.digitalfondue.jfiveparse.Element;
 import ch.digitalfondue.jfiveparse.JFiveParse;
-import ch.digitalfondue.jfiveparse.Node;
+import ch.digitalfondue.jfiveparse.NodeMatcher;
+import ch.digitalfondue.jfiveparse.Selector;
 
-import java.io.StringReader;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-public class Example {
+public class LoadHNTitle {
 
-    public static void main(String[] args) {
-        // directly from String
-        Document doc = JFiveParse.parse("<html><body>Hello world!</body></html>");
-        System.out.println(JFiveParse.serialize(doc));
-
-        // from reader
-        Document doc2 = JFiveParse.parse(new StringReader("<html><body>Hello world!</body></html>"));
-        System.out.println(JFiveParse.serialize(doc2));
-
-        // parse fragment
-        List<Node> fragment = JFiveParse.parseFragment("<p><span>Hello world</span></p>");
-        System.out.println(JFiveParse.serialize(fragment.get(0)));
-
-        // parse fragment from reader
-        List<Node> fragment2 = JFiveParse.parseFragment(new StringReader("<p><span>Hello world</span></p>"));
-        System.out.println(JFiveParse.serialize(fragment2.get(0)));
+    public static void main(String[] args) throws IOException {
+        try (Reader reader = new InputStreamReader(new URL("https://news.ycombinator.com/").openStream(), StandardCharsets.UTF_8)) {
+            // select td.title > span.titleline > a
+            NodeMatcher matcher = Selector.select().
+                    element("td").hasClass("title")
+                    .withChild().element("span").hasClass("titleline")
+                    .withChild().element("a").toMatcher();
+            JFiveParse.parse(reader).getAllNodesMatching(matcher).stream()
+                    .map(Element.class::cast)
+                    .forEach(a -> System.out.printf("%s [%s]\n", a.getTextContent(), a.getAttribute("href")));
+        }
     }
 }
 ```
