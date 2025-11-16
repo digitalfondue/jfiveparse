@@ -18,7 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
-class NodeMatchers<T> implements BaseNodesVisitor<T> {
+final class NodeMatchers<T> implements BaseNodesVisitor<T> {
 
     private final BiPredicate<T, T> matcher;
     private final T baseNode;

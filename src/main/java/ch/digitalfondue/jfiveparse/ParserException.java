@@ -18,7 +18,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.io.Serial;
 
-public class ParserException extends RuntimeException {
+public final class ParserException extends RuntimeException {
 
     ParserException(Throwable ioe) {
         super(ioe);

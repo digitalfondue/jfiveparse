@@ -21,11 +21,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
-import java.util.function.BiPredicate;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
-public class W3CDom {
+public final class W3CDom {
 
     private W3CDom() {
     }
@@ -33,22 +32,17 @@ public class W3CDom {
    public static class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
 
         private W3CDomSelector() {
-            super(W3CDom::wrap, W3CDom::unwrap);
+            super(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node);
         }
 
         @Override
-        W3CDomSelector inst() {
+        protected W3CDomSelector inst() {
             return this;
         }
 
         @Override
-        W3CDomSelector newInst() {
+        protected W3CDomSelector newInst() {
             return select();
-        }
-
-        public NodeMatcher<org.w3c.dom.Node> toMatcher() {
-            var res = this.internalToMatcher();
-            return new NodeMatcher<>(res);
         }
     }
 
@@ -207,7 +201,7 @@ public class W3CDom {
         @Override
         public List<org.w3c.dom.Node> getChildNodes() {
             var childNodes = node.getChildNodes();
-            return new SelectableNodeList(childNodes::item, childNodes.getLength());
+            return new NodeList(childNodes::item, childNodes.getLength());
         }
 
         @Override
@@ -265,7 +259,7 @@ public class W3CDom {
         }
     }
 
-    static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement<org.w3c.dom.Node> {
+    private static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement<org.w3c.dom.Node> {
 
         SelectableElementWrapper(org.w3c.dom.Element node) {
             super(node);
@@ -339,12 +333,12 @@ public class W3CDom {
         }
     }
 
-    private static final class SelectableNodeList extends AbstractList<org.w3c.dom.Node> {
+    private static final class NodeList extends AbstractList<org.w3c.dom.Node> {
 
         private final IntFunction<org.w3c.dom.Node> get;
         private final int size;
 
-        SelectableNodeList(IntFunction<org.w3c.dom.Node> get, int size) {
+        NodeList(IntFunction<org.w3c.dom.Node> get, int size) {
             this.get = get;
             this.size = size;
         }

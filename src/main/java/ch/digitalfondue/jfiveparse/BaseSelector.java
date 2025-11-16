@@ -121,13 +121,17 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return andMatchers(List.of(BaseSelector::isElement, res.size() == 1 ? res.get(0) : orMatchers(res)));
     }
 
-    BiPredicate<SelectableNode<T>, SelectableNode<T>> internalToMatcher() {
+    private BiPredicate<SelectableNode<T>, SelectableNode<T>> internalToMatcher() {
         return matchers.size() == 1 ? matchers.get(0) : andMatchers(matchers);
     }
 
-    abstract R inst();
+    public NodeMatcher<T> toMatcher() {
+        return new NodeMatcher<>(internalToMatcher());
+    }
 
-    abstract R newInst();
+    protected abstract R inst();
+
+    protected abstract R newInst();
 
     public R universal() {
         matchers.add(BaseSelector::isElement);

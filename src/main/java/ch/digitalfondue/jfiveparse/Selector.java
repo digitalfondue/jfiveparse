@@ -145,22 +145,23 @@ public final class Selector extends BaseSelector<Node, Selector> {
         return new Selector();
     }
 
+    /**
+     * Parse a CSS selector string.
+     *
+     * @param selector
+     * @return
+     */
     public static NodeMatcher<Node> parseSelector(String selector) {
         return new NodeMatcher<>(select().parseSelectorInstance(selector));
     }
 
     @Override
-    Selector inst() {
+    protected Selector inst() {
         return this;
     }
 
     @Override
-    Selector newInst() {
+    protected Selector newInst() {
         return select();
-    }
-
-
-    public NodeMatcher<Node> toMatcher() {
-        return new NodeMatcher<>(this.internalToMatcher());
     }
 }

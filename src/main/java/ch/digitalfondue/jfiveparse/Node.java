@@ -18,7 +18,6 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 /**

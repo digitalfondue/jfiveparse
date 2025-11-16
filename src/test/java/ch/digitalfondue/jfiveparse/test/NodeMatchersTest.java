@@ -22,12 +22,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// FIXME
 class NodeMatchersTest {
 
     final Parser parser = new Parser();
-
-
 
     @Test
     void firstChildTest() {
