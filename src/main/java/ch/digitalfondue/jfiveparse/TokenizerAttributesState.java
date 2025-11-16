@@ -15,7 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-class TokenizerAttributesState {
+final class TokenizerAttributesState {
 
     static void handleBeforeAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();

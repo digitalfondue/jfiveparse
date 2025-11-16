@@ -18,7 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import static ch.digitalfondue.jfiveparse.Common.*;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
-class TreeConstructorInFramesetSelectTemplate {
+final class TreeConstructorInFramesetSelectTemplate {
 
     static void inFrameset(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 

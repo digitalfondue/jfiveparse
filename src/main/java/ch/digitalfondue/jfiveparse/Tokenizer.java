@@ -24,7 +24,7 @@ import java.util.Locale;
  * 
  * Quite ugly, but it works.
  */
-class Tokenizer {
+final class Tokenizer {
 
     private final TreeConstructor tokenHandler;
 

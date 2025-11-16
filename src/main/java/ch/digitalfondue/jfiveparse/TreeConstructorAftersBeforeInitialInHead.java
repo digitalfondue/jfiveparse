@@ -21,7 +21,7 @@ import java.util.Set;
 
 import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
-class TreeConstructorAftersBeforeInitialInHead {
+final class TreeConstructorAftersBeforeInitialInHead {
 
     static void afterHead(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {

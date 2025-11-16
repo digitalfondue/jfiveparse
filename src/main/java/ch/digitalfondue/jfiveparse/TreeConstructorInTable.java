@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
-class TreeConstructorInTable {
+final class TreeConstructorInTable {
 
     static void inTable(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
 

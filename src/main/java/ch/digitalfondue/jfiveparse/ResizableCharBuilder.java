@@ -20,7 +20,7 @@ import java.util.Arrays;
 /**
  * Resizable char buffer with some custom methods/properties.
  */
-class ResizableCharBuilder {
+final class ResizableCharBuilder {
 
     private char[] buff;
     private int pos = 0;

@@ -18,7 +18,7 @@ package ch.digitalfondue.jfiveparse;
 /**
  * Constants used in the library.
  */
-class Characters {
+final class Characters {
 
     static final char NULL = 0x0000;
     static final char EXCLAMATION_MARK = 0x0021;

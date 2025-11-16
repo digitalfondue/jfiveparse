@@ -23,7 +23,7 @@ import java.util.Arrays;
  * It does not compact on use, so I hope that it will not find cases that will
  * degenerate the internal buffer... :D
  */
-class ResizableIntBuffer {
+final class ResizableIntBuffer {
     private int[] buff = new int[32];
     private int start = 15;
     private int pos = 15;

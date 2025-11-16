@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Expose convenient static methods for parsing String or Reader as Html document and serializing nodes back to String.
  */
-public class JFiveParse {
+public final class JFiveParse {
 
     /**
      * Parse a full html document with the default options.

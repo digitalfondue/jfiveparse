@@ -21,7 +21,7 @@ import java.util.HashMap;
 /**
  * Dumping ground for static functions and constants.
  */
-class Common {
+final class Common {
 
     static int toLowerCase(int chr) {
         if (isUpperCaseASCIILetter(chr)) {

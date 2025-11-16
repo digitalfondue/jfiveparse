@@ -20,7 +20,7 @@ import java.util.HashMap;
 import static ch.digitalfondue.jfiveparse.Common.*;
 import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
-class TreeConstructorInBodyForeignContentText {
+final class TreeConstructorInBodyForeignContentText {
 
     private static void handleInBodyCharacter(TreeConstructor treeConstructor) {
         int chr = treeConstructor.getChr();

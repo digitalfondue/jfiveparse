@@ -29,7 +29,7 @@ public final class W3CDom {
     private W3CDom() {
     }
 
-   public static class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
+   public static final class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
 
         private W3CDomSelector() {
             super(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node);

@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.ArrayList;
 
-class TreeConstructorActiveFormattingElements {
+final class TreeConstructorActiveFormattingElements {
 
     final ArrayList<Element> activeFormattingElements = new ArrayList<>();
     private final TreeConstructor treeConstructor;

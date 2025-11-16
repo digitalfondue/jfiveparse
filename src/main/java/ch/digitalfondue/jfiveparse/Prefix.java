@@ -25,7 +25,7 @@ import java.util.TreeMap;
  * structure is completely initialized, then TreeMap will be compacted in a
  * simple array (this will leave some empty spaces).
  */
-class Prefix {
+final class Prefix {
     char c;
     char[] chars;
 
