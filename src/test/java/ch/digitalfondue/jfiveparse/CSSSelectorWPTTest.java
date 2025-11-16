@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class CSSSelectorWPTTest {
@@ -15,8 +17,6 @@ class CSSSelectorWPTTest {
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/only-child.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/query/query-is.html
-    //
-    // https://github.com/web-platform-tests/wpt/blob/e6ba136b87cdbabb117809c1f53d8c1eb9e6aeb0/css/selectors/not-complex.html#L27 not
 
     private static final Document HAS_BASIC = JFiveParse.parse("""
             <main id=main>
@@ -257,17 +257,57 @@ class CSSSelectorWPTTest {
     }
 
 
+    // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/not-complex.html
+    private static final Document NOT_COMPLEX = JFiveParse.parse("""
+            <main id=main>
+              <div id=a><div id=d></div></div>
+              <div id=b><div id=e></div></div>
+              <div id=c><div id=f></div></div>
+            </main>
+            """);
+
+    @Test
+    void checkNotComplex() {
+        checkWithIds(NOT_COMPLEX, ":not(#a)", "b", "c", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(#a #d)", "a", "b", "c", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(#b div)", "a", "b", "c", "d", "f");
+        checkWithIds(NOT_COMPLEX, ":not(div div)", "a", "b", "c");
+        checkWithIds(NOT_COMPLEX, ":not(div + div)", "a", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(main > div)", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(#a, #b)", "c", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(#f, main > div)", "d", "e");
+        checkWithIds(NOT_COMPLEX, ":not(div + div + div, div + div > div)", "a", "b", "d");
+
+        // FIXME implement nth-child
+        // checkWithIds(NOT_COMPLEX, ":not(div:nth-child(1))", "b", "c");
+        checkWithIds(NOT_COMPLEX, ":not(:not(div))", "a", "b", "c", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(:not(:not(div)))");
+        checkWithIds(NOT_COMPLEX, ":not(div, span)");
+        checkWithIds(NOT_COMPLEX, ":not(span, p)", "a", "b", "c", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(#unknown, .unknown)", "a", "b", "c", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(#unknown > div, span)", "a", "b", "c", "d", "e", "f");
+        checkWithIds(NOT_COMPLEX, ":not(#unknown ~ div, span)", "a", "b", "c", "d", "e", "f");
+
+        // :hover not  supported
+        // checkWithIds(NOT_COMPLEX, ":not(:hover div)", "a", "b", "c", "d", "e", "f");
+        // checkWithIds(NOT_COMPLEX, ":not(:link div)", "a", "b", "c", "d", "e", "f");
+        // checkWithIds(NOT_COMPLEX, ":not(:visited div)", "a", "b", "c", "d", "e", "f");
+    }
+
+
+
     private static void checkWithIds(Document doc, String selector, String... ids) {
         var main = doc.getElementById("main");
-        var byIds = Arrays.stream(ids).map(main::getElementById).toList();
-        var bySelector = main.getAllNodesMatching(Selector.parseSelector(selector));
+        var byIds = Arrays.stream(ids).map(main::getElementById).collect(Collectors.toSet()); // not in order
+        var bySelector = new HashSet<>(main.getAllNodesMatching(Selector.parseSelector(selector))); // not in order
+        // var selectedIds = bySelector.stream().map(n -> ((Element) n).getAttribute("id")).toList();
         Assertions.assertEquals(byIds, bySelector);
     }
 
     private static void checkWithIdFirst(Document doc, String selector, String id) {
         var main = doc.getElementById("main");
-        var byIds = Stream.of(id).map(main::getElementById).toList();
-        var bySelector = main.getAllNodesMatching(Selector.parseSelector(selector), true);
+        var byIds = Stream.of(id).map(main::getElementById).collect(Collectors.toSet());
+        var bySelector = new HashSet<>(main.getAllNodesMatching(Selector.parseSelector(selector), true));
         Assertions.assertEquals(byIds, bySelector);
     }
 }
