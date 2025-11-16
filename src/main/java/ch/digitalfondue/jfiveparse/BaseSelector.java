@@ -230,10 +230,10 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     res.matchers.add(this::isLastOfType);
                 } else if ("root".equals(name)) {
                     res.matchers.add(this::isRoot);
-                } else if (("is".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
+                } else if (("is".equals(name) || "where".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
                     var isMatchers = orMatchers(ds.value().stream().map((l) -> toBaseNodeMatcher(l, stateSupplier)).toList());
                     var baseRule = res.collectMatchers();
-                    var mustMatch = "is".equals(name);
+                    var mustMatch = !"not".equals(name);
                     res.matchers.add((node, base) -> baseRule.test(node, base) && isMatchers.test(node, base) == mustMatch);
                 } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector

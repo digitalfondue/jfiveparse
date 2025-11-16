@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 class CSSSelectorWPTTest {
 
     // TODO: add
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-basic.html
+    //
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-not.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/last-child.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/only-child.html
@@ -292,6 +292,36 @@ class CSSSelectorWPTTest {
         // checkWithIds(NOT_COMPLEX, ":not(:hover div)", "a", "b", "c", "d", "e", "f");
         // checkWithIds(NOT_COMPLEX, ":not(:link div)", "a", "b", "c", "d", "e", "f");
         // checkWithIds(NOT_COMPLEX, ":not(:visited div)", "a", "b", "c", "d", "e", "f");
+    }
+
+
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-basic.html
+    private static final Document IS_WHERE_BASIC = JFiveParse.parse("""
+            <main id=main>
+             <div id=a><div id=d></div></div>
+             <div id=b><div id=e></div></div>
+             <div id=c><div id=f></div></div>
+           </main>
+           """);
+
+    @Test
+    void checkIsWhereBasic() {
+        // FIXME check we fail here
+        // checkWithIds(IS_WHERE_BASIC, ":is()");
+        checkWithIds(IS_WHERE_BASIC, ":is(#a)", "a");
+        checkWithIds(IS_WHERE_BASIC, ":is(#a, #f)", "a", "f");
+        checkWithIds(IS_WHERE_BASIC, ":is(#a, #c) :where(#a #d, #c #f)", "d", "f");
+        checkWithIds(IS_WHERE_BASIC, "#c > :is(#c > #f)", "f");
+        checkWithIds(IS_WHERE_BASIC, "#c > :is(#b > #f)");
+        checkWithIds(IS_WHERE_BASIC, "#a div:is(#d)", "d");
+        checkWithIds(IS_WHERE_BASIC, ":is(div) > div", "d", "e", "f");
+        checkWithIds(IS_WHERE_BASIC, ":is(*) > div", "a", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_BASIC, ":is(*) div", "a", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_BASIC, "div > :where(#e, #f)", "e", "f");
+        checkWithIds(IS_WHERE_BASIC, "div > :where(*)", "d", "e", "f");
+        checkWithIds(IS_WHERE_BASIC, ":is(*) > :where(*)", "a", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_BASIC, ":is(#a + #b) + :is(#c)", "c");
+        checkWithIds(IS_WHERE_BASIC, ":is(#a, #b) + div", "b", "c");
     }
 
 
