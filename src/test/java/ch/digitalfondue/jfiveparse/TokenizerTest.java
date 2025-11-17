@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.MatchResult;
@@ -151,7 +150,7 @@ public class TokenizerTest {
 
         for (Token t : tokens) {
             Token lastRes = res.isEmpty() ? null : res.get(res.size() - 1);
-            if (t != null && lastRes != null && t instanceof Token.CharacterToken currentChar && lastRes instanceof Token.CharacterToken lastResChar) {
+            if (t instanceof Token.CharacterToken currentChar && lastRes instanceof Token.CharacterToken lastResChar) {
                 for (int i = 0; i < currentChar.chr.pos(); i++) {
                     lastResChar.chr.append(currentChar.chr.at(i));
                 }
@@ -161,14 +160,6 @@ public class TokenizerTest {
         }
 
         return res;
-    }
-
-    private static boolean isCharacter(Object o) {
-        if(o!= null && o instanceof List) {
-            List<Object> l = (List<Object>) o;
-            return !l.isEmpty() && l.get(0).equals("Character");
-        }
-        return false;
     }
 
     public static class TokenizerTestSuite {

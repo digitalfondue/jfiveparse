@@ -15,7 +15,6 @@ class CSSSelectorWPTTest {
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-not.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292aq/css/selectors/query/query-is.html
-    // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/query/query-where.html
     // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/only-of-type.html
 
     private static final Document HAS_BASIC = JFiveParse.parse("""
@@ -326,7 +325,7 @@ class CSSSelectorWPTTest {
 
 
     private static final Document LAST_CHILD = JFiveParse.parse("""
-            <div id="main">
+            <main id="main">
             <div>
               <div id="target1">Whitespace nodes should be ignored.</div>
             </div>
@@ -350,7 +349,7 @@ class CSSSelectorWPTTest {
               <div id="target5" data-expected="false">The first child should not be matched.</div>
               <blockquote></blockquote>
             </div>
-            </div>
+            </main>
             """);
 
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/last-child.html
@@ -365,7 +364,7 @@ class CSSSelectorWPTTest {
 
 
     private static final Document ONLY_CHILD = JFiveParse.parse("""
-            <div id=main>
+            <main id=main>
             <div>
               <div id="target1">Whitespace nodes should be ignored.</div>
             </div>
@@ -388,7 +387,7 @@ class CSSSelectorWPTTest {
             <div>
               <div id="target5"></div>
             </div>
-            </div>
+            </main>
             """);
 
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/only-child.html
@@ -399,6 +398,49 @@ class CSSSelectorWPTTest {
         checkWithIds(ONLY_CHILD, "#target3:only-child", "target3");
         checkWithIds(ONLY_CHILD, "#target4:only-child");
         checkWithIds(ONLY_CHILD, "#target5:only-child", "target5");
+    }
+
+
+    private static final Document QUERY_WHERE = JFiveParse.parse("""
+            <main id="main">
+            <div id="a1" class="a">
+                <div class="b" id="b1"></div>
+                <div class="c" id="c1"></div>
+                <div class="c" id="d"></div>
+                <div class="e" id="e1"></div>
+                <div class="f" id="f1"></div>
+                <div class="g">
+                  <div class="b" id="b2">
+                    <div class="b" id="b3"></div>
+                  </div>
+                </div>
+                <div class="h" id="h1"></div>
+              </div>
+              <div class="c" id="c2">
+                <div id="a2" class="a"></div>
+                <div class="e" id="e2"></div>
+              </div>
+            </main>
+            """);
+    //  https://github.com/web-platform-tests/wpt/blob/master/css/selectors/query/query-where.html
+    @Test
+    void checkQueryWhere() {
+        checkWithIds(QUERY_WHERE, ".a :where(.b, .c)","b1", "c1", "d", "b2", "b3");
+
+        // Compound selector arguments are supported by :where
+        checkWithIds(QUERY_WHERE, ".a :where(.c#d, .e)", "d", "e1");
+
+        // Complex selector arguments are supported by :where
+        checkWithIds(QUERY_WHERE, ".a :where(.e+.f, .g>.b, .h)", "f1", "b2", "h1");
+
+        // Nested selector arguments are supported by :where
+        checkWithIds(QUERY_WHERE, ".a+:where(.b+.f, :where(.c>.e, .g))", "e2");
+
+        // Nested :is selector arguments are supported by :where
+        checkWithIds(QUERY_WHERE, ".a :where(:is(:is(.b ~ .c)))", "c1", "d");
+
+        // Nested :not selector arguments are supported by :where
+        checkWithIds(QUERY_WHERE, ".b + :where(.c + .c + .c, .b + .c:not(span), .b + .c + .e) ~ .h", "h1");
     }
 
 
