@@ -17,11 +17,9 @@ package ch.digitalfondue.jfiveparse;
 
 import org.w3c.dom.Document;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.*;
-import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 public final class W3CDom {
@@ -62,8 +60,7 @@ public final class W3CDom {
             factory.setXIncludeAware(false);
             factory.setExpandEntityReferences(false);
             //
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document d = builder.newDocument();
+            Document d = factory.newDocumentBuilder().newDocument();
             doc.traverse(new W3CDNodeVisitor(d));
             return d;
         } catch (ParserConfigurationException e) {
@@ -155,11 +152,6 @@ public final class W3CDom {
         }
     }
 
-    private static org.w3c.dom.Node unwrap(SelectableNode<org.w3c.dom.Node> toUnwrap) {
-        // we know we can do that, ugly, but at least it's in a single place
-        return toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node;
-    }
-
     private static SelectableNode<org.w3c.dom.Node> wrap(org.w3c.dom.Node node) {
         if (node == null) {
             return null;
@@ -200,8 +192,7 @@ public final class W3CDom {
 
         @Override
         public List<org.w3c.dom.Node> getChildNodes() {
-            var childNodes = node.getChildNodes();
-            return new NodeList(childNodes::item, childNodes.getLength());
+            return new W3CDom.NodeList(node.getChildNodes());
         }
 
         @Override
@@ -335,22 +326,20 @@ public final class W3CDom {
 
     private static final class NodeList extends AbstractList<org.w3c.dom.Node> {
 
-        private final IntFunction<org.w3c.dom.Node> get;
-        private final int size;
+        private final org.w3c.dom.NodeList nodes;
 
-        NodeList(IntFunction<org.w3c.dom.Node> get, int size) {
-            this.get = get;
-            this.size = size;
+        public NodeList(org.w3c.dom.NodeList nodes) {
+            this.nodes = nodes;
         }
 
         @Override
         public org.w3c.dom.Node get(int index) {
-            return get.apply(index);
+            return nodes.item(index);
         }
 
         @Override
         public int size() {
-            return size;
+            return nodes.getLength();
         }
     }
 
