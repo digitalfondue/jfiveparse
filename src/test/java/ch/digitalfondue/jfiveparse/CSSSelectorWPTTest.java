@@ -13,9 +13,10 @@ class CSSSelectorWPTTest {
     // TODO: add
     //
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-not.html
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/only-child.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/query/query-is.html
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292aq/css/selectors/query/query-is.html
+    // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/query/query-where.html
+    // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/only-of-type.html
 
     private static final Document HAS_BASIC = JFiveParse.parse("""
             <main id=main>
@@ -360,6 +361,44 @@ class CSSSelectorWPTTest {
         checkWithIds(LAST_CHILD, "#target3:last-child", "target3");
         checkWithIds(LAST_CHILD, "#target4:last-child", "target4");
         checkWithIds(LAST_CHILD, "#target5:last-child");
+    }
+
+
+    private static final Document ONLY_CHILD = JFiveParse.parse("""
+            <div id=main>
+            <div>
+              <div id="target1">Whitespace nodes should be ignored.</div>
+            </div>
+            
+            <div>
+              <div id="target2">A comment node should be ignored.</div>
+              <!-- -->
+            </div>
+            
+            <div>
+              <div id="target3">Non-whitespace text node should be ignored.</div>
+              .
+            </div>
+            
+            <div>
+              <blockquote></blockquote>
+              <div id="target4" data-expected="false">There is another child element.</div>
+            </div>
+            
+            <div>
+              <div id="target5"></div>
+            </div>
+            </div>
+            """);
+
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/only-child.html
+    @Test
+    void checkOnlyChild() {
+        checkWithIds(ONLY_CHILD, "#target1:only-child", "target1");
+        checkWithIds(ONLY_CHILD, "#target2:only-child", "target2");
+        checkWithIds(ONLY_CHILD, "#target3:only-child", "target3");
+        checkWithIds(ONLY_CHILD, "#target4:only-child");
+        checkWithIds(ONLY_CHILD, "#target5:only-child", "target5");
     }
 
 
