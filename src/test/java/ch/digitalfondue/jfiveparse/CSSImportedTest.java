@@ -52,7 +52,7 @@ class CSSImportedTest {
         return res;
     }
 
-    private static Map<String, CSS.AttributeAction> ATTRIBUTE_ACTION = Map.of(
+    private static final Map<String, CSS.AttributeAction> ATTRIBUTE_ACTION = Map.of(
             "any", CSS.AttributeAction.ANY,
             "element", CSS.AttributeAction.ELEMENT,
             "end", CSS.AttributeAction.END,

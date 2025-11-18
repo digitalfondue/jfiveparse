@@ -186,7 +186,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     case ADJACENT -> res.nextSibling();
                     case SIBLING -> res.subsequentSibling();
                     case PARENT, COLUMN_COMBINATOR -> throw new IllegalArgumentException("Combinator " + c + " is not supported");
-                };
+                }
             } else if (part instanceof CSS.TagSelector t) {
                 if (t.namespace() == null || "*".equals(t.namespace())) {
                     res.element(t.name());
@@ -227,11 +227,13 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 } else if ("empty".equals(name)) {
                     res.matchers.add(this::isEmpty);
                 } else if ("only-child".equals(name)) {
-                    res.matchers.add(this::isOnlyChild);
+                    res.matchers.add(andMatchers(List.of(this::isFirstElementChild, this::isLastElementChild)));
                 } else if ("first-of-type".equals(name)) {
                     res.matchers.add(this::isFirstOfType);
                 } else if ("last-of-type".equals(name)) {
                     res.matchers.add(this::isLastOfType);
+                } else if ("only-of-type".equals(name)) {
+                    res.matchers.add(andMatchers(List.of(this::isFirstOfType, this::isLastOfType)));
                 } else if ("root".equals(name)) {
                     res.matchers.add(this::isRoot);
                 } else if (("is".equals(name) || "where".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
@@ -327,17 +329,6 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             }
         }
         return false;
-    }
-
-    private boolean isOnlyChild(SelectableNode<T> node, SelectableNode<T> base) {
-        if (node.getParentNode() == null) {
-            return true;
-        }
-        var found = wrapper.apply(node.getParentNode()).getChildNodes()
-                        .stream()
-                        .map(wrapper)
-                        .filter(BaseSelector::isElement).toList();
-        return found.size() == 1 && found.get(0).isSameNode(unwrapper.apply(node));
     }
 
     private boolean isEmpty(SelectableNode<T> node, SelectableNode<T> base) {

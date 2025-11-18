@@ -518,6 +518,61 @@ class CSSSelectorWPTTest {
     }
 
 
+    private static final Document ONLY_OF_TYPE = JFiveParse.parse("""
+            <main id=main>
+            <div>
+              <div id="target1">Whitespace nodes should be ignored.</div>
+            </div>
+            
+            <div>
+              <div id="target2">A comment node should be ignored.</div>
+              <!-- -->
+            </div>
+            
+            <div>
+              <div id="target3">Non-whitespace text node should be ignored.</div>
+              .
+            </div>
+            
+            <div>
+              <blockquote></blockquote>
+              <div id="target4" data-expected="false">There is another child element of a different type.</div>
+            </div>
+            
+            <div>
+              <div id="target5"></div>
+            </div>
+            </main>
+            """);
+
+    // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/only-of-type.html
+    @Test
+    void checkOnlyOfType() {
+        checkWithIds(ONLY_OF_TYPE, "#target1:only-of-type", "target1");
+        checkWithIds(ONLY_OF_TYPE, "#target2:only-of-type", "target2");
+        checkWithIds(ONLY_OF_TYPE, "#target3:only-of-type", "target3");
+        checkWithIds(ONLY_OF_TYPE, "#target4:only-of-type", "target4");
+        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type", "target5");
+
+        var ofDifferentType = new Element("span", Node.NAMESPACE_HTML);
+        ofDifferentType.setId("target6");
+        ONLY_OF_TYPE.getElementById("target5").getParentNode().appendChild(ofDifferentType);
+        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type", "target5");
+        checkWithIds(ONLY_OF_TYPE, "#target6:only-of-type", "target6");
+
+        var anotherOfType = new Element("div", Node.NAMESPACE_HTML);
+        anotherOfType.setId("target7");
+        ONLY_OF_TYPE.getElementById("target5").getParentNode().appendChild(anotherOfType);
+        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type");
+        checkWithIds(ONLY_OF_TYPE, "#target7:only-of-type");
+
+
+        ONLY_OF_TYPE.getElementById("target5").getParentNode().removeChild(anotherOfType);
+        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type", "target5");
+    }
+
+
+
     private static void checkWithIds(Node doc, String selector, String... ids) {
         var main = doc.getElementById("main");
         var byIds = Arrays.stream(ids).map(main::getElementById).collect(Collectors.toSet()); // not in order

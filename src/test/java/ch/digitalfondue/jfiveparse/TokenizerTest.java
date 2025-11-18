@@ -89,8 +89,7 @@ public class TokenizerTest {
                 int val = Integer.parseInt(result.group(1), 16);
                 return String.valueOf(((char) val));
             };
-            String newInput = replaceAll(desc.input, "\\\\u([\\d\\w]{4})", doubleEscapedUnicode);
-            desc.input = newInput;
+            desc.input = replaceAll(desc.input, "\\\\u([\\d\\w]{4})", doubleEscapedUnicode);
             for (Object o : desc.output) {
                 if (isCharacterToken(o) || isCommentToken(o)) {
                     List<String> token = (List<String>) o;
