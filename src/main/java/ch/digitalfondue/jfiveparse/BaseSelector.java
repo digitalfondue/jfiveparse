@@ -2,6 +2,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -13,10 +14,12 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     private List<BiPredicate<SelectableNode<T>, SelectableNode<T>>> matchers = new ArrayList<>();
     private final Function<T, SelectableNode<T>> wrapper;
     private final Function<SelectableNode<T>, T> unwrapper;
+    private final Map<String, String> nameSpaceAlias;
 
-    BaseSelector(Function<T, SelectableNode<T>> wrapper, Function<SelectableNode<T>, T> unwrapper) {
+    BaseSelector(Function<T, SelectableNode<T>> wrapper, Function<SelectableNode<T>, T> unwrapper, Map<String, String> nameSpaceAlias) {
         this.wrapper = wrapper;
         this.unwrapper = unwrapper;
+        this.nameSpaceAlias = nameSpaceAlias;
     }
 
     private void contains(String value) {
@@ -35,8 +38,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R element(String name, String namespace) {
+        String namespaceToMatch = nameSpaceAlias.getOrDefault(namespace, namespace);
         matchers.add((node, base) -> node instanceof SelectableNode.SelectableElement<?> ce && name.equals(ce.getNodeName())
-                && Objects.equals(namespace, ce.getNamespaceURI()));
+                && Objects.equals(namespaceToMatch, ce.getNamespaceURI()));
         return inst();
     }
 
@@ -184,7 +188,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     case PARENT, COLUMN_COMBINATOR -> throw new IllegalArgumentException("Combinator " + c + " is not supported");
                 };
             } else if (part instanceof CSS.TagSelector t) {
-                if (t.namespace() == null) {
+                if (t.namespace() == null || "*".equals(t.namespace())) {
                     res.element(t.name());
                 } else {
                     res.element(t.name(), t.namespace());

@@ -12,9 +12,7 @@ class CSSSelectorWPTTest {
 
     // TODO: add
     //
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-not.html
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
-    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292aq/css/selectors/query/query-is.html
     // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/only-of-type.html
 
     private static final Document HAS_BASIC = JFiveParse.parse("""
@@ -444,7 +442,83 @@ class CSSSelectorWPTTest {
     }
 
 
-    private static void checkWithIds(Document doc, String selector, String... ids) {
+    private static final Document IS_WHERE_NOT = JFiveParse.parse("""
+            <main id=main>
+              <div id=a><div id=d></div></div>
+              <div id=b><div id=e></div></div>
+              <div id=c><div id=f></div></div>
+            </main>
+            """);
+
+    // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/is-where-not.html
+    @Test
+    void checkIsWhereNot() {
+        checkWithIds(IS_WHERE_NOT, ":not(:is(#a))", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:where(#b))", "a", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:where(:root #c))", "a", "b", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(#a, #b))", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(#b div))", "a", "b", "c", "d", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(#a div, div + div))", "a", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(span))", "a", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(div))");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(*|div))");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(*|*))");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(*))");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(svg|div))", "a", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(:not(div)))", "a", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(span, b, i))", "a", "b", "c", "d", "e", "f");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(span, b, i, div))");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(#b ~ div div, * + #c))", "a", "b", "d", "e");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(div > :not(#e)))", "a", "b", "c", "e");
+        checkWithIds(IS_WHERE_NOT, ":not(:is(div > :not(:where(#e, #f))))", "a", "b", "c", "e", "f");
+    }
+
+    // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/query/query-is.html
+
+    private static final Document QUERY_IS=  JFiveParse.parse("""
+            <main id=main>
+            <div id="a1" class="a">
+                <div class="b" id="b1"></div>
+                <div class="c" id="c1"></div>
+                <div class="c" id="d"></div>
+                <div class="e" id="e1"></div>
+                <div class="f" id="f1"></div>
+                <div class="g">
+                  <div class="b" id="b2">
+                    <div class="b" id="b3"></div>
+                  </div>
+                </div>
+                <div class="h" id="h1"></div>
+              </div>
+              <div class="c" id="c2">
+                <div id="a2" class="a"></div>
+                <div class="e" id="e2"></div>
+              </div>
+            </main>
+            """);
+
+    @Test
+    void checkQueryIs() {
+        checkWithIds(QUERY_IS, ".a :is(.b, .c)", "b1", "c1", "d", "b2", "b3");
+
+        // Compound selector arguments are supported by :is
+        checkWithIds(QUERY_IS, ".a :is(.c#d, .e)", "d", "e1");
+
+        // Complex selector arguments are supported by :is
+        checkWithIds(QUERY_IS, ".a :is(.e+.f, .g>.b, .h)", "f1", "b2", "h1");
+
+        // Nested selector arguments are supported by :is
+        checkWithIds(QUERY_IS, ".a+:is(.b+.f, :is(.c>.e, .g))", "e2");
+
+        // Nested :where selector arguments are supported by :is
+        checkWithIds(QUERY_IS, ".a :is(:where(:where(.b ~ .c)))", "c1", "d");
+
+        // Nested :not selector arguments are supported by :is
+        checkWithIds(QUERY_IS, ".b + :is(.c + .c + .c, .b + .c:not(span), .b + .c + .e) ~ .h", "h1");
+    }
+
+
+    private static void checkWithIds(Node doc, String selector, String... ids) {
         var main = doc.getElementById("main");
         var byIds = Arrays.stream(ids).map(main::getElementById).collect(Collectors.toSet()); // not in order
         var bySelector = new HashSet<>(main.getAllNodesMatching(Selector.parseSelector(selector))); // not in order
@@ -452,7 +526,7 @@ class CSSSelectorWPTTest {
         Assertions.assertEquals(byIds, bySelector);
     }
 
-    private static void checkWithIdFirst(Document doc, String selector, String id) {
+    private static void checkWithIdFirst(Node doc, String selector, String id) {
         var main = doc.getElementById("main");
         var byIds = Stream.of(id).map(main::getElementById).collect(Collectors.toSet());
         var bySelector = new HashSet<>(main.getAllNodesMatching(Selector.parseSelector(selector), true));

@@ -29,8 +29,8 @@ public final class W3CDom {
 
    public static final class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
 
-        private W3CDomSelector() {
-            super(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node);
+        private W3CDomSelector(Map<String, String> namespaceAlias) {
+            super(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node, namespaceAlias);
         }
 
         @Override
@@ -45,7 +45,7 @@ public final class W3CDom {
     }
 
     public static W3CDomSelector select() {
-        return new W3CDomSelector();
+        return new W3CDomSelector(Map.of());
     }
 
     public static Document toW3CDocument(ch.digitalfondue.jfiveparse.Document doc) {
