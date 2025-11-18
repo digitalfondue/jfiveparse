@@ -212,8 +212,6 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 } else {
                     throw new IllegalArgumentException("AttributeSelector " + a + " is not supported");
                 }
-            } else if (part instanceof CSS.PseudoElement pe) {
-                throw new IllegalStateException("to implement");
             } else if (part instanceof CSS.InternalSelector is && "base".equals(is.name())) {
                 res.matchers.add((node, base) -> base.isSameNode(unwrapper.apply(node)));
             } else if (part instanceof CSS.PseudoSelector ps) {
