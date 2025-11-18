@@ -18,7 +18,6 @@ package ch.digitalfondue.jfiveparse;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ public final class JFiveParse {
      * @return a {@link Document}
      */
     public static Document parse(String input) {
-        return parse(input, EnumSet.noneOf(Option.class));
+        return parse(input, Set.of());
     }
 
     /**
@@ -55,7 +54,7 @@ public final class JFiveParse {
      * @return
      */
     public static Document parse(Reader input) {
-        return parse(input, EnumSet.noneOf(Option.class));
+        return parse(input, Set.of());
     }
 
     public static Document parse(Reader input, Set<Option> options) {
@@ -69,11 +68,11 @@ public final class JFiveParse {
      * @return
      */
     public static List<Node> parseFragment(String input) {
-        return parseFragment(input, EnumSet.noneOf(Option.class));
+        return parseFragment(input, Set.of());
     }
 
     public static List<Node> parseFragment(Reader input) {
-        return parseFragment(input, EnumSet.noneOf(Option.class));
+        return parseFragment(input, Set.of());
     }
 
     public static List<Node> parseFragment(Reader input, Set<Option> options) {
@@ -100,7 +99,7 @@ public final class JFiveParse {
     }
 
     public static String serialize(Node node) {
-        return serialize(node, EnumSet.noneOf(Option.class));
+        return serialize(node, Set.of());
     }
 
     public static String serialize(Node node, Set<Option> options) {
@@ -108,7 +107,7 @@ public final class JFiveParse {
     }
 
     public static void serialize(Node node, Writer writer) throws IOException {
-        serialize(node, EnumSet.noneOf(Option.class), writer);
+        serialize(node, Set.of(), writer);
     }
 
     public static void serialize(Node node, Set<Option> options, Writer writer) throws IOException {

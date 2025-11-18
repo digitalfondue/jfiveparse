@@ -181,11 +181,11 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         for (var part : selector) {
             if (part instanceof CSS.Combinator c) {
                 switch (c.type()) {
-                    case DESCENDANT -> res.withDescendant();
-                    case CHILD -> res.withChild();
-                    case ADJACENT -> res.nextSibling();
-                    case SIBLING -> res.subsequentSibling();
-                    case PARENT, COLUMN_COMBINATOR -> throw new IllegalArgumentException("Combinator " + c + " is not supported");
+                    case CSS.CT_CHILD -> res.withChild();
+                    case CSS.CT_SIBLING -> res.subsequentSibling();
+                    case CSS.CT_ADJACENT -> res.nextSibling();
+                    case CSS.CT_DESCENDANT -> res.withDescendant();
+                    default -> throw new IllegalArgumentException("Combinator " + c + " is not supported");
                 }
             } else if (part instanceof CSS.TagSelector t) {
                 if (t.namespace() == null || "*".equals(t.namespace())) {
@@ -197,17 +197,17 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 var action = a.action();
                 var name = a.name();
                 var value = a.value();
-                if (action == CSS.AttributeAction.EQUALS) {
+                if (action == CSS.ATTR_ACTION_EQUALS) {
                     res.attrValEq(name, value);
-                } else if (action == CSS.AttributeAction.ELEMENT && "class".equals(name)) {
+                } else if (action == CSS.ATTR_ACTION_ELEMENT && "class".equals(name)) {
                     res.hasClass(value);
-                } else if (action == CSS.AttributeAction.EXISTS) {
+                } else if (action == CSS.ATTR_ACTION_EXISTS) {
                     res.attr(name);
-                } else if (action == CSS.AttributeAction.START) {
+                } else if (action == CSS.ATTR_ACTION_START) {
                     res.attrValStartWith(name, value);
-                } else if (action == CSS.AttributeAction.ANY) {
+                } else if (action == CSS.ATTR_ACTION_ANY) {
                     res.attrValContains(name, value);
-                } else if (action == CSS.AttributeAction.END) {
+                } else if (action == CSS.ATTR_ACTION_END) {
                     res.attrValEndWith(name, value);
                 } else {
                     throw new IllegalArgumentException("AttributeSelector " + a + " is not supported");
@@ -246,14 +246,14 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                         r.add(new CSS.InternalSelector("base"));
                         var comb = !s.isEmpty() && s.get(0) instanceof CSS.Combinator combinator ? combinator.type() : null;
                         if (comb == null) {
-                            comb = CSS.CombinatorType.DESCENDANT;
+                            comb = CSS.CT_DESCENDANT;
                             r.add(new CSS.Combinator(comb));
                         }
                         r.addAll(s);
                         var nm = toBaseNodeMatcher(r, stateSupplier);
                         return switch (comb) {
-                            case CHILD, DESCENDANT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> node.getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
-                            case SIBLING, ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> wrapper.apply(node.getParentNode()).getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
+                            case CSS.CT_CHILD, CSS.CT_DESCENDANT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> node.getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
+                            case CSS.CT_SIBLING, CSS.CT_ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> wrapper.apply(node.getParentNode()).getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
                             default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has");
                         };
                     }).toList());

@@ -52,15 +52,15 @@ class CSSImportedTest {
         return res;
     }
 
-    private static final Map<String, CSS.AttributeAction> ATTRIBUTE_ACTION = Map.of(
-            "any", CSS.AttributeAction.ANY,
-            "element", CSS.AttributeAction.ELEMENT,
-            "end", CSS.AttributeAction.END,
-            "equals", CSS.AttributeAction.EQUALS,
-            "exists", CSS.AttributeAction.EXISTS,
-            "hyphen", CSS.AttributeAction.HYPHEN,
-            "not", CSS.AttributeAction.NOT,
-            "start", CSS.AttributeAction.START
+    private static final Map<String, Integer> ATTRIBUTE_ACTION = Map.of(
+            "any", CSS.ATTR_ACTION_ANY,
+            "element", CSS.ATTR_ACTION_ELEMENT,
+            "end", CSS.ATTR_ACTION_END,
+            "equals", CSS.ATTR_ACTION_EQUALS,
+            "exists", CSS.ATTR_ACTION_EXISTS,
+            "hyphen", CSS.ATTR_ACTION_HYPHEN,
+            "not", CSS.ATTR_ACTION_NOT,
+            "start", CSS.ATTR_ACTION_START
     );
 
 
@@ -72,14 +72,14 @@ class CSSImportedTest {
         return switch (type) {
             case "attribute" -> new CSS.AttributeSelector(
                     elem.get("name").getAsString(),
-                    ATTRIBUTE_ACTION.get(elem.get("action").getAsString()),
+                    ATTRIBUTE_ACTION.getOrDefault(elem.get("action").getAsString(), -1),
                     elem.get("value").getAsString(),
                     Optional.ofNullable(fromStringOrNull(elem.get("ignoreCase"))).map(s -> switch (s) {
-                        case "true" -> CSS.AttributeIgnoreCase.IGNORE_CASE_TRUE;
-                        case "false" -> CSS.AttributeIgnoreCase.IGNORE_CASE_FALSE;
-                        case "quirks" -> CSS.AttributeIgnoreCase.IGNORE_CASE_QUIRKS;
+                        case "true" -> CSS.IGNORE_CASE_TRUE;
+                        case "false" -> CSS.IGNORE_CASE_FALSE;
+                        case "quirks" -> CSS.IGNORE_CASE_QUIRKS;
                         default -> throw new IllegalStateException("ignore case is not covered " + s);
-                    }).orElse(null),
+                    }).orElse(-1),
                     fromStringOrNull(elem.get("namespace"))
             );
             case "pseudo" -> {
@@ -96,12 +96,12 @@ class CSSImportedTest {
                     new CSS.PseudoElement(elem.get("name").getAsString(), fromStringOrNull(elem.get("data")));
             case "tag" -> new CSS.TagSelector(elem.get("name").getAsString(), fromStringOrNull(elem.get("namespace")));
             case "universal" -> new CSS.UniversalSelector(fromStringOrNull(elem.get("namespace")));
-            case "adjacent" -> new CSS.Combinator(CSS.CombinatorType.ADJACENT);
-            case "child" -> new CSS.Combinator(CSS.CombinatorType.CHILD);
-            case "descendant" -> new CSS.Combinator(CSS.CombinatorType.DESCENDANT);
-            case "parent" -> new CSS.Combinator(CSS.CombinatorType.PARENT);
-            case "sibling" -> new CSS.Combinator(CSS.CombinatorType.SIBLING);
-            case "column-combinator" -> new CSS.Combinator(CSS.CombinatorType.COLUMN_COMBINATOR);
+            case "adjacent" -> new CSS.Combinator(CSS.CT_ADJACENT);
+            case "child" -> new CSS.Combinator(CSS.CT_CHILD);
+            case "descendant" -> new CSS.Combinator(CSS.CT_DESCENDANT);
+            case "parent" -> new CSS.Combinator(CSS.CT_PARENT);
+            case "sibling" -> new CSS.Combinator(CSS.CT_SIBLING);
+            case "column-combinator" -> new CSS.Combinator(CSS.CT_COLUMN_COMBINATOR);
             default -> throw new IllegalStateException(type);
         };
     }

@@ -18,7 +18,6 @@ package ch.digitalfondue.jfiveparse;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Writer;
-import java.util.EnumSet;
 import java.util.Set;
 
 import static ch.digitalfondue.jfiveparse.Common.*;
@@ -178,7 +177,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     public static void serialize(Node node, Writer writer) throws IOException {
-        serialize(node, EnumSet.noneOf(Option.class), writer);
+        serialize(node, Set.of(), writer);
     }
 
     public static void serialize(Node node, Set<Option> options, Writer writer) throws IOException {
@@ -187,7 +186,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     public static String serialize(Node node) {
-        return serialize(node, EnumSet.noneOf(Option.class));
+        return serialize(node, Set.of());
     }
 
     public static String serialize(Node node, Set<Option> options) {

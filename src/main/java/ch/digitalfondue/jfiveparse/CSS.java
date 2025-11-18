@@ -53,14 +53,17 @@ final class CSS {
     sealed interface CssSelector {}
 
     // child '>', parent '<', sibling '~', adjacent '+', column '||', descendant 'a b'
-    record Combinator(CombinatorType type) implements CssSelector {}
+    record Combinator(int type) implements CssSelector {}
 
     record TagSelector(String name, String namespace) implements CssSelector {}
 
 
-    enum AttributeIgnoreCase { IGNORE_CASE_TRUE, IGNORE_CASE_FALSE, IGNORE_CASE_QUIRKS }
 
-    record AttributeSelector(String name, AttributeAction action, String value, AttributeIgnoreCase ignoreCase, String namespace) implements CssSelector {}
+    static final int IGNORE_CASE_TRUE = 0;
+    static final int IGNORE_CASE_FALSE = 1;
+    static final int IGNORE_CASE_QUIRKS = 2;
+
+    record AttributeSelector(String name, int action, String value, int ignoreCase, String namespace) implements CssSelector {}
 
     record PseudoElement(String name, String data) implements CssSelector {}
 
@@ -72,18 +75,23 @@ final class CSS {
 
     record UniversalSelector(String namespace) implements CssSelector {}
 
-    enum CombinatorType {
-        CHILD,
-        PARENT,
-        SIBLING, // subsequent-sibling combinator: "~"
-        ADJACENT, // next-sibling combinator: "+"
-        COLUMN_COMBINATOR,
-        DESCENDANT
-    }
 
-    enum AttributeAction {
-        EQUALS, EXISTS, START, END, ANY, NOT, HYPHEN, ELEMENT
-    }
+    static final int CT_CHILD = 0;
+    static final int CT_SIBLING = 1; // subsequent-sibling combinator: "~"
+    static final int CT_ADJACENT = 2; // next-sibling combinator: "+"
+    static final int CT_DESCENDANT = 3;
+    static final int CT_PARENT = 4;
+    static final int CT_COLUMN_COMBINATOR = 5;
+
+    //
+    static final int ATTR_ACTION_EQUALS = 0;
+    static final int ATTR_ACTION_EXISTS = 1;
+    static final int ATTR_ACTION_START = 2;
+    static final int ATTR_ACTION_END = 3;
+    static final int ATTR_ACTION_ANY = 4;
+    static final int ATTR_ACTION_NOT = 5;
+    static final int ATTR_ACTION_HYPHEN = 6;
+    static final int ATTR_ACTION_ELEMENT = 7;
 
     private static String unescapeCSS(String cssString) {
         return RE_ESCAPE.matcher(cssString).replaceAll((r) -> {
@@ -101,15 +109,15 @@ final class CSS {
         });
     }
 
-    private static AttributeAction getActionTypes(char c) {
+    private static int getActionTypes(char c) {
         return switch (c) {
-            case '~' /*Tilde*/ -> AttributeAction.ELEMENT;
-            case '^' /*Circumflex*/ -> AttributeAction.START;
-            case '$' /*Dollar*/ -> AttributeAction.END;
-            case '*' /*Asterisk*/ -> AttributeAction.ANY;
-            case '!' /*ExclamationMark*/ -> AttributeAction.NOT;
-            case '|' /* Pipe */ -> AttributeAction.HYPHEN;
-            default -> null;
+            case '~' /*Tilde*/ -> ATTR_ACTION_ELEMENT;
+            case '^' /*Circumflex*/ -> ATTR_ACTION_START;
+            case '$' /*Dollar*/ -> ATTR_ACTION_END;
+            case '*' /*Asterisk*/ -> ATTR_ACTION_ANY;
+            case '!' /*ExclamationMark*/ -> ATTR_ACTION_NOT;
+            case '|' /* Pipe */ -> ATTR_ACTION_HYPHEN;
+            default -> -1;
         };
 
     }
@@ -214,8 +222,8 @@ final class CSS {
             }
         }
 
-        void addTraversal(CombinatorType type) {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CombinatorType.DESCENDANT
+        void addTraversal(int type) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CT_DESCENDANT
             ) {
                 tokens.set(tokens.size() - 1, new Combinator(type));
                 return;
@@ -226,18 +234,18 @@ final class CSS {
             tokens.add(new Combinator(type));
         }
 
-        void addSpecialAttribute(String name, AttributeAction action) {
+        void addSpecialAttribute(String name, int action) {
             tokens.add(new AttributeSelector(
                     name,
                     action,
                     getName(1),
-                    AttributeIgnoreCase.IGNORE_CASE_QUIRKS,
+                    IGNORE_CASE_QUIRKS,
                     null)
             );
         }
 
         void finalizeSubselector() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CombinatorType.DESCENDANT) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CT_DESCENDANT) {
                 tokens.remove(tokens.size()-1);
             }
 
@@ -267,9 +275,9 @@ final class CSS {
                     case 32: // space
                     {
                         // check the first token is not DESCENDANT
-                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Combinator ct) || ct.type() != CombinatorType.DESCENDANT)) {
+                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Combinator ct) || ct.type() != CT_DESCENDANT)) {
                             ensureNotCombinator();
-                            tokens.add(new Combinator(CombinatorType.DESCENDANT));
+                            tokens.add(new Combinator(CT_DESCENDANT));
                         }
                         stripWhitespace(1);
                         break;
@@ -277,37 +285,37 @@ final class CSS {
                     // Traversals
                     case '>': // GreaterThan
                     {
-                        addTraversal(CombinatorType.CHILD);
+                        addTraversal(CT_CHILD);
                         stripWhitespace(1);
                         break;
                     }
                     case '<': // LessThan
                     {
-                        addTraversal(CombinatorType.PARENT);
+                        addTraversal(CT_PARENT);
                         stripWhitespace(1);
                         break;
                     }
                     case '~': //Tilde
                     {
-                        addTraversal(CombinatorType.SIBLING);
+                        addTraversal(CT_SIBLING);
                         stripWhitespace(1);
                         break;
                     }
                     case '+': //Plus
                     {
-                        addTraversal(CombinatorType.ADJACENT);
+                        addTraversal(CT_ADJACENT);
                         stripWhitespace(1);
                         break;
                     }
                     // Special attribute selectors: .class, #id
                     case '.': //Period
                     {
-                        addSpecialAttribute("class", AttributeAction.ELEMENT);
+                        addSpecialAttribute("class", ATTR_ACTION_ELEMENT);
                         break;
                     }
                     case '#': //Hash
                     {
-                        addSpecialAttribute("id", AttributeAction.EQUALS);
+                        addSpecialAttribute("id", ATTR_ACTION_EQUALS);
                         break;
                     }
                     case '[': // LeftSquareBracket
@@ -332,9 +340,9 @@ final class CSS {
                         }
                         stripWhitespace(0);
                         // Determine comparison operation
-                        AttributeAction action = AttributeAction.EXISTS;
-                        AttributeAction possibleAction = getActionTypes(selector.charAt(selectorIndex));
-                        if (possibleAction != null) {
+                        int action = ATTR_ACTION_EXISTS;
+                        int possibleAction = getActionTypes(selector.charAt(selectorIndex));
+                        if (possibleAction != -1) {
                             action = possibleAction;
                             if (!charAtIsEqual(selectorIndex + 1, '=')) {
                                 throw new IllegalStateException("Expected '='");
@@ -342,14 +350,14 @@ final class CSS {
 
                             stripWhitespace(2);
                         } else if (charAtIsEqual(selectorIndex, '=')) {
-                            action = AttributeAction.EQUALS;
+                            action = ATTR_ACTION_EQUALS;
                             stripWhitespace(1);
                         }
 
                         String value = "";
-                        AttributeIgnoreCase ignoreCase = null;
+                        int ignoreCase = -1;
 
-                        if (action != AttributeAction.EXISTS) {
+                        if (action != ATTR_ACTION_EXISTS) {
                             if (isQuote(selector.charAt(selectorIndex))) {
                                 char quote = selector.charAt(selectorIndex);
                                 selectorIndex += 1;
@@ -379,12 +387,12 @@ final class CSS {
                             switch (selector.charAt(selectorIndex) | 0x20) {
                                 // If the forceIgnore flag is set (either 'i' or 's'), use that value
                                 case 'i': {
-                                    ignoreCase = AttributeIgnoreCase.IGNORE_CASE_TRUE;
+                                    ignoreCase = IGNORE_CASE_TRUE;
                                     stripWhitespace(1);
                                     break;
                                 }
                                 case 's': {
-                                    ignoreCase = AttributeIgnoreCase.IGNORE_CASE_FALSE;
+                                    ignoreCase = IGNORE_CASE_FALSE;
                                     stripWhitespace(1);
                                     break;
                                 }
@@ -469,7 +477,7 @@ final class CSS {
                         } else if (firstChar == '|') {
                             name = "";
                             if (charAtIsEqual(selectorIndex + 1, '|')) {
-                                addTraversal(CombinatorType.COLUMN_COMBINATOR);
+                                addTraversal(CT_COLUMN_COMBINATOR);
                                 stripWhitespace(2);
                                 break;
                             }

@@ -391,7 +391,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
      * Get the html content of the child of this node.
      */
     public String getInnerHTML() {
-        return getInnerHTML(EnumSet.noneOf(Option.class));
+        return getInnerHTML(Set.of());
     }
 
     /**
@@ -412,7 +412,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
      * Get the html content of this node and his child.
      */
     public String getOuterHTML() {
-        return getOuterHTML(EnumSet.noneOf(Option.class));
+        return getOuterHTML(Set.of());
     }
 
     /**
