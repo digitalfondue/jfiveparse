@@ -620,16 +620,15 @@ class CSSSelectorTest {
         // Last-of-type
         sizzleCheckMatcherIds("#qunit-fixture > p:last-of-type", "first");
 
-        // FIXME
         // Only-of-type
-        /*sizzleCheckMatcherIds("#qunit-fixture > :only-of-type",
+        sizzleCheckMatcherIds("#qunit-fixture > :only-of-type",
                 "name+value",
                 "firstUL",
                 "empty",
                 "floatTest",
                 "iframe",
                 "table"
-        );*/
+        );
     }
 
     // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1336
