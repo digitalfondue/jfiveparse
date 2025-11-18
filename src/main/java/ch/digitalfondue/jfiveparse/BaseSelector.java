@@ -244,8 +244,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     var hasMatchers = orMatchers(ds.value().stream().map(s -> {
                         var r = new ArrayList<CSS.CssSelector>(s.size() + 2);
                         r.add(new CSS.InternalSelector("base"));
-                        var comb = !s.isEmpty() && s.get(0) instanceof CSS.Combinator combinator ? combinator.type() : null;
-                        if (comb == null) {
+                        int comb = !s.isEmpty() && s.get(0) instanceof CSS.Combinator combinator ? combinator.type() : -1;
+                        if (comb == -1) {
                             comb = CSS.CT_DESCENDANT;
                             r.add(new CSS.Combinator(comb));
                         }
