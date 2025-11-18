@@ -548,29 +548,40 @@ class CSSSelectorWPTTest {
     // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/only-of-type.html
     @Test
     void checkOnlyOfType() {
-        checkWithIds(ONLY_OF_TYPE, "#target1:only-of-type", "target1");
-        checkWithIds(ONLY_OF_TYPE, "#target2:only-of-type", "target2");
-        checkWithIds(ONLY_OF_TYPE, "#target3:only-of-type", "target3");
-        checkWithIds(ONLY_OF_TYPE, "#target4:only-of-type", "target4");
-        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type", "target5");
+        var target1 = ONLY_OF_TYPE.getElementById("target1");
+        var target2 = ONLY_OF_TYPE.getElementById("target2");
+        var target3 = ONLY_OF_TYPE.getElementById("target3");
+        var target4 = ONLY_OF_TYPE.getElementById("target4");
+        var target5 = ONLY_OF_TYPE.getElementById("target5");
+
+        Assertions.assertTrue(target1.matches(":only-of-type"));
+        Assertions.assertTrue(target2.matches(":only-of-type"));
+        Assertions.assertTrue(target3.matches(":only-of-type"));
+        Assertions.assertTrue(target4.matches(":only-of-type"));
+        Assertions.assertTrue(target5.matches(":only-of-type"));
+
 
         var ofDifferentType = new Element("span", Node.NAMESPACE_HTML);
         ofDifferentType.setId("target6");
         ONLY_OF_TYPE.getElementById("target5").getParentNode().appendChild(ofDifferentType);
-        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type", "target5");
-        checkWithIds(ONLY_OF_TYPE, "#target6:only-of-type", "target6");
+
+        var target6 = ONLY_OF_TYPE.getElementById("target6");
+
+        Assertions.assertTrue(target5.matches(":only-of-type"));
+        Assertions.assertTrue(target6.matches(":only-of-type"));
 
         var anotherOfType = new Element("div", Node.NAMESPACE_HTML);
         anotherOfType.setId("target7");
         ONLY_OF_TYPE.getElementById("target5").getParentNode().appendChild(anotherOfType);
-        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type");
-        checkWithIds(ONLY_OF_TYPE, "#target7:only-of-type");
 
+        var target7 = ONLY_OF_TYPE.getElementById("target7");
+
+        Assertions.assertFalse(target5.matches(":only-of-type"));
+        Assertions.assertFalse(target7.matches(":only-of-type"));
 
         ONLY_OF_TYPE.getElementById("target5").getParentNode().removeChild(anotherOfType);
-        checkWithIds(ONLY_OF_TYPE, "#target5:only-of-type", "target5");
+        Assertions.assertTrue(target5.matches(":only-of-type"));
     }
-
 
 
     private static void checkWithIds(Node doc, String selector, String... ids) {

@@ -441,4 +441,14 @@ public final class Element extends Node implements SelectableNode.SelectableElem
             return originalNodeName;
         }
     }
+
+    /**
+     * Return true if it matches the provided css selector. See https://developer.mozilla.org/en-US/docs/Web/API/Element/matches
+     *
+     * @param cssSelector
+     * @return
+     */
+    public boolean matches(String cssSelector) {
+        return Selector.parseSelector(cssSelector).matcher.test(this, this);
+    }
 }
