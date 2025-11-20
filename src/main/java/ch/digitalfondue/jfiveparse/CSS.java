@@ -18,11 +18,14 @@ package ch.digitalfondue.jfiveparse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.IntPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // based on https://github.com/fb55/css-what/blob/master/src/parse.ts
-// under the license (BSD 2-Clause "Simplified" License): ( https://github.com/fb55/css-what/blob/master/LICENSE )
+// and https://github.com/fb55/nth-check
+//
+// under the license (BSD 2-Clause "Simplified" License): ( https://github.com/fb55/css-what/blob/master/LICENSE / https://github.com/fb55/nth-check/blob/master/LICENSE )
 // Copyright (c) Felix Böhm
 // All rights reserved.
 //
@@ -512,5 +515,104 @@ final class CSS {
         private boolean canCharAt(int i) {
             return i < selectorLength;
         }
+    }
+
+    //
+
+    static final class NthParserState {
+        int a;
+        int b;
+        private Integer number;
+        private int idx, sign = 1;
+        private final String expression;
+        private final int exprLength;
+
+        NthParserState(String expression) {
+            this.expression = expression.trim().toLowerCase(Locale.ROOT);
+            this.exprLength = this.expression.length();
+            parse();
+        }
+
+        private void parse() {
+            if ("even".equals(expression)) {
+                a = 2;
+                b = 0;
+                return;
+            } else if ("odd".equals(expression)) {
+                a = 2;
+                b = 1;
+                return;
+            }
+
+            readSign();
+            readNumber();
+
+            if (idx < exprLength && expression.charAt(idx) == 'n') {
+                idx++;
+                a = sign * (number != null ? number : 1);
+
+                skipWhitespace();
+
+                if (idx < exprLength) {
+                    readSign();
+                    skipWhitespace();
+                    readNumber();
+                } else {
+                    sign = number = 0;
+                }
+            }
+
+            if (number == null || idx < exprLength) {
+                throw new ParserException("n-th rule couldn't be parsed (" + expression + ")");
+            }
+            b = sign * number;
+        }
+
+        private void readNumber() {
+            int start = idx;
+            int value = 0;
+            while (idx < exprLength && expression.charAt(idx) >= '0' && expression.charAt(idx) <= '9') {
+                value = value * 10 + (expression.charAt(idx) - '0');
+                idx++;
+            }
+            if (idx != start) {
+                number = value;
+            }
+        }
+
+        private void readSign() {
+            switch (expression.charAt(idx)) {
+                case '-': {
+                    idx++;
+                    sign = -1;
+                    return;
+                }
+                case '+': {
+                    idx++;
+                }
+            }
+            sign = 1;
+        }
+
+        private void skipWhitespace() {
+            while (idx < exprLength && isWhitespace(expression.charAt(idx))) {
+                idx++;
+            }
+        }
+    }
+
+    static IntPredicate parseNth(String expression) {
+        var state = new NthParserState(expression);
+        int a = state.a;
+        int b = state.b;
+        if (b < 0 && a <= 0) return (i) -> false;
+        if (a == -1) return (i) -> i <= b;
+        if (a == 0) return (i) -> i == b;
+        if (a == 1) return b < 0 ? (n) -> true : (i) -> i >= b;
+        int absA = Math.abs(a);
+        int bMod = ((b % absA) + absA) % absA;
+        return a > 1
+                ? (i) -> i >= b && i % absA == bMod
+                : (i) -> i <= b && i % absA == bMod;
     }
 }

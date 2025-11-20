@@ -1,5 +1,6 @@
 package ch.digitalfondue.jfiveparse;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -205,4 +206,65 @@ class CSSTest {
     }
 
     // TODO: add all the missing String.raw tests
+
+    record NthExprAB(String expr, int a, int b) {}
+
+    // https://github.com/fb55/nth-check/blob/master/src/__fixtures__/rules.ts
+    private static List<NthExprAB> NTH_EXPRS = List.of(
+            new NthExprAB("1", 0, 1),
+            new NthExprAB("2", 0, 2),
+            new NthExprAB("3", 0, 3),
+            new NthExprAB("5", 0, 5),
+            new NthExprAB(" 1 ", 0, 1),
+            new NthExprAB(" 5 ", 0, 5),
+            new NthExprAB("+2n + 1", 2, 1),
+            new NthExprAB("-1", 0, -1),
+            new NthExprAB("-1n + 3", -1, 3),
+            new NthExprAB("-1n+3", -1, 3),
+            new NthExprAB("-n+2", -1, 2),
+            new NthExprAB("-n+3", -1, 3),
+            new NthExprAB("0n+3", 0, 3),
+            new NthExprAB("1n", 1, 0),
+            new NthExprAB("1n+0", 1, 0),
+            new NthExprAB("2n", 2, 0),
+            new NthExprAB("2n + 1", 2, 1),
+            new NthExprAB("2n+1", 2, 1),
+            new NthExprAB("3n", 3, 0),
+            new NthExprAB("3n+0", 3, 0),
+            new NthExprAB("3n+1", 3, 1),
+            new NthExprAB("3n+2", 3, 2),
+            new NthExprAB("3n+3", 3, 3),
+            new NthExprAB("3n-1", 3, -1),
+            new NthExprAB("3n-2", 3, -2),
+            new NthExprAB("3n-3", 3, -3),
+            new NthExprAB("even", 2, 0),
+            new NthExprAB("n", 1, 0),
+            new NthExprAB("n+2", 1, 2),
+            new NthExprAB("odd", 2, 1)
+    );
+
+    @Test
+    void checkNthParsing() {
+        NTH_EXPRS.forEach(e -> {
+            var res = new CSS.NthParserState(e.expr);
+            Assertions.assertEquals(e.a, res.a);
+            Assertions.assertEquals(e.b, res.b);
+        });
+    }
+
+    @Test
+    void checkFailingNthParsing() {
+        List.of("-",
+                "- 1n",
+                "-1 n",
+                "2+0",
+                "2n+-0",
+                "an+b",
+                "asdf",
+                "b",
+                "expr",
+                "odd|even|x").forEach(e -> {
+            Assertions.assertThrows(ParserException.class, () -> new CSS.NthParserState(e));
+        });
+    }
 }
