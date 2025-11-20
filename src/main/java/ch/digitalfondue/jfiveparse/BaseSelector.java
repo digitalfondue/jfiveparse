@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
 abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
@@ -259,6 +260,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     }).toList());
                     var baseRule = res.collectMatchers();
                     res.matchers.add((node, base) -> baseRule.test(node, base) && hasMatchers.test(node, node));
+                } else if ("nth-child".equals(name) && ps.data() instanceof CSS.DataString s) {
+                    var idxPredicate = CSS.parseNth(s.value());
+                    res.matchers.add((node, base) -> isAt(node, idxPredicate));
                 } else {
                     throw new ParserException("PseudoSelector '" + name + "' is not supported");
                 }
@@ -298,6 +302,22 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
     private boolean isRoot(SelectableNode<T> n, SelectableNode<T> base) {
         return (n.getParentNode() == null || wrapper.apply(n.getParentNode()).getNodeType() == Node.DOCUMENT_NODE) && n.getNodeType() == Node.ELEMENT_NODE;
+    }
+
+    private boolean isAt(SelectableNode<T> n, IntPredicate idxPredicate) {
+        if (n.getParentNode() != null) {
+            var childNodes = wrapper.apply(n.getParentNode()).getChildNodes();
+            var elemIdx = 0;
+            for (T child : childNodes) {
+                if (wrapper.apply(child).getNodeType() == Node.ELEMENT_NODE) {
+                    elemIdx++;
+                    if (n.isSameNode(child) && idxPredicate.test(elemIdx)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private boolean isLastOfType(SelectableNode<T> node, SelectableNode<T> base) {

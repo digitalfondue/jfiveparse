@@ -789,6 +789,102 @@ class CSSSelectorTest {
         sizzleCheckMatcherIds(":root", "html");
     }
 
+
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1061
+    @Test
+    void sizzleNth() {
+        sizzleCheckMatcherIds("p:nth-child(1)", "firstp", "sndp");
+        // Nth-child
+        sizzleCheckMatcherIds("p:nth-child(1)", "firstp", "sndp");
+        // Nth-child (with whitespace)
+        sizzleCheckMatcherIds("p:nth-child( 1 )", "firstp", "sndp");
+        // Nth-child (case-insensitive)
+        sizzleCheckMatcherIds("#select1 option:NTH-child(3)", "option1c");
+        // Not nth-child
+        sizzleCheckMatcherIds("#qunit-fixture p:not(:nth-child(1))", "ap", "en", "sap", "first");
+
+        // Nth-child(2)
+        sizzleCheckMatcherIds("#qunit-fixture form#form > *:nth-child(2)", "text1");
+        // Nth-child(2)
+        sizzleCheckMatcherIds("#qunit-fixture form#form > :nth-child(2)", "text1");
+
+        // Nth-child(-1)
+        sizzleCheckMatcherIds("#select1 option:nth-child(-1)");
+        // Nth-child(3)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3)", "option1c");
+
+        // "Nth-child(0n+3)"
+        sizzleCheckMatcherIds("#select1 option:nth-child(0n+3)", "option1c");
+
+        // Nth-child(1n+0)
+        sizzleCheckMatcherIds("#select1 option:nth-child(1n+0)",
+                "option1a",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-child(1n)
+        sizzleCheckMatcherIds("#select1 option:nth-child(1n)",
+                "option1a",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-child(n)
+        sizzleCheckMatcherIds("#select1 option:nth-child(n)",
+                "option1a",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-child(even)
+        sizzleCheckMatcherIds("#select1 option:nth-child(even)", "option1b", "option1d");
+        // Nth-child(odd)
+        sizzleCheckMatcherIds("#select1 option:nth-child(odd)", "option1a", "option1c");
+        // Nth-child(2n)
+        sizzleCheckMatcherIds("#select1 option:nth-child(2n)", "option1b", "option1d");
+        // Nth-child(2n+1)
+        sizzleCheckMatcherIds("#select1 option:nth-child(2n+1)", "option1a", "option1c");
+        // Nth-child(2n + 1)
+        sizzleCheckMatcherIds("#select1 option:nth-child(2n + 1)", "option1a", "option1c");
+        // Nth-child(+2n + 1)
+        sizzleCheckMatcherIds("#select1 option:nth-child(+2n + 1)", "option1a", "option1c");
+        // Nth-child(3n)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n)", "option1c");
+        // Nth-child(3n+1)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n+1)", "option1a", "option1d");
+        // Nth-child(3n+2)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n+2)", "option1b");
+        // Nth-child(3n+3)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n+3)", "option1c");
+        // Nth-child(3n-1)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n-1)", "option1b");
+        // Nth-child(3n-2)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n-2)", "option1a", "option1d");
+        // Nth-child(3n-3)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n-3)", "option1c");
+        // Nth-child(3n+0)
+        sizzleCheckMatcherIds("#select1 option:nth-child(3n+0)", "option1c");
+        // Nth-child(-1n+3)
+        sizzleCheckMatcherIds("#select1 option:nth-child(-1n+3)",
+                "option1a",
+                "option1b",
+                "option1c"
+        );
+        // Nth-child(-n+3)
+        sizzleCheckMatcherIds("#select1 option:nth-child(-n+3)",
+                "option1a",
+                "option1b",
+                "option1c"
+        );
+        // Nth-child(-1n + 3)
+        sizzleCheckMatcherIds("#select1 option:nth-child(-1n + 3)",
+                "option1a",
+                "option1b",
+                "option1c"
+        );
+    }
+
     private static Document loadDocument(String name) {
         try {
             return JFiveParse.parse(load(name));

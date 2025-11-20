@@ -275,8 +275,8 @@ class CSSSelectorWPTTest {
         checkWithIds(NOT_COMPLEX, ":not(#f, main > div)", "d", "e");
         checkWithIds(NOT_COMPLEX, ":not(div + div + div, div + div > div)", "a", "b", "d");
 
-        // FIXME implement nth-child
-        // checkWithIds(NOT_COMPLEX, ":not(div:nth-child(1))", "b", "c");
+
+        checkWithIds(NOT_COMPLEX, ":not(div:nth-child(1))", "b", "c");
         checkWithIds(NOT_COMPLEX, ":not(:not(div))", "a", "b", "c", "d", "e", "f");
         checkWithIds(NOT_COMPLEX, ":not(:not(:not(div)))");
         checkWithIds(NOT_COMPLEX, ":not(div, span)");
