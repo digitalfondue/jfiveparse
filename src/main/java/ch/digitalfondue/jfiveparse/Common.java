@@ -15,8 +15,10 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.IntFunction;
 
 /**
  * Dumping ground for static functions and constants.
@@ -616,5 +618,26 @@ final class Common {
     /** /!\ beware when using this function!, the "from"-"to" must be carefully chosen! */
     static boolean isHtmlNSBetweenH1H6(Element element) {
         return element.nodeNameID >= Common.ELEMENT_H1_ID && element.nodeNameID <= Common.ELEMENT_H6_ID && element.namespaceID == Node.NAMESPACE_HTML_ID;
+    }
+
+    static final class NodeList<T> extends AbstractList<T> {
+
+        private final IntFunction<T> nodeFetcher;
+        private final int size;
+
+        public NodeList(int size, IntFunction<T> nodeFetcher) {
+            this.size = size;
+            this.nodeFetcher = nodeFetcher;
+        }
+
+        @Override
+        public T get(int index) {
+            return nodeFetcher.apply(index);
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
     }
 }

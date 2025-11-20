@@ -158,12 +158,12 @@ public final class Selector extends BaseSelector<Node, Selector> {
     }
 
     @Override
-    protected Selector inst() {
+    Selector inst() {
         return this;
     }
 
     @Override
-    protected Selector newInst() {
+    Selector newInst() {
         return select();
     }
 }

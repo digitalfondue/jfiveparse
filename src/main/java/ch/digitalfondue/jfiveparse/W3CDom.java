@@ -34,12 +34,12 @@ public final class W3CDom {
         }
 
         @Override
-        protected W3CDomSelector inst() {
+        W3CDomSelector inst() {
             return this;
         }
 
         @Override
-        protected W3CDomSelector newInst() {
+        W3CDomSelector newInst() {
             return select();
         }
     }
@@ -192,7 +192,8 @@ public final class W3CDom {
 
         @Override
         public List<org.w3c.dom.Node> getChildNodes() {
-            return new W3CDom.NodeList(node.getChildNodes());
+            var c = node.getChildNodes();
+            return new Common.NodeList<>(c.getLength(), c::item);
         }
 
         @Override
@@ -323,24 +324,4 @@ public final class W3CDom {
             }
         }
     }
-
-    private static final class NodeList extends AbstractList<org.w3c.dom.Node> {
-
-        private final org.w3c.dom.NodeList nodes;
-
-        public NodeList(org.w3c.dom.NodeList nodes) {
-            this.nodes = nodes;
-        }
-
-        @Override
-        public org.w3c.dom.Node get(int index) {
-            return nodes.item(index);
-        }
-
-        @Override
-        public int size() {
-            return nodes.getLength();
-        }
-    }
-
 }

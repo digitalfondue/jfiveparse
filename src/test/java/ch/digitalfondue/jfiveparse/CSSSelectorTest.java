@@ -792,7 +792,7 @@ class CSSSelectorTest {
 
     // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1061
     @Test
-    void sizzleNth() {
+    void sizzleNthChild() {
         sizzleCheckMatcherIds("p:nth-child(1)", "firstp", "sndp");
         // Nth-child
         sizzleCheckMatcherIds("p:nth-child(1)", "firstp", "sndp");
@@ -882,6 +882,103 @@ class CSSSelectorTest {
                 "option1a",
                 "option1b",
                 "option1c"
+        );
+    }
+
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1155C18-L1155C32
+    @Test
+    void sizzleNthLastChild() {
+        sizzleCheckMatcherIds("form:nth-last-child(5)", "testForm");
+        sizzleCheckMatcherIds("form:nth-last-child( 5 )", "testForm");
+        // Nth-last-child (case-insensitive)
+        sizzleCheckMatcherIds("#select1 option:NTH-last-child(3)", "option1b");
+        // Not nth-last-child
+        sizzleCheckMatcherIds("#qunit-fixture p:not(:nth-last-child(1))",
+                "firstp",
+                "ap",
+                "sndp",
+                "en",
+                "first"
+        );
+
+        // Nth-last-child(-1)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(-1)");
+        // Nth-last-child(3)
+        sizzleCheckMatcherIds("#select1 :nth-last-child(3)", "option1b");
+        // Nth-last-child(3)
+        sizzleCheckMatcherIds("#select1 *:nth-last-child(3)", "option1b");
+        // Nth-last-child(3)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3)", "option1b");
+
+        // Nth-last-child(0n+3)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(0n+3)", "option1b");
+
+        // Nth-last-child(1n+0)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(1n+0)",
+                "option1a",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-last-child(1n)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(1n)",
+                "option1a",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-last-child(n)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(n)",
+                "option1a",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-last-child(even)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(even)", "option1a", "option1c");
+        // Nth-last-child(odd)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(odd)", "option1b", "option1d");
+        // Nth-last-child(2n)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(2n)", "option1a", "option1c");
+        // Nth-last-child(2n+1)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(2n+1)", "option1b", "option1d");
+        // Nth-last-child(2n + 1)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(2n + 1)", "option1b", "option1d");
+        // Nth-last-child(+2n + 1)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(+2n + 1)", "option1b", "option1d");
+        // Nth-last-child(3n)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n)", "option1b");
+        // Nth-last-child(3n+1)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n+1)", "option1a", "option1d");
+        // Nth-last-child(3n+2)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n+2)", "option1c");
+        // Nth-last-child(3n+3)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n+3)", "option1b");
+        // Nth-last-child(3n-1)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n-1)", "option1c");
+        // Nth-last-child(3n-2)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n-2)", "option1a", "option1d");
+        // Nth-last-child(3n-3)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n-3)", "option1b");
+        // Nth-last-child(3n+0)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(3n+0)", "option1b");
+        // Nth-last-child(-1n+3)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(-1n+3)",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-last-child(-n+3)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(-n+3)",
+                "option1b",
+                "option1c",
+                "option1d"
+        );
+        // Nth-last-child(-1n + 3)
+        sizzleCheckMatcherIds("#select1 option:nth-last-child(-1n + 3)",
+                "option1b",
+                "option1c",
+                "option1d"
         );
     }
 
