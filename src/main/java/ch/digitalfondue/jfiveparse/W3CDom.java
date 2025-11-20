@@ -64,7 +64,7 @@ public final class W3CDom {
             doc.traverse(new W3CDNodeVisitor(d));
             return d;
         } catch (ParserConfigurationException e) {
-            throw new IllegalStateException(e);
+            throw new ParserException(e);
         }
     }
 

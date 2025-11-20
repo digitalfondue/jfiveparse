@@ -27,4 +27,7 @@ public final class ParserException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 4813626126106692625L;
 
+    ParserException(String message) {
+        super(message);
+    }
 }

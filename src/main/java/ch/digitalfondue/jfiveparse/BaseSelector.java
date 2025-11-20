@@ -185,7 +185,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     case CSS.CT_SIBLING -> res.subsequentSibling();
                     case CSS.CT_ADJACENT -> res.nextSibling();
                     case CSS.CT_DESCENDANT -> res.withDescendant();
-                    default -> throw new IllegalArgumentException("Combinator " + c + " is not supported");
+                    default -> throw new ParserException("Combinator " + c + " is not supported");
                 }
             } else if (part instanceof CSS.TagSelector t) {
                 if (t.namespace() == null || "*".equals(t.namespace())) {
@@ -210,7 +210,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 } else if (action == CSS.ATTR_ACTION_END) {
                     res.attrValEndWith(name, value);
                 } else {
-                    throw new IllegalArgumentException("AttributeSelector " + a + " is not supported");
+                    throw new ParserException("AttributeSelector " + a + " is not supported");
                 }
             } else if (part instanceof CSS.InternalSelector is && "base".equals(is.name())) {
                 res.matchers.add((node, base) -> base.isSameNode(unwrapper.apply(node)));
@@ -254,18 +254,18 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                         return switch (comb) {
                             case CSS.CT_CHILD, CSS.CT_DESCENDANT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> node.getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
                             case CSS.CT_SIBLING, CSS.CT_ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> wrapper.apply(node.getParentNode()).getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
-                            default -> throw new IllegalArgumentException("Combinator " + comb + " is not supported in :has");
+                            default -> throw new ParserException("Combinator " + comb + " is not supported in :has");
                         };
                     }).toList());
                     var baseRule = res.collectMatchers();
                     res.matchers.add((node, base) -> baseRule.test(node, base) && hasMatchers.test(node, node));
                 } else {
-                    throw new IllegalArgumentException("PseudoSelector '" + name + "' is not supported");
+                    throw new ParserException("PseudoSelector '" + name + "' is not supported");
                 }
             } else if (part instanceof CSS.UniversalSelector) {
                 res.matchers.add(BaseSelector::isElement);
             } else {
-                throw new IllegalArgumentException(part + " is not supported");
+                throw new ParserException(part + " is not supported");
             }
         }
         return andMatchers(List.of(BaseSelector::isElement, res.internalToMatcher()));

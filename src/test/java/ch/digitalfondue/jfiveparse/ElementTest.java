@@ -47,7 +47,7 @@ class ElementTest {
     void beforeBeginWithoutParent() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         startNode.parentNode = null;
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(ParserException.class, () ->
             startNode.insertAdjacentHTML("beforebegin", "<!-- beforebegin -->"));
     }
 
@@ -87,14 +87,14 @@ class ElementTest {
     void afterEndWithoutParent() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         startNode.parentNode = null;
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(ParserException.class, () ->
             startNode.insertAdjacentHTML("afterend", "<!-- beforebegin -->"));
     }
 
     @Test()
     void wrongPosition() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(ParserException.class, () ->
             startNode.insertAdjacentHTML("plop", "<!-- plop -->"));
     }
 
@@ -123,14 +123,14 @@ class ElementTest {
     @Test
     void wrongElementPosition() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(ParserException.class, () ->
             startNode.insertAdjacentElement("plop", new Element("plop")));
     }
 
     @Test
     void wrongTextPosition() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(ParserException.class, () ->
             startNode.insertAdjacentText("plop", "plop"));
     }
 

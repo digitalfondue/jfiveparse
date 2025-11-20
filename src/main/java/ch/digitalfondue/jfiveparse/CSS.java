@@ -45,7 +45,7 @@ final class CSS {
         List<List<CssSelector>> subselects = new ArrayList<>();
         int endIndex = new ParseSelector(subselects, selector, 0).parse();
         if (endIndex < selector.length()) {
-            throw new IllegalStateException("Unmatched selector: " + selector.substring(endIndex));
+            throw new ParserException("Unmatched selector: " + selector.substring(endIndex));
         }
         return subselects;
     }
@@ -174,7 +174,7 @@ final class CSS {
         String getName(int offset) {
             Matcher matcher = RE_NAME.matcher(selector.substring(selectorIndex + offset));
             if (!matcher.find()) {
-                throw new IllegalStateException("Expected name, found " + selector.substring(selectorIndex));
+                throw new ParserException("Expected name, found " + selector.substring(selectorIndex));
             }
             String name = matcher.group();
             selectorIndex += offset + name.length();
@@ -213,12 +213,12 @@ final class CSS {
                     }
                 }
             }
-            throw new IllegalStateException("Parenthesis not matched");
+            throw new ParserException("Parenthesis not matched");
         }
 
         void ensureNotCombinator() {
             if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator) {
-                throw new IllegalStateException("Did not expect successive combinators.");
+                throw new ParserException("Did not expect successive combinators.");
             }
         }
 
@@ -250,7 +250,7 @@ final class CSS {
             }
 
             if (tokens.isEmpty()) {
-                throw new IllegalStateException("Empty sub-selector");
+                throw new ParserException("Empty sub-selector");
             }
 
             subselects.add(tokens);
@@ -345,7 +345,7 @@ final class CSS {
                         if (possibleAction != -1) {
                             action = possibleAction;
                             if (!charAtIsEqual(selectorIndex + 1, '=')) {
-                                throw new IllegalStateException("Expected '='");
+                                throw new ParserException("Expected '='");
                             }
 
                             stripWhitespace(2);
@@ -368,7 +368,7 @@ final class CSS {
                                             selector.charAt(selectorIndex) == '\\' ? 2 : 1;
                                 }
                                 if (selector.charAt(selectorIndex) != quote) {
-                                    throw new IllegalStateException("Attribute value didn't end");
+                                    throw new ParserException("Attribute value didn't end");
                                 }
                                 value = unescapeCSS(selector.substring(sectionStart, selectorIndex));
                                 selectorIndex += 1;
@@ -400,7 +400,7 @@ final class CSS {
                         }
 
                         if (!charAtIsEqual(selectorIndex, ']')) {
-                            throw new IllegalStateException("Attribute selector didn't terminate");
+                            throw new ParserException("Attribute selector didn't terminate");
                         }
 
                         selectorIndex += 1;
@@ -425,14 +425,14 @@ final class CSS {
                         if (charAtIsEqual(selectorIndex, '(')) {
                             if (isUnpackPseudos(name)) {
                                 if (canCharAt(selectorIndex + 1) && isQuote(selector.charAt(selectorIndex + 1))) {
-                                    throw new IllegalStateException("Pseudo-selector " + name + " cannot be quoted");
+                                    throw new ParserException("Pseudo-selector " + name + " cannot be quoted");
                                 }
 
                                 List<List<CssSelector>> subselects = new ArrayList<>();
                                 data = new DataSelectors(subselects);
                                 selectorIndex = new ParseSelector(subselects, selector, selectorIndex + 1).parse();
                                 if (!charAtIsEqual(selectorIndex, ')')) {
-                                    throw new IllegalStateException("Missing closing parenthesis in :" + name + " (" + selector + ")");
+                                    throw new ParserException("Missing closing parenthesis in :" + name + " (" + selector + ")");
                                 }
                                 selectorIndex += 1;
                             } else {
@@ -459,7 +459,7 @@ final class CSS {
                         if (selector.startsWith("/*", selectorIndex)) {
                             int endIndex = selector.indexOf("*/", selectorIndex + 2);
                             if (endIndex < 0) {
-                                throw new IllegalStateException("Comment was not terminated");
+                                throw new ParserException("Comment was not terminated");
                             }
                             selectorIndex = endIndex + 2;
                             // Remove leading whitespace

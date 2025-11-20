@@ -78,7 +78,7 @@ class CSSImportedTest {
                         case "true" -> CSS.IGNORE_CASE_TRUE;
                         case "false" -> CSS.IGNORE_CASE_FALSE;
                         case "quirks" -> CSS.IGNORE_CASE_QUIRKS;
-                        default -> throw new IllegalStateException("ignore case is not covered " + s);
+                        default -> throw new ParserException("ignore case is not covered " + s);
                     }).orElse(-1),
                     fromStringOrNull(elem.get("namespace"))
             );

@@ -151,7 +151,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
         switch (position) {
             case "beforebegin":
                 if (parentNode == null) {
-                    throw new IllegalStateException("The element has no parent. Cannot use beforebegin.");
+                    throw new ParserException("The element has no parent. Cannot use beforebegin.");
                 }
                 parentNode.insertBefore(node, this);
                 break;
@@ -164,14 +164,14 @@ public final class Element extends Node implements SelectableNode.SelectableElem
                 break;
             case "afterend":
                 if (parentNode == null) {
-                    throw new IllegalStateException("The element has no parent. Cannot use afterend.");
+                    throw new ParserException("The element has no parent. Cannot use afterend.");
                 }
                 node.parentNode = parentNode;
                 List<Node> parentChildNodes = parentNode.getMutableChildNodes();
                 parentChildNodes.addAll(parentChildNodes.indexOf(this) + 1, Collections.singletonList(node));
                 break;
             default:
-                throw new IllegalStateException("The position provided ('" + position + "') is not one of 'beforeBegin', 'afterBegin', 'beforeEnd', or 'afterEnd'.");
+                throw new ParserException("The position provided ('" + position + "') is not one of 'beforeBegin', 'afterBegin', 'beforeEnd', or 'afterEnd'.");
         }
         return node;
     }
@@ -193,7 +193,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
         switch (position) {
             case "beforebegin":
                 if (parentNode == null) {
-                    throw new IllegalStateException("The element has no parent. Cannot use beforebegin.");
+                    throw new ParserException("The element has no parent. Cannot use beforebegin.");
                 }
                 for (Node node : parser.parseFragment((Element) parentNode, text)) {
                     parentNode.insertBefore(node, this);
@@ -212,7 +212,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
                 break;
             case "afterend":
                 if (parentNode == null) {
-                    throw new IllegalStateException("The element has no parent. Cannot use afterend.");
+                    throw new ParserException("The element has no parent. Cannot use afterend.");
                 }
                 List<Node> newNodeList = parser.parseFragment((Element) parentNode, text);
                 for (Node node: newNodeList) {
@@ -222,7 +222,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
                 parentChildNodes.addAll(parentChildNodes.indexOf(this) + 1, newNodeList);
                 break;
             default:
-                throw new IllegalStateException("The position provided ('" + position + "') is not one of 'beforeBegin', 'afterBegin', 'beforeEnd', or 'afterEnd'.");
+                throw new ParserException("The position provided ('" + position + "') is not one of 'beforeBegin', 'afterBegin', 'beforeEnd', or 'afterEnd'.");
         }
     }
 
