@@ -371,10 +371,10 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementInSelectScope(int tagNameID) {
+    boolean hasElementSelectInScope() {
         for (int i = openElements.size() - 1; i >= 0; i--) {
             Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, tagNameID)) {
+            if (Common.isHtmlNS(node, Common.ELEMENT_SELECT_ID)) {
                 return true;
             }
 

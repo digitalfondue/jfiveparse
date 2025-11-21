@@ -122,7 +122,7 @@ final class TreeConstructorInFramesetSelectTemplate {
                 // ignore
             }
         } else if (isEndTagNamed(tokenType, ELEMENT_SELECT_ID, tagNameID)) {
-            if (!treeConstructor.hasElementInSelectScope(ELEMENT_SELECT_ID)) {
+            if (!treeConstructor.hasElementSelectInScope()) {
                 treeConstructor.emitParseError();
                 // ignore
             } else {
@@ -131,21 +131,21 @@ final class TreeConstructorInFramesetSelectTemplate {
             }
         } else if (isStartTagNamed(tokenType, ELEMENT_SELECT_ID, tagNameID)) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInSelectScope(ELEMENT_SELECT_ID)) {
-                // ignore
-            } else {
+            if (treeConstructor.hasElementSelectInScope()) {
                 treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
                 treeConstructor.resetInsertionModeAppropriately();
-            }
+            }/* else {
+                // ignore
+            }*/
         } else if (tokenType == TT_START_TAG && (ELEMENT_INPUT_ID == tagNameID || ELEMENT_KEYGEN_ID == tagNameID || ELEMENT_TEXTAREA_ID == tagNameID)) {
             treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInSelectScope(ELEMENT_SELECT_ID)) {
-                // ignore
-            } else {
+            if (treeConstructor.hasElementSelectInScope()) {
                 treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
                 treeConstructor.resetInsertionModeAppropriately();
                 treeConstructor.dispatch();
-            }
+            }/* else {
+                // ignore
+            }*/
         } else if ((tokenType == TT_START_TAG && (ELEMENT_SCRIPT_ID == tagNameID || ELEMENT_TEMPLATE_ID == tagNameID)) || isEndTagNamed(tokenType, ELEMENT_TEMPLATE_ID, tagNameID)) {
             TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == TT_EOF) {
