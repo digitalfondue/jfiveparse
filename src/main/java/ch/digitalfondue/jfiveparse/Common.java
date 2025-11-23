@@ -63,23 +63,11 @@ final class Common {
         return isUpperOrLowerCaseASCIILetter(chr) || isASCIIDigit(chr);
     }
 
-    private static final char[] SYSTEM = new char[] {'s', 'y', 's', 't', 'e', 'm'}; //system
-    private static final char[] PUBLIC = new char[] {'p', 'u', 'b', 'l', 'i', 'c'}; //public
-    private static final char[] DOCTYPE = new char[] {'d', 'o', 'c', 't', 'y', 'p', 'e'}; //doctype
+    static final char[] SYSTEM = new char[] {'s', 'y', 's', 't', 'e', 'm'}; //system
+    static final char[] PUBLIC = new char[] {'p', 'u', 'b', 'l', 'i', 'c'}; //public
+    static final char[] DOCTYPE = new char[] {'d', 'o', 'c', 't', 'y', 'p', 'e'}; //doctype
 
-    static boolean matchCharCaseInsensitiveSystem(int[] chars) {
-        return matchCharsCaseInsensitive(SYSTEM, chars);
-    }
-
-    static boolean matchCharsCaseInsensitivePublic(int[] chars) {
-        return matchCharsCaseInsensitive(PUBLIC, chars);
-    }
-
-    static boolean matchCharsCaseInsensitiveDoctype(int[] chars) {
-        return matchCharsCaseInsensitive(DOCTYPE, chars);
-    }
-
-    private static boolean matchCharsCaseInsensitive(char[] str, int[] chars) {
+    static boolean matchCharsCaseInsensitive(char[] str, int[] chars) {
         for (int i = 0; i < chars.length; i++) {
             if (str[i] != toLowerCase(chars[i])) {
                 return false;

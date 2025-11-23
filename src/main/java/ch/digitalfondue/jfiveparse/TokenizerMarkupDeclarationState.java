@@ -36,7 +36,7 @@ class TokenizerMarkupDeclarationState {
             chars[5] = processedInputStream.peekNextInputCharacter(6);
             chars[6] = processedInputStream.peekNextInputCharacter(7);
 
-            if (Common.matchCharsCaseInsensitiveDoctype(chars)) {
+            if (Common.matchCharsCaseInsensitive(Common.DOCTYPE, chars)) {
                 processedInputStream.consume(7);
                 tokenizer.setState(TokenizerState.DOCTYPE_STATE);
 

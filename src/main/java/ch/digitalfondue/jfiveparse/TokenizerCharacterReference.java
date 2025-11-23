@@ -133,7 +133,7 @@ class TokenizerCharacterReference {
     }
 
     private static char[] handleCompleteEntityInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, Prefix currentPrefix, String entityMatched) {
-        if ((currentPrefix.c) != Characters.SEMICOLON) {
+        if (currentPrefix.c != Characters.SEMICOLON) {
             int nextCharacterAfterMatchedEntity = processedInputStream.peekNextInputCharacter(entityMatched.length());
             if (Common.isAlphaNumericASCII(nextCharacterAfterMatchedEntity)) {
                 return null;

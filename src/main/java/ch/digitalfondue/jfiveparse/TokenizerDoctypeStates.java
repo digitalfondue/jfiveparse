@@ -140,10 +140,10 @@ class TokenizerDoctypeStates {
             sixChars[4] = processedInputStream.peekNextInputCharacter(4);
             sixChars[5] = processedInputStream.peekNextInputCharacter(5);
 
-            if (Common.matchCharsCaseInsensitivePublic(sixChars)) {
+            if (Common.matchCharsCaseInsensitive(Common.PUBLIC, sixChars)) {
                 processedInputStream.consume(5);
                 tokenizer.setState(TokenizerState.AFTER_DOCTYPE_PUBLIC_KEYWORD_STATE);
-            } else if (Common.matchCharCaseInsensitiveSystem(sixChars)) {
+            } else if (Common.matchCharsCaseInsensitive(Common.SYSTEM, sixChars)) {
                 processedInputStream.consume(5);
                 tokenizer.setState(TokenizerState.AFTER_DOCTYPE_SYSTEM_KEYWORD_STATE);
             } else {
