@@ -15,6 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.Arrays;
+
 class TokenizerMarkupDeclarationState {
 
     static void handleMarkupDeclarationOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
@@ -40,7 +42,7 @@ class TokenizerMarkupDeclarationState {
 
             } else if (tokenizer.getAdjustedCurrentNode() != null && //
                     Node.NAMESPACE_HTML_ID != tokenizer.getAdjustedCurrentNode().namespaceID && //
-                    matchCDATACodePoints(chars)) {
+                    Arrays.equals(CDATA, chars)) {
 
                 processedInputStream.consume(7);
                 tokenizer.setState(TokenizerState.CDATA_SECTION_STATE);
@@ -51,14 +53,5 @@ class TokenizerMarkupDeclarationState {
         }
     }
 
-    private static final char[] CDATA = "[CDATA[".toCharArray();
-
-    private static boolean matchCDATACodePoints(int[] chars) {
-        for (int i = 0; i < chars.length; i++) {
-            if ((CDATA[i]) != chars[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
+    private static final int[] CDATA = new int[] {'[', 'C', 'D', 'A', 'T', 'A', '['}; //"[CDATA[".toCharArray();
 }
