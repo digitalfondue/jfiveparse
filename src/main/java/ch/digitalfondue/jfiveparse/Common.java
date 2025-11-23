@@ -42,15 +42,11 @@ final class Common {
     }
 
     static boolean isUpperOrLowerCaseASCIILetter(int chr) {
-        return isLowerCaseASCIILetter(chr) || isUpperCaseASCIILetter(chr);
+        return (chr >= Characters.LATIN_SMALL_LETTER_A && chr <= Characters.LATIN_SMALL_LETTER_Z) || isUpperCaseASCIILetter(chr);
     }
 
     static boolean isUpperCaseASCIILetter(int chr) {
         return chr >= Characters.LATIN_CAPITAL_LETTER_A && chr <= Characters.LATIN_CAPITAL_LETTER_Z;
-    }
-
-    static boolean isLowerCaseASCIILetter(int chr) {
-        return chr >= Characters.LATIN_SMALL_LETTER_A && chr <= Characters.LATIN_SMALL_LETTER_Z;
     }
 
     static boolean isASCIIHexDigit(int chr) {
