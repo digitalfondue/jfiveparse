@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static ch.digitalfondue.jfiveparse.TokenizerCharacterReference.invalidCharacterReference;
+import static ch.digitalfondue.jfiveparse.TokenizerState.invalidCharacterReference;
 
 class TokenizerCharacterReferenceTest {
 
