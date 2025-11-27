@@ -638,7 +638,7 @@ class TokenizerState {
         processedInputStream.reconsume(chr);
     }
 
-    private static final char[] SCRIPT = "script".toCharArray();
+    private static final char[] SCRIPT = new char[] {'s', 'c', 'r', 'i', 'p', 't'};
 
     static void handleScriptDataDoubleEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
