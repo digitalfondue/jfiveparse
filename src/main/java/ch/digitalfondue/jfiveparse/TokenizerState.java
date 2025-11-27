@@ -1752,43 +1752,38 @@ class TokenizerState {
         }
 
         if (currentPrefix.isComplete()) {
-            return handleCompleteEntity(inAttribute, processedInputStream, tokenHandler, currentPrefix);
+            String entityMatched = currentPrefix.getString();
+            if (inAttribute) {
+                return handleCompleteEntityInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
+            } else {
+                return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
+            }
         } else {
-            handleUncompleteEntity(tokenHandler, chr, tentativelyMatched);
+            // handleUncompleteEntity
+            // If no match can be made, then no characters are consumed, and
+            // nothing is returned.
+            // In this case, if the characters after the U+0026 AMPERSAND
+            // character (&) consist of a sequence of one or more
+            // alphanumeric ASCII characters
+            // followed by a U+003B SEMICOLON character (;), then this is a
+            // parse error.
+
+            int tentativelyMatchedLength = tentativelyMatched.pos();
+            boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.at(tentativelyMatchedLength - 1) == Characters.SEMICOLON;
+            if (emitParseError) {
+                for (int i = 0; emitParseError && i < tentativelyMatchedLength - 1; i++) {
+                    emitParseError = Common.isAlphaNumericASCII(chr);
+                }
+            }
+
+            if (emitParseError) {
+                tokenHandler.emitParseError();
+            }
             return null;
         }
     }
 
-    private static void handleUncompleteEntity(Tokenizer tokenHandler, int chr, ResizableCharBuilder tentativelyMatched) {
-        // If no match can be made, then no characters are consumed, and
-        // nothing is returned.
-        // In this case, if the characters after the U+0026 AMPERSAND
-        // character (&) consist of a sequence of one or more
-        // alphanumeric ASCII characters
-        // followed by a U+003B SEMICOLON character (;), then this is a
-        // parse error.
 
-        int tentativelyMatchedLength = tentativelyMatched.pos();
-        boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.at(tentativelyMatchedLength - 1) == Characters.SEMICOLON;
-        if (emitParseError) {
-            for (int i = 0; emitParseError && i < tentativelyMatchedLength - 1; i++) {
-                emitParseError = Common.isAlphaNumericASCII(chr);
-            }
-        }
-
-        if (emitParseError) {
-            tokenHandler.emitParseError();
-        }
-    }
-
-    private static char[] handleCompleteEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler, EntitiesPrefix currentPrefix) {
-        String entityMatched = currentPrefix.getString();
-        if (inAttribute) {
-            return handleCompleteEntityInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
-        } else {
-            return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
-        }
-    }
 
     private static char[] handleCompleteEntityNotInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, EntitiesPrefix currentPrefix, String entityMatched) {
         if ((currentPrefix.c) != Characters.SEMICOLON) {
