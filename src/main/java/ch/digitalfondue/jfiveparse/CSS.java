@@ -122,19 +122,6 @@ final class CSS {
             case '|' /* Pipe */ -> ATTR_ACTION_HYPHEN;
             default -> -1;
         };
-
-    }
-
-    private static boolean isWhitespace(char c) {
-        return switch (c) {
-            // tab
-            // newline
-            // formfeed
-            // carriage return
-            // space
-            case 9, 10, 12, 13, 32 -> true;
-            default -> false;
-        };
     }
 
     private static boolean isQuote(char c) {
@@ -187,7 +174,7 @@ final class CSS {
         void stripWhitespace(int offset) {
             selectorIndex += offset;
 
-            while (selectorIndex < selectorLength && isWhitespace(selector.charAt(selectorIndex))) {
+            while (selectorIndex < selectorLength && Common.isTabLfFfCrOrSpace(selector.charAt(selectorIndex))) {
                 selectorIndex++;
             }
         }
@@ -377,7 +364,7 @@ final class CSS {
                                 selectorIndex += 1;
                             } else {
                                 int valueStart = selectorIndex;
-                                while (selectorIndex < selectorLength && !isWhitespace(selector.charAt(selectorIndex)) && selector.charAt(selectorIndex) != ']') {
+                                while (selectorIndex < selectorLength && !Common.isTabLfFfCrOrSpace(selector.charAt(selectorIndex)) && selector.charAt(selectorIndex) != ']') {
                                     selectorIndex +=
                                             // Skip next character if it is escaped
                                             selector.charAt(selectorIndex) == '\\' ? 2 : 1;
@@ -595,7 +582,7 @@ final class CSS {
         }
 
         private void skipWhitespace() {
-            while (idx < exprLength && isWhitespace(expression.charAt(idx))) {
+            while (idx < exprLength && Common.isTabLfFfCrOrSpace(expression.charAt(idx))) {
                 idx++;
             }
         }

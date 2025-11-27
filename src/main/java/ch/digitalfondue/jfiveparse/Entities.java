@@ -27,30 +27,26 @@ import java.util.zip.GZIPInputStream;
  */
 final class Entities {
 
-    static final Prefix ENTITIES = Helper.prepare();
+    static final Prefix ENTITIES = prepare();
 
+    private static Prefix prepare() {
+        Prefix e = new Prefix(null);
+        try (DataInputStream dais = new DataInputStream(new GZIPInputStream(Entities.class.getResourceAsStream("/ch/digitalfondue/jfiveparse/entities-with-1-2-codepoint")))) {
 
-    private static class Helper {
-
-        static Prefix prepare() {
-            Prefix e = new Prefix(null);
-            try (DataInputStream dais = new DataInputStream(new GZIPInputStream(Entities.class.getResourceAsStream("/ch/digitalfondue/jfiveparse/entities-with-1-2-codepoint")))) {
-
-                // number of entities with only one codepoint
-                for (int i = 0; i < 2138; i++) {
-                    e.addWord(dais.readUTF(), new int[] { dais.readInt() });
-                }
-
-                // number of entities with 2 codepoints
-                for (int i = 0; i < 93; i++) {
-                    e.addWord(dais.readUTF(), new int[] { dais.readInt(), dais.readInt() });
-                }
-
-                e.compact();
-                return e;
-            } catch (IOException ioe) {
-                throw new IllegalStateException(ioe);
+            // number of entities with only one codepoint
+            for (int i = 0; i < 2138; i++) {
+                e.addWord(dais.readUTF(), new int[] { dais.readInt() });
             }
+
+            // number of entities with 2 codepoints
+            for (int i = 0; i < 93; i++) {
+                e.addWord(dais.readUTF(), new int[] { dais.readInt(), dais.readInt() });
+            }
+
+            e.compact();
+            return e;
+        } catch (IOException ioe) {
+            throw new IllegalStateException(ioe);
         }
     }
 }

@@ -254,6 +254,12 @@ final class Common {
         }
     }
 
+    // isWhiteSpace
+    // tab
+    // newline
+    // formfeed
+    // carriage return
+    // space
     static boolean isTabLfFfCrOrSpace(int chr) {
         return chr == Characters.TAB || chr == Characters.LF || chr == Characters.FF || chr == Characters.CR || chr == Characters.SPACE;
     }
