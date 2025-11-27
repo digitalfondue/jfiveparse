@@ -60,7 +60,7 @@ class TokenizerCharacterReference {
 
     private static char[] parseEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler, int chr) {
         int matchedCount = 0;
-        Prefix currentPrefix = Entities.ENTITIES;
+        var currentPrefix = EntitiesPrefix.ENTITIES;
         ResizableCharBuilder tentativelyMatched = new ResizableCharBuilder();
 
         for (;;) {
@@ -68,7 +68,7 @@ class TokenizerCharacterReference {
             if (next != Characters.EOF) {
                 tentativelyMatched.append((char) next);
             }
-            Prefix tmpPrefix = currentPrefix.getNode((char) next);
+            var tmpPrefix = currentPrefix.getNode((char) next);
             if (tmpPrefix != null) {
                 currentPrefix = tmpPrefix;
                 matchedCount++;
@@ -78,7 +78,7 @@ class TokenizerCharacterReference {
         }
 
         if (!currentPrefix.isComplete()) {
-            Prefix maybeCompleteParent = currentPrefix.getMaybeCompleteParent();
+            var maybeCompleteParent = currentPrefix.getMaybeCompleteParent();
             if (maybeCompleteParent != null) {
                 currentPrefix = maybeCompleteParent;
             }
@@ -114,7 +114,7 @@ class TokenizerCharacterReference {
         }
     }
 
-    private static char[] handleCompleteEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler, Prefix currentPrefix) {
+    private static char[] handleCompleteEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler, EntitiesPrefix currentPrefix) {
         String entityMatched = currentPrefix.getString();
         if (inAttribute) {
             return handleCompleteEntityInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
@@ -123,7 +123,7 @@ class TokenizerCharacterReference {
         }
     }
 
-    private static char[] handleCompleteEntityNotInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, Prefix currentPrefix, String entityMatched) {
+    private static char[] handleCompleteEntityNotInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, EntitiesPrefix currentPrefix, String entityMatched) {
         if ((currentPrefix.c) != Characters.SEMICOLON) {
             tokenHandler.emitParseError();
         }
@@ -132,7 +132,7 @@ class TokenizerCharacterReference {
         return currentPrefix.chars;
     }
 
-    private static char[] handleCompleteEntityInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, Prefix currentPrefix, String entityMatched) {
+    private static char[] handleCompleteEntityInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, EntitiesPrefix currentPrefix, String entityMatched) {
         if (currentPrefix.c != Characters.SEMICOLON) {
             int nextCharacterAfterMatchedEntity = processedInputStream.peekNextInputCharacter(entityMatched.length());
             if (Common.isAlphaNumericASCII(nextCharacterAfterMatchedEntity)) {
