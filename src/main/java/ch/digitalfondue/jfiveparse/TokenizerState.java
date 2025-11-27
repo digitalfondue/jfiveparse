@@ -134,7 +134,11 @@ class TokenizerState {
                 tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
                 break;
             case Characters.EOF:
-                handleEndTagOpenStateEOF(tokenizer, processedInputStream, chr);
+                // handleEndTagOpenStateEOF(tokenizer, processedInputStream, chr);
+                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
+                tokenizer.emitCharacter(Characters.SOLIDUS);
+                processedInputStream.reconsume(chr);
                 break;
             default:
                 if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
@@ -152,13 +156,6 @@ class TokenizerState {
                 }
                 break;
         }
-    }
-
-    private static void handleEndTagOpenStateEOF(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
-        tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
-        tokenizer.emitCharacter(Characters.SOLIDUS);
-        processedInputStream.reconsume(chr);
     }
 
     static void handleTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
