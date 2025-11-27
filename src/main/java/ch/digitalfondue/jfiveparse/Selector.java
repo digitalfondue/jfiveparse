@@ -154,7 +154,11 @@ public final class Selector extends BaseSelector<Node, Selector> {
      * @return
      */
     public static NodeMatcher<Node> parseSelector(String selector) {
-        return new NodeMatcher<>(select().parseSelectorInstance(selector));
+        return parseSelector(selector, Map.of());
+    }
+
+    public static NodeMatcher<Node> parseSelector(String selector, Map<String, String> namespaceAlias) {
+        return new NodeMatcher<>(new Selector(namespaceAlias).parseSelectorInstance(selector));
     }
 
     @Override
