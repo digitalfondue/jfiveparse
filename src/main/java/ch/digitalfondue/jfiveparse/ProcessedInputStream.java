@@ -114,10 +114,6 @@ abstract class ProcessedInputStream {
         return buffer.isEmpty ? readWithCRHandling() : buffer.removeFirst();
     }
 
-    int getNextInputCharacter() {
-        return peekNextInputCharacter(1);
-    }
-
     void reconsume(int chr) {
         buffer.addFirst(chr);
     }

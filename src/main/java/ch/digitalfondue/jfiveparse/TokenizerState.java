@@ -1690,7 +1690,7 @@ class TokenizerState {
         }
         //
 
-        int chr = processedInputStream.getNextInputCharacter();
+        int chr = processedInputStream.peekNextInputCharacter(1);
 
         if (additionalCharacter != -1 && additionalCharacter == chr) {
             return null;
@@ -1714,7 +1714,7 @@ class TokenizerState {
 
     private static char[] parseNumberSign(ProcessedInputStream processedInputStream, Tokenizer tokenHandler) {
         processedInputStream.consume();
-        int nextChar = processedInputStream.getNextInputCharacter();
+        int nextChar = processedInputStream.peekNextInputCharacter(1);
         if (nextChar == Characters.LATIN_SMALL_LETTER_X || nextChar == Characters.LATIN_CAPITAL_LETTER_X) {
             return parseHexSection(processedInputStream, tokenHandler, nextChar);
         } else {
@@ -1831,7 +1831,7 @@ class TokenizerState {
             return null;
         } else {
             processedInputStream.consume(matchedCount);
-            if (Characters.SEMICOLON == processedInputStream.getNextInputCharacter()) {
+            if (Characters.SEMICOLON == processedInputStream.peekNextInputCharacter(1)) {
                 processedInputStream.consume();
             } else {
                 tokenHandler.emitParseError();
@@ -1870,7 +1870,7 @@ class TokenizerState {
             return null;
         } else {
             processedInputStream.consume(matchedCount);
-            if (Characters.SEMICOLON == processedInputStream.getNextInputCharacter()) {
+            if (Characters.SEMICOLON == processedInputStream.peekNextInputCharacter(1)) {
                 processedInputStream.consume();
             } else {
                 tokenHandler.emitParseError();
@@ -2055,7 +2055,7 @@ class TokenizerState {
                 processedInputStream.consume(3);
                 return;
             } else {
-                int curr = processedInputStream.getNextInputCharacter();
+                int curr = processedInputStream.peekNextInputCharacter(1);
 
                 if (curr == Characters.EOF) {
                     return;

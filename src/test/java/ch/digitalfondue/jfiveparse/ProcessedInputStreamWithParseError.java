@@ -63,7 +63,7 @@ final class ProcessedInputStreamWithParseError extends StringProcessedInputStrea
 
     @Override
     int getNextInputCharacterAndConsume() {
-        int c = getNextInputCharacter();
+        int c = peekNextInputCharacter(1);
         consume();
         return c;
     }
