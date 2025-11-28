@@ -1705,20 +1705,17 @@ class TokenizerState {
             case Characters.EOF:
                 return null;
             case Characters.NUMBER_SIGN: {
-                return parseNumberSign(processedInputStream, tokenHandler);
+                // parseNumberSign
+                processedInputStream.consume();
+                int nextChar = processedInputStream.peekNextInputCharacter(1);
+                if (nextChar == Characters.LATIN_SMALL_LETTER_X || nextChar == Characters.LATIN_CAPITAL_LETTER_X) {
+                    return parseHexSection(processedInputStream, tokenHandler, nextChar);
+                } else {
+                    return parseDecSection(processedInputStream, tokenHandler);
+                }
             }
             default:
                 return parseEntity(inAttribute, processedInputStream, tokenHandler, chr);
-        }
-    }
-
-    private static char[] parseNumberSign(ProcessedInputStream processedInputStream, Tokenizer tokenHandler) {
-        processedInputStream.consume();
-        int nextChar = processedInputStream.peekNextInputCharacter(1);
-        if (nextChar == Characters.LATIN_SMALL_LETTER_X || nextChar == Characters.LATIN_CAPITAL_LETTER_X) {
-            return parseHexSection(processedInputStream, tokenHandler, nextChar);
-        } else {
-            return parseDecSection(processedInputStream, tokenHandler);
         }
     }
 
