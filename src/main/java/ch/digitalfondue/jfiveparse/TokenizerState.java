@@ -98,10 +98,10 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.EXCLAMATION_MARK:
-                tokenizer.setState(TokenizerState.MARKUP_DECLARATION_OPEN_STATE);
+                tokenizer.setState(MARKUP_DECLARATION_OPEN_STATE);
                 break;
             case Characters.SOLIDUS:
-                tokenizer.setState(TokenizerState.END_TAG_OPEN_STATE);
+                tokenizer.setState(END_TAG_OPEN_STATE);
                 break;
             case Characters.QUESTION_MARK:
                 tokenizer.emitParseError();
@@ -110,15 +110,15 @@ class TokenizerState {
                 // This seems the (only) one
                 processedInputStream.reconsume(chr);
                 //
-                tokenizer.setState(TokenizerState.BOGUS_COMMENT_STATE);
+                tokenizer.setState(BOGUS_COMMENT_STATE);
                 break;
             default:
                 if (Common.isUpperOrLowerCaseASCIILetter(chr)) { //
                     tokenizer.createNewStartTagToken(chr);
-                    tokenizer.setState(TokenizerState.TAG_NAME_STATE);
+                    tokenizer.setState(TAG_NAME_STATE);
                 } else { // default
                     //handleTagOpenStateAnythingElse
-                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitParseErrorAndSetState(DATA_STATE);
                     tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
                     processedInputStream.reconsume(chr);
                 }
@@ -131,11 +131,11 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 break;
             case Characters.EOF:
                 // handleEndTagOpenStateEOF(tokenizer, processedInputStream, chr);
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
                 tokenizer.emitCharacter(Characters.SOLIDUS);
                 processedInputStream.reconsume(chr);
@@ -144,7 +144,7 @@ class TokenizerState {
                 if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
                     tokenizer.newEndTokenTag();
                     tokenizer.appendCurrentTagToken(chr);
-                    tokenizer.setState(TokenizerState.TAG_NAME_STATE);
+                    tokenizer.setState(TAG_NAME_STATE);
                 } else {
                     tokenizer.emitParseError();
                     // FIXME CHECK only in some case the bogus comment state
@@ -152,7 +152,7 @@ class TokenizerState {
                     // This seems the (only) one
                     processedInputStream.reconsume(chr);
                     //
-                    tokenizer.setState(TokenizerState.BOGUS_COMMENT_STATE);
+                    tokenizer.setState(BOGUS_COMMENT_STATE);
                 }
                 break;
         }
@@ -168,13 +168,13 @@ class TokenizerState {
                 case Characters.LF:
                 case Characters.FF:
                 case Characters.SPACE:
-                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                    tokenizer.setState(BEFORE_ATTRIBUTE_NAME_STATE);
                     return;
                 case Characters.SOLIDUS:
-                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                     return;
                 case Characters.GREATERTHAN_SIGN:
-                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.setState(DATA_STATE);
                     tokenizer.addCurrentAttributeAndEmitToken();
                     return;
                 case Characters.NULL:
@@ -182,7 +182,7 @@ class TokenizerState {
                     tokenizer.appendCurrentTagToken(Characters.REPLACEMENT_CHARACTER);
                     return;
                 case Characters.EOF:
-                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitParseErrorAndSetState(DATA_STATE);
                     processedInputStream.reconsume(chr);
                     return;
                 default:
@@ -196,15 +196,15 @@ class TokenizerState {
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.setSelfClosing(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.addCurrentAttributeAndEmitToken();
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                tokenizer.emitParseErrorAndSetState(BEFORE_ATTRIBUTE_NAME_STATE);
                 processedInputStream.reconsume(chr);
                 break;
         }
@@ -216,10 +216,10 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.AMPERSAND:
-                tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_RCDATA_STATE);
+                tokenizer.setState(CHARACTER_REFERENCE_IN_RCDATA_STATE);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.RCDATA_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(RCDATA_LESS_THAN_SIGN_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
@@ -235,7 +235,7 @@ class TokenizerState {
     }
 
     static void handleCharacterReferenceInRCDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        tokenizer.setState(TokenizerState.RCDATA_STATE);
+        tokenizer.setState(RCDATA_STATE);
         char[] chars = consumeCharacterReference(-1, false, processedInputStream, tokenizer);
         if (chars == null) {
             tokenizer.emitCharacter(Characters.AMPERSAND);
@@ -250,9 +250,9 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
-            tokenizer.setState(TokenizerState.RCDATA_END_TAG_OPEN_STATE);
+            tokenizer.setState(RCDATA_END_TAG_OPEN_STATE);
         } else {
-            tokenizer.setStateAndEmitCharacter(TokenizerState.RCDATA_STATE, Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(RCDATA_STATE, Characters.LESSTHAN_SIGN);
             processedInputStream.reconsume(chr);
         }
     }
@@ -263,9 +263,9 @@ class TokenizerState {
             tokenizer.newEndTokenTag();
             tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
-            tokenizer.setState(TokenizerState.RCDATA_END_TAG_NAME_STATE);
+            tokenizer.setState(RCDATA_END_TAG_NAME_STATE);
         } else {
-            tokenizer.setStateAndEmitCharacter(TokenizerState.RCDATA_STATE, Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(RCDATA_STATE, Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(Characters.SOLIDUS);
             processedInputStream.reconsume(chr);
         }
@@ -279,21 +279,21 @@ class TokenizerState {
             case Characters.FF:
             case Characters.SPACE:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                    tokenizer.setState(BEFORE_ATTRIBUTE_NAME_STATE);
                 } else {
                     anythingElseRCDataEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.SOLIDUS:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                 } else {
                     anythingElseRCDataEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.GREATERTHAN_SIGN:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.setState(DATA_STATE);
                     // TODO: check attributes???
                     tokenizer.emitTagToken();
                 } else {
@@ -312,7 +312,7 @@ class TokenizerState {
     }
 
     private static void anythingElseRCDataEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.setStateAndEmitCharacter(TokenizerState.RCDATA_STATE, Characters.LESSTHAN_SIGN);
+        tokenizer.setStateAndEmitCharacter(RCDATA_STATE, Characters.LESSTHAN_SIGN);
         tokenizer.emitCharacter(Characters.SOLIDUS);
 
         tokenizer.emitTemporaryBufferAsCharacters();
@@ -333,7 +333,7 @@ class TokenizerState {
                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(SCRIPT_DATA_LESS_THAN_SIGN_STATE);
                 break;
             default:
                 // tokenizer.emitCharacter(chr);
@@ -343,7 +343,7 @@ class TokenizerState {
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
 
                 // optimization: bypass if possible
-                if (tokenizer.getState() == TokenizerState.SCRIPT_DATA_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
+                if (tokenizer.getState() == SCRIPT_DATA_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
                     for (;;) {
                         int internalChr = processedInputStream.getNextInputCharacterAndConsume();
                         switch (internalChr) {
@@ -356,7 +356,7 @@ class TokenizerState {
                                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                                 return;
                             case Characters.LESSTHAN_SIGN:
-                                tokenizer.setState(TokenizerState.SCRIPT_DATA_LESS_THAN_SIGN_STATE);
+                                tokenizer.setState(SCRIPT_DATA_LESS_THAN_SIGN_STATE);
                                 return;
                             default:
                                 textNode.append((char) internalChr);
@@ -373,15 +373,15 @@ class TokenizerState {
         switch (chr) {
             case Characters.SOLIDUS:
                 tokenizer.createTemporaryBuffer();
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_END_TAG_OPEN_STATE);
+                tokenizer.setState(SCRIPT_DATA_END_TAG_OPEN_STATE);
                 break;
             case Characters.EXCLAMATION_MARK:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPE_START_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPE_START_STATE);
                 tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
                 tokenizer.emitCharacter(Characters.EXCLAMATION_MARK);
                 break;
             default:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+                tokenizer.setState(SCRIPT_DATA_STATE);
                 tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
                 processedInputStream.reconsume(chr);
                 break;
@@ -395,9 +395,9 @@ class TokenizerState {
             tokenizer.newEndTokenTag();
             tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_END_TAG_NAME_STATE);
+            tokenizer.setState(SCRIPT_DATA_END_TAG_NAME_STATE);
         } else {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+            tokenizer.setState(SCRIPT_DATA_STATE);
             tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(Characters.SOLIDUS);
             processedInputStream.reconsume(chr);
@@ -413,21 +413,21 @@ class TokenizerState {
             case Characters.FF:
             case Characters.SPACE:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                    tokenizer.setState(BEFORE_ATTRIBUTE_NAME_STATE);
                 } else {
                     anythingElseScriptDataEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.SOLIDUS:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                 } else {
                     anythingElseScriptDataEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.GREATERTHAN_SIGN:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.setState(DATA_STATE);
                     tokenizer.emitTagToken();
                 } else {
                     anythingElseScriptDataEndTagNameState(tokenizer, processedInputStream, chr);
@@ -445,7 +445,7 @@ class TokenizerState {
     }
 
     private static void anythingElseScriptDataEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+        tokenizer.setState(SCRIPT_DATA_STATE);
         tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
         tokenizer.emitCharacter(Characters.SOLIDUS);
 
@@ -457,10 +457,10 @@ class TokenizerState {
     static void handleScriptDataEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.HYPHEN_MINUS) {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPE_START_DASH_STATE);
+            tokenizer.setState(SCRIPT_DATA_ESCAPE_START_DASH_STATE);
             tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
         } else {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+            tokenizer.setState(SCRIPT_DATA_STATE);
             processedInputStream.reconsume(chr);
         }
     }
@@ -468,10 +468,10 @@ class TokenizerState {
     static void handleScriptDataEscapeStartDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.HYPHEN_MINUS) {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_DASH_DASH_STATE);
+            tokenizer.setState(SCRIPT_DATA_ESCAPED_DASH_DASH_STATE);
             tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
         } else {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+            tokenizer.setState(SCRIPT_DATA_STATE);
             processedInputStream.reconsume(chr);
         }
     }
@@ -483,22 +483,22 @@ class TokenizerState {
                 tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+                tokenizer.setState(SCRIPT_DATA_STATE);
                 tokenizer.emitCharacter(Characters.GREATERTHAN_SIGN);
                 break;
             case Characters.NULL:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+                tokenizer.emitParseErrorAndSetState(SCRIPT_DATA_ESCAPED_STATE);
                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPED_STATE);
                 tokenizer.emitCharacter(chr);
                 break;
         }
@@ -508,18 +508,18 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_DASH_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPED_DASH_STATE);
                 tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.EOF:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitParseError();
                 processedInputStream.reconsume(chr);
                 break;
@@ -533,22 +533,22 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_DASH_DASH_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPED_DASH_DASH_STATE);
                 tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPED_LESS_THAN_SIGN_STATE);
                 break;
             case Characters.NULL:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+                tokenizer.emitParseErrorAndSetState(SCRIPT_DATA_ESCAPED_STATE);
                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+                tokenizer.setState(SCRIPT_DATA_ESCAPED_STATE);
                 tokenizer.emitCharacter(chr);
                 break;
         }
@@ -559,15 +559,15 @@ class TokenizerState {
 
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_END_TAG_OPEN_STATE);
+            tokenizer.setState(SCRIPT_DATA_ESCAPED_END_TAG_OPEN_STATE);
         } else if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
             tokenizer.createTemporaryBuffer();
             tokenizer.appendToTemporaryBuffer(chr);
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_START_STATE);
+            tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPE_START_STATE);
             tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(chr);
         } else {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+            tokenizer.setState(SCRIPT_DATA_ESCAPED_STATE);
             tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
             processedInputStream.reconsume(chr);
         }
@@ -580,9 +580,9 @@ class TokenizerState {
             tokenizer.newEndTokenTag();
             tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_END_TAG_NAME_STATE);
+            tokenizer.setState(SCRIPT_DATA_ESCAPED_END_TAG_NAME_STATE);
         } else {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+            tokenizer.setState(SCRIPT_DATA_ESCAPED_STATE);
             tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(Characters.SOLIDUS);
             processedInputStream.reconsume(chr);
@@ -597,21 +597,21 @@ class TokenizerState {
             case Characters.FF:
             case Characters.SPACE:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                    tokenizer.setState(BEFORE_ATTRIBUTE_NAME_STATE);
                 } else {
                     anythingElseScriptDataEscapedEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.SOLIDUS:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                 } else {
                     anythingElseScriptDataEscapedEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.GREATERTHAN_SIGN:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.setState(DATA_STATE);
                     tokenizer.emitTagToken();
                 } else {
                     anythingElseScriptDataEscapedEndTagNameState(tokenizer, processedInputStream, chr);
@@ -629,7 +629,7 @@ class TokenizerState {
     }
 
     private static void anythingElseScriptDataEscapedEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+        tokenizer.setState(SCRIPT_DATA_ESCAPED_STATE);
         tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
         tokenizer.emitCharacter(Characters.SOLIDUS);
 
@@ -650,9 +650,9 @@ class TokenizerState {
             case Characters.SOLIDUS:
             case Characters.GREATERTHAN_SIGN:
                 if (tokenizer.isTemporaryBufferEquals(SCRIPT)) {
-                    tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+                    tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
                 } else {
-                    tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+                    tokenizer.setState(SCRIPT_DATA_ESCAPED_STATE);
                 }
                 tokenizer.emitCharacter(chr);
                 break;
@@ -661,7 +661,7 @@ class TokenizerState {
                     tokenizer.appendToTemporaryBuffer(chr);
                     tokenizer.emitCharacter(chr);
                 } else {
-                    tokenizer.setState(TokenizerState.SCRIPT_DATA_ESCAPED_STATE);
+                    tokenizer.setState(SCRIPT_DATA_ESCAPED_STATE);
                     processedInputStream.reconsume(chr);
                 }
                 break;
@@ -672,11 +672,11 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_DASH_STATE);
+                tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_DASH_STATE);
                 tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE);
                 tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
                 break;
             case Characters.NULL:
@@ -684,7 +684,7 @@ class TokenizerState {
                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
@@ -697,23 +697,23 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_STATE);
+                tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_DASH_DASH_STATE);
                 tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE);
                 tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
                 break;
             case Characters.NULL:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+                tokenizer.emitParseErrorAndSetState(SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+                tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
                 tokenizer.emitCharacter(chr);
                 break;
         }
@@ -726,23 +726,23 @@ class TokenizerState {
                 tokenizer.emitCharacter(Characters.HYPHEN_MINUS);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_LESS_THAN_SIGN_STATE);
                 tokenizer.emitCharacter(Characters.LESSTHAN_SIGN);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+                tokenizer.setState(SCRIPT_DATA_STATE);
                 tokenizer.emitCharacter(Characters.GREATERTHAN_SIGN);
                 break;
             case Characters.NULL:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+                tokenizer.emitParseErrorAndSetState(SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
                 tokenizer.emitCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+                tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
                 tokenizer.emitCharacter(chr);
                 break;
         }
@@ -752,10 +752,10 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_END_STATE);
+            tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPE_END_STATE);
             tokenizer.emitCharacter(Characters.SOLIDUS);
         } else {
-            tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+            tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
             processedInputStream.reconsume(chr);
         }
     }
@@ -769,7 +769,7 @@ class TokenizerState {
             case Characters.SPACE:
             case Characters.SOLIDUS:
             case Characters.GREATERTHAN_SIGN:
-                var state = tokenizer.isTemporaryBufferEquals(SCRIPT) ? TokenizerState.SCRIPT_DATA_ESCAPED_STATE : TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE;
+                var state = tokenizer.isTemporaryBufferEquals(SCRIPT) ? SCRIPT_DATA_ESCAPED_STATE : SCRIPT_DATA_DOUBLE_ESCAPED_STATE;
                 tokenizer.setStateAndEmitCharacter(state, chr);
                 break;
             default:
@@ -777,7 +777,7 @@ class TokenizerState {
                     tokenizer.appendToTemporaryBuffer(chr);
                     tokenizer.emitCharacter(chr);
                 } else {
-                    tokenizer.setState(TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
+                    tokenizer.setState(SCRIPT_DATA_DOUBLE_ESCAPED_STATE);
                     processedInputStream.reconsume(chr);
                 }
                 break;
@@ -811,7 +811,7 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.RAWTEXT_LESS_THAN_SIGN_STATE);
+                tokenizer.setState(RAWTEXT_LESS_THAN_SIGN_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
@@ -826,14 +826,14 @@ class TokenizerState {
                 // vvv optimization vvv
                 int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
-                if (tokenizer.getState() == TokenizerState.RAWTEXT_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
+                if (tokenizer.getState() == RAWTEXT_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
 
                     for (;;) {
                         int internalChr = processedInputStream.getNextInputCharacterAndConsume();
                         switch (internalChr) {
                             case Characters.LESSTHAN_SIGN:
                                 tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
-                                tokenizer.setState(TokenizerState.RAWTEXT_LESS_THAN_SIGN_STATE);
+                                tokenizer.setState(RAWTEXT_LESS_THAN_SIGN_STATE);
                                 return;
                             case Characters.NULL:
                                 tokenizer.emitParseError();
@@ -856,9 +856,9 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
-            tokenizer.setState(TokenizerState.RAWTEXT_END_TAG_OPEN_STATE);
+            tokenizer.setState(RAWTEXT_END_TAG_OPEN_STATE);
         } else {
-            tokenizer.setStateAndEmitCharacter(TokenizerState.RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
             processedInputStream.reconsume(chr);
         }
     }
@@ -869,9 +869,9 @@ class TokenizerState {
             tokenizer.newEndTokenTag();
             tokenizer.appendCurrentTagToken(chr);
             tokenizer.appendToTemporaryBuffer(chr);
-            tokenizer.setState(TokenizerState.RAWTEXT_END_TAG_NAME_STATE);
+            tokenizer.setState(RAWTEXT_END_TAG_NAME_STATE);
         } else {
-            tokenizer.setStateAndEmitCharacter(TokenizerState.RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
+            tokenizer.setStateAndEmitCharacter(RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
             tokenizer.emitCharacter(Characters.SOLIDUS);
             processedInputStream.reconsume(chr);
         }
@@ -885,21 +885,21 @@ class TokenizerState {
             case Characters.FF:
             case Characters.SPACE:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                    tokenizer.setState(BEFORE_ATTRIBUTE_NAME_STATE);
                 } else {
                     anythingElseRawTextEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.SOLIDUS:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                 } else {
                     anythingElseRawTextEndTagNameState(tokenizer, processedInputStream, chr);
                 }
                 break;
             case Characters.GREATERTHAN_SIGN:
                 if (tokenizer.isAppropriateEndTagToken()) {
-                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.setState(DATA_STATE);
                     // TODO: check attributes???
                     tokenizer.emitTagToken();
                 } else {
@@ -918,7 +918,7 @@ class TokenizerState {
     }
 
     private static void anythingElseRawTextEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream, int chr) {
-        tokenizer.setStateAndEmitCharacter(TokenizerState.RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
+        tokenizer.setStateAndEmitCharacter(RAWTEXT_STATE, Characters.LESSTHAN_SIGN);
         tokenizer.emitCharacter(Characters.SOLIDUS);
 
         tokenizer.emitTemporaryBufferAsCharacters();
@@ -938,7 +938,7 @@ class TokenizerState {
         if (chars[0] == Characters.HYPHEN_MINUS && chars[1] == Characters.HYPHEN_MINUS) {
             processedInputStream.consume(2);
             tokenizer.createNewCommentToken();
-            tokenizer.setState(TokenizerState.COMMENT_START_STATE);
+            tokenizer.setState(COMMENT_START_STATE);
         } else {
             chars[2] = processedInputStream.peekNextInputCharacter(3);
             chars[3] = processedInputStream.peekNextInputCharacter(4);
@@ -948,17 +948,17 @@ class TokenizerState {
 
             if (Common.matchCharsCaseInsensitive(Common.DOCTYPE, chars)) {
                 processedInputStream.consume(7);
-                tokenizer.setState(TokenizerState.DOCTYPE_STATE);
+                tokenizer.setState(DOCTYPE_STATE);
 
             } else if (tokenizer.getAdjustedCurrentNode() != null && //
                     Node.NAMESPACE_HTML_ID != tokenizer.getAdjustedCurrentNode().namespaceID && //
                     Arrays.equals(CDATA, chars)) {
 
                 processedInputStream.consume(7);
-                tokenizer.setState(TokenizerState.CDATA_SECTION_STATE);
+                tokenizer.setState(CDATA_SECTION_STATE);
 
             } else {
-                tokenizer.emitParseErrorAndSetState(TokenizerState.BOGUS_COMMENT_STATE);
+                tokenizer.emitParseErrorAndSetState(BOGUS_COMMENT_STATE);
             }
         }
     }
@@ -975,17 +975,17 @@ class TokenizerState {
             case Characters.LF:
             case Characters.FF:
             case Characters.SPACE:
-                tokenizer.setState(TokenizerState.BEFORE_DOCTYPE_NAME_STATE);
+                tokenizer.setState(BEFORE_DOCTYPE_NAME_STATE);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.createNewDoctypeToken();
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(null, null, null);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.BEFORE_DOCTYPE_NAME_STATE);
+                tokenizer.emitParseErrorAndSetState(BEFORE_DOCTYPE_NAME_STATE);
                 processedInputStream.reconsume(chr);
                 break;
         }
@@ -1004,17 +1004,17 @@ class TokenizerState {
                 tokenizer.emitParseError();
                 tokenizer.createNewDoctypeToken();
                 tokenizer.appendDoctypeNameCharacter(Characters.REPLACEMENT_CHARACTER);
-                tokenizer.setState(TokenizerState.DOCTYPE_NAME_STATE);
+                tokenizer.setState(DOCTYPE_NAME_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.createNewDoctypeToken();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(null, null, null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.createNewDoctypeToken();
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(null, null, null);
@@ -1024,11 +1024,11 @@ class TokenizerState {
                 if (Common.isUpperCaseASCIILetter(chr)) {
                     tokenizer.createNewDoctypeToken();
                     tokenizer.appendDoctypeNameCharacter(chr + 0x0020);
-                    tokenizer.setState(TokenizerState.DOCTYPE_NAME_STATE);
+                    tokenizer.setState(DOCTYPE_NAME_STATE);
                 } else {
                     tokenizer.createNewDoctypeToken();
                     tokenizer.appendDoctypeNameCharacter(chr);
-                    tokenizer.setState(TokenizerState.DOCTYPE_NAME_STATE);
+                    tokenizer.setState(DOCTYPE_NAME_STATE);
                 }
                 break;
         }
@@ -1041,10 +1041,10 @@ class TokenizerState {
             case Characters.LF:
             case Characters.FF:
             case Characters.SPACE:
-                tokenizer.setState(TokenizerState.AFTER_DOCTYPE_NAME_STATE);
+                tokenizer.setState(AFTER_DOCTYPE_NAME_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 break;
             case Characters.NULL:
@@ -1052,7 +1052,7 @@ class TokenizerState {
                 tokenizer.appendDoctypeNameCharacter(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 processedInputStream.reconsume(chr);
@@ -1073,11 +1073,11 @@ class TokenizerState {
                 // ignore
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 processedInputStream.reconsume(chr);
@@ -1093,14 +1093,14 @@ class TokenizerState {
                 };
                 if (Common.matchCharsCaseInsensitive(Common.PUBLIC, sixChars)) {
                     processedInputStream.consume(5);
-                    tokenizer.setState(TokenizerState.AFTER_DOCTYPE_PUBLIC_KEYWORD_STATE);
+                    tokenizer.setState(AFTER_DOCTYPE_PUBLIC_KEYWORD_STATE);
                 } else if (Common.matchCharsCaseInsensitive(Common.SYSTEM, sixChars)) {
                     processedInputStream.consume(5);
-                    tokenizer.setState(TokenizerState.AFTER_DOCTYPE_SYSTEM_KEYWORD_STATE);
+                    tokenizer.setState(AFTER_DOCTYPE_SYSTEM_KEYWORD_STATE);
                 } else {
                     tokenizer.emitParseError();
                     tokenizer.setDoctypeForceQuirksFlag(true);
-                    tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                    tokenizer.setState(BOGUS_DOCTYPE_STATE);
                 }
                 break;
         }
@@ -1113,26 +1113,26 @@ class TokenizerState {
             case Characters.LF:
             case Characters.FF:
             case Characters.SPACE:
-                tokenizer.setState(TokenizerState.BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_STATE);
+                tokenizer.setState(BEFORE_DOCTYPE_PUBLIC_IDENTIFIER_STATE);
                 break;
             case Characters.QUOTATION_MARK:
                 tokenizer.emitParseError();
                 tokenizer.createDoctypePublicIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_STATE);
                 break;
             case Characters.APOSTROPHE:
                 tokenizer.emitParseError();
                 tokenizer.createDoctypePublicIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 processedInputStream.reconsume(chr);
@@ -1140,7 +1140,7 @@ class TokenizerState {
             default:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                tokenizer.setState(BOGUS_DOCTYPE_STATE);
                 break;
         }
     }
@@ -1156,20 +1156,20 @@ class TokenizerState {
                 break;
             case Characters.QUOTATION_MARK:
                 tokenizer.createDoctypePublicIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_PUBLIC_IDENTIFIER_DOUBLE_QUOTED_STATE);
                 break;
             case Characters.APOSTROPHE:
                 tokenizer.createDoctypePublicIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_PUBLIC_IDENTIFIER_SINGLE_QUOTED_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), null, null);
                 processedInputStream.reconsume(chr);
@@ -1177,7 +1177,7 @@ class TokenizerState {
             default:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                tokenizer.setState(BOGUS_DOCTYPE_STATE);
                 break;
         }
     }
@@ -1186,7 +1186,7 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.QUOTATION_MARK:
-                tokenizer.setState(TokenizerState.AFTER_DOCTYPE_PUBLIC_IDENTIFIER_STATE);
+                tokenizer.setState(AFTER_DOCTYPE_PUBLIC_IDENTIFIER_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
@@ -1195,11 +1195,11 @@ class TokenizerState {
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 processedInputStream.reconsume(chr);
@@ -1214,7 +1214,7 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.APOSTROPHE:
-                tokenizer.setState(TokenizerState.AFTER_DOCTYPE_PUBLIC_IDENTIFIER_STATE);
+                tokenizer.setState(AFTER_DOCTYPE_PUBLIC_IDENTIFIER_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
@@ -1223,11 +1223,11 @@ class TokenizerState {
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 processedInputStream.reconsume(chr);
@@ -1245,24 +1245,24 @@ class TokenizerState {
             case Characters.LF:
             case Characters.FF:
             case Characters.SPACE:
-                tokenizer.setState(TokenizerState.BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_STATE);
+                tokenizer.setState(BETWEEN_DOCTYPE_PUBLIC_AND_SYSTEM_IDENTIFIERS_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 break;
             case Characters.QUOTATION_MARK:
                 tokenizer.emitParseError();
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
                 break;
             case Characters.APOSTROPHE:
                 tokenizer.emitParseError();
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 processedInputStream.reconsume(chr);
@@ -1270,7 +1270,7 @@ class TokenizerState {
             default:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                tokenizer.setState(BOGUS_DOCTYPE_STATE);
                 break;
         }
     }
@@ -1285,19 +1285,19 @@ class TokenizerState {
                 // ignore
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 break;
             case Characters.QUOTATION_MARK:
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
                 break;
             case Characters.APOSTROPHE:
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 processedInputStream.reconsume(chr);
@@ -1305,7 +1305,7 @@ class TokenizerState {
             default:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                tokenizer.setState(BOGUS_DOCTYPE_STATE);
                 break;
         }
     }
@@ -1317,26 +1317,26 @@ class TokenizerState {
             case Characters.LF:
             case Characters.FF:
             case Characters.SPACE:
-                tokenizer.setState(TokenizerState.BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_STATE);
+                tokenizer.setState(BEFORE_DOCTYPE_SYSTEM_IDENTIFIER_STATE);
                 break;
             case Characters.QUOTATION_MARK:
                 tokenizer.emitParseError();
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
                 break;
             case Characters.APOSTROPHE:
                 tokenizer.emitParseError();
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 processedInputStream.reconsume(chr);
@@ -1344,7 +1344,7 @@ class TokenizerState {
             default:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                tokenizer.setState(BOGUS_DOCTYPE_STATE);
                 break;
         }
     }
@@ -1361,20 +1361,20 @@ class TokenizerState {
 
             case Characters.QUOTATION_MARK:
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_DOUBLE_QUOTED_STATE);
                 break;
             case Characters.APOSTROPHE:
                 tokenizer.createDoctypeSystemIdentifier();
-                tokenizer.setState(TokenizerState.DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
+                tokenizer.setState(DOCTYPE_SYSTEM_IDENTIFIER_SINGLE_QUOTED_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), null);
                 processedInputStream.reconsume(chr);
@@ -1382,7 +1382,7 @@ class TokenizerState {
             default:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                tokenizer.setState(BOGUS_DOCTYPE_STATE);
                 break;
         }
     }
@@ -1391,7 +1391,7 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.QUOTATION_MARK:
-                tokenizer.setState(TokenizerState.AFTER_DOCTYPE_SYSTEM_IDENTIFIER_STATE);
+                tokenizer.setState(AFTER_DOCTYPE_SYSTEM_IDENTIFIER_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
@@ -1400,11 +1400,11 @@ class TokenizerState {
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 processedInputStream.reconsume(chr);
@@ -1419,7 +1419,7 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.APOSTROPHE:
-                tokenizer.setState(TokenizerState.AFTER_DOCTYPE_SYSTEM_IDENTIFIER_STATE);
+                tokenizer.setState(AFTER_DOCTYPE_SYSTEM_IDENTIFIER_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
@@ -1428,11 +1428,11 @@ class TokenizerState {
             case Characters.GREATERTHAN_SIGN:
                 tokenizer.emitParseError();
                 tokenizer.setDoctypeForceQuirksFlag(true);
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 processedInputStream.reconsume(chr);
@@ -1453,17 +1453,17 @@ class TokenizerState {
                 // ignore
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.setDoctypeForceQuirksFlag(true);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.BOGUS_DOCTYPE_STATE);
+                tokenizer.emitParseErrorAndSetState(BOGUS_DOCTYPE_STATE);
                 break;
         }
     }
@@ -1472,11 +1472,11 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 break;
             case Characters.EOF:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitDoctypeToken(tokenizer.getDoctypeNameToken(), tokenizer.getDoctypePublicIdentifier(), tokenizer.getDoctypeSystemIdentifier());
                 processedInputStream.reconsume(chr);
                 break;
@@ -1492,25 +1492,25 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
-                tokenizer.setState(TokenizerState.COMMENT_START_DASH_STATE);
+                tokenizer.setState(COMMENT_START_DASH_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
                 tokenizer.appendCommentCharacter(Characters.REPLACEMENT_CHARACTER);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.emitComment();
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.emitComment();
                 processedInputStream.reconsume(chr);
                 break;
             default:
                 tokenizer.appendCommentCharacter(chr);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
         }
     }
@@ -1519,25 +1519,25 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
-                tokenizer.setState(TokenizerState.COMMENT_END_STATE);
+                tokenizer.setState(COMMENT_END_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, Characters.REPLACEMENT_CHARACTER);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.emitComment();
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.emitComment();
                 processedInputStream.reconsume(chr);
                 break;
             default:
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, chr);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
         }
     }
@@ -1547,14 +1547,14 @@ class TokenizerState {
             int chr = processedInputStream.getNextInputCharacterAndConsume();
             switch (chr) {
                 case Characters.HYPHEN_MINUS:
-                    tokenizer.setState(TokenizerState.COMMENT_END_DASH_STATE);
+                    tokenizer.setState(COMMENT_END_DASH_STATE);
                     return;
                 case Characters.NULL:
                     tokenizer.emitParseError();
                     tokenizer.appendCommentCharacter(Characters.REPLACEMENT_CHARACTER);
                     return;
                 case Characters.EOF:
-                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitParseErrorAndSetState(DATA_STATE);
                     tokenizer.emitComment();
                     processedInputStream.reconsume(chr);
                     return;
@@ -1568,21 +1568,21 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
-                tokenizer.setState(TokenizerState.COMMENT_END_STATE);
+                tokenizer.setState(COMMENT_END_STATE);
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, Characters.REPLACEMENT_CHARACTER);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.emitComment();
                 processedInputStream.reconsume(chr);
                 break;
             default:
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, chr);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
         }
     }
@@ -1591,24 +1591,24 @@ class TokenizerState {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitComment();
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, Characters.HYPHEN_MINUS);
                 tokenizer.appendCommentCharacter(Characters.REPLACEMENT_CHARACTER);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
             case Characters.EXCLAMATION_MARK:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.COMMENT_END_BANG_STATE);
+                tokenizer.emitParseErrorAndSetState(COMMENT_END_BANG_STATE);
                 break;
             case Characters.HYPHEN_MINUS:
                 tokenizer.emitParseError();
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.emitComment();
                 processedInputStream.reconsume(chr);
                 break;
@@ -1616,7 +1616,7 @@ class TokenizerState {
                 tokenizer.emitParseError();
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, Characters.HYPHEN_MINUS);
                 tokenizer.appendCommentCharacter(chr);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
         }
 
@@ -1628,28 +1628,28 @@ class TokenizerState {
             case Characters.HYPHEN_MINUS:
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, Characters.HYPHEN_MINUS);
                 tokenizer.appendCommentCharacter(Characters.EXCLAMATION_MARK);
-                tokenizer.setState(TokenizerState.COMMENT_END_DASH_STATE);
+                tokenizer.setState(COMMENT_END_DASH_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.emitComment();
                 break;
             case Characters.NULL:
                 tokenizer.emitParseError();
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, Characters.HYPHEN_MINUS);
                 tokenizer.appendCommentCharacter(Characters.EXCLAMATION_MARK, Characters.REPLACEMENT_CHARACTER);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
             case Characters.EOF:
                 tokenizer.emitParseError();
                 tokenizer.emitComment();
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
                 tokenizer.appendCommentCharacter(Characters.HYPHEN_MINUS, Characters.HYPHEN_MINUS);
                 tokenizer.appendCommentCharacter(Characters.EXCLAMATION_MARK, chr);
-                tokenizer.setState(TokenizerState.COMMENT_STATE);
+                tokenizer.setState(COMMENT_STATE);
                 break;
         }
     }
@@ -1678,7 +1678,7 @@ class TokenizerState {
         }
         tokenizer.emitComment(sb);
 
-        tokenizer.setState(TokenizerState.DATA_STATE);
+        tokenizer.setState(DATA_STATE);
     }
     //endregion
 
@@ -1985,10 +1985,10 @@ class TokenizerState {
                 tokenizer.emitCharacter(chr);
                 break;
             case Characters.AMPERSAND:
-                tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_DATA_STATE);
+                tokenizer.setState(CHARACTER_REFERENCE_IN_DATA_STATE);
                 break;
             case Characters.LESSTHAN_SIGN:
-                tokenizer.setState(TokenizerState.TAG_OPEN_STATE);
+                tokenizer.setState(TAG_OPEN_STATE);
                 break;
             default:
                 int previousInsertionMode = tokenizer.getTokenHandlerInsertionMode(); // optim
@@ -1996,7 +1996,7 @@ class TokenizerState {
                 // vvv optimization vvv
                 int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
-                if (tokenizer.getState() == TokenizerState.DATA_STATE && previousInsertionMode == currentInsertionMode
+                if (tokenizer.getState() == DATA_STATE && previousInsertionMode == currentInsertionMode
                         && (currentInsertionMode == TreeConstructor.IM_IN_BODY || currentInsertionMode == TreeConstructor.IM_IN_CELL)
                         && tokenizer.isTokenHandlerInHtmlContent() && textNode != null) {
 
@@ -2013,11 +2013,11 @@ class TokenizerState {
                                 return;
                             case Characters.AMPERSAND:
                                 tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
-                                tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_DATA_STATE);
+                                tokenizer.setState(CHARACTER_REFERENCE_IN_DATA_STATE);
                                 return;
                             case Characters.LESSTHAN_SIGN:
                                 tokenizer.resetTokenHandlerInsertCharacterPreviousTextNode();
-                                tokenizer.setState(TokenizerState.TAG_OPEN_STATE);
+                                tokenizer.setState(TAG_OPEN_STATE);
                                 return;
                             default:
                                 textNode.append((char) internalChr);
@@ -2031,8 +2031,8 @@ class TokenizerState {
     }
 
     static void handleCharacterReferenceInDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        tokenizer.setState(TokenizerState.DATA_STATE);
-        char[] chars = TokenizerState.consumeCharacterReference(-1, false, processedInputStream, tokenizer);
+        tokenizer.setState(DATA_STATE);
+        char[] chars = consumeCharacterReference(-1, false, processedInputStream, tokenizer);
         if (chars == null) {
             tokenizer.emitCharacter(Characters.AMPERSAND);
         } else {
@@ -2045,7 +2045,7 @@ class TokenizerState {
     // cdata
 
     static void handleCDataSectionState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        tokenizer.setState(TokenizerState.DATA_STATE);
+        tokenizer.setState(DATA_STATE);
 
         while (true) {
 
@@ -2079,30 +2079,30 @@ class TokenizerState {
                 // ignore
                 break;
             case Characters.SOLIDUS:
-                tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.addCurrentAttributeAndEmitToken();
                 break;
             case Characters.NULL:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
+                tokenizer.emitParseErrorAndSetState(ATTRIBUTE_NAME_STATE);
                 tokenizer.startNewAttributeAndAppendToName(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.QUOTATION_MARK:
             case Characters.APOSTROPHE:
             case Characters.LESSTHAN_SIGN:
             case Characters.EQUALS_SIGN:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
+                tokenizer.emitParseErrorAndSetState(ATTRIBUTE_NAME_STATE);
                 tokenizer.startNewAttributeAndAppendToName(chr);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
                 tokenizer.startNewAttributeAndAppendToName(chr);
-                tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
+                tokenizer.setState(ATTRIBUTE_NAME_STATE);
                 break;
         }
     }
@@ -2116,16 +2116,16 @@ class TokenizerState {
                 case Characters.LF:
                 case Characters.FF:
                 case Characters.SPACE:
-                    tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_NAME_STATE);
+                    tokenizer.setState(AFTER_ATTRIBUTE_NAME_STATE);
                     return;
                 case Characters.SOLIDUS:
-                    tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                    tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                     return;
                 case Characters.EQUALS_SIGN:
-                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_VALUE_STATE);
+                    tokenizer.setState(BEFORE_ATTRIBUTE_VALUE_STATE);
                     return;
                 case Characters.GREATERTHAN_SIGN:
-                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.setState(DATA_STATE);
                     tokenizer.addCurrentAttributeAndEmitToken();
                     return;
                 case Characters.NULL:
@@ -2139,7 +2139,7 @@ class TokenizerState {
                     tokenizer.appendCurrentAttributeName(chr);
                     return;
                 case Characters.EOF:
-                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitParseErrorAndSetState(DATA_STATE);
                     processedInputStream.reconsume(chr);
                     return;
                 default:
@@ -2159,31 +2159,31 @@ class TokenizerState {
                 // ignore
                 break;
             case Characters.SOLIDUS:
-                tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                 break;
             case Characters.EQUALS_SIGN:
-                tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_VALUE_STATE);
+                tokenizer.setState(BEFORE_ATTRIBUTE_VALUE_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 //
                 tokenizer.addCurrentAttributeAndEmitToken();
                 //
                 break;
             case Characters.NULL:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
+                tokenizer.emitParseErrorAndSetState(ATTRIBUTE_NAME_STATE);
                 tokenizer.addCurrentAttributeInAttributes();
                 tokenizer.startNewAttributeAndAppendToName(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.QUOTATION_MARK:
             case Characters.APOSTROPHE:
             case Characters.LESSTHAN_SIGN:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_NAME_STATE);
+                tokenizer.emitParseErrorAndSetState(ATTRIBUTE_NAME_STATE);
                 tokenizer.addCurrentAttributeInAttributes();
                 tokenizer.startNewAttributeAndAppendToName(chr);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
@@ -2194,7 +2194,7 @@ class TokenizerState {
                     tokenizer.emitParseError();
                 }
                 tokenizer.startNewAttributeAndAppendToName(chr);
-                tokenizer.setState(TokenizerState.ATTRIBUTE_NAME_STATE);
+                tokenizer.setState(ATTRIBUTE_NAME_STATE);
                 break;
         }
     }
@@ -2209,37 +2209,37 @@ class TokenizerState {
                 // ignore
                 break;
             case Characters.QUOTATION_MARK:
-                tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
-                tokenizer.setAttributeQuoteType(TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
+                tokenizer.setState(ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
+                tokenizer.setAttributeQuoteType(ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
                 break;
             case Characters.AMPERSAND:
-                tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
+                tokenizer.setState(ATTRIBUTE_VALUE_UNQUOTED_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             case Characters.APOSTROPHE:
-                tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
-                tokenizer.setAttributeQuoteType(TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
+                tokenizer.setState(ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
+                tokenizer.setAttributeQuoteType(ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
                 break;
             case Characters.NULL:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
+                tokenizer.emitParseErrorAndSetState(ATTRIBUTE_VALUE_UNQUOTED_STATE);
                 tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 tokenizer.addCurrentAttributeAndEmitToken();
                 break;
             case Characters.LESSTHAN_SIGN:
             case Characters.EQUALS_SIGN:
             case Characters.GRAVE_ACCENT:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
+                tokenizer.emitParseErrorAndSetState(ATTRIBUTE_VALUE_UNQUOTED_STATE);
                 tokenizer.appendCurrentAttributeValue(chr);
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.setState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
+                tokenizer.setState(ATTRIBUTE_VALUE_UNQUOTED_STATE);
                 tokenizer.appendCurrentAttributeValue(chr);
         }
     }
@@ -2250,13 +2250,13 @@ class TokenizerState {
             int chr = processedInputStream.getNextInputCharacterAndConsume();
             switch (chr) {
                 case Characters.QUOTATION_MARK:
-                    tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
+                    tokenizer.setState(AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
                     return;
                 case Characters.AMPERSAND:
                     // save current state
-                    tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
+                    tokenizer.setPreviousState(ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
                     //
-                    tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
+                    tokenizer.setState(CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
                     tokenizer.additionalAllowedCharacter = Characters.QUOTATION_MARK;
                     return;
                 case Characters.NULL:
@@ -2264,7 +2264,7 @@ class TokenizerState {
                     tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
                     return;
                 case Characters.EOF:
-                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitParseErrorAndSetState(DATA_STATE);
                     processedInputStream.reconsume(chr);
                     return;
                 default:
@@ -2278,13 +2278,13 @@ class TokenizerState {
             int chr = processedInputStream.getNextInputCharacterAndConsume();
             switch (chr) {
                 case Characters.APOSTROPHE:
-                    tokenizer.setState(TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
+                    tokenizer.setState(AFTER_ATTRIBUTE_VALUE_QUOTED_STATE);
                     return;
                 case Characters.AMPERSAND:
                     // save current state
-                    tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
+                    tokenizer.setPreviousState(ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE);
                     //
-                    tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
+                    tokenizer.setState(CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
                     tokenizer.additionalAllowedCharacter = Characters.APOSTROPHE;
                     return;
                 case Characters.NULL:
@@ -2292,7 +2292,7 @@ class TokenizerState {
                     tokenizer.appendCurrentAttributeValue(Characters.REPLACEMENT_CHARACTER);
                     return;
                 case Characters.EOF:
-                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitParseErrorAndSetState(DATA_STATE);
                     processedInputStream.reconsume(chr);
                     return;
                 default:
@@ -2309,15 +2309,15 @@ class TokenizerState {
                 case Characters.LF:
                 case Characters.FF:
                 case Characters.SPACE:
-                    tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                    tokenizer.setState(BEFORE_ATTRIBUTE_NAME_STATE);
                     return;
                 case Characters.AMPERSAND:
-                    tokenizer.setPreviousState(TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE);
-                    tokenizer.setState(TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
+                    tokenizer.setPreviousState(ATTRIBUTE_VALUE_UNQUOTED_STATE);
+                    tokenizer.setState(CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE);
                     tokenizer.additionalAllowedCharacter = Characters.GREATERTHAN_SIGN;
                     return;
                 case Characters.GREATERTHAN_SIGN:
-                    tokenizer.setState(TokenizerState.DATA_STATE);
+                    tokenizer.setState(DATA_STATE);
                     tokenizer.addCurrentAttributeAndEmitToken();
                     return;
                 case Characters.NULL:
@@ -2333,7 +2333,7 @@ class TokenizerState {
                     tokenizer.appendCurrentAttributeValue(chr);
                     return;
                 case Characters.EOF:
-                    tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                    tokenizer.emitParseErrorAndSetState(DATA_STATE);
                     processedInputStream.reconsume(chr);
                     return;
                 default:
@@ -2343,7 +2343,7 @@ class TokenizerState {
     }
 
     static void handleCharacterReferenceInAttributeValueState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        char[] res = TokenizerState.consumeCharacterReference(tokenizer.additionalAllowedCharacter, true, processedInputStream, tokenizer);
+        char[] res = consumeCharacterReference(tokenizer.additionalAllowedCharacter, true, processedInputStream, tokenizer);
         if (res == null) {
             tokenizer.appendCurrentAttributeValue(Characters.AMPERSAND);
         } else {
@@ -2366,21 +2366,21 @@ class TokenizerState {
             case Characters.LF:
             case Characters.FF:
             case Characters.SPACE:
-                tokenizer.setState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                tokenizer.setState(BEFORE_ATTRIBUTE_NAME_STATE);
                 break;
             case Characters.SOLIDUS:
-                tokenizer.setState(TokenizerState.SELF_CLOSING_START_TAG_STATE);
+                tokenizer.setState(SELF_CLOSING_START_TAG_STATE);
                 break;
             case Characters.GREATERTHAN_SIGN:
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(DATA_STATE);
                 tokenizer.addCurrentAttributeAndEmitToken();
                 break;
             case Characters.EOF:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.DATA_STATE);
+                tokenizer.emitParseErrorAndSetState(DATA_STATE);
                 processedInputStream.reconsume(chr);
                 break;
             default:
-                tokenizer.emitParseErrorAndSetState(TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE);
+                tokenizer.emitParseErrorAndSetState(BEFORE_ATTRIBUTE_NAME_STATE);
                 processedInputStream.reconsume(chr);
         }
     }
