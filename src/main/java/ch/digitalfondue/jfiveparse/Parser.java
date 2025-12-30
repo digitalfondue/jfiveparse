@@ -117,7 +117,7 @@ public class Parser {
         // created (good idea? y/n?)
         TreeConstructor tokenHandler = new TreeConstructor(disableIgnoreTokenInBodyStartTag, interpretSelfClosingAnythingElse);
         //
-        tokenHandler.setHtmlFragmentParsing(true);
+        tokenHandler.isHtmlFragmentParsing = true;
         tokenHandler.scriptingFlag = scriptingFlag;
         Tokenizer tokenizer = new Tokenizer(tokenHandler, transformEntities);
         tokenHandler.setTokenizer(tokenizer);
@@ -148,7 +148,7 @@ public class Parser {
         // 5
         Element root = TreeConstructor.buildElement("html", Common.ELEMENT_HTML_ID, "html", Node.NAMESPACE_HTML, Node.NAMESPACE_HTML_ID, null);
 
-        tokenHandler.setContext(node);
+        tokenHandler.context = node;
 
         // 6
         tokenHandler.getDocument().appendChild(root);

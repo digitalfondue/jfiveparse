@@ -84,7 +84,7 @@ class TreeConstructor {
     private Element form;
     Element context;
     private Boolean framesetOk;
-    private boolean isHtmlFragmentParsing;
+    boolean isHtmlFragmentParsing;
     private boolean fosterParentingEnabled;
     // --- ----
 
@@ -1000,18 +1000,6 @@ class TreeConstructor {
 
     void setForm(Element form) {
         this.form = form;
-    }
-
-    void setContext(Element node) {
-        this.context = node;
-    }
-
-    boolean isHtmlFragmentParsing() {
-        return isHtmlFragmentParsing;
-    }
-
-    void setHtmlFragmentParsing(boolean isHtmlFragmentParsing) {
-        this.isHtmlFragmentParsing = isHtmlFragmentParsing;
     }
 
     Boolean getFramesetOk() {

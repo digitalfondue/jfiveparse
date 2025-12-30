@@ -305,7 +305,7 @@ final class TreeConstructorInBodyForeignContentText {
     // A start tag whose tag name is "select"
     private static void startSelect(TreeConstructor treeConstructor) {
 
-        if (treeConstructor.isHtmlFragmentParsing() && treeConstructor.context.nodeNameID == ELEMENT_SELECT_ID) {
+        if (treeConstructor.isHtmlFragmentParsing && treeConstructor.context.nodeNameID == ELEMENT_SELECT_ID) {
             treeConstructor.emitParseError();
             // ignore token
             return;
@@ -387,7 +387,7 @@ final class TreeConstructorInBodyForeignContentText {
     // A start tag whose tag name is "input"
     private static void startInput(TreeConstructor treeConstructor) {
 
-        if (treeConstructor.isHtmlFragmentParsing() && treeConstructor.context.nodeNameID == ELEMENT_SELECT_ID) {
+        if (treeConstructor.isHtmlFragmentParsing && treeConstructor.context.nodeNameID == ELEMENT_SELECT_ID) {
             treeConstructor.emitParseError();
             //
             // return;

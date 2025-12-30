@@ -42,7 +42,7 @@ final class TreeConstructorInFramesetSelectTemplate {
                 // ignore
             } else {
                 treeConstructor.popCurrentNode();
-                if (!treeConstructor.isHtmlFragmentParsing() && !isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_FRAMESET_ID)) {
+                if (!treeConstructor.isHtmlFragmentParsing && !isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_FRAMESET_ID)) {
                     treeConstructor.setInsertionMode(IM_AFTER_FRAMESET);
                 }
             }
