@@ -532,7 +532,7 @@ final class Common {
 
     // ---------------------------------------------------------------------
 
-    //
+    // see https://html.spec.whatwg.org/multipage/parsing.html#has-an-element-in-the-specific-scope
 
     static boolean isInCommonInScope(Element element) {
     	String tagName = element.nodeName;
@@ -540,8 +540,16 @@ final class Common {
     	int namespaceID = element.namespaceID;
         if (Node.NAMESPACE_HTML_ID == namespaceID) {
             return switch (tagNameID) {
-                case ELEMENT_APPLET_ID, ELEMENT_CAPTION_ID, ELEMENT_HTML_ID, ELEMENT_MARQUEE_ID, ELEMENT_OBJECT_ID,
-                     ELEMENT_TABLE_ID, ELEMENT_TEMPLATE_ID, ELEMENT_TD_ID, ELEMENT_TH_ID -> true;
+                case ELEMENT_APPLET_ID,
+                     ELEMENT_CAPTION_ID,
+                     ELEMENT_HTML_ID,
+                     ELEMENT_TABLE_ID,
+                     ELEMENT_TD_ID,
+                     ELEMENT_TH_ID,
+                     ELEMENT_MARQUEE_ID,
+                     ELEMENT_OBJECT_ID,
+                     ELEMENT_SELECT_ID,
+                     ELEMENT_TEMPLATE_ID -> true;
                 default -> false;
             };
         } else if (Node.NAMESPACE_MATHML_ID == namespaceID) {
@@ -574,6 +582,7 @@ final class Common {
 
     // ---------------
 
+    // https://html.spec.whatwg.org/multipage/parsing.html#closing-elements-that-have-implied-end-tags
     static boolean isImpliedTag(Element e) {
         if (Node.NAMESPACE_HTML_ID != e.namespaceID) {
             return false;
