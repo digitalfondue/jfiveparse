@@ -365,20 +365,6 @@ class TreeConstructor {
         return false;
     }
 
-    boolean hasElementSelectInScope() {
-        for (int i = openElements.size() - 1; i >= 0; i--) {
-            Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, Common.ELEMENT_SELECT_ID)) {
-                return true;
-            }
-
-            if (!Common.isHtmlNS(node, Common.ELEMENT_OPTION_ID) && !Common.isHtmlNS(node, Common.ELEMENT_OPTGROUP_ID)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     // implementation of
     // https://html.spec.whatwg.org/multipage/syntax.html#adoption-agency-algorithm
     void adoptionAgencyAlgorithm(int subjectID) {
