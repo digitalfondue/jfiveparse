@@ -112,6 +112,7 @@ final class CSS {
                 return !isHexNumber || isWhiteSpace ? Matcher.quoteReplacement(escaped) : high < 0 ? Character.toString(high + 0x1_00_00) : Character.toString(Character.toCodePoint((char) ((high >> 10) | 0xd8_00), (char) ((high & 0x3_ff) | 0xdc_00)));
             });
         } catch (IllegalArgumentException e) {
+            // TODO: check
             // it seems there is an issue with Character.toString -> we generate a wrong codepoint
             throw new ParserException("Error while unescaping a CSS string " + cssString);
         }

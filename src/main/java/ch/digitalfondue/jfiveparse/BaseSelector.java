@@ -264,6 +264,10 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     var idxPredicate = CSS.parseNth(s.value());
                     var reversedOrder = "nth-last-child".equals(name);
                     res.matchers.add((node, base) -> isAt(node, idxPredicate, reversedOrder));
+                } else if (("nth-of-type".equals(name) || "nth-last-of-type".equals(name)) && ps.data() instanceof CSS.DataString s) {
+                    var idxPredicate = CSS.parseNth(s.value());
+                    var reversedOrder = "nth-last-of-type".equals(name);
+                    res.matchers.add((node, base) -> isAtNthOfType(node, idxPredicate, reversedOrder));
                 } else {
                     throw new ParserException("PseudoSelector '" + name + "' is not supported");
                 }
@@ -302,7 +306,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private boolean isRoot(SelectableNode<T> n, SelectableNode<T> base) {
-        return (n.getParentNode() == null || wrapper.apply(n.getParentNode()).getNodeType() == Node.DOCUMENT_NODE) && n.getNodeType() == Node.ELEMENT_NODE;
+        return (n.getParentNode() == null || wrapper.apply(n.getParentNode()).getNodeType() == Node.DOCUMENT_NODE) && isElement(n);
     }
 
     private boolean isAt(SelectableNode<T> n, IntPredicate idxPredicate, boolean reversedOrder) {
@@ -315,13 +319,38 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             }
             var elemIdx = 0;
             for (T child : childNodes) {
-                if (wrapper.apply(child).getNodeType() == Node.ELEMENT_NODE) {
+                if (isElement(wrapper.apply(child))) {
                     elemIdx++;
                     if (n.isSameNode(child) && idxPredicate.test(elemIdx)) {
                         return true;
                     }
                 }
             }
+        }
+        return false;
+    }
+
+    private boolean isAtNthOfType(SelectableNode<T> node, IntPredicate idxPredicate, boolean reversedOrder) {
+        if (node.getParentNode() != null) {
+            var nodeName = node.getNodeName();
+            var c = wrapper.apply(node.getParentNode()).getChildNodes();
+            var childNodes = c;
+            if (reversedOrder) {
+                int size = c.size();
+                childNodes = new Common.NodeList<>(size, (idx) -> c.get(size - idx -1));
+            }
+            int elemIdx = 0;
+            for (T child : childNodes) {
+                if (node.isSameNode(child)) {
+                    elemIdx++;
+                    break;
+                }
+                var wrappedChild = wrapper.apply(child);
+                if (isElement(wrappedChild) && nodeName.equals(wrappedChild.getNodeName())) {
+                    elemIdx++;
+                }
+            }
+            return idxPredicate.test(elemIdx);
         }
         return false;
     }

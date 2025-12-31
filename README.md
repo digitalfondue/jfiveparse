@@ -15,15 +15,6 @@ Future 2.x.x versions will require Java 17.
 
 [Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
-## Why?
-
-As far as I know, there is no pure java html5 parser that currently pass the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests) (well, the more relevant tests :D, note: this project was published in october 2015).
-
-Additionally, I wanted a library with a reduced footprint (and no dependencies). Currently, the jar weight around ~150kb. The target is to keep it under 200kb.
-
-Performance should be competitive with other java parsers.
-
-
 ## License
 
 jfiveparse is licensed under the Apache License Version 2.0.
