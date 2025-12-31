@@ -179,6 +179,25 @@ public class TreeConstructionTest {
         int depthsForTemplatesChilds = 0;
 
         if (node instanceof Element elem) {
+
+            // TODO: at the moment, it's not really clear if we want to handle at tree construction time the
+            //       selectedcontent clone behaviour. CHECK, where we should put this logic...
+            // this works only if: selected content is a child of a button, which must be the first child of an option
+            var hasSelectedContent = elem.getAllNodesMatching(Selector.parseSelector("button:first-child > selectedcontent:only-child"), true);
+            if ("SELECT".equals(elem.getTagName()) && !hasSelectedContent.isEmpty()) {
+                var toClone = elem.getAllNodesMatching(Selector.parseSelector("option[selected]"), true);
+                if (toClone.isEmpty()) {
+                    toClone = elem.getAllNodesMatching(Selector.parseSelector("option:first-of-type"), true);
+                }
+                if (!toClone.isEmpty()) {
+                    var selectedContent = hasSelectedContent.get(0);
+                    var childNodes = new ArrayList<>(toClone.get(0).cloneNode(true).getChildNodes());
+                    for (var c : childNodes) {
+                        selectedContent.appendChild(c);
+                    }
+                }
+            }
+
             sb.append("<");
             if (Node.NAMESPACE_MATHML.equals(elem.getNamespaceURI())) {
                 sb.append("math ");

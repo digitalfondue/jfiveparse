@@ -13,7 +13,6 @@ class CSSSelectorWPTTest {
     // TODO: add
     //
     // https://github.com/web-platform-tests/wpt/blob/8f25d0cad39c05f4f169a3864b47300f504b292a/css/selectors/has-matches-to-uninserted-elements.html
-    // https://github.com/web-platform-tests/wpt/blob/master/css/selectors/only-of-type.html
 
     private static final Document HAS_BASIC = JFiveParse.parse("""
             <main id=main>

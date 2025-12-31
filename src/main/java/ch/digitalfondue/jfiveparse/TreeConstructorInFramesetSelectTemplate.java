@@ -42,7 +42,7 @@ final class TreeConstructorInFramesetSelectTemplate {
                 // ignore
             } else {
                 treeConstructor.popCurrentNode();
-                if (!treeConstructor.isHtmlFragmentParsing() && !isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_FRAMESET_ID)) {
+                if (!treeConstructor.isHtmlFragmentParsing && !isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_FRAMESET_ID)) {
                     treeConstructor.setInsertionMode(IM_AFTER_FRAMESET);
                 }
             }
@@ -60,127 +60,6 @@ final class TreeConstructorInFramesetSelectTemplate {
         } else {
             treeConstructor.emitParseError();
             // ignore token
-        }
-    }
-    
-    static void inSelect(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        if (tokenType == TT_CHARACTER && treeConstructor.getChr() == Characters.NULL) {
-            treeConstructor.emitParseError();
-            // ignore
-        } else if (tokenType == TT_CHARACTER) {
-            treeConstructor.insertCharacter();
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertComment();
-        } else if (tokenType == TT_DOCTYPE) {
-            treeConstructor.emitParseError();
-            // ignore
-        } else if (isStartTagNamed(tokenType, ELEMENT_HTML_ID, tagNameID)) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (isStartTagNamed(tokenType, ELEMENT_OPTION_ID, tagNameID)) {
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
-                treeConstructor.popCurrentNode();
-            }
-            treeConstructor.insertHtmlElementToken();
-        } else if (isStartTagNamed(tokenType, ELEMENT_OPTGROUP_ID, tagNameID)) {
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
-                treeConstructor.popCurrentNode();
-            }
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTGROUP_ID)) {
-                treeConstructor.popCurrentNode();
-            }
-            treeConstructor.insertHtmlElementToken();
-        } else if (isStartTagNamed(tokenType, ELEMENT_HR_ID, tagNameID)) {
-            // see https://github.com/html5lib/html5lib-tests/commit/55aa183097fa52bb1328cd93633be6f88159d4b8
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
-                treeConstructor.popCurrentNode();
-            }
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTGROUP_ID)) {
-                treeConstructor.popCurrentNode();
-            }
-            treeConstructor.insertHtmlElementToken();
-            treeConstructor.popCurrentNode();
-            treeConstructor.ackSelfClosingTagIfSet();
-        } else if (isEndTagNamed(tokenType, ELEMENT_OPTGROUP_ID, tagNameID)) {
-
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)
-                    && isHtmlNS(treeConstructor.openElementAt(treeConstructor.openElementsSize() - 2), ELEMENT_OPTGROUP_ID)) {
-                treeConstructor.popCurrentNode();
-            }
-
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTGROUP_ID)) {
-                treeConstructor.popCurrentNode();
-            } else {
-                treeConstructor.emitParseError();
-                // ignore
-            }
-
-        } else if (isEndTagNamed(tokenType, ELEMENT_OPTION_ID, tagNameID)) {
-            if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
-                treeConstructor.popCurrentNode();
-            } else {
-                treeConstructor.emitParseError();
-                // ignore
-            }
-        } else if (isEndTagNamed(tokenType, ELEMENT_SELECT_ID, tagNameID)) {
-            if (!treeConstructor.hasElementSelectInScope()) {
-                treeConstructor.emitParseError();
-                // ignore
-            } else {
-                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
-                treeConstructor.resetInsertionModeAppropriately();
-            }
-        } else if (isStartTagNamed(tokenType, ELEMENT_SELECT_ID, tagNameID)) {
-            treeConstructor.emitParseError();
-            if (treeConstructor.hasElementSelectInScope()) {
-                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
-                treeConstructor.resetInsertionModeAppropriately();
-            }/* else {
-                // ignore
-            }*/
-        } else if (tokenType == TT_START_TAG && (ELEMENT_INPUT_ID == tagNameID || ELEMENT_KEYGEN_ID == tagNameID || ELEMENT_TEXTAREA_ID == tagNameID)) {
-            treeConstructor.emitParseError();
-            if (treeConstructor.hasElementSelectInScope()) {
-                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
-                treeConstructor.resetInsertionModeAppropriately();
-                treeConstructor.dispatch();
-            }/* else {
-                // ignore
-            }*/
-        } else if ((tokenType == TT_START_TAG && (ELEMENT_SCRIPT_ID == tagNameID || ELEMENT_TEMPLATE_ID == tagNameID)) || isEndTagNamed(tokenType, ELEMENT_TEMPLATE_ID, tagNameID)) {
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (tokenType == TT_EOF) {
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else {
-            treeConstructor.emitParseError();
-            // ignore
-        }
-    }
-
-    static void inSelectTable(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        boolean isCaptionOrRelatedTags = ELEMENT_CAPTION_ID == tagNameID || //
-                ELEMENT_TABLE_ID == tagNameID || //
-                ELEMENT_TBODY_ID == tagNameID || //
-                ELEMENT_TFOOT_ID == tagNameID || //
-                ELEMENT_THEAD_ID == tagNameID || //
-                ELEMENT_TR_ID == tagNameID || //
-                ELEMENT_TD_ID == tagNameID || //
-                ELEMENT_TH_ID == tagNameID;
-        if (tokenType == TT_START_TAG && isCaptionOrRelatedTags) {
-            treeConstructor.emitParseError();
-            treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
-            treeConstructor.resetInsertionModeAppropriately();
-            treeConstructor.dispatch();
-        } else if (tokenType == TT_END_TAG && isCaptionOrRelatedTags) {
-            treeConstructor.emitParseError();
-            if (!treeConstructor.hasElementInTableScope(tagNameID)) { // known ID
-                // ignore token
-            } else {
-                treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
-                treeConstructor.resetInsertionModeAppropriately();
-                treeConstructor.dispatch();
-            }
-        } else {
-            inSelect(tokenType, tagName, tagNameID, treeConstructor);
         }
     }
     

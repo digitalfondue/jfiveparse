@@ -88,7 +88,7 @@ final class TreeConstructorAftersBeforeInitialInHead {
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (Common.isEndTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
-            if (treeConstructor.isHtmlFragmentParsing()) {
+            if (treeConstructor.isHtmlFragmentParsing) {
                 treeConstructor.emitParseError();
             } else {
                 treeConstructor.setInsertionMode(IM_AFTER_AFTER_BODY);

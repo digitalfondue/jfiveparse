@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.digitalfondue.jfiveparse.test;
+package ch.digitalfondue.jfiveparse;
 
-import ch.digitalfondue.jfiveparse.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

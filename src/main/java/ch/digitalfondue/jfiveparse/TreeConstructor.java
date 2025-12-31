@@ -82,9 +82,9 @@ class TreeConstructor {
     // --- ---
     private Element head;
     private Element form;
-    private Element context;
+    Element context;
     private Boolean framesetOk;
-    private boolean isHtmlFragmentParsing;
+    boolean isHtmlFragmentParsing;
     private boolean fosterParentingEnabled;
     // --- ----
 
@@ -243,12 +243,6 @@ class TreeConstructor {
         case IM_IN_CELL:
             TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
             break;
-        case IM_IN_SELECT:
-            TreeConstructorInFramesetSelectTemplate.inSelect(tokenType, tagName, tagNameID, this);
-            break;
-        case IM_IN_SELECT_IN_TABLE:
-            TreeConstructorInFramesetSelectTemplate.inSelectTable(tokenType, tagName, tagNameID, this);
-            break;
         case IM_IN_TEMPLATE:
             TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, this);
             break;
@@ -369,20 +363,6 @@ class TreeConstructor {
             }
         }
         return false;
-    }
-
-    boolean hasElementSelectInScope() {
-        for (int i = openElements.size() - 1; i >= 0; i--) {
-            Element node = openElements.get(i);
-            if (Common.isHtmlNS(node, Common.ELEMENT_SELECT_ID)) {
-                return true;
-            }
-
-            if (!Common.isHtmlNS(node, Common.ELEMENT_OPTION_ID) && !Common.isHtmlNS(node, Common.ELEMENT_OPTGROUP_ID)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     // implementation of
@@ -850,6 +830,7 @@ class TreeConstructor {
         return document;
     }
 
+    // see https://html.spec.whatwg.org/multipage/parsing.html#reset-the-insertion-mode-appropriately
     void resetInsertionModeAppropriately() {
         boolean last = false;
         int counter = openElements.size() - 1;
@@ -862,30 +843,7 @@ class TreeConstructor {
                 node = context;
             }
 
-            if (Common.isHtmlNS(node, Common.ELEMENT_SELECT_ID)) {
-                if (last) {
-                    insertionMode = IM_IN_SELECT;
-                    break;
-                } else {
-                    int ancestorIdx = counter;
-                    Element ancestor = node;
-                    while (true) {
-                        if (ancestor == openElements.get(0)) {
-                            break;
-                        }
-                        ancestorIdx--;
-                        ancestor = openElements.get(ancestorIdx);
-                        if (Common.isHtmlNS(ancestor, Common.ELEMENT_TEMPLATE_ID)) {
-                            break;
-                        } else if (Common.isHtmlNS(ancestor, Common.ELEMENT_TABLE_ID)) {
-                            insertionMode = IM_IN_SELECT_IN_TABLE;
-                            return;
-                        }
-                    }
-                    insertionMode = IM_IN_SELECT;
-                    break;
-                }
-            } else if ((Common.isHtmlNS(node, Common.ELEMENT_TD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TH_ID)) && !last) {
+            if ((Common.isHtmlNS(node, Common.ELEMENT_TD_ID) || Common.isHtmlNS(node, Common.ELEMENT_TH_ID)) && !last) {
                 insertionMode = IM_IN_CELL;
                 break;
             } else if (Common.isHtmlNS(node, Common.ELEMENT_TR_ID)) {
@@ -1030,18 +988,6 @@ class TreeConstructor {
         this.form = form;
     }
 
-    void setContext(Element node) {
-        this.context = node;
-    }
-
-    boolean isHtmlFragmentParsing() {
-        return isHtmlFragmentParsing;
-    }
-
-    void setHtmlFragmentParsing(boolean isHtmlFragmentParsing) {
-        this.isHtmlFragmentParsing = isHtmlFragmentParsing;
-    }
-
     Boolean getFramesetOk() {
         return framesetOk;
     }
@@ -1123,14 +1069,12 @@ class TreeConstructor {
     static final int IM_IN_COLUMN_GROUP = 12;
     static final int IM_IN_TABLE_BODY = 13;
     static final int IM_IN_ROW = 14;
-    static final int IM_IN_SELECT = 15;
-    static final int IM_IN_SELECT_IN_TABLE = 16;
-    static final int IM_IN_TEMPLATE = 17;
-    static final int IM_AFTER_BODY = 18;
-    static final int IM_IN_FRAMESET = 19;
-    static final int IM_AFTER_FRAMESET = 20;
-    static final int IM_AFTER_AFTER_BODY = 21;
-    static final int IM_AFTER_AFTER_FRAMESET = 22;
+    static final int IM_IN_TEMPLATE = 15;
+    static final int IM_AFTER_BODY = 16;
+    static final int IM_IN_FRAMESET = 17;
+    static final int IM_AFTER_FRAMESET = 18;
+    static final int IM_AFTER_AFTER_BODY = 19;
+    static final int IM_AFTER_AFTER_FRAMESET = 20;
     //
 
 }

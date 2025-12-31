@@ -4,3 +4,5 @@ target
 .settings/
 .idea
 *.iml
+/src/test/resources/ch/digitalfondue/jfiveparse/FuzzTestInputs/
+/.cifuzz-corpus/

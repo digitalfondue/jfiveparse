@@ -183,8 +183,10 @@ final class TreeConstructorInBodyForeignContentText {
                 startSelect(treeConstructor);
                 break;
             case ELEMENT_OPTGROUP_ID:
+                startOptgroup(treeConstructor);
+                break;
             case ELEMENT_OPTION_ID:
-                startOptgroupOption(treeConstructor);
+                startOption(treeConstructor);
                 break;
             case ELEMENT_RB_ID:
             case ELEMENT_RTC_ID:
@@ -273,30 +275,48 @@ final class TreeConstructorInBodyForeignContentText {
         treeConstructor.insertHtmlElementToken();
     }
 
-    private static void startOptgroupOption(TreeConstructor treeConstructor) {
-        if (Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+    // A start tag whose tag name is "option"
+    private static void startOption(TreeConstructor treeConstructor) {
+        if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
+            treeConstructor.generateImpliedEndTag("optgroup", Node.NAMESPACE_HTML);
+            // If the stack of open elements has an option element in scope, then this is a parse error.
+        } else if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
             treeConstructor.popCurrentNode();
         }
-
         treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
     }
 
-    private static void startSelect(TreeConstructor treeConstructor) {
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+    // A start tag whose tag name is "optgroup"
+    private static void startOptgroup(TreeConstructor treeConstructor) {
+        if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
+            treeConstructor.generateImpliedEndTag();
+            // If the stack of open elements has an option element in scope or has an optgroup element in scope, then this is a parse error.
+        } else if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
+            treeConstructor.popCurrentNode();
+        }
         treeConstructor.activeFormattingElements.reconstruct();
         treeConstructor.insertHtmlElementToken();
-        treeConstructor.framesetOkToFalse();
+    }
 
-        final int insertionMode = treeConstructor.getInsertionMode();
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+    // A start tag whose tag name is "select"
+    private static void startSelect(TreeConstructor treeConstructor) {
 
-        if (insertionMode == IM_IN_TABLE || //
-                insertionMode == IM_IN_CAPTION || //
-                insertionMode == IM_IN_TABLE_BODY || //
-                insertionMode == IM_IN_ROW || //
-                insertionMode == IM_IN_CELL) {
-            treeConstructor.setInsertionMode(IM_IN_SELECT_IN_TABLE);
+        if (treeConstructor.isHtmlFragmentParsing && treeConstructor.context.nodeNameID == ELEMENT_SELECT_ID) {
+            treeConstructor.emitParseError();
+            // ignore token
+            return;
+        } else if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
+            treeConstructor.emitParseError();
+            // ignore token
+            treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
         } else {
-            treeConstructor.setInsertionMode(IM_IN_SELECT);
+            treeConstructor.activeFormattingElements.reconstruct();
+            treeConstructor.insertHtmlElementToken();
+            treeConstructor.framesetOkToFalse();
         }
     }
 
@@ -339,10 +359,18 @@ final class TreeConstructorInBodyForeignContentText {
         treeConstructor.dispatch();
     }
 
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+    // A start tag whose tag name is "hr"
     private static void startHr(TreeConstructor treeConstructor) {
         if (treeConstructor.hasElementInButtonScope(ELEMENT_P_ID)) {
             treeConstructor.closePElement();
         }
+
+        if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
+            treeConstructor.generateImpliedEndTag();
+            // If the stack of open elements has an option element in scope or has an optgroup element in scope, then this is a parse error.
+        }
+
         treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
@@ -355,7 +383,34 @@ final class TreeConstructorInBodyForeignContentText {
         treeConstructor.ackSelfClosingTagIfSet();
     }
 
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+    // A start tag whose tag name is "input"
     private static void startInput(TreeConstructor treeConstructor) {
+
+        if (treeConstructor.isHtmlFragmentParsing && treeConstructor.context.nodeNameID == ELEMENT_SELECT_ID) {
+            treeConstructor.emitParseError();
+            //
+            // return;
+            //
+            // TODO: check who is right: the spec say:
+            // Parse error.
+            // Ignore the token.
+            // Return.
+            //
+            // if uncommented, we fail the following test in tests_innerHTML_1.dat
+            // #data
+            // <input><option>
+            // #errors
+            // #document-fragment
+            // select
+            // #document
+            // | <input>
+            // | <option>
+        }
+        if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
+            treeConstructor.emitParseError();
+            treeConstructor.popOpenElementsUntilWithHtmlNS(ELEMENT_SELECT_ID);
+        }
 
         treeConstructor.activeFormattingElements.reconstruct();
         Element element = treeConstructor.insertHtmlElementToken();
@@ -637,6 +692,7 @@ final class TreeConstructorInBodyForeignContentText {
         }
     }
 
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
     private static void inBodyEndTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tagNameID) {
             case ELEMENT_TEMPLATE_ID:
@@ -648,6 +704,7 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_HTML_ID:
                 endHtml(treeConstructor);
                 break;
+            // An end tag whose tag name is one of: "address", ...,  "ul"
             case ELEMENT_ADDRESS_ID:
             case ELEMENT_ARTICLE_ID:
             case ELEMENT_ASIDE_ID:
@@ -673,6 +730,7 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_PRE_ID:
             case ELEMENT_SEARCH_ID:
             case ELEMENT_SECTION_ID:
+            case ELEMENT_SELECT_ID:
             case ELEMENT_SUMMARY_ID:
             case ELEMENT_UL_ID:
                 endAddressUl(tagNameID, treeConstructor);

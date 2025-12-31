@@ -982,6 +982,88 @@ class CSSSelectorTest {
         );
     }
 
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1254C18-L1254C29
+    @Test
+    void nthOfType() {
+        sizzleCheckMatcherIds(":nth-of-type(-1)");
+        // Nth-of-type(3)
+        sizzleCheckMatcherIds("#ap :nth-of-type(3)", "mark");
+        // Nth-of-type(n)
+        sizzleCheckMatcherIds("#ap :nth-of-type(n)",
+                "google",
+                "groups",
+                "code1",
+                "anchor1",
+                "mark"
+        );
+        // Nth-of-type(0n+3)
+        sizzleCheckMatcherIds("#ap :nth-of-type(0n+3)", "mark");
+        // Nth-of-type(2n)
+        sizzleCheckMatcherIds("#ap :nth-of-type(2n)", "groups");
+        // Nth-of-type(even)
+        sizzleCheckMatcherIds("#ap :nth-of-type(even)", "groups");
+        // Nth-of-type(2n+1)
+        sizzleCheckMatcherIds("#ap :nth-of-type(2n+1)", "google", "code1", "anchor1", "mark");
+        // Nth-of-type(odd)
+        sizzleCheckMatcherIds("#ap :nth-of-type(odd)", "google", "code1", "anchor1", "mark");
+        // Nth-of-type(-n+2)
+        sizzleCheckMatcherIds("#qunit-fixture > :nth-of-type(-n+2)",
+                "firstp",
+                "ap",
+                "foo",
+                "nothiddendiv",
+                "name+value",
+                "firstUL",
+                "empty",
+                "form",
+                "floatTest",
+                "iframe",
+                "lengthtest",
+                "table"
+        );
+    }
+
+    // https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L1295
+    @Test
+    void nthLastOfType() {
+        sizzleCheckMatcherIds(":nth-of-type(-1)");
+        // Nth-of-type(3)
+        sizzleCheckMatcherIds("#ap :nth-of-type(3)", "mark");
+        // Nth-of-type(n)
+        sizzleCheckMatcherIds("#ap :nth-of-type(n)",
+                "google",
+                "groups",
+                "code1",
+                "anchor1",
+                "mark"
+        );
+        // Nth-of-type(0n+3)
+        sizzleCheckMatcherIds("#ap :nth-of-type(0n+3)", "mark");
+        // Nth-of-type(2n)
+        sizzleCheckMatcherIds("#ap :nth-of-type(2n)", "groups");
+        // Nth-of-type(even)
+        sizzleCheckMatcherIds("#ap :nth-of-type(even)", "groups");
+        // Nth-of-type(2n+1)
+        sizzleCheckMatcherIds("#ap :nth-of-type(2n+1)", "google", "code1", "anchor1", "mark");
+        // Nth-of-type(odd)
+        sizzleCheckMatcherIds("#ap :nth-of-type(odd)", "google", "code1", "anchor1", "mark");
+        // Nth-of-type(-n+2)
+        sizzleCheckMatcherIds("#qunit-fixture > :nth-of-type(-n+2)",
+                "firstp",
+                "ap",
+                "foo",
+                "nothiddendiv",
+                "name+value",
+                "firstUL",
+                "empty",
+                "form",
+                "floatTest",
+                "iframe",
+                "lengthtest",
+                "table"
+        );
+    }
+
     private static Document loadDocument(String name) {
         try {
             return JFiveParse.parse(load(name));
