@@ -4,6 +4,9 @@ import com.code_intelligence.jazzer.api.FuzzedDataProvider;
 import com.code_intelligence.jazzer.junit.DictionaryFile;
 import com.code_intelligence.jazzer.junit.DictionaryFiles;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import java.util.Base64;
 
 // set env variable JAZZER_FUZZ=1 to run them
 class FuzzTest {
@@ -39,5 +42,11 @@ class FuzzTest {
         } catch (ParserException e) {
             // acceptable, all ParserException are contemplated cases
         }
+    }
+
+    @Test
+    @Disabled
+    void checkCSSRes() {
+        CSS.parseSelector(new String(Base64.getDecoder().decode("UFsKLQ==")));
     }
 }

@@ -97,19 +97,24 @@ final class CSS {
     static final int ATTR_ACTION_ELEMENT = 7;
 
     private static String unescapeCSS(String cssString) {
-        return RE_ESCAPE.matcher(cssString).replaceAll((r) -> {
-            String escaped = r.group(1);
-            boolean isHexNumber = true;
-            int high = 0;
-            try {
-                high = Integer.parseInt(r.group(1).trim(), 16) - 0x1_00_00;
-            } catch (NumberFormatException nfe) {
-                isHexNumber = false;
-            }
-            boolean isWhiteSpace = r.group(2) != null;
+        try {
+            return RE_ESCAPE.matcher(cssString).replaceAll((r) -> {
+                String escaped = r.group(1);
+                boolean isHexNumber = true;
+                int high = 0;
+                try {
+                    high = Integer.parseInt(r.group(1).trim(), 16) - 0x1_00_00;
+                } catch (NumberFormatException nfe) {
+                    isHexNumber = false;
+                }
+                boolean isWhiteSpace = r.group(2) != null;
 
-            return !isHexNumber || isWhiteSpace ? Matcher.quoteReplacement(escaped) : high < 0 ? Character.toString(high + 0x1_00_00) : Character.toString(Character.toCodePoint((char) ((high >> 10) | 0xd8_00), (char) ((high & 0x3_ff) | 0xdc_00)));
-        });
+                return !isHexNumber || isWhiteSpace ? Matcher.quoteReplacement(escaped) : high < 0 ? Character.toString(high + 0x1_00_00) : Character.toString(Character.toCodePoint((char) ((high >> 10) | 0xd8_00), (char) ((high & 0x3_ff) | 0xdc_00)));
+            });
+        } catch (IllegalArgumentException e) {
+            // it seems there is an issue with Character.toString -> we generate a wrong codepoint
+            throw new ParserException("Error while unescaping a CSS string " + cssString);
+        }
     }
 
     private static int getActionTypes(char c) {
@@ -174,7 +179,7 @@ final class CSS {
         void stripWhitespace(int offset) {
             selectorIndex += offset;
 
-            while (selectorIndex < selectorLength && Common.isTabLfFfCrOrSpace(selector.charAt(selectorIndex))) {
+            while (selectorIndex < selectorLength && Common.isTabLfFfCrOrSpace(charAt(selectorIndex))) {
                 selectorIndex++;
             }
         }
@@ -183,7 +188,7 @@ final class CSS {
             selectorIndex += 1;
             int start = selectorIndex;
             for (int counter = 1; selectorIndex < selectorLength; selectorIndex++) {
-                switch (selector.charAt(selectorIndex)) {
+                switch (charAt(selectorIndex)) {
                     case '\\': {
                         // Skip next character
                         selectorIndex += 1;
@@ -255,7 +260,7 @@ final class CSS {
 
             loop:
             while (selectorIndex < selectorLength) {
-                var firstChar = selector.charAt(selectorIndex);
+                var firstChar = charAt(selectorIndex);
                 switch (firstChar) {
                     // whitespace
                     case 9: // tab
@@ -331,7 +336,7 @@ final class CSS {
                         stripWhitespace(0);
                         // Determine comparison operation
                         int action = ATTR_ACTION_EXISTS;
-                        int possibleAction = getActionTypes(selector.charAt(selectorIndex));
+                        int possibleAction = getActionTypes(charAt(selectorIndex));
                         if (possibleAction != -1) {
                             action = possibleAction;
                             if (!charAtIsEqual(selectorIndex + 1, '=')) {
@@ -348,33 +353,33 @@ final class CSS {
                         int ignoreCase = -1;
 
                         if (action != ATTR_ACTION_EXISTS) {
-                            if (isQuote(selector.charAt(selectorIndex))) {
-                                char quote = selector.charAt(selectorIndex);
+                            if (isQuote(charAt(selectorIndex))) {
+                                char quote = charAt(selectorIndex);
                                 selectorIndex += 1;
                                 int sectionStart = selectorIndex;
-                                while (selectorIndex < selectorLength && selector.charAt(selectorIndex) != quote) {
+                                while (selectorIndex < selectorLength && charAt(selectorIndex) != quote) {
                                     selectorIndex +=
                                             // Skip next character if it is escaped
-                                            selector.charAt(selectorIndex) == '\\' ? 2 : 1;
+                                            charAt(selectorIndex) == '\\' ? 2 : 1;
                                 }
-                                if (selector.charAt(selectorIndex) != quote) {
+                                if (charAt(selectorIndex) != quote) {
                                     throw new ParserException("Attribute value didn't end");
                                 }
                                 value = unescapeCSS(selector.substring(sectionStart, selectorIndex));
                                 selectorIndex += 1;
                             } else {
                                 int valueStart = selectorIndex;
-                                while (selectorIndex < selectorLength && !Common.isTabLfFfCrOrSpace(selector.charAt(selectorIndex)) && selector.charAt(selectorIndex) != ']') {
+                                while (selectorIndex < selectorLength && !Common.isTabLfFfCrOrSpace(charAt(selectorIndex)) && charAt(selectorIndex) != ']') {
                                     selectorIndex +=
                                             // Skip next character if it is escaped
-                                            selector.charAt(selectorIndex) == '\\' ? 2 : 1;
+                                            charAt(selectorIndex) == '\\' ? 2 : 1;
                                 }
 
                                 value = unescapeCSS(selector.substring(valueStart, selectorIndex));
                             }
 
                             stripWhitespace(0);
-                            switch (selector.charAt(selectorIndex) | 0x20) {
+                            switch (charAt(selectorIndex) | 0x20) {
                                 // If the forceIgnore flag is set (either 'i' or 's'), use that value
                                 case 'i': {
                                     ignoreCase = IGNORE_CASE_TRUE;
@@ -414,7 +419,7 @@ final class CSS {
                         DataPseudo data = null;
                         if (charAtIsEqual(selectorIndex, '(')) {
                             if (isUnpackPseudos(name)) {
-                                if (canCharAt(selectorIndex + 1) && isQuote(selector.charAt(selectorIndex + 1))) {
+                                if (canCharAt(selectorIndex + 1) && isQuote(charAt(selectorIndex + 1))) {
                                     throw new ParserException("Pseudo-selector " + name + " cannot be quoted");
                                 }
 
@@ -478,7 +483,7 @@ final class CSS {
                         }
                         if (charAtIsEqual(selectorIndex, '|') && !charAtIsEqual(selectorIndex + 1, '|')) {
                             namespace = name;
-                            if (selector.charAt(selectorIndex + 1) == '*') {
+                            if (charAt(selectorIndex + 1) == '*') {
                                 name = "*";
                                 selectorIndex += 2;
                             } else {
@@ -497,6 +502,13 @@ final class CSS {
 
         private boolean charAtIsEqual(int i, char toCompare) {
             return i < selectorLength && selector.charAt(i) == toCompare;
+        }
+
+        private char charAt(int idx) {
+            if (idx < selectorLength) {
+                return selector.charAt(idx);
+            }
+            throw new ParserException(selector + " is not a valid selector");
         }
 
         private boolean canCharAt(int i) {
