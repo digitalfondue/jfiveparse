@@ -15,6 +15,12 @@ Future 2.x.x versions will require Java 17.
 
 [Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
+## Features
+ - a html 5 parser
+ - css selector parser and matcher (that works on both the "jfiveparse" DOM types or the `org.w3c.dom.Document` & co)
+ - a typesafe selector builder and matcher
+ - a converter from the internal "jfiveparse" DOM type to the `org.w3c.dom.Document`
+
 ## License
 
 jfiveparse is licensed under the Apache License Version 2.0.
