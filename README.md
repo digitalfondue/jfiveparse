@@ -48,6 +48,10 @@ compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.1.4'
 If you use it as a module, remember to add `requires ch.digitalfondue.jfiveparse;` in your module-info.
 If you are using the W3CDom class (and the various inner classes), you may also need to require the `java.xml` module, as it's an optional dependency.
 
+## Examples:
+
+### Parse, select and print all title from HN
+
 ```java
 package ch.digitalfondue.jfiveparse.example;
 
@@ -72,16 +76,11 @@ public class LoadHNTitle {
 }
 ```
 
-It will print:
+### Type safe selectors:
 
-```html
-<html><head></head><body>Hello world!</body></html>
-<html><head></head><body>Hello world!</body></html>
-<p><span>Hello world</span></p>
-<p><span>Hello world</span></p>
-```
+See https://github.com/digitalfondue/jfiveparse/blob/master/src/test/java/ch/digitalfondue/jfiveparse/NodeMatchersTest.java 
 
-## Examples:
+### Other examples
 
 See directory: https://github.com/digitalfondue/jfiveparse/tree/master/src/test/java/ch/digitalfondue/jfiveparse/example
 
