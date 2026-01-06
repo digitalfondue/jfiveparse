@@ -27,6 +27,8 @@ jfiveparse is licensed under the Apache License Version 2.0.
 
 ## Download
 
+### Stable
+
 maven:
 
 ```xml
@@ -42,6 +44,25 @@ gradle:
 ```
 compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.1.4'
 ```
+
+### Milestone releases
+
+maven:
+
+```xml
+<dependency>
+    <groupId>ch.digitalfondue.jfiveparse</groupId>
+    <artifactId>jfiveparse</artifactId>
+    <version>2.0.0-M1</version>
+</dependency>
+```
+
+gradle:
+
+```
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.0-M1'
+```
+
 
 ## Use:
 
