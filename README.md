@@ -11,7 +11,7 @@ It provides both fragment and full document parsing. It can parse directly from 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
 
 Version 1.1.4 and older require Java 11.
-Future 2.x.x versions will require Java 17.
+Version 2.x.x require Java 17.
 
 [Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
@@ -53,14 +53,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>2.0.0-M1</version>
+    <version>2.0.0-M2</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.0-M1'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.0-M2'
 ```
 
 
