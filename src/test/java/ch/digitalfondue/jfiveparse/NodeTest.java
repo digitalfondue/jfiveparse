@@ -268,6 +268,39 @@ class NodeTest {
     }
 
     @Test
+    void normalizeStartMiddleEnd() {
+
+        // start
+        Element wrapper = new Element("div");
+        wrapper.appendChild(new Text("Part 1"));
+        wrapper.appendChild(new Element("div"));
+        wrapper.appendChild(new Element("div"));
+        wrapper.normalize();
+        assertEquals(3, wrapper.getChildNodes().size());
+        assertEquals("Part 1", wrapper.getChildNodes().get(0).getTextContent());
+
+        // middle
+        wrapper = new Element("div");
+        wrapper.appendChild(new Element("div"));
+        wrapper.appendChild(new Text("Part 1"));
+        wrapper.appendChild(new Element("div"));
+        wrapper.normalize();
+        assertEquals(3, wrapper.getChildNodes().size());
+        assertEquals("Part 1", wrapper.getChildNodes().get(1).getTextContent());
+
+
+        // end
+        wrapper = new Element("div");
+        wrapper.appendChild(new Element("div"));
+        wrapper.appendChild(new Element("div"));
+        wrapper.appendChild(new Text("Part 1"));
+        wrapper.normalize();
+
+        assertEquals(3, wrapper.getChildNodes().size());
+        assertEquals("Part 1", wrapper.getChildNodes().get(2).getTextContent());
+    }
+
+    @Test
     void normalizeEmptyNested() {
 
         //same case of https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize

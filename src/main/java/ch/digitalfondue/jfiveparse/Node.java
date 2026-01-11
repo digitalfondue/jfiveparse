@@ -544,6 +544,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 			// stop accumulating node and add current
 			else if (text != null) {
 				replaceTextNodeWith(text, concatenatedText);
+				concatenatedText = null;
 				text = null;
 				n.normalize();
 			} else {
