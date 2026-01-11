@@ -16,10 +16,10 @@ Version 2.x.x require Java 17.
 [Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
 ## Features
- - a html 5 parser
- - css selector parser and matcher (that works on both the "jfiveparse" DOM types or the `org.w3c.dom.Document` & co)
+ - a html 5 parser with a compact footprint with 0 dependencies (jar is around 175kb)
+ - css selector parser and matcher (that works on both the "jfiveparse" types or `org.w3c.dom.*` nodes)
  - a typesafe selector builder and matcher
- - a converter from the internal "jfiveparse" DOM type to the `org.w3c.dom.Document`
+ - a converter from the internal "jfiveparse" Document to `org.w3c.dom.Document`
 
 ## License
 
@@ -53,14 +53,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>2.0.0-M2</version>
+    <version>2.0.0-M3</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.0-M2'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.0-M3'
 ```
 
 
