@@ -53,6 +53,7 @@ class TreeConstructor {
 
     final boolean disableIgnoreTokenInBodyStartTag;
     final boolean interpretSelfClosingAnythingElse;
+    final boolean disableInTableTextForsterParenting;
 
     // ----
     private int tokenType;
@@ -107,9 +108,10 @@ class TreeConstructor {
         this.tokenizer = tokenizer;
     }
 
-    TreeConstructor(boolean disableIgnoreTokenInBodyStartTag, boolean interpretSelfClosingAnythingElse) {
+    TreeConstructor(boolean disableIgnoreTokenInBodyStartTag, boolean interpretSelfClosingAnythingElse, boolean disableInTableTextForsterParenting) {
         this.disableIgnoreTokenInBodyStartTag = disableIgnoreTokenInBodyStartTag;
         this.interpretSelfClosingAnythingElse = interpretSelfClosingAnythingElse;
+        this.disableInTableTextForsterParenting = disableInTableTextForsterParenting;
     }
 
     private void setTagNameAndSaveOriginal(ResizableCharBuilder rawTagName) {
