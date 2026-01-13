@@ -243,7 +243,7 @@ final class TreeConstructorInTable {
             treeConstructor.appendToPendingTableCharactersToken(chr);
         } else {
             ResizableCharBuilder chars = treeConstructor.getPendingTableCharactersToken();
-            if (!isAllSpaceCharacters(chars)) {
+            if (!isAllSpaceCharacters(chars) && !treeConstructor.disableInTableTextForsterParenting) {
                 // TODO CHECK
 
                 treeConstructor.emitParseError();

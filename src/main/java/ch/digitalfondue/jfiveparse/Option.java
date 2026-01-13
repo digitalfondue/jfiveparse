@@ -93,4 +93,6 @@ public enum Option {
      * When encountering unknown self-closing tag, will interpret as self-closing tag instead of ignoring.
      */
     INTERPRET_SELF_CLOSING_ANYTHING_ELSE,
+
+    DISABLE_IN_TABLE_TEXT_FOSTER_PARENTING
 }
