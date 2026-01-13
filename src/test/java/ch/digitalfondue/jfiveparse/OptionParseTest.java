@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +32,7 @@ class OptionParseTest {
         assertEquals("<html><head></head><body>a</body></html>", JFiveParse.serialize(dw));
 
         // with option
-        Document l = JFiveParse.parse("<html><body><tr><td>a</td></tr></body>", Collections.singleton(Option.DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG));
+        Document l = JFiveParse.parse("<html><body><tr><td>a</td></tr></body>", Set.of(Option.DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG));
         assertEquals("<html><head></head><body><tr><td>a</td></tr></body></html>", JFiveParse.serialize(l));
     }
 
@@ -44,8 +44,27 @@ class OptionParseTest {
         assertEquals("<hr><sj-test><sj-a><sj-b></sj-b></sj-a></sj-test>", html);
 
         // with option
-        var selfClosing = JFiveParse.parseFragment("<hr /><sj-test /><sj-a><sj-b /></mj-a>", Collections.singleton(Option.INTERPRET_SELF_CLOSING_ANYTHING_ELSE));
+        var selfClosing = JFiveParse.parseFragment("<hr /><sj-test /><sj-a><sj-b /></mj-a>", Set.of(Option.INTERPRET_SELF_CLOSING_ANYTHING_ELSE));
         var selfClosingHtml = selfClosing.stream().map(s -> ((Element) s).getOuterHTML()).collect(Collectors.joining());
         assertEquals("<hr><sj-test></sj-test><sj-a><sj-b></sj-b></sj-a>", selfClosingHtml);
+    }
+
+    @Test
+    void optionDisableInTableTextFosterParenting() {
+        var res = JFiveParse.parse("""
+                <table>1
+                    <thead>12<tr>3<th>4</th>5</tr>6</thead>21
+                    <tbody>22<tr>3<td>4</td>5</tr>6</tbody>22
+                    <tfoot>32<tr>3<th>4</th>5</tr>6</tfoot>23
+                </table>
+                """, Set.of(Option.DISABLE_IN_TABLE_TEXT_FOSTER_PARENTING));
+
+        assertEquals("""
+                <table>1
+                    <thead>12<tr>3<th>4</th>5</tr>6</thead>21
+                    <tbody>22<tr>3<td>4</td>5</tr>6</tbody>22
+                    <tfoot>32<tr>3<th>4</th>5</tr>6</tfoot>23
+                </table>
+                """, res.getBody().getInnerHTML());
     }
 }
