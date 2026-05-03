@@ -45,12 +45,16 @@ final class CSS {
 
     // expose it on the JFiveParse class (?)
     static List<List<CssSelector>> parseSelector(String selector) {
-        List<List<CssSelector>> subselects = new ArrayList<>();
-        int endIndex = new ParseSelector(subselects, selector, 0).parse();
-        if (endIndex < selector.length()) {
-            throw new ParserException("Unmatched selector: " + selector.substring(endIndex));
+        try {
+            List<List<CssSelector>> subselects = new ArrayList<>();
+            int endIndex = new ParseSelector(subselects, selector, 0).parse();
+            if (endIndex < selector.length()) {
+                throw new ParserException("Unmatched selector: " + selector.substring(endIndex));
+            }
+            return subselects;
+        } catch (IndexOutOfBoundsException e) {
+            throw new ParserException("Parse selector for selector " + selector, e);
         }
-        return subselects;
     }
 
     sealed interface CssSelector {}
