@@ -507,9 +507,12 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     @Override
     public String getTextContent() {
-		if (this instanceof Text t) {
-			return t.getData();
-		}
+        if (!hasChildNodes()) {
+            return "";
+        }
+        if (this instanceof Text t) {
+            return t.getData();
+        }
         StringBuilder sb = new StringBuilder();
         traverse((n) -> {
             if (n instanceof Text t) {
@@ -517,6 +520,11 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
             }
         });
         return sb.toString();
+    }
+
+    public void setTextContent(String text) {
+        empty();
+        appendChild(new Text(text));
     }
 
     /**

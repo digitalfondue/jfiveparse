@@ -178,6 +178,17 @@ class NodeTest {
     }
 
     @Test
+    void setTextContent() {
+        Document doc = parser.parse("<div id=myid class=></div>");
+        Element e = doc.getElementById("myid");
+        assertEquals("", e.getInnerHTML());
+        assertEquals("", e.getTextContent());
+        e.setTextContent("hello world");
+        assertEquals("hello world", e.getInnerHTML());
+        assertEquals("hello world", e.getTextContent());
+    }
+
+    @Test
     void contains() {
         Document doc = parser.parse("<div id=cont> text<div> bla bla <div id=myid class=>blabla</div>plop</div></div>");
         Element e = doc.getElementById("myid");

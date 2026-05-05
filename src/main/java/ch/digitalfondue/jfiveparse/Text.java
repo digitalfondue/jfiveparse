@@ -63,10 +63,20 @@ public final class Text extends Node {
         return "#text";
     }
 
-	@Override
-	public Node cloneNode(boolean deep) {
-		return new Text(getData());
-	}
+    @Override
+    public Node cloneNode(boolean deep) {
+        return new Text(getData());
+    }
+
+    @Override
+    public String getTextContent() {
+        return getData();
+    }
+
+    @Override
+    public void setTextContent(String text) {
+        setData(text);
+    }
 
     @Override
     public boolean isEqualNode(Node other) {
