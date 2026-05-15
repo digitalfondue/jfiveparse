@@ -18,8 +18,11 @@ package ch.digitalfondue.jfiveparse;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
@@ -36,10 +39,81 @@ import java.util.zip.GZIPInputStream;
  */
 final class EntitiesPrefix {
 
-    static final EntitiesPrefix ENTITIES = prepare();
+    static {
+        prepare();
+    }
 
-    private static EntitiesPrefix prepare() {
-        EntitiesPrefix e = new EntitiesPrefix(null);
+    private static void flatten(EntitiesPrefix root) {
+        List<EntitiesPrefix> nodes = new ArrayList<>();
+        Map<EntitiesPrefix, Integer> nodeToIndex = new HashMap<>();
+        Queue<EntitiesPrefix> queue = new LinkedList<>();
+        queue.add(root);
+        nodeToIndex.put(root, 0);
+
+        while (!queue.isEmpty()) {
+            EntitiesPrefix node = queue.poll();
+            nodes.add(node);
+            if (node.childsCompacted != null) {
+                for (EntitiesPrefix child : node.childsCompacted) {
+                    if (child != null && !nodeToIndex.containsKey(child)) {
+                        nodeToIndex.put(child, nodes.size() + queue.size() + 1);
+                        queue.add(child);
+                    }
+                }
+            }
+        }
+        // re-indexing to ensure contiguous indices in BFS order
+        nodeToIndex.clear();
+        for (int i = 0; i < nodes.size(); i++) {
+            nodeToIndex.put(nodes.get(i), i);
+        }
+
+        int nodeCount = nodes.size();
+        NODE_CHAR = new char[nodeCount];
+        NODE_CHILDREN_BASE = new int[nodeCount];
+        NODE_MIN_CHILD_CHAR = new char[nodeCount];
+        NODE_CHILDREN_COUNT = new int[nodeCount];
+        NODE_RESULTS = new char[nodeCount][];
+
+        List<Integer> childPointersList = new ArrayList<>();
+
+        for (int i = 0; i < nodeCount; i++) {
+            EntitiesPrefix node = nodes.get(i);
+            NODE_CHAR[i] = node.c;
+            NODE_RESULTS[i] = node.chars;
+
+            if (node.childsCompacted != null) {
+                NODE_CHILDREN_BASE[i] = childPointersList.size();
+                NODE_MIN_CHILD_CHAR[i] = (char) node.offset;
+                NODE_CHILDREN_COUNT[i] = node.childsCompacted.length;
+                for (EntitiesPrefix child : node.childsCompacted) {
+                    if (child != null) {
+                        childPointersList.add(nodeToIndex.get(child));
+                    } else {
+                        childPointersList.add(-1);
+                    }
+                }
+            } else {
+                NODE_CHILDREN_BASE[i] = -1;
+                NODE_CHILDREN_COUNT[i] = 0;
+            }
+        }
+
+        CHILD_POINTERS = new int[childPointersList.size()];
+        for (int i = 0; i < childPointersList.size(); i++) {
+            CHILD_POINTERS[i] = childPointersList.get(i);
+        }
+    }
+
+    static char[] NODE_CHAR;
+    static int[] NODE_CHILDREN_BASE;
+    static char[] NODE_MIN_CHILD_CHAR;
+    static int[] NODE_CHILDREN_COUNT;
+    static char[][] NODE_RESULTS;
+    static int[] CHILD_POINTERS;
+
+    private static void prepare() {
+        EntitiesPrefix e = new EntitiesPrefix();
         try (DataInputStream dais = new DataInputStream(new GZIPInputStream(EntitiesPrefix.class.getResourceAsStream("/ch/digitalfondue/jfiveparse/entities-with-1-2-codepoint")))) {
 
             // number of entities with only one codepoint
@@ -53,7 +127,7 @@ final class EntitiesPrefix {
             }
 
             e.compact();
-            return e;
+            flatten(e);
         } catch (IOException ioe) {
             throw new IllegalStateException(ioe);
         }
@@ -71,10 +145,8 @@ final class EntitiesPrefix {
     private int offset;
     private EntitiesPrefix[] childsCompacted;
     //
-    private final EntitiesPrefix parent;
 
-    EntitiesPrefix(EntitiesPrefix prefix) {
-        this.parent = prefix;
+    EntitiesPrefix() {
     }
 
     void compact() {
@@ -95,31 +167,6 @@ final class EntitiesPrefix {
                 }
             }
         }
-    }
-
-    String getString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(c);
-
-        var p = parent;
-        while (p != null) {
-            sb.append(p.c);
-            p = p.parent;
-        }
-
-        return sb.reverse().toString();
-    }
-
-    EntitiesPrefix getMaybeCompleteParent() {
-        var p = parent;
-        while (p != null) {
-            if (p.isComplete()) {
-                return p;
-            }
-            p = p.parent;
-        }
-        return null;
     }
 
     void addWord(String s, int[] codepoints) {
@@ -144,26 +191,9 @@ final class EntitiesPrefix {
             }
 
             if (!tmpChilds.containsKey(nextVal)) {
-                tmpChilds.put(nextVal, new EntitiesPrefix(this));
+                tmpChilds.put(nextVal, new EntitiesPrefix());
             }
             tmpChilds.get(nextVal).addWord(s.substring(1), codepoints);
-        }
-    }
-
-    boolean isComplete() {
-        return chars != null;
-    }
-
-    EntitiesPrefix getNode(char c) {
-        if (childsCompacted != null) {
-            int idx = c - offset;
-            if (idx < 0 || idx >= childsCompacted.length) {
-                return null;
-            } else {
-                return childsCompacted[idx];
-            }
-        } else {
-            return null;
         }
     }
 }

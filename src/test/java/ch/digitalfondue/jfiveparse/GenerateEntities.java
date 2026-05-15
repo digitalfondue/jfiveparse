@@ -43,7 +43,7 @@ public class GenerateEntities {
         String json = Files.readString(Paths.get("src/test/resources/entities.json"));
         Map<String, EntityValues> m = new GsonBuilder().create().fromJson(json, type);
 
-        EntitiesPrefix p = new EntitiesPrefix(null);
+        EntitiesPrefix p = new EntitiesPrefix();
 
         ByteArrayOutputStream baosOneCodePoint = new ByteArrayOutputStream();
         GZIPOutputStream osOneCodePoint = new GZIPOutputStream(baosOneCodePoint);

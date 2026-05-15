@@ -1721,36 +1721,57 @@ class TokenizerState {
 
     private static char[] parseEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler, int chr) {
         int matchedCount = 0;
-        var currentPrefix = EntitiesPrefix.ENTITIES;
+        int currentNodeIdx = 0;
+        int lastCompleteNodeIdx = -1;
+        int lastCompleteMatchedCount = 0;
+
         ResizableCharBuilder tentativelyMatched = new ResizableCharBuilder();
 
         for (;;) {
+            if (EntitiesPrefix.NODE_RESULTS[currentNodeIdx] != null) {
+                lastCompleteNodeIdx = currentNodeIdx;
+                lastCompleteMatchedCount = matchedCount;
+            }
+
             int next = processedInputStream.peekNextInputCharacter(matchedCount + 1);
             if (next != Characters.EOF) {
                 tentativelyMatched.append((char) next);
-            }
-            var tmpPrefix = currentPrefix.getNode((char) next);
-            if (tmpPrefix != null) {
-                currentPrefix = tmpPrefix;
-                matchedCount++;
             } else {
+                break;
+            }
+
+            char nextChar = (char) next;
+            int childrenBase = EntitiesPrefix.NODE_CHILDREN_BASE[currentNodeIdx];
+            boolean found = false;
+            if (childrenBase != -1) {
+                int offset = nextChar - EntitiesPrefix.NODE_MIN_CHILD_CHAR[currentNodeIdx];
+                if (offset >= 0 && offset < EntitiesPrefix.NODE_CHILDREN_COUNT[currentNodeIdx]) {
+                    int nextNodeIdx = EntitiesPrefix.CHILD_POINTERS[childrenBase + offset];
+                    if (nextNodeIdx != -1) {
+                        currentNodeIdx = nextNodeIdx;
+                        matchedCount++;
+                        found = true;
+                    }
+                }
+            }
+
+            if (!found) {
                 break;
             }
         }
 
-        if (!currentPrefix.isComplete()) {
-            var maybeCompleteParent = currentPrefix.getMaybeCompleteParent();
-            if (maybeCompleteParent != null) {
-                currentPrefix = maybeCompleteParent;
-            }
+        if (EntitiesPrefix.NODE_RESULTS[currentNodeIdx] == null) {
+            currentNodeIdx = lastCompleteNodeIdx;
+            matchedCount = lastCompleteMatchedCount;
         }
 
-        if (currentPrefix.isComplete()) {
-            String entityMatched = currentPrefix.getString();
+        if (currentNodeIdx != -1 && EntitiesPrefix.NODE_RESULTS[currentNodeIdx] != null) {
+            char nodeChar = EntitiesPrefix.NODE_CHAR[currentNodeIdx];
+            char[] result = EntitiesPrefix.NODE_RESULTS[currentNodeIdx];
             if (inAttribute) {
-                return handleCompleteEntityInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
+                return handleCompleteEntityInAttribute(processedInputStream, tokenHandler, nodeChar, matchedCount, result);
             } else {
-                return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
+                return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, nodeChar, matchedCount, result);
             }
         } else {
             // handleUncompleteEntity
@@ -1766,7 +1787,7 @@ class TokenizerState {
             boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.at(tentativelyMatchedLength - 1) == Characters.SEMICOLON;
             if (emitParseError) {
                 for (int i = 0; emitParseError && i < tentativelyMatchedLength - 1; i++) {
-                    emitParseError = Common.isAlphaNumericASCII(chr);
+                    emitParseError = Common.isAlphaNumericASCII(tentativelyMatched.at(i));
                 }
             }
 
@@ -1777,32 +1798,30 @@ class TokenizerState {
         }
     }
 
-
-
-    private static char[] handleCompleteEntityNotInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, EntitiesPrefix currentPrefix, String entityMatched) {
-        if ((currentPrefix.c) != Characters.SEMICOLON) {
+    private static char[] handleCompleteEntityNotInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, char nodeChar, int matchedCount, char[] chars) {
+        if (nodeChar != Characters.SEMICOLON) {
             tokenHandler.emitParseError();
         }
 
-        processedInputStream.consume(entityMatched.length() - 1);
-        return currentPrefix.chars;
+        processedInputStream.consume(matchedCount);
+        return chars;
     }
 
-    private static char[] handleCompleteEntityInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, EntitiesPrefix currentPrefix, String entityMatched) {
-        if (currentPrefix.c != Characters.SEMICOLON) {
-            int nextCharacterAfterMatchedEntity = processedInputStream.peekNextInputCharacter(entityMatched.length());
+    private static char[] handleCompleteEntityInAttribute(ProcessedInputStream processedInputStream, Tokenizer tokenHandler, char nodeChar, int matchedCount, char[] chars) {
+        if (nodeChar != Characters.SEMICOLON) {
+            int nextCharacterAfterMatchedEntity = processedInputStream.peekNextInputCharacter(matchedCount + 1);
             if (Common.isAlphaNumericASCII(nextCharacterAfterMatchedEntity)) {
                 return null;
             } else if (Characters.EQUALS_SIGN == nextCharacterAfterMatchedEntity) {
                 tokenHandler.emitParseError();
                 return null;
             } else {
-                return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatched);
+                return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, nodeChar, matchedCount, chars);
             }
 
         } else {
-            processedInputStream.consume(entityMatched.length() - 1);
-            return currentPrefix.chars;
+            processedInputStream.consume(matchedCount);
+            return chars;
         }
     }
 
