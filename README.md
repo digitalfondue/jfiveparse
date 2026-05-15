@@ -10,8 +10,8 @@ jfiveparse pass all the non-scripted tests for the tokenizer and tree constructi
 It provides both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
 
-Version 1.1.4 and older require Java 11.
 Version 2.x.x require Java 17.
+Version 1.1.4 and older require Java 11.
 
 [Javadoc@javadoc.io](https://www.javadoc.io/doc/ch.digitalfondue.jfiveparse/jfiveparse/).
 
@@ -35,34 +35,15 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>1.1.4</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:1.1.4'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.0'
 ```
-
-### Milestone releases
-
-maven:
-
-```xml
-<dependency>
-    <groupId>ch.digitalfondue.jfiveparse</groupId>
-    <artifactId>jfiveparse</artifactId>
-    <version>2.0.0-M4</version>
-</dependency>
-```
-
-gradle:
-
-```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.0-M4'
-```
-
 
 ## Use:
 
@@ -126,9 +107,10 @@ placed inside a documentFragment. This will be fixed.
 
 The parser can be customized to allow some non-standard behaviour, you can see the following tests: https://github.com/digitalfondue/jfiveparse/blob/master/src/test/java/ch/digitalfondue/jfiveparse/OptionParseTest.java
 
- - DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG : allow to have for example "tr" tag without the containing table/tbody.
- - INTERPRET_SELF_CLOSING_ANYTHING_ELSE :  When encountering unknown self-closing tag, they will be interpreted 
-   as it is and not as open tag only, thus creating a non-intuitive DOM.    
+ - DISABLE_IGNORE_TOKEN_IN_BODY_START_TAG: allow to have for example "tr" tag without the containing table/tbody.
+ - INTERPRET_SELF_CLOSING_ANYTHING_ELSE:  When encountering unknown self-closing tag, they will be interpreted 
+   as it is and not as open tag only, thus creating a non-intuitive DOM.
+ - DISABLE_IN_TABLE_TEXT_FOSTER_PARENTING: allow to have text inside table / tr, without reparenting in td/th nodes 
 
 ### Entities
 The &ntities; are by default (and by specification) parsed and interpreted. 
@@ -182,6 +164,6 @@ and tag names.
   - various optimizations...
   - TokenizerRCDataStates.handleRCDataState could be optimized 
       - (textarea related)
-
+    
 
 mvn clean test jacoco:report
