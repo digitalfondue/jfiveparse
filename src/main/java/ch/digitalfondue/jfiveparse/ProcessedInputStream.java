@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 /**
  * Even though the html5 specification is working with codepoints, this input
@@ -30,71 +31,136 @@ import java.io.Reader;
  */
 abstract class ProcessedInputStream {
 
-    private boolean crFound;
     protected final ResizableIntBuffer buffer = new ResizableIntBuffer();
 
-    protected abstract int read();
+    protected abstract int getNext();
 
     static class StringProcessedInputStream extends ProcessedInputStream {
         protected int pos = 0;
         protected final char[] input;
 
         StringProcessedInputStream(String input) {
-            this.input = input.toCharArray();
+            this.input = normalize(input);
+        }
+
+        private static char[] normalize(String s) {
+            char[] arr = s.toCharArray();
+            int n = arr.length;
+            int j = 0;
+            for (int i = 0; i < n; i++) {
+                char c = arr[i];
+                if (c == '\r') {
+                    arr[j++] = '\n';
+                    if (i + 1 < n && arr[i + 1] == '\n') {
+                        i++;
+                    }
+                } else {
+                    arr[j++] = c;
+                }
+            }
+            return j == n ? arr : Arrays.copyOf(arr, j);
         }
 
         @Override
-        protected int read() {
-            try {
+        protected int getNext() {
+            if (pos < input.length) {
                 return input[pos++];
-            } catch (IndexOutOfBoundsException s) {
-                return -1;
             }
+            return -1;
+        }
+
+        @Override
+        protected int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
+            int n = input.length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if ((stopAtAmpersand && c == '&') || (stopAtLessThan && c == '<') || c == '\0') {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return -1;
+        }
+
+        @Override
+        protected int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
+            int n = input.length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if (c == quoteChar || (stopAtAmpersand && c == '&') || c == '\0') {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return -1;
+        }
+
+        @Override
+        protected int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
+            int n = input.length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if (Common.isTabLfFfCrOrSpace(c) || c == '&' || c == '>' || c == '\0' ||
+                        c == '"' || c == '\'' || c == '<' || c == '=' || c == '`') {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return -1;
         }
     }
 
     static final class ReaderProcessedInputStream extends ProcessedInputStream {
 
         private final Reader reader;
+        private boolean crFound;
 
         ReaderProcessedInputStream(Reader reader) {
             this.reader = reader;
         }
 
         @Override
-        protected int read() {
+        protected int getNext() {
             try {
-                return reader.read();
+                int chr = reader.read();
+                if (crFound) {
+                    crFound = false;
+                    if (chr == Characters.LF) {
+                        chr = reader.read();
+                    }
+                }
+
+                if (chr == Characters.CR) {
+                    crFound = true;
+                    chr = Characters.LF;
+                }
+                return chr;
             } catch (IOException ioe) {
                 throw new ParserException(ioe);
             }
         }
     }
 
-    //
-    private int readWithCRHandling() {
-        int chr = read();
-        if (crFound) {
-            //chr = handleCrFoundInternal(chr);
-            crFound = false;
-            if (chr == Characters.LF) {
-                chr = read();
-            }
-        }
-
-        if (chr == Characters.CR) {
-            // handleChrIsCR
-            crFound = true;
-            chr = Characters.LF;
-        }
-        return chr;
-    }
-
     int peekNextInputCharacter(int offset) {
         if (buffer.length() < offset) {
             // fill buffer
             for (int i = buffer.length(); i < offset; i++) {
-                buffer.add(readWithCRHandling());
+                buffer.add(getNext());
             }
         }
         return buffer.getCharAt(offset);
@@ -111,7 +177,78 @@ abstract class ProcessedInputStream {
     }
 
     int consume() {
-        return buffer.isEmpty ? readWithCRHandling() : buffer.removeFirst();
+        return buffer.isEmpty ? getNext() : buffer.removeFirst();
+    }
+
+    int readUntil(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if ((stopAtAmpersand && chr == '&') || (stopAtLessThan && chr == '<') || chr == '\0' || chr == -1) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return readUntilInternal(builder, stopAtAmpersand, stopAtLessThan);
+    }
+
+    int readUntilAttributeValue(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if (chr == quoteChar || (stopAtAmpersand && chr == '&') || chr == '\0' || chr == -1) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return readUntilAttributeValueInternal(builder, quoteChar, stopAtAmpersand);
+    }
+
+    int readUntilAttributeValueUnquoted(ResizableCharBuilder builder) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if (Common.isTabLfFfCrOrSpace(chr) || chr == '&' || chr == '>' || chr == '\0' ||
+                    chr == '"' || chr == '\'' || chr == '<' || chr == '=' || chr == '`' || chr == -1) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return readUntilAttributeValueUnquotedInternal(builder);
+    }
+
+    protected int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
+        int chr;
+        while ((chr = getNext()) != -1) {
+            if ((stopAtAmpersand && chr == '&') || (stopAtLessThan && chr == '<') || chr == '\0') {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return -1;
+    }
+
+    protected int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
+        int chr;
+        while ((chr = getNext()) != -1) {
+            if (chr == quoteChar || (stopAtAmpersand && chr == '&') || chr == '\0') {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return -1;
+    }
+
+    protected int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
+        int chr;
+        while ((chr = getNext()) != -1) {
+            if (Common.isTabLfFfCrOrSpace(chr) || chr == '&' || chr == '>' || chr == '\0' ||
+                    chr == '"' || chr == '\'' || chr == '<' || chr == '=' || chr == '`') {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return -1;
     }
 
     void reconsume(int chr) {

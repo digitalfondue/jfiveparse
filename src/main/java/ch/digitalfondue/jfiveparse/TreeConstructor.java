@@ -120,8 +120,9 @@ class TreeConstructor {
     }
 
     void setTagName(String lowerCasedTagName) {
-        this.tagName = lowerCasedTagName;
         this.tagNameID = Common.tagNameToID(lowerCasedTagName);
+        String cached = Common.getTagNameFromID(this.tagNameID);
+        this.tagName = cached != null ? cached : lowerCasedTagName;
     }
 
     //

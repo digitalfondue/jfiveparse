@@ -18,6 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.IntFunction;
 
 /**
@@ -154,12 +155,22 @@ final class Common {
             return;
         }
 
-        for (String lowerCaseAttr : new ArrayList<>(attrs.keySet())) {
-            if (SVG_ATTRIBUTES.containsKey(lowerCaseAttr)) {
+        List<String> toAdjust = null;
+        for (AttributeNode attr : attrs) {
+            if (SVG_ATTRIBUTES.containsKey(attr.name)) {
+                if (toAdjust == null) {
+                    toAdjust = new ArrayList<>(2);
+                }
+                toAdjust.add(attr.name);
+            }
+        }
+
+        if (toAdjust != null) {
+            for (String lowerCaseAttr : toAdjust) {
                 AttributeNode attr = attrs.get(lowerCaseAttr);
+                attrs.remove(lowerCaseAttr);
                 attr.name = SVG_ATTRIBUTES.get(lowerCaseAttr);
                 attrs.put(attr);
-                attrs.remove(lowerCaseAttr);
             }
         }
     }
@@ -185,15 +196,25 @@ final class Common {
             return;
         }
 
-        for (String lowerCaseAttr: new ArrayList<>(attrs.keySet())) {
-            if (FOREIGN_ATTRIBUTES_TO_ADJUST.containsKey(lowerCaseAttr)) {
+        List<String> toAdjust = null;
+        for (AttributeNode attr : attrs) {
+            if (FOREIGN_ATTRIBUTES_TO_ADJUST.containsKey(attr.name)) {
+                if (toAdjust == null) {
+                    toAdjust = new ArrayList<>(2);
+                }
+                toAdjust.add(attr.name);
+            }
+        }
+
+        if (toAdjust != null) {
+            for (String lowerCaseAttr : toAdjust) {
                 String[] adj = FOREIGN_ATTRIBUTES_TO_ADJUST.get(lowerCaseAttr);
                 AttributeNode attr = attrs.get(lowerCaseAttr);
+                attrs.remove(lowerCaseAttr);
                 attr.prefix = adj[0];
                 attr.name = adj[1];
                 attr.namespace = adj[2];
                 attrs.put(attr);
-                attrs.remove(lowerCaseAttr);
             }
         }
     }
@@ -389,6 +410,7 @@ final class Common {
             case "math" -> ELEMENT_MATH_ID;
             case "svg" -> ELEMENT_SVG_ID;
             case "ruby" -> ELEMENT_RUBY_ID;
+            //
             case "span" -> ELEMENT_SPAN_ID;
             case "sub" -> ELEMENT_SUB_ID;
             case "sup" -> ELEMENT_SUP_ID;
@@ -397,7 +419,6 @@ final class Common {
         };
     }
 
-    // this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
     static final int ELEMENT_ADDRESS_ID = 1;
     static final int ELEMENT_APPLET_ID = 2;
     static final int ELEMENT_AREA_ID = 3;
@@ -479,16 +500,13 @@ final class Common {
     static final int ELEMENT_UL_ID = 79;
     static final int ELEMENT_WBR_ID = 80;
     static final int ELEMENT_XMP_ID = 81;
-    // end this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
     static final int ELEMENT_OPTGROUP_ID = 82;
     static final int ELEMENT_OPTION_ID = 83;
     static final int ELEMENT_RB_ID = 84;
     static final int ELEMENT_RP_ID = 85;
     static final int ELEMENT_RT_ID = 86;
     static final int ELEMENT_RTC_ID = 87;
-    //
     static final int ELEMENT_A_ID = 88;
-    //
     static final int ELEMENT_DIALOG_ID = 89;
     static final int ELEMENT_SEARCH_ID = 90;
     static final int ELEMENT_B_ID = 91;
@@ -509,11 +527,133 @@ final class Common {
     static final int ELEMENT_MATH_ID = 106;
     static final int ELEMENT_SVG_ID = 107;
     static final int ELEMENT_RUBY_ID = 108;
-    //
     static final int ELEMENT_SPAN_ID = 109;
     static final int ELEMENT_SUB_ID = 110;
     static final int ELEMENT_SUP_ID = 111;
     static final int ELEMENT_VAR_ID = 112;
+
+    private static final String[] ID_TO_TAGNAME = new String[113];
+    static {
+        ID_TO_TAGNAME[ELEMENT_ADDRESS_ID] = "address";
+        ID_TO_TAGNAME[ELEMENT_APPLET_ID] = "applet";
+        ID_TO_TAGNAME[ELEMENT_AREA_ID] = "area";
+        ID_TO_TAGNAME[ELEMENT_ARTICLE_ID] = "article";
+        ID_TO_TAGNAME[ELEMENT_ASIDE_ID] = "aside";
+        ID_TO_TAGNAME[ELEMENT_BASE_ID] = "base";
+        ID_TO_TAGNAME[ELEMENT_BASEFONT_ID] = "basefont";
+        ID_TO_TAGNAME[ELEMENT_BGSOUND_ID] = "bgsound";
+        ID_TO_TAGNAME[ELEMENT_BLOCKQUOTE_ID] = "blockquote";
+        ID_TO_TAGNAME[ELEMENT_BODY_ID] = "body";
+        ID_TO_TAGNAME[ELEMENT_BR_ID] = "br";
+        ID_TO_TAGNAME[ELEMENT_BUTTON_ID] = "button";
+        ID_TO_TAGNAME[ELEMENT_CAPTION_ID] = "caption";
+        ID_TO_TAGNAME[ELEMENT_CENTER_ID] = "center";
+        ID_TO_TAGNAME[ELEMENT_COL_ID] = "col";
+        ID_TO_TAGNAME[ELEMENT_COLGROUP_ID] = "colgroup";
+        ID_TO_TAGNAME[ELEMENT_DD_ID] = "dd";
+        ID_TO_TAGNAME[ELEMENT_DETAILS_ID] = "details";
+        ID_TO_TAGNAME[ELEMENT_DIR_ID] = "dir";
+        ID_TO_TAGNAME[ELEMENT_DIV_ID] = "div";
+        ID_TO_TAGNAME[ELEMENT_DL_ID] = "dl";
+        ID_TO_TAGNAME[ELEMENT_DT_ID] = "dt";
+        ID_TO_TAGNAME[ELEMENT_EMBED_ID] = "embed";
+        ID_TO_TAGNAME[ELEMENT_FIELDSET_ID] = "fieldset";
+        ID_TO_TAGNAME[ELEMENT_FIGCAPTION_ID] = "figcaption";
+        ID_TO_TAGNAME[ELEMENT_FIGURE_ID] = "figure";
+        ID_TO_TAGNAME[ELEMENT_FOOTER_ID] = "footer";
+        ID_TO_TAGNAME[ELEMENT_FORM_ID] = "form";
+        ID_TO_TAGNAME[ELEMENT_FRAME_ID] = "frame";
+        ID_TO_TAGNAME[ELEMENT_FRAMESET_ID] = "frameset";
+        ID_TO_TAGNAME[ELEMENT_H1_ID] = "h1";
+        ID_TO_TAGNAME[ELEMENT_H2_ID] = "h2";
+        ID_TO_TAGNAME[ELEMENT_H3_ID] = "h3";
+        ID_TO_TAGNAME[ELEMENT_H4_ID] = "h4";
+        ID_TO_TAGNAME[ELEMENT_H5_ID] = "h5";
+        ID_TO_TAGNAME[ELEMENT_H6_ID] = "h6";
+        ID_TO_TAGNAME[ELEMENT_HEAD_ID] = "head";
+        ID_TO_TAGNAME[ELEMENT_HEADER_ID] = "header";
+        ID_TO_TAGNAME[ELEMENT_HGROUP_ID] = "hgroup";
+        ID_TO_TAGNAME[ELEMENT_HR_ID] = "hr";
+        ID_TO_TAGNAME[ELEMENT_HTML_ID] = "html";
+        ID_TO_TAGNAME[ELEMENT_IFRAME_ID] = "iframe";
+        ID_TO_TAGNAME[ELEMENT_IMG_ID] = "img";
+        ID_TO_TAGNAME[ELEMENT_INPUT_ID] = "input";
+        ID_TO_TAGNAME[ELEMENT_LI_ID] = "li";
+        ID_TO_TAGNAME[ELEMENT_LINK_ID] = "link";
+        ID_TO_TAGNAME[ELEMENT_LISTING_ID] = "listing";
+        ID_TO_TAGNAME[ELEMENT_MAIN_ID] = "main";
+        ID_TO_TAGNAME[ELEMENT_MARQUEE_ID] = "marquee";
+        ID_TO_TAGNAME[ELEMENT_MENU_ID] = "menu";
+        ID_TO_TAGNAME[ELEMENT_META_ID] = "meta";
+        ID_TO_TAGNAME[ELEMENT_NAV_ID] = "nav";
+        ID_TO_TAGNAME[ELEMENT_NOEMBED_ID] = "noembed";
+        ID_TO_TAGNAME[ELEMENT_NOFRAMES_ID] = "noframes";
+        ID_TO_TAGNAME[ELEMENT_NOSCRIPT_ID] = "noscript";
+        ID_TO_TAGNAME[ELEMENT_OBJECT_ID] = "object";
+        ID_TO_TAGNAME[ELEMENT_OL_ID] = "ol";
+        ID_TO_TAGNAME[ELEMENT_P_ID] = "p";
+        ID_TO_TAGNAME[ELEMENT_PARAM_ID] = "param";
+        ID_TO_TAGNAME[ELEMENT_PLAINTEXT_ID] = "plaintext";
+        ID_TO_TAGNAME[ELEMENT_PRE_ID] = "pre";
+        ID_TO_TAGNAME[ELEMENT_SCRIPT_ID] = "script";
+        ID_TO_TAGNAME[ELEMENT_SECTION_ID] = "section";
+        ID_TO_TAGNAME[ELEMENT_SELECT_ID] = "select";
+        ID_TO_TAGNAME[ELEMENT_SOURCE_ID] = "source";
+        ID_TO_TAGNAME[ELEMENT_STYLE_ID] = "style";
+        ID_TO_TAGNAME[ELEMENT_SUMMARY_ID] = "summary";
+        ID_TO_TAGNAME[ELEMENT_TABLE_ID] = "table";
+        ID_TO_TAGNAME[ELEMENT_TBODY_ID] = "tbody";
+        ID_TO_TAGNAME[ELEMENT_TD_ID] = "td";
+        ID_TO_TAGNAME[ELEMENT_TEMPLATE_ID] = "template";
+        ID_TO_TAGNAME[ELEMENT_TEXTAREA_ID] = "textarea";
+        ID_TO_TAGNAME[ELEMENT_TFOOT_ID] = "tfoot";
+        ID_TO_TAGNAME[ELEMENT_TH_ID] = "th";
+        ID_TO_TAGNAME[ELEMENT_THEAD_ID] = "thead";
+        ID_TO_TAGNAME[ELEMENT_TITLE_ID] = "title";
+        ID_TO_TAGNAME[ELEMENT_TR_ID] = "tr";
+        ID_TO_TAGNAME[ELEMENT_TRACK_ID] = "track";
+        ID_TO_TAGNAME[ELEMENT_UL_ID] = "ul";
+        ID_TO_TAGNAME[ELEMENT_WBR_ID] = "wbr";
+        ID_TO_TAGNAME[ELEMENT_XMP_ID] = "xmp";
+        ID_TO_TAGNAME[ELEMENT_OPTGROUP_ID] = "optgroup";
+        ID_TO_TAGNAME[ELEMENT_OPTION_ID] = "option";
+        ID_TO_TAGNAME[ELEMENT_RB_ID] = "rb";
+        ID_TO_TAGNAME[ELEMENT_RP_ID] = "rp";
+        ID_TO_TAGNAME[ELEMENT_RT_ID] = "rt";
+        ID_TO_TAGNAME[ELEMENT_RTC_ID] = "rtc";
+        ID_TO_TAGNAME[ELEMENT_A_ID] = "a";
+        ID_TO_TAGNAME[ELEMENT_DIALOG_ID] = "dialog";
+        ID_TO_TAGNAME[ELEMENT_SEARCH_ID] = "search";
+        ID_TO_TAGNAME[ELEMENT_B_ID] = "b";
+        ID_TO_TAGNAME[ELEMENT_BIG_ID] = "big";
+        ID_TO_TAGNAME[ELEMENT_CODE_ID] = "code";
+        ID_TO_TAGNAME[ELEMENT_EM_ID] = "em";
+        ID_TO_TAGNAME[ELEMENT_FONT_ID] = "font";
+        ID_TO_TAGNAME[ELEMENT_I_ID] = "i";
+        ID_TO_TAGNAME[ELEMENT_S_ID] = "s";
+        ID_TO_TAGNAME[ELEMENT_SMALL_ID] = "small";
+        ID_TO_TAGNAME[ELEMENT_STRIKE_ID] = "strike";
+        ID_TO_TAGNAME[ELEMENT_STRONG_ID] = "strong";
+        ID_TO_TAGNAME[ELEMENT_TT_ID] = "tt";
+        ID_TO_TAGNAME[ELEMENT_U_ID] = "u";
+        ID_TO_TAGNAME[ELEMENT_NO_BR_ID] = "nobr";
+        ID_TO_TAGNAME[ELEMENT_KEYGEN_ID] = "keygen";
+        ID_TO_TAGNAME[ELEMENT_IMAGE_ID] = "image";
+        ID_TO_TAGNAME[ELEMENT_MATH_ID] = "math";
+        ID_TO_TAGNAME[ELEMENT_SVG_ID] = "svg";
+        ID_TO_TAGNAME[ELEMENT_RUBY_ID] = "ruby";
+        ID_TO_TAGNAME[ELEMENT_SPAN_ID] = "span";
+        ID_TO_TAGNAME[ELEMENT_SUB_ID] = "sub";
+        ID_TO_TAGNAME[ELEMENT_SUP_ID] = "sup";
+        ID_TO_TAGNAME[ELEMENT_VAR_ID] = "var";
+    }
+
+    static String getTagNameFromID(int id) {
+        if (id > 0 && id < ID_TO_TAGNAME.length) {
+            return ID_TO_TAGNAME[id];
+        }
+        return null;
+    }
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;
