@@ -389,23 +389,7 @@ final class TreeConstructorInBodyForeignContentText {
 
         if (treeConstructor.isHtmlFragmentParsing && treeConstructor.context.nodeNameID == ELEMENT_SELECT_ID) {
             treeConstructor.emitParseError();
-            //
-            // return;
-            //
-            // TODO: check who is right: the spec say:
-            // Parse error.
-            // Ignore the token.
-            // Return.
-            //
-            // if uncommented, we fail the following test in tests_innerHTML_1.dat
-            // #data
-            // <input><option>
-            // #errors
-            // #document-fragment
-            // select
-            // #document
-            // | <input>
-            // | <option>
+            return;
         }
         if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
             treeConstructor.emitParseError();
