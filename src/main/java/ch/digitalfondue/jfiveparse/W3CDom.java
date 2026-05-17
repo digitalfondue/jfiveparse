@@ -33,6 +33,21 @@ public final class W3CDom {
             super(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node, namespaceAlias);
         }
 
+
+       /**
+        * Parse a CSS selector string.
+        *
+        * @param selector
+        * @return
+        */
+       public static NodeMatcher<org.w3c.dom.Node> parseSelector(String selector) {
+           return parseSelector(selector, Map.of());
+       }
+
+       public static NodeMatcher<org.w3c.dom.Node> parseSelector(String selector, Map<String, String> namespaceAlias) {
+           return new NodeMatcher<>(new W3CDomSelector(namespaceAlias).parseSelectorInstance(selector));
+       }
+
         @Override
         W3CDomSelector inst() {
             return this;
