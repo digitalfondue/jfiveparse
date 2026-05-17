@@ -19,6 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,12 +48,24 @@ public class TreeConstructionTest {
         }
         Parser parser = new Parser(options);
         if (treeTest.isDocumentFragment) {
+            // first as a "string" source
             List<Node> nodes = parser.parseFragment(new Element(treeTest.documentFragmentElement, treeTest.documentFragmentNamespace, null), treeTest.data);
             String rendered = renderNodes(nodes);
             assertEquals(treeTest.document, rendered);
+
+            // then as a "reader" source
+            nodes = parser.parseFragment(new Element(treeTest.documentFragmentElement, treeTest.documentFragmentNamespace, null), new StringReader(treeTest.data));
+            rendered = renderNodes(nodes);
+            assertEquals(treeTest.document, rendered);
         } else {
+            // first as a "string" source
             Document document = parser.parse(treeTest.data);
             String rendered = renderDocument(document);
+            assertEquals(treeTest.document, rendered);
+
+            //then as a "reader" source
+            document = parser.parse(new StringReader(treeTest.data));
+            rendered = renderDocument(document);
             assertEquals(treeTest.document, rendered);
         }
     }
@@ -78,8 +91,6 @@ public class TreeConstructionTest {
         }
         data.sort((o1, o2) -> Comparator.<Object[], String>comparing(o -> (String) o[0]).thenComparing(o -> (boolean) o[2]).compare(o1, o2));
         return data;
-
-
     }
 
     static TreeConstruction parse(String test) {
