@@ -23,7 +23,8 @@ public final class AttributeNode {
     String originalName;
 
     private String value;
-    private ResizableCharBuilder valueBuilder;
+    private char[] valueBuilder;
+    private int valueBuilderLen;
 
     //
     String prefix;
@@ -38,9 +39,10 @@ public final class AttributeNode {
         this.value = value;
     }
 
-    AttributeNode(String name, String originalName, ResizableCharBuilder value, int attributeQuoteType) {
+    AttributeNode(String name, String originalName, char[] value, int valueLen, int attributeQuoteType) {
         this.name = name;
         this.valueBuilder = value;
+        this.valueBuilderLen = valueLen;
         this.originalName = originalName;
         this.attributeQuoteType = attributeQuoteType;
     }
@@ -50,6 +52,7 @@ public final class AttributeNode {
         this.originalName = a.originalName;
         this.value = a.value;
         this.valueBuilder = a.valueBuilder;
+        this.valueBuilderLen = a.valueBuilderLen;
         this.prefix = a.prefix;
         this.namespace = a.namespace;
         this.attributeQuoteType = a.attributeQuoteType;
@@ -63,7 +66,7 @@ public final class AttributeNode {
 
     public String getValue() {
         if (value == null && valueBuilder != null) {
-            value = valueBuilder.toString();
+            value = new String(valueBuilder, 0, valueBuilderLen);
             valueBuilder = null;
         }
         return value;

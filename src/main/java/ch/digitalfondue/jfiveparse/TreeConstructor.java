@@ -97,6 +97,7 @@ class TreeConstructor {
     //
     private boolean quirksMode;
     private boolean inHtmlContent;
+    private final Node[] insertionBase = new Node[2];
 
     // ----
 
@@ -625,23 +626,33 @@ class TreeConstructor {
             // 3
             if (lastTemplatePos != -1 && ((lastTablePos == -1) || (lastTemplatePos > lastTablePos))) {
                 // inside the template
-                return new Node[] { openElements.get(lastTemplatePos), null };
+                insertionBase[0] = openElements.get(lastTemplatePos);
+                insertionBase[1] = null;
+                return insertionBase;
             }
             // 4
             if (lastTablePos == -1) {
-                return new Node[] { openElements.get(0), null };
+                insertionBase[0] = openElements.get(0);
+                insertionBase[1] = null;
+                return insertionBase;
             }
             // 5
             Element lastTable = openElements.get(lastTablePos);
             if (lastTable.getParentNode() != null) {
-                return new Node[] { lastTable.getParentNode(), lastTable };
+                insertionBase[0] = lastTable.getParentNode();
+                insertionBase[1] = lastTable;
+                return insertionBase;
             }
             // 6
             Element previous = openElements.get(lastTablePos - 1);
             // 7
-            return new Node[] { previous, null };
+            insertionBase[0] = previous;
+            insertionBase[1] = null;
+            return insertionBase;
         } else {
-            return new Node[] { target, null };
+            insertionBase[0] = target;
+            insertionBase[1] = null;
+            return insertionBase;
         }
     }
 

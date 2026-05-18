@@ -19,6 +19,8 @@ import java.util.*;
 
 public final class Attributes implements Iterable<AttributeNode> {
 
+    private AttributeNode[] smallAttributes;
+    private int size;
     private Map<String, AttributeNode> attributes;
 
     public Attributes() {
@@ -29,7 +31,17 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public boolean containsKey(String key) {
-        return attributes != null && attributes.containsKey(key);
+        if (attributes != null) {
+            return attributes.containsKey(key);
+        }
+        if (smallAttributes != null) {
+            for (int i = 0; i < size; i++) {
+                if (smallAttributes[i].name.equals(key)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -39,67 +51,172 @@ public final class Attributes implements Iterable<AttributeNode> {
         }
 
         if (obj instanceof Attributes a) {
-            return Objects.equals(attributes, a.attributes);
+            if (attributes != null || a.attributes != null) {
+                return Objects.equals(asMap(), a.asMap());
+            }
+            if (size != a.size) {
+                return false;
+            }
+            for (int i = 0; i < size; i++) {
+                if (!smallAttributes[i].equals(a.smallAttributes[i])) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }
 
+    private Map<String, AttributeNode> asMap() {
+        if (attributes != null) {
+            return attributes;
+        }
+        if (size == 0) {
+            return Collections.emptyMap();
+        }
+        Map<String, AttributeNode> m = new LinkedHashMap<>();
+        for (int i = 0; i < size; i++) {
+            m.put(smallAttributes[i].name, smallAttributes[i]);
+        }
+        return m;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(attributes);
+        if (attributes != null) {
+            return Objects.hashCode(attributes);
+        }
+        int hash = 7;
+        for (int i = 0; i < size; i++) {
+            hash = 31 * hash + smallAttributes[i].hashCode();
+        }
+        return hash;
     }
 
     public Attributes copy() {
         Attributes a = new Attributes();
         if (attributes != null) {
+            a.attributes = new LinkedHashMap<>();
             for (var v : attributes.values()) {
                 a.put(new AttributeNode(v));
             }
-            return a;
+        } else if (smallAttributes != null) {
+            a.smallAttributes = new AttributeNode[smallAttributes.length];
+            a.size = size;
+            for (int i = 0; i < size; i++) {
+                a.smallAttributes[i] = new AttributeNode(smallAttributes[i]);
+            }
         }
         return a;
     }
 
     public AttributeNode get(String key) {
-        return attributes == null ? null : attributes.get(key);
+        if (attributes != null) {
+            return attributes.get(key);
+        }
+        if (smallAttributes != null) {
+            for (int i = 0; i < size; i++) {
+                if (smallAttributes[i].name.equals(key)) {
+                    return smallAttributes[i];
+                }
+            }
+        }
+        return null;
     }
 
     Set<String> keySet() {
-        return attributes == null ? Set.of() : attributes.keySet();
-    }
-
-    private void ensureMap() {
-        if (attributes == null) {
-            attributes = new LinkedHashMap<>();
+        if (attributes != null) {
+            return attributes.keySet();
         }
+        if (size == 0) {
+            return Collections.emptySet();
+        }
+        Set<String> s = new LinkedHashSet<>();
+        for (int i = 0; i < size; i++) {
+            s.add(smallAttributes[i].name);
+        }
+        return s;
     }
 
     public void put(AttributeNode attribute) {
-        ensureMap();
-        attributes.put(attribute.getName(), attribute);
+        if (attributes != null) {
+            attributes.put(attribute.getName(), attribute);
+            return;
+        }
+
+        if (smallAttributes == null) {
+            smallAttributes = new AttributeNode[2];
+        }
+
+        for (int i = 0; i < size; i++) {
+            if (smallAttributes[i].name.equals(attribute.name)) {
+                smallAttributes[i] = attribute;
+                return;
+            }
+        }
+
+        if (size < 8) {
+            if (size == smallAttributes.length) {
+                smallAttributes = Arrays.copyOf(smallAttributes, smallAttributes.length * 2);
+            }
+            smallAttributes[size++] = attribute;
+        } else {
+            attributes = new LinkedHashMap<>();
+            for (int i = 0; i < size; i++) {
+                attributes.put(smallAttributes[i].name, smallAttributes[i]);
+            }
+            attributes.put(attribute.name, attribute);
+            smallAttributes = null;
+        }
     }
 
     public void put(String key, String value) {
-        ensureMap();
-        attributes.put(key, new AttributeNode(key, value));
+        put(new AttributeNode(key, value));
     }
 
     public void remove(String key) {
         if (attributes != null) {
             attributes.remove(key);
+        } else if (smallAttributes != null) {
+            for (int i = 0; i < size; i++) {
+                if (smallAttributes[i].name.equals(key)) {
+                    System.arraycopy(smallAttributes, i + 1, smallAttributes, i, size - i - 1);
+                    smallAttributes[--size] = null;
+                    return;
+                }
+            }
         }
     }
 
     public boolean isEmpty() {
-        return attributes == null || attributes.isEmpty();
+        return (attributes == null || attributes.isEmpty()) && size == 0;
     }
 
     @Override
     public Iterator<AttributeNode> iterator() {
-        return attributes == null ? Collections.emptyIterator() : attributes.values().iterator();
+        if (attributes != null) {
+            return attributes.values().iterator();
+        }
+        if (size == 0) {
+            return Collections.emptyIterator();
+        }
+        return new Iterator<>() {
+            int i = 0;
+
+            @Override
+            public boolean hasNext() {
+                return i < size;
+            }
+
+            @Override
+            public AttributeNode next() {
+                return smallAttributes[i++];
+            }
+        };
     }
 
     public String getNamedItem(String name) {
-        return attributes != null && attributes.containsKey(name) ? attributes.get(name).getValue() : null;
+        AttributeNode a = get(name);
+        return a != null ? a.getValue() : null;
     }
 }
