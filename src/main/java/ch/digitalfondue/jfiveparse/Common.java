@@ -153,13 +153,21 @@ final class Common {
         if (attrs == null || attrs.isEmpty()) {
             return;
         }
-
-        for (String lowerCaseAttr : new ArrayList<>(attrs.keySet())) {
-            if (SVG_ATTRIBUTES.containsKey(lowerCaseAttr)) {
+        ArrayList<String> toAdjust = null;
+        for (AttributeNode attr : attrs) {
+            if (SVG_ATTRIBUTES.containsKey(attr.name)) {
+                if (toAdjust == null) {
+                    toAdjust = new ArrayList<>(4);
+                }
+                toAdjust.add(attr.name);
+            }
+        }
+        if (toAdjust != null) {
+            for (String lowerCaseAttr : toAdjust) {
                 AttributeNode attr = attrs.get(lowerCaseAttr);
+                attrs.remove(lowerCaseAttr);
                 attr.name = SVG_ATTRIBUTES.get(lowerCaseAttr);
                 attrs.put(attr);
-                attrs.remove(lowerCaseAttr);
             }
         }
     }
@@ -185,15 +193,25 @@ final class Common {
             return;
         }
 
-        for (String lowerCaseAttr: new ArrayList<>(attrs.keySet())) {
-            if (FOREIGN_ATTRIBUTES_TO_ADJUST.containsKey(lowerCaseAttr)) {
+        ArrayList<String> toAdjust = null;
+        for (AttributeNode attr : attrs) {
+            if (FOREIGN_ATTRIBUTES_TO_ADJUST.containsKey(attr.name)) {
+                if (toAdjust == null) {
+                    toAdjust = new ArrayList<>(4);
+                }
+                toAdjust.add(attr.name);
+            }
+        }
+
+        if (toAdjust != null) {
+            for (String lowerCaseAttr : toAdjust) {
                 String[] adj = FOREIGN_ATTRIBUTES_TO_ADJUST.get(lowerCaseAttr);
                 AttributeNode attr = attrs.get(lowerCaseAttr);
+                attrs.remove(lowerCaseAttr);
                 attr.prefix = adj[0];
                 attr.name = adj[1];
                 attr.namespace = adj[2];
                 attrs.put(attr);
-                attrs.remove(lowerCaseAttr);
             }
         }
     }
