@@ -99,6 +99,9 @@ class TreeConstructor {
     private boolean inHtmlContent;
 
     // ----
+    // used in findAppropriatePlaceForInsertingNode
+    private final Node[] insertionBase = new Node[2];
+    // ----
 
     void setTokenizerState(int state) {
         tokenizer.setState(state);
@@ -607,7 +610,8 @@ class TreeConstructor {
     // ------------------
 
     // appropriate place for inserting a node
-    Node[] findAppropriatePlaceForInsertingNode(Element overrideTarget) {
+    // /!\ the returned array is shared /!\, don't modify it
+    private Node[] findAppropriatePlaceForInsertingNode(Element overrideTarget) {
         Element target = overrideTarget != null ? overrideTarget : getCurrentNode();
         int targetNameID = target.nodeNameID;
         if (fosterParentingEnabled && (Node.NAMESPACE_HTML_ID == target.namespaceID && (
@@ -625,23 +629,33 @@ class TreeConstructor {
             // 3
             if (lastTemplatePos != -1 && ((lastTablePos == -1) || (lastTemplatePos > lastTablePos))) {
                 // inside the template
-                return new Node[] { openElements.get(lastTemplatePos), null };
+                insertionBase[0] = openElements.get(lastTemplatePos);
+                insertionBase[1] = null;
+                return insertionBase;
             }
             // 4
             if (lastTablePos == -1) {
-                return new Node[] { openElements.get(0), null };
+                insertionBase[0] = openElements.get(0);
+                insertionBase[1] = null;
+                return insertionBase;
             }
             // 5
             Element lastTable = openElements.get(lastTablePos);
             if (lastTable.getParentNode() != null) {
-                return new Node[] { lastTable.getParentNode(), lastTable };
+                insertionBase[0] = lastTable.getParentNode();
+                insertionBase[1] = lastTable;
+                return insertionBase;
             }
             // 6
             Element previous = openElements.get(lastTablePos - 1);
             // 7
-            return new Node[] { previous, null };
+            insertionBase[0] = previous;
+            insertionBase[1] = null;
+            return insertionBase;
         } else {
-            return new Node[] { target, null };
+            insertionBase[0] = target;
+            insertionBase[1] = null;
+            return insertionBase;
         }
     }
 
