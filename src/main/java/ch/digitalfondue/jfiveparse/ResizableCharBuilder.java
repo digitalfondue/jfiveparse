@@ -103,5 +103,13 @@ final class ResizableCharBuilder {
         return Arrays.copyOf(buff, pos);
     }
 
+    void append(char[] c, int offset, int length) {
+        if (pos + length >= buff.length) {
+            buff = Arrays.copyOf(buff, Math.max(pos + length, buff.length * 2 + 2));
+        }
+        System.arraycopy(c, offset, buff, pos, length);
+        pos += length;
+    }
+
 
 }

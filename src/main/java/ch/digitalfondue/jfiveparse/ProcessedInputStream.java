@@ -17,20 +17,13 @@ package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 /**
- * Even though the html5 specification is working with codepoints, this input
- * stream will only emit chars and "-1".
- * 
- * This has some interesting consequences that we will need to fully explore:
- * <ul>
- * <li>Character position is not the same as the current position
- * <li>other unknown issues??
- * </ul>
+ * Wrapped and abstracted input. Can most likely be optimized.
  */
 abstract class ProcessedInputStream {
 
-    private boolean crFound;
     protected final ResizableIntBuffer buffer = new ResizableIntBuffer();
 
     protected abstract int read();
@@ -40,22 +33,40 @@ abstract class ProcessedInputStream {
         protected final char[] input;
 
         StringProcessedInputStream(String input) {
-            this.input = input.toCharArray();
+            this.input = normalize(input);
+        }
+
+        private static char[] normalize(String s) {
+            char[] arr = s.toCharArray();
+            int n = arr.length;
+            int j = 0;
+            for (int i = 0; i < n; i++) {
+                char c = arr[i];
+                if (c == '\r') {
+                    arr[j++] = '\n';
+                    if (i + 1 < n && arr[i + 1] == '\n') {
+                        i++;
+                    }
+                } else {
+                    arr[j++] = c;
+                }
+            }
+            return j == n ? arr : Arrays.copyOf(arr, j);
         }
 
         @Override
         protected int read() {
-            try {
+            if (pos < input.length) {
                 return input[pos++];
-            } catch (IndexOutOfBoundsException s) {
-                return -1;
             }
+            return -1;
         }
     }
 
     static final class ReaderProcessedInputStream extends ProcessedInputStream {
 
         private final Reader reader;
+        private boolean crFound;
 
         ReaderProcessedInputStream(Reader reader) {
             this.reader = reader;
@@ -64,7 +75,19 @@ abstract class ProcessedInputStream {
         @Override
         protected int read() {
             try {
-                return reader.read();
+                int chr = reader.read();
+                if (crFound) {
+                    crFound = false;
+                    if (chr == Characters.LF) {
+                        chr = reader.read();
+                    }
+                }
+
+                if (chr == Characters.CR) {
+                    crFound = true;
+                    chr = Characters.LF;
+                }
+                return chr;
             } catch (IOException ioe) {
                 throw new ParserException(ioe);
             }
@@ -72,29 +95,11 @@ abstract class ProcessedInputStream {
     }
 
     //
-    private int readWithCRHandling() {
-        int chr = read();
-        if (crFound) {
-            //chr = handleCrFoundInternal(chr);
-            crFound = false;
-            if (chr == Characters.LF) {
-                chr = read();
-            }
-        }
-
-        if (chr == Characters.CR) {
-            // handleChrIsCR
-            crFound = true;
-            chr = Characters.LF;
-        }
-        return chr;
-    }
-
     int peekNextInputCharacter(int offset) {
         if (buffer.length() < offset) {
             // fill buffer
             for (int i = buffer.length(); i < offset; i++) {
-                buffer.add(readWithCRHandling());
+                buffer.add(read());
             }
         }
         return buffer.getCharAt(offset);
@@ -111,7 +116,7 @@ abstract class ProcessedInputStream {
     }
 
     int consume() {
-        return buffer.isEmpty ? readWithCRHandling() : buffer.removeFirst();
+        return buffer.isEmpty ? read() : buffer.removeFirst();
     }
 
     void reconsume(int chr) {
