@@ -22,6 +22,7 @@ final class Characters {
 
     static final char NULL = 0x0000;
     static final char EXCLAMATION_MARK = 0x0021;
+    /** & */
     static final char AMPERSAND = 0x0026;
     static final char LESSTHAN_SIGN = 0x003C;
     static final char GREATERTHAN_SIGN = 0x003E;
@@ -31,7 +32,9 @@ final class Characters {
     static final int EOF = -1;
 
     static final char TAB = 0x0009;
+    /** \r */
     static final char CR = 0x000D;
+    /** \n */
     static final char LF = 0x000A;
     static final char FF = 0x000C;
     static final char SPACE = 0x0020;

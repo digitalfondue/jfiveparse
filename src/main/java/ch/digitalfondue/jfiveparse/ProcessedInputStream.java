@@ -28,70 +28,75 @@ abstract class ProcessedInputStream {
 
     protected abstract int read();
 
-    static class StringProcessedInputStream extends ProcessedInputStream {
-        protected int pos = 0;
-        protected final char[] input;
-
-        StringProcessedInputStream(String input) {
-            this.input = normalize(input);
-        }
-
-        private static char[] normalize(String s) {
-            char[] arr = s.toCharArray();
-            int n = arr.length;
-            int j = 0;
-            for (int i = 0; i < n; i++) {
-                char c = arr[i];
-                if (c == '\r') {
-                    arr[j++] = '\n';
-                    if (i + 1 < n && arr[i + 1] == '\n') {
-                        i++;
-                    }
-                } else {
-                    arr[j++] = c;
-                }
+    int readUntil(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if ((stopAtAmpersand && chr == Characters.AMPERSAND) || (stopAtLessThan && chr == Characters.LESSTHAN_SIGN) || chr == Characters.NULL || chr == Characters.EOF) {
+                return chr;
             }
-            return j == n ? arr : Arrays.copyOf(arr, j);
+            builder.append((char) chr);
         }
-
-        @Override
-        protected int read() {
-            if (pos < input.length) {
-                return input[pos++];
-            }
-            return -1;
-        }
+        return readUntilInternal(builder, stopAtAmpersand, stopAtLessThan);
     }
 
-    static final class ReaderProcessedInputStream extends ProcessedInputStream {
-
-        private final Reader reader;
-        private boolean crFound;
-
-        ReaderProcessedInputStream(Reader reader) {
-            this.reader = reader;
-        }
-
-        @Override
-        protected int read() {
-            try {
-                int chr = reader.read();
-                if (crFound) {
-                    crFound = false;
-                    if (chr == Characters.LF) {
-                        chr = reader.read();
-                    }
-                }
-
-                if (chr == Characters.CR) {
-                    crFound = true;
-                    chr = Characters.LF;
-                }
+    int readUntilAttributeValue(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if (chr == quoteChar || (stopAtAmpersand && chr == Characters.AMPERSAND) || chr == Characters.NULL || chr == Characters.EOF) {
                 return chr;
-            } catch (IOException ioe) {
-                throw new ParserException(ioe);
             }
+            builder.append((char) chr);
         }
+        return readUntilAttributeValueInternal(builder, quoteChar, stopAtAmpersand);
+    }
+
+    int readUntilAttributeValueUnquoted(ResizableCharBuilder builder) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.AMPERSAND || chr == '>' || chr == Characters.NULL ||
+                    chr == '"' || chr == '\'' || chr == Characters.LESSTHAN_SIGN || chr == '=' || chr == '`' || chr == Characters.EOF) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return readUntilAttributeValueUnquotedInternal(builder);
+    }
+
+    protected int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
+        int chr;
+        while ((chr = read()) != -1) {
+            if ((stopAtAmpersand && chr == Characters.AMPERSAND) || (stopAtLessThan && chr == Characters.LESSTHAN_SIGN) || chr == Characters.NULL) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return -1;
+    }
+
+    protected int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
+        int chr;
+        while ((chr = read()) != -1) {
+            if (chr == quoteChar || (stopAtAmpersand && chr == Characters.AMPERSAND) || chr == Characters.NULL) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return -1;
+    }
+
+    protected int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
+        int chr;
+        while ((chr = read()) != -1) {
+            if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.AMPERSAND || chr == '>' || chr == Characters.NULL ||
+                    chr == '"' || chr == '\'' || chr == Characters.LESSTHAN_SIGN || chr == '=' || chr == '`') {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return -1;
     }
 
     //
@@ -126,6 +131,135 @@ abstract class ProcessedInputStream {
     void consume(int count) {
         for (int i = 0; i < count; i++) {
             consume();
+        }
+    }
+
+
+
+    static class StringProcessedInputStream extends ProcessedInputStream {
+        private int pos = 0;
+        private final char[] input;
+        private final int length;
+
+
+        StringProcessedInputStream(String input) {
+            char[] toNormalize = input.toCharArray();
+            int j = 0;
+            for (int i = 0; i < toNormalize.length; i++) {
+                char c = toNormalize[i];
+                if (c == Characters.CR) {
+                    toNormalize[j++] = Characters.LF;
+                    if (i + 1 < toNormalize.length && toNormalize[i + 1] == Characters.LF) {
+                        i++;
+                    }
+                } else {
+                    toNormalize[j++] = c;
+                }
+            }
+            this.input = toNormalize;
+            this.length = j;
+        }
+
+        // used for test
+        protected int getCharAt(int pos) {
+            if (pos >= length) {
+                return -1;
+            }
+            return input[pos];
+        }
+
+        @Override
+        protected int read() {
+            if (pos < length) {
+                return input[pos++];
+            }
+            return -1;
+        }
+
+        @Override
+        protected int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
+            int n = length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if ((stopAtAmpersand && c == Characters.AMPERSAND) || (stopAtLessThan && c == Characters.LESSTHAN_SIGN) || c == Characters.NULL) {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return -1;
+        }
+
+        @Override
+        protected int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
+            int n = length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if (c == quoteChar || (stopAtAmpersand && c == Characters.AMPERSAND) || c == Characters.NULL) {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return -1;
+        }
+
+        @Override
+        protected int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
+            int n = length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if (Common.isTabLfFfCrOrSpace(c) || c == Characters.AMPERSAND || c == '>' || c == Characters.NULL ||
+                        c == '"' || c == '\'' || c == Characters.LESSTHAN_SIGN || c == '=' || c == '`') {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return -1;
+        }
+    }
+
+    static final class ReaderProcessedInputStream extends ProcessedInputStream {
+
+        private final Reader reader;
+        private boolean crFound;
+
+        ReaderProcessedInputStream(Reader reader) {
+            this.reader = reader;
+        }
+
+        @Override
+        protected int read() {
+            try {
+                int chr = reader.read();
+                if (crFound) {
+                    crFound = false;
+                    if (chr == Characters.LF) {
+                        chr = reader.read();
+                    }
+                }
+
+                if (chr == Characters.CR) {
+                    crFound = true;
+                    chr = Characters.LF;
+                }
+                return chr;
+            } catch (IOException ioe) {
+                throw new ParserException(ioe);
+            }
         }
     }
 }
