@@ -37,7 +37,7 @@ final class Tokenizer {
     // tag related
     private Attributes attributes;
     private final ResizableCharBuilder currentAttributeName = new ResizableCharBuilder();
-    private ResizableCharBuilder currentAttributeValue;
+    ResizableCharBuilder currentAttributeValue;
     private int currentAttributeQuoteType;
     private boolean selfClosing;
     final ResizableCharBuilder tagName = new ResizableCharBuilder();
