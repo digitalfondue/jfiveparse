@@ -53,12 +53,10 @@ final class ResizableCharBuilder {
     }
 
     void append(char c) {
-        try {
-            buff[pos++] = c;
-        } catch (IndexOutOfBoundsException e) {
+        if (pos == buff.length) {
             buff = Arrays.copyOf(buff, buff.length * 2 + 2);
-            buff[pos - 1] = c;
         }
+        buff[pos++] = c;
     }
 
     String toLowerCase() {

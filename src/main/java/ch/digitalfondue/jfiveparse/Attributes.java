@@ -70,7 +70,7 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     private void ensureMap() {
         if (attributes == null) {
-            attributes = new LinkedHashMap<>();
+            attributes = new LinkedHashMap<>(8);
         }
     }
 
