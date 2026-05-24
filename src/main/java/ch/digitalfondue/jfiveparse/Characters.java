@@ -24,7 +24,9 @@ final class Characters {
     static final char EXCLAMATION_MARK = 0x0021;
     /** & */
     static final char AMPERSAND = 0x0026;
+    /** < */
     static final char LESSTHAN_SIGN = 0x003C;
+    /** > */
     static final char GREATERTHAN_SIGN = 0x003E;
     static final char SOLIDUS = 0x002F;
     static final char QUESTION_MARK = 0x003F;
