@@ -17,7 +17,6 @@ package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 
 /**
  * Wrapped and abstracted input. Can most likely be optimized.
@@ -351,7 +350,7 @@ abstract class ProcessedInputStream {
             int i = pos;
             while (i < n) {
                 char c = input[i];
-                if (c == '-' || c == Characters.NULL) {
+                if (c == Characters.HYPHEN_MINUS || c == Characters.NULL) {
                     builder.append(input, pos, i - pos);
                     pos = i + 1;
                     return c;
