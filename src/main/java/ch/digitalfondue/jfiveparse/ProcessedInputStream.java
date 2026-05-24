@@ -52,12 +52,18 @@ abstract class ProcessedInputStream {
         return readUntilAttributeValueInternal(builder, quoteChar, stopAtAmpersand);
     }
 
+    private static boolean mustStopReadUntilAttributeValueUnquoted(int chr) {
+        return Common.isTabLfFfCrOrSpace(chr) || chr == Characters.AMPERSAND || chr == Characters.GREATERTHAN_SIGN
+                || chr == Characters.NULL || chr == Characters.QUOTATION_MARK ||
+                chr == Characters.APOSTROPHE || chr == Characters.LESSTHAN_SIGN ||
+                chr == Characters.EQUALS_SIGN || chr == Characters.GRAVE_ACCENT || chr == Characters.EOF;
+    }
+
     int readUntilAttributeValueUnquoted(ResizableCharBuilder builder) {
         int chr;
         while (!buffer.isEmpty) {
             chr = buffer.removeFirst();
-            if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.AMPERSAND || chr == '>' || chr == Characters.NULL ||
-                    chr == '"' || chr == '\'' || chr == Characters.LESSTHAN_SIGN || chr == '=' || chr == '`' || chr == Characters.EOF) {
+            if (mustStopReadUntilAttributeValueUnquoted(chr)) {
                 return chr;
             }
             builder.append((char) chr);
@@ -65,38 +71,111 @@ abstract class ProcessedInputStream {
         return readUntilAttributeValueUnquotedInternal(builder);
     }
 
+    int readUntilTagName(ResizableCharBuilder builder) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.SOLIDUS || chr == Characters.GREATERTHAN_SIGN || chr == Characters.NULL || chr == Characters.EOF) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return readUntilTagNameInternal(builder);
+    }
+
+    private static boolean mustStopReadUntilAttributeName(int chr) {
+        return Common.isTabLfFfCrOrSpace(chr) || chr == Characters.SOLIDUS || chr == Characters.EQUALS_SIGN || chr == Characters.GREATERTHAN_SIGN || chr == Characters.NULL ||
+                chr == Characters.QUOTATION_MARK || chr == Characters.APOSTROPHE || chr == Characters.LESSTHAN_SIGN || chr == Characters.EOF;
+    }
+
+    int readUntilAttributeName(ResizableCharBuilder builder) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if (mustStopReadUntilAttributeName(chr)) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return readUntilAttributeNameInternal(builder);
+    }
+
+    int readUntilComment(ResizableCharBuilder builder) {
+        int chr;
+        while (!buffer.isEmpty) {
+            chr = buffer.removeFirst();
+            if (chr == Characters.HYPHEN_MINUS || chr == Characters.NULL || chr == Characters.EOF) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return readUntilCommentInternal(builder);
+    }
+
     protected int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
         int chr;
-        while ((chr = read()) != -1) {
+        while ((chr = read()) != Characters.EOF) {
             if ((stopAtAmpersand && chr == Characters.AMPERSAND) || (stopAtLessThan && chr == Characters.LESSTHAN_SIGN) || chr == Characters.NULL) {
                 return chr;
             }
             builder.append((char) chr);
         }
-        return -1;
+        return Characters.EOF;
     }
 
     protected int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
         int chr;
-        while ((chr = read()) != -1) {
+        while ((chr = read()) != Characters.EOF) {
             if (chr == quoteChar || (stopAtAmpersand && chr == Characters.AMPERSAND) || chr == Characters.NULL) {
                 return chr;
             }
             builder.append((char) chr);
         }
-        return -1;
+        return Characters.EOF;
     }
 
     protected int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
         int chr;
-        while ((chr = read()) != -1) {
-            if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.AMPERSAND || chr == '>' || chr == Characters.NULL ||
-                    chr == '"' || chr == '\'' || chr == Characters.LESSTHAN_SIGN || chr == '=' || chr == '`') {
+        while ((chr = read()) != Characters.EOF) {
+            if (mustStopReadUntilAttributeValueUnquoted(chr)) {
                 return chr;
             }
             builder.append((char) chr);
         }
-        return -1;
+        return Characters.EOF;
+    }
+
+    protected int readUntilTagNameInternal(ResizableCharBuilder builder) {
+        int chr;
+        while ((chr = read()) != Characters.EOF) {
+            if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.SOLIDUS || chr == Characters.GREATERTHAN_SIGN || chr == Characters.NULL) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return Characters.EOF;
+    }
+
+    protected int readUntilAttributeNameInternal(ResizableCharBuilder builder) {
+        int chr;
+        while ((chr = read()) != Characters.EOF) {
+            if (mustStopReadUntilAttributeName(chr)) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return Characters.EOF;
+    }
+
+    protected int readUntilCommentInternal(ResizableCharBuilder builder) {
+        int chr;
+        while ((chr = read()) != Characters.EOF) {
+            if (chr == Characters.HYPHEN_MINUS || chr == Characters.NULL) {
+                return chr;
+            }
+            builder.append((char) chr);
+        }
+        return Characters.EOF;
     }
 
     //
@@ -163,7 +242,7 @@ abstract class ProcessedInputStream {
         // used for test
         protected int getCharAt(int pos) {
             if (pos >= length) {
-                return -1;
+                return Characters.EOF;
             }
             return input[pos];
         }
@@ -173,7 +252,7 @@ abstract class ProcessedInputStream {
             if (pos < length) {
                 return input[pos++];
             }
-            return -1;
+            return Characters.EOF;
         }
 
         @Override
@@ -191,7 +270,7 @@ abstract class ProcessedInputStream {
             }
             builder.append(input, pos, n - pos);
             pos = n;
-            return -1;
+            return Characters.EOF;
         }
 
         @Override
@@ -209,7 +288,7 @@ abstract class ProcessedInputStream {
             }
             builder.append(input, pos, n - pos);
             pos = n;
-            return -1;
+            return Characters.EOF;
         }
 
         @Override
@@ -218,8 +297,7 @@ abstract class ProcessedInputStream {
             int i = pos;
             while (i < n) {
                 char c = input[i];
-                if (Common.isTabLfFfCrOrSpace(c) || c == Characters.AMPERSAND || c == '>' || c == Characters.NULL ||
-                        c == '"' || c == '\'' || c == Characters.LESSTHAN_SIGN || c == '=' || c == '`') {
+                if (mustStopReadUntilAttributeValueUnquoted(c)) {
                     builder.append(input, pos, i - pos);
                     pos = i + 1;
                     return c;
@@ -228,7 +306,61 @@ abstract class ProcessedInputStream {
             }
             builder.append(input, pos, n - pos);
             pos = n;
-            return -1;
+            return Characters.EOF;
+        }
+
+        @Override
+        protected int readUntilTagNameInternal(ResizableCharBuilder builder) {
+            int n = length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if (Common.isTabLfFfCrOrSpace(c) || c == Characters.SOLIDUS || c == Characters.GREATERTHAN_SIGN || c == Characters.NULL) {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return Characters.EOF;
+        }
+
+        @Override
+        protected int readUntilAttributeNameInternal(ResizableCharBuilder builder) {
+            int n = length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if (mustStopReadUntilAttributeName(c)) {
+                    builder.append(input, pos, i - pos); // append remaining
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return Characters.EOF;
+        }
+
+        @Override
+        protected int readUntilCommentInternal(ResizableCharBuilder builder) {
+            int n = length;
+            int i = pos;
+            while (i < n) {
+                char c = input[i];
+                if (c == '-' || c == Characters.NULL) {
+                    builder.append(input, pos, i - pos);
+                    pos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(input, pos, n - pos);
+            pos = n;
+            return Characters.EOF;
         }
     }
 
