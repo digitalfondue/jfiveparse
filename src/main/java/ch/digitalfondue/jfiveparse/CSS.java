@@ -65,7 +65,7 @@ final class CSS {
     record TagSelector(String name, String namespace) implements CssSelector {}
 
 
-
+    static final int IGNORE_CASE_UNKNOWN = -1;
     static final int IGNORE_CASE_TRUE = 0;
     static final int IGNORE_CASE_FALSE = 1;
     static final int IGNORE_CASE_QUIRKS = 2;
@@ -338,6 +338,12 @@ final class CSS {
                                 name = getName(1);
                             }
                         }
+
+                        // Support unescaped colons in attribute names (e.g., xml:lang)
+                        while (selector.charAt(selectorIndex) == ':') {
+                            name = name + ":" + getName(1);
+                        }
+
                         stripWhitespace(0);
                         // Determine comparison operation
                         int action = ATTR_ACTION_EXISTS;
@@ -355,7 +361,7 @@ final class CSS {
                         }
 
                         String value = "";
-                        int ignoreCase = -1;
+                        int ignoreCase = IGNORE_CASE_UNKNOWN;
 
                         if (action != ATTR_ACTION_EXISTS) {
                             if (isQuote(charAt(selectorIndex))) {

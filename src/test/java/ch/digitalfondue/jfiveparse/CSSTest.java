@@ -205,6 +205,21 @@ class CSSTest {
         )), r);
     }
 
+    @Test
+    void checkUnescapedColon() {
+        var r = CSS.parseSelector("*[xml:lang|=\"es\"]");
+        assertEquals(List.of(List.of(
+                new CSS.UniversalSelector(null),
+                new CSS.AttributeSelector(
+                        "xml:lang",
+                        CSS.ATTR_ACTION_HYPHEN,
+                        "es",
+                        CSS.IGNORE_CASE_UNKNOWN,
+                        null
+                )
+        )), r);
+    }
+
     // TODO: add all the missing String.raw tests
 
     record NthExprAB(String expr, int a, int b) {}
