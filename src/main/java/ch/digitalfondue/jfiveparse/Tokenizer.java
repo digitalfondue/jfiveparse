@@ -36,8 +36,8 @@ final class Tokenizer {
 
     // tag related
     private Attributes attributes;
-    private final ResizableCharBuilder currentAttributeName = new ResizableCharBuilder();
-    private ResizableCharBuilder currentAttributeValue;
+    final ResizableCharBuilder currentAttributeName = new ResizableCharBuilder();
+    ResizableCharBuilder currentAttributeValue;
     private int currentAttributeQuoteType;
     private boolean selfClosing;
     final ResizableCharBuilder tagName = new ResizableCharBuilder();
@@ -51,7 +51,7 @@ final class Tokenizer {
     private StringBuilder doctypeSystemIdentifier;
 
     // comment related
-    private ResizableCharBuilder commentToken;
+    ResizableCharBuilder commentToken;
 
     //
     private final ResizableCharBuilder temporaryBuffer = new ResizableCharBuilder();
