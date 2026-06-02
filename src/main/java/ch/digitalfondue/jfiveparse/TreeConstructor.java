@@ -117,11 +117,6 @@ class TreeConstructor {
         this.disableInTableTextForsterParenting = disableInTableTextForsterParenting;
     }
 
-    private void setTagNameAndSaveOriginal(ResizableCharBuilder rawTagName) {
-        setTagName(rawTagName.toLowerCase());
-        this.originalTagName = rawTagName.containsUpperCase ? rawTagName.toString() : this.tagName;
-    }
-
     void setTagName(String lowerCasedTagName) {
         this.tagName = lowerCasedTagName;
         this.tagNameID = Common.tagNameToID(lowerCasedTagName);
@@ -835,7 +830,10 @@ class TreeConstructor {
     }
 
     void emitStartTagToken(ResizableCharBuilder name, Attributes attrs, boolean selfClosing) {
-        setTagNameAndSaveOriginal(name);
+        //
+        setTagName(name.toLowerCase());
+        this.originalTagName = name.containsUpperCase ? name.toString() : this.tagName;
+        //
         this.attrs = attrs;
         this.selfClosing = selfClosing;
         tokenType = TT_START_TAG;
