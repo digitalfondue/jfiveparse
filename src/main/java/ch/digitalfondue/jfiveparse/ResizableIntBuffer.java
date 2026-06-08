@@ -71,6 +71,11 @@ final class ResizableIntBuffer {
     int removeFirst() {
         int chr = buff[start++];
         isEmpty = length() == 0;
+        if (isEmpty) {
+            // reset at the initial position
+            start = 15;
+            pos = 15;
+        }
         return chr;
     }
 }
