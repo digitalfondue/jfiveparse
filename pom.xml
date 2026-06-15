@@ -85,6 +85,12 @@
             <version>1.21.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.java-allocation-instrumenter</groupId>
+            <artifactId>java-allocation-instrumenter</artifactId>
+            <version>3.3.5</version>
+            <scope>test</scope>
+        </dependency>
         <!--
         <dependency>
             <groupId>tools.profiler</groupId>
@@ -167,6 +173,28 @@
                     <additionalOptions>-Xdoclint:none</additionalOptions>
                 </configuration>
             </plugin>
+            <!-- set agents, see https://stackoverflow.com/a/50704624 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <argLine>@{argLine} -javaagent:${com.google.code.java-allocation-instrumenter:java-allocation-instrumenter:jar}</argLine>
+                </configuration>
+            </plugin>
+            <!-- end agents -->
         </plugins>
     </build>
     <profiles>
