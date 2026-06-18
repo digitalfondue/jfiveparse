@@ -1792,7 +1792,7 @@ class TokenizerState {
             boolean emitParseError = tentativelyMatchedLength > 1 && tentativelyMatched.at(tentativelyMatchedLength - 1) == Characters.SEMICOLON;
             if (emitParseError) {
                 for (int i = 0; emitParseError && i < tentativelyMatchedLength - 1; i++) {
-                    emitParseError = Common.isAlphaNumericASCII(chr);
+                    emitParseError = Common.isAlphaNumericASCII(tentativelyMatched.at(i));
                 }
             }
 
