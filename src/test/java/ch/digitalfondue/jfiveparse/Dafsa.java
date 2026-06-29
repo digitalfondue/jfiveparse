@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+// https://www.ryanliptak.com/blog/better-named-character-reference-tokenization/
 // based on https://github.com/squeek502/named-character-references/tree/master
 public class Dafsa {
     private int[] firstLayer;
