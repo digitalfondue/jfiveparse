@@ -27,40 +27,20 @@ public final class W3CDom {
     private W3CDom() {
     }
 
-   public static final class W3CDomSelector extends BaseSelector<org.w3c.dom.Node, W3CDomSelector> {
-
-        private W3CDomSelector(Map<String, String> namespaceAlias) {
-            super(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node, namespaceAlias);
-        }
-
-
-       /**
-        * Parse a CSS selector string.
-        *
-        * @param selector
-        * @return
-        */
-       public static NodeMatcher<org.w3c.dom.Node> parseSelector(String selector) {
-           return parseSelector(selector, Map.of());
-       }
-
-       public static NodeMatcher<org.w3c.dom.Node> parseSelector(String selector, Map<String, String> namespaceAlias) {
-           return new NodeMatcher<>(new W3CDomSelector(namespaceAlias).parseSelectorInstance(selector));
-       }
-
-        @Override
-        W3CDomSelector inst() {
-            return this;
-        }
-
-        @Override
-        W3CDomSelector newInst() {
-            return select();
-        }
+    public static Selector<org.w3c.dom.Node> select() {
+        return select(Map.of());
     }
 
-    public static W3CDomSelector select() {
-        return new W3CDomSelector(Map.of());
+    public static Selector<org.w3c.dom.Node> select(Map<String, String> namespaceAlias) {
+        return new Selector<>(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node, namespaceAlias);
+    }
+
+    public static NodeMatcher<org.w3c.dom.Node> parseSelector(String selector) {
+        return parseSelector(selector, Map.of());
+    }
+
+    public static NodeMatcher<org.w3c.dom.Node> parseSelector(String selector, Map<String, String> namespaceAlias) {
+        return new NodeMatcher<>(select(namespaceAlias).parseSelectorInstance(selector));
     }
 
     public static Document toW3CDocument(ch.digitalfondue.jfiveparse.Document doc) {
