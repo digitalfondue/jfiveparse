@@ -47,7 +47,7 @@ public class TokenizerTest {
 
     public static List<Object[]> data() throws IOException {
         List<Object[]> data = new ArrayList<>();
-        try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("src/test/resources/html5lib-tests/tokenizer"), "*.test")) {
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("external-resources/html5lib-tests/tokenizer"), "*.test")) {
             for (Path p : ds) {
                 byte[] file = Files.readAllBytes(p);
                 String json = new String(file, StandardCharsets.UTF_8);

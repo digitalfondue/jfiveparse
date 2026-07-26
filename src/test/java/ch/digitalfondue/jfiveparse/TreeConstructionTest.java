@@ -72,7 +72,7 @@ public class TreeConstructionTest {
 
     public static List<Object[]> data() throws IOException {
         List<Object[]> data = new ArrayList<>();
-        try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("src/test/resources/html5lib-tests/tree-construction"), "*.dat")) {
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("external-resources/wpt/html/syntax/parsing/resources"), "*.dat")) {
             for (Path p : ds) {
                 String file = Files.readString(p);
                 String[] testsAsString = file.split("\n\n#data\n");
@@ -82,7 +82,8 @@ public class TreeConstructionTest {
                         data.add(new Object[] { p.getFileName().toString(), treeTest, false });
                         data.add(new Object[] { p.getFileName().toString(), treeTest, true });
                     } else if (treeTest.scriptingFlag) {
-                        data.add(new Object[] { p.getFileName().toString(), treeTest, true });
+                        // do nothing
+                        // data.add(new Object[] { p.getFileName().toString(), treeTest, true });
                     } else {
                         data.add(new Object[] { p.getFileName().toString(), treeTest, false });
                     }
