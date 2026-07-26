@@ -105,6 +105,7 @@ class TokenizerState {
                 break;
             case Characters.QUESTION_MARK:
                 tokenizer.emitParseError();
+                // FIXME: add support for processing instruction open state
                 // FIXME CHECK only in some case the bogus comment state
                 // will use the character that caused the transition.
                 // This seems the (only) one
@@ -113,7 +114,7 @@ class TokenizerState {
                 tokenizer.setState(BOGUS_COMMENT_STATE);
                 break;
             default:
-                if (Common.isUpperOrLowerCaseASCIILetter(chr)) { //
+                if (Common.isUpperOrLowerCaseASCIILetter(chr)) { // ASCII alpha
                     tokenizer.createNewStartTagToken(chr);
                     tokenizer.setState(TAG_NAME_STATE);
                 } else { // default
