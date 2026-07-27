@@ -91,6 +91,8 @@ class TokenizerState {
     static final int AFTER_DOCTYPE_SYSTEM_IDENTIFIER_STATE = 65;
     static final int BOGUS_DOCTYPE_STATE = 66;
     static final int CDATA_SECTION_STATE = 67;
+    static final int PROCESSING_INSTRUCTION_OPEN_STATE = 68;
+    static final int PROCESSING_INSTRUCTION_TARGET_STATE = 69;
 
 
     //region TokenizerTagStates
@@ -104,14 +106,9 @@ class TokenizerState {
                 tokenizer.setState(END_TAG_OPEN_STATE);
                 break;
             case Characters.QUESTION_MARK:
-                tokenizer.emitParseError();
-                // FIXME: add support for processing instruction open state
-                // FIXME CHECK only in some case the bogus comment state
-                // will use the character that caused the transition.
-                // This seems the (only) one
-                processedInputStream.reconsume(chr);
-                //
-                tokenizer.setState(BOGUS_COMMENT_STATE);
+                // set temporary buffer to empty string
+                tokenizer.createTemporaryBuffer();
+                tokenizer.setState(PROCESSING_INSTRUCTION_OPEN_STATE);
                 break;
             default:
                 if (Common.isUpperOrLowerCaseASCIILetter(chr)) { // ASCII alpha
@@ -2392,6 +2389,24 @@ class TokenizerState {
             default:
                 tokenizer.emitParseErrorAndSetState(BEFORE_ATTRIBUTE_NAME_STATE);
                 processedInputStream.reconsume(chr);
+        }
+    }
+
+    // see https://html.spec.whatwg.org/multipage/parsing.html#processing-instruction-open-state
+    static void handleProcessingInstructionOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+        int chr = processedInputStream.getNextInputCharacterAndConsume();
+        if (Common.isUpperOrLowerCaseASCIILetter(chr) || chr == Characters.LOW_LINE) {
+            processedInputStream.reconsume(chr);
+            tokenizer.setState(PROCESSING_INSTRUCTION_TARGET_STATE);
+        } else if (chr == Characters.EOF) {
+            tokenizer.emitParseError();
+            tokenizer.emitEOF();
+        } else {
+            tokenizer.emitParseError();
+            tokenizer.createNewCommentToken();
+            tokenizer.appendCommentCharacter('?');
+            tokenizer.
+            // FIXME: convert the tmp buffer in a comment, reconsume + bogus comment state
         }
     }
     //endregion

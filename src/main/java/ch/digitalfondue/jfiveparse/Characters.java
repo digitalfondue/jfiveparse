@@ -85,4 +85,5 @@ final class Characters {
     static final char LATIN_SMALL_LIGATURE_OE = 0x0153;
     static final char LATIN_SMALL_LETTER_Z_WITH_CARON = 0x017E;
     static final char LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS = 0x0178;
+    static final char LOW_LINE = 0x005F;
 }

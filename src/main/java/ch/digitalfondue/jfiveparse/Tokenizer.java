@@ -79,8 +79,7 @@ final class Tokenizer {
 
     //
 
-    //
-
+    // reset the buffer
     void createTemporaryBuffer() {
         temporaryBuffer.reset();
     }
@@ -376,6 +375,9 @@ final class Tokenizer {
             break;
         case TokenizerState.CDATA_SECTION_STATE:
             TokenizerState.handleCDataSectionState(this, processedInputStream);
+            break;
+        case TokenizerState.PROCESSING_INSTRUCTION_OPEN_STATE:
+            TokenizerState.handleProcessingInstructionOpenState(this, processedInputStream);
             break;
         }
     }
