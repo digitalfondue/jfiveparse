@@ -2405,8 +2405,8 @@ class TokenizerState {
             tokenizer.emitParseError();
             tokenizer.createNewCommentToken();
             tokenizer.appendCommentCharacter('?');
-            tokenizer.
-            // FIXME: convert the tmp buffer in a comment, reconsume + bogus comment state
+            tokenizer.appendTemporaryBufferToComment();
+            tokenizer.setState(BOGUS_COMMENT_STATE);
         }
     }
     //endregion

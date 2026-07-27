@@ -108,4 +108,8 @@ final class ResizableCharBuilder {
         System.arraycopy(c, offset, buff, pos, length);
         pos += length;
     }
+
+    void append(ResizableCharBuilder other) {
+        append(other.buff, 0, other.pos);
+    }
 }

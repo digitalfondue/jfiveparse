@@ -379,6 +379,8 @@ final class Tokenizer {
         case TokenizerState.PROCESSING_INSTRUCTION_OPEN_STATE:
             TokenizerState.handleProcessingInstructionOpenState(this, processedInputStream);
             break;
+        case TokenizerState.PROCESSING_INSTRUCTION_TARGET_STATE:
+            throw new IllegalStateException("TODO");
         }
     }
 
@@ -515,6 +517,10 @@ final class Tokenizer {
     void appendCommentCharacter(int chr, int chr2) {
         commentToken.append((char) chr);
         commentToken.append((char) chr2);
+    }
+
+    void appendTemporaryBufferToComment() {
+        commentToken.append(temporaryBuffer);
     }
 
     //
