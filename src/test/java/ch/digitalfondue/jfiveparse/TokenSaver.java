@@ -83,7 +83,6 @@ class TokenSaver extends TreeConstructor {
 
     @Override
     public Document getDocument() {
-        // TODO Auto-generated method stub
         return null;
     }
 

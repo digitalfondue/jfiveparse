@@ -2404,9 +2404,7 @@ class TokenizerState {
             tokenizer.emitEOF();
         } else {
             tokenizer.emitParseError();
-            tokenizer.createNewCommentToken();
-            tokenizer.appendCommentCharacter('?');
-            tokenizer.appendTemporaryBufferToComment();
+            tokenizer.convertTemporaryBufferToComment();
             processedInputStream.reconsume(chr);
             tokenizer.setState(BOGUS_COMMENT_STATE);
         }
@@ -2418,13 +2416,23 @@ class TokenizerState {
         if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.QUESTION_MARK || chr == Characters.GREATERTHAN_SIGN) {
             if (tokenizer.isTemporaryBufferEquals(Common.XML) || tokenizer.isTemporaryBufferEquals(Common.XML_STYLESHEET)) {
                 tokenizer.emitParseError();
-                tokenizer.appendTemporaryBufferToComment();
+                tokenizer.convertTemporaryBufferToComment();
                 processedInputStream.reconsume(chr);
                 tokenizer.setState(BOGUS_COMMENT_STATE);
-                return;
+            } else {
+                throw new IllegalStateException("TODO");
             }
+        } else if (Common.isAlphaNumericASCII(chr) || chr == Characters.HYPHEN_MINUS || chr == Characters.LOW_LINE) {
+            tokenizer.appendToTemporaryBuffer(chr);
+        } else if (chr == Characters.EOF) {
+            tokenizer.emitParseError();
+            tokenizer.emitEOF();
+        } else {
+            tokenizer.emitParseError();
+            tokenizer.convertTemporaryBufferToComment();
+            processedInputStream.reconsume(chr);
+            tokenizer.setState(BOGUS_COMMENT_STATE);
         }
-        throw new IllegalStateException("TODO");
     }
     //endregion
 }

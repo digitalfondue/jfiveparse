@@ -524,6 +524,12 @@ final class Tokenizer {
         commentToken.append(temporaryBuffer);
     }
 
+    void convertTemporaryBufferToComment() {
+        createNewCommentToken();
+        appendCommentCharacter('?');
+        appendTemporaryBufferToComment();
+    }
+
     //
 
     void emitEOF() {
