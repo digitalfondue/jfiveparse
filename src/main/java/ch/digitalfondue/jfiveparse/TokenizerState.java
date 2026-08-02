@@ -148,6 +148,7 @@ class TokenizerState {
                     // FIXME CHECK only in some case the bogus comment state
                     // will use the character that caused the transition.
                     // This seems the (only) one
+                    tokenizer.createNewCommentToken();
                     processedInputStream.reconsume(chr);
                     //
                     tokenizer.setState(BOGUS_COMMENT_STATE);
@@ -984,6 +985,7 @@ class TokenizerState {
                 tokenizer.setState(CDATA_SECTION_STATE);
 
             } else {
+                tokenizer.createNewCommentToken();
                 tokenizer.emitParseErrorAndSetState(BOGUS_COMMENT_STATE);
             }
         }
@@ -1679,8 +1681,7 @@ class TokenizerState {
     }
 
     static void handleBogusCommentState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
-        ResizableCharBuilder sb = new ResizableCharBuilder();
-
+        ResizableCharBuilder sb = tokenizer.commentToken;
         boolean continueProcess = true;
         while (continueProcess) {
             int chr = processedInputStream.getNextInputCharacterAndConsume();
@@ -2406,8 +2407,24 @@ class TokenizerState {
             tokenizer.createNewCommentToken();
             tokenizer.appendCommentCharacter('?');
             tokenizer.appendTemporaryBufferToComment();
+            processedInputStream.reconsume(chr);
             tokenizer.setState(BOGUS_COMMENT_STATE);
         }
+    }
+
+    // see https://html.spec.whatwg.org/multipage/parsing.html#processing-instruction-target-state
+    static void handleProcessingInstructionTargetState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+        int chr = processedInputStream.getNextInputCharacterAndConsume();
+        if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.QUESTION_MARK || chr == Characters.GREATERTHAN_SIGN) {
+            if (tokenizer.isTemporaryBufferEquals(Common.XML) || tokenizer.isTemporaryBufferEquals(Common.XML_STYLESHEET)) {
+                tokenizer.emitParseError();
+                tokenizer.appendTemporaryBufferToComment();
+                processedInputStream.reconsume(chr);
+                tokenizer.setState(BOGUS_COMMENT_STATE);
+                return;
+            }
+        }
+        throw new IllegalStateException("TODO");
     }
     //endregion
 }

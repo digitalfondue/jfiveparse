@@ -95,6 +95,7 @@ final class Tokenizer {
         }
     }
 
+    /* ASCII case-insensitive match */
     boolean isTemporaryBufferEquals(char[] s) {
         return temporaryBuffer.equalsASCIICaseInsensitive(s);
     }
@@ -380,7 +381,7 @@ final class Tokenizer {
             TokenizerState.handleProcessingInstructionOpenState(this, processedInputStream);
             break;
         case TokenizerState.PROCESSING_INSTRUCTION_TARGET_STATE:
-            throw new IllegalStateException("TODO");
+            TokenizerState.handleProcessingInstructionTargetState(this, processedInputStream);
         }
     }
 

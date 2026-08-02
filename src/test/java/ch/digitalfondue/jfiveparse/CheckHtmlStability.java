@@ -23,4 +23,11 @@ class CheckHtmlStability {
         var content = JFiveParse.serialize(res);
         Assertions.assertEquals(Files.readString(Paths.get("src/test/resources/test-serialized.html")), content);
     }
+
+    @Test
+    void checkFailure() {
+        var res = JFiveParse.parse("<body><?-100>");
+        var content = JFiveParse.serialize(res);
+        Assertions.assertEquals("<html><head></head><body><!--?-100--></body></html>", content);
+    }
 }

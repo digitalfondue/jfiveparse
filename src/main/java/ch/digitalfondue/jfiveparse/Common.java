@@ -67,6 +67,10 @@ final class Common {
     static final char[] PUBLIC = new char[] {'p', 'u', 'b', 'l', 'i', 'c'}; //public
     static final char[] DOCTYPE = new char[] {'d', 'o', 'c', 't', 'y', 'p', 'e'}; //doctype
 
+
+    static final char[] XML = new char[] {'x', 'm', 'l'};
+    static final char[] XML_STYLESHEET = new char[] {'x', 'm', 'l', '-', 's', 't', 'y', 'l', 'e', 's', 'h', 'e', 'e', 't'};
+
     static boolean matchCharsCaseInsensitive(char[] str, int[] chars) {
         for (int i = 0; i < chars.length; i++) {
             if (str[i] != toLowerCase(chars[i])) {
