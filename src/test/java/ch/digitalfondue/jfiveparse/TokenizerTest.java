@@ -17,6 +17,8 @@ package ch.digitalfondue.jfiveparse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -99,6 +101,25 @@ public class TokenizerTest {
         }
 
         checkSingleTest(desc, state);
+    }
+
+    @Test
+    @Disabled
+    // this test is more likely than not no more valid
+    // in test3.test
+    // {"description":"<?",
+    //"input":"<?",
+    //"output":[["Comment", "?"]],
+    //"errors":[
+    //    { "code": "unexpected-question-mark-instead-of-tag-name", "line": 1, "col": 2 }
+    //]}
+
+    public void debugTest() {
+        var descriptor = new TokenizerTestDescriptor();
+        descriptor.description = "<?";
+        descriptor.input = "<?";
+        descriptor.output = List.of(List.of("Comment", "?"));
+        checkSingleTest(descriptor, TokenizerStateForTest.DATA_STATE);
     }
 
     private void checkSingleTest(TokenizerTestDescriptor desc, TokenizerStateForTest initialState) {
