@@ -814,6 +814,7 @@ class TreeConstructor {
         dispatch();
     }
 
+    // https://html.spec.whatwg.org/multipage/parsing.html#insert-a-processing-instruction
     void emitProcessingInstructionToken(String processingInstructionTokenTarget, String processingInstructionTokenData) {
         this.processingInstructionTokenTarget = processingInstructionTokenTarget;
         this.processingInstructionTokenData = processingInstructionTokenData;
