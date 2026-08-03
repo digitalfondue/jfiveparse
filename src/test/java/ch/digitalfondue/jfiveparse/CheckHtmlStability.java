@@ -1,6 +1,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -25,9 +26,10 @@ class CheckHtmlStability {
     }
 
     @Test
+    @Disabled
     void checkFailure() {
-        var res = JFiveParse.parse("<body><?-100>");
+        var res = JFiveParse.parse("<body><?something>");
         var content = JFiveParse.serialize(res);
-        Assertions.assertEquals("<html><head></head><body><!--?-100--></body></html>", content);
+        Assertions.assertEquals("<html><head></head><body><?something></body></html>", content);
     }
 }

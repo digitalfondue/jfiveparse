@@ -93,6 +93,9 @@ class TokenizerState {
     static final int CDATA_SECTION_STATE = 67;
     static final int PROCESSING_INSTRUCTION_OPEN_STATE = 68;
     static final int PROCESSING_INSTRUCTION_TARGET_STATE = 69;
+    static final int AFTER_PROCESSING_INSTRUCTION_TARGET_STATE = 70;
+    static final int PROCESSING_INSTRUCTION_DATA_STATE = 71;
+    static final int PROCESSING_INSTRUCTION_QUESTIONABLE_STATE = 72;
 
 
     //region TokenizerTagStates
@@ -2420,7 +2423,9 @@ class TokenizerState {
                 processedInputStream.reconsume(chr);
                 tokenizer.setState(BOGUS_COMMENT_STATE);
             } else {
-                throw new IllegalStateException("TODO");
+                tokenizer.createProcessingInstructionToken();
+                processedInputStream.reconsume(chr);
+                tokenizer.setState(AFTER_PROCESSING_INSTRUCTION_TARGET_STATE);
             }
         } else if (Common.isAlphaNumericASCII(chr) || chr == Characters.HYPHEN_MINUS || chr == Characters.LOW_LINE) {
             tokenizer.appendToTemporaryBuffer(chr);
@@ -2432,6 +2437,45 @@ class TokenizerState {
             tokenizer.convertTemporaryBufferToComment();
             processedInputStream.reconsume(chr);
             tokenizer.setState(BOGUS_COMMENT_STATE);
+        }
+    }
+
+    static void handleAfterProcessingInstructionTargetState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+        int chr = processedInputStream.getNextInputCharacterAndConsume();
+        if (!Common.isTabLfFfCrOrSpace(chr)) {
+            // ignore
+            processedInputStream.reconsume(chr);
+            tokenizer.setState(PROCESSING_INSTRUCTION_DATA_STATE);
+        }
+    }
+
+    static void handleProcessingInstructionDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+        int chr = processedInputStream.getNextInputCharacterAndConsume();
+        if (chr == Characters.QUESTION_MARK) {
+            tokenizer.setState(PROCESSING_INSTRUCTION_QUESTIONABLE_STATE);
+        } else if (chr == Characters.GREATERTHAN_SIGN) {
+            tokenizer.setState(DATA_STATE);
+            tokenizer.emitProcessingInstructionToken();
+        } else if (chr == Characters.EOF) {
+            tokenizer.emitParseError();
+            tokenizer.emitEOF();
+        } else {
+            tokenizer.processingInstructionTokenData.append((char) chr);
+        }
+    }
+
+    static void handleProcessingInstructionQuestionableState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+        int chr = processedInputStream.getNextInputCharacterAndConsume();
+        if (chr == Characters.GREATERTHAN_SIGN) {
+            tokenizer.setState(DATA_STATE);
+            tokenizer.emitProcessingInstructionToken();
+        } else if (chr == Characters.EOF) {
+            tokenizer.emitParseError();
+            tokenizer.emitEOF();
+        } else {
+            tokenizer.processingInstructionTokenData.append(Characters.QUESTION_MARK);
+            processedInputStream.reconsume(chr);
+            tokenizer.setState(PROCESSING_INSTRUCTION_DATA_STATE);
         }
     }
     //endregion

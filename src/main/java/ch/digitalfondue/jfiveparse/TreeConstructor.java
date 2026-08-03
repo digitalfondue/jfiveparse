@@ -34,6 +34,7 @@ class TreeConstructor {
     static final int TT_EOF = 3;
     static final int TT_END_TAG = 4;
     static final int TT_START_TAG = 5;
+    static final int TT_PROCESSING_INSTRUCTION = 6;
 
     //
     boolean scriptingFlag;
@@ -88,6 +89,11 @@ class TreeConstructor {
     boolean isHtmlFragmentParsing;
     private boolean fosterParentingEnabled;
     // --- ----
+
+    // --- processing instruction related ---
+    private String processingInstructionTokenTarget;
+    private String processingInstructionTokenData;
+    // --- ---
 
     // when textarea is present, if the first character is LF, it must be
     // skipped
@@ -805,6 +811,13 @@ class TreeConstructor {
     void emitComment(ResizableCharBuilder comment) {
         this.comment = comment;
         tokenType = TT_COMMENT;
+        dispatch();
+    }
+
+    void emitProcessingInstructionToken(String processingInstructionTokenTarget, String processingInstructionTokenData) {
+        this.processingInstructionTokenTarget = processingInstructionTokenTarget;
+        this.processingInstructionTokenData = processingInstructionTokenData;
+        tokenType = TT_PROCESSING_INSTRUCTION;
         dispatch();
     }
 
