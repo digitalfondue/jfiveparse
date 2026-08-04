@@ -22,16 +22,16 @@ public class update_external_resources {
             cloneRepo(tempDir, "https://github.com/html5lib/html5lib-tests.git");
             cloneRepo(tempDir, "https://github.com/web-platform-tests/wpt.git");
 
-            MoreFiles.deleteRecursively(Path.of("external-resources2"));
+            MoreFiles.deleteRecursively(Path.of("external-resources"));
 
             // 3. Copy html5lib-tests/tokenizer
             Path sourceTokenizer = tempDir.resolve("html5lib-tests").resolve("tokenizer");
-            Path targetTokenizer = Path.of("external-resources2", "html5lib-tests", "tokenizer");
+            Path targetTokenizer = Path.of("external-resources", "html5lib-tests", "tokenizer");
             copyDirectoryIfExists(sourceTokenizer, targetTokenizer);
 
             // 4. Copy wpt/html/syntax/parsing/resources
             Path sourceWptResources = tempDir.resolve("wpt").resolve("html").resolve("syntax").resolve("parsing").resolve("resources");
-            Path targetWptResources = Path.of("external-resources2", "wpt", "html", "syntax", "parsing", "resources");
+            Path targetWptResources = Path.of("external-resources", "wpt", "html", "syntax", "parsing", "resources");
             copyDirectoryIfExists(sourceWptResources, targetWptResources);
 
         } catch (Exception e) {
