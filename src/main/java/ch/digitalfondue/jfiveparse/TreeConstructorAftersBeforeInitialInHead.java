@@ -452,6 +452,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.insertCharacter();
         } else if (tokenType == TT_COMMENT) {
             treeConstructor.insertComment();
+        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertProcessingInstruction();
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
@@ -540,6 +542,7 @@ final class TreeConstructorAftersBeforeInitialInHead {
                 chr == Characters.LF || //
                 chr == Characters.FF || chr == Characters.CR || chr == Characters.SPACE)) || //
                 tokenType == TT_COMMENT || //
+                tokenType == TT_PROCESSING_INSTRUCTION || //
                 (tokenType == TT_START_TAG && (
                         Common.ELEMENT_BASEFONT_ID == tagNameID || //
                         Common.ELEMENT_BGSOUND_ID == tagNameID || //
