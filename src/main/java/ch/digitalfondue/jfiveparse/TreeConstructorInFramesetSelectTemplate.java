@@ -26,6 +26,8 @@ final class TreeConstructorInFramesetSelectTemplate {
             treeConstructor.insertCharacter();
         } else if (tokenType == TT_COMMENT) {
             treeConstructor.insertComment();
+        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertProcessingInstruction();
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore

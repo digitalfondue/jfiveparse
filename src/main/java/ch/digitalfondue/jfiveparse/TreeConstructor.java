@@ -786,6 +786,10 @@ class TreeConstructor {
         document.appendChild(new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
     }
 
+    void insertProcessingInstructionToHtmlElement() {
+        openElements.get(0).appendChild(new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
+    }
+
     // ------------------
 
     Element popCurrentNode() {

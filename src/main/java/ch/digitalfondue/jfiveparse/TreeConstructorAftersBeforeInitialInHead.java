@@ -84,6 +84,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (tokenType == TT_COMMENT) {
             treeConstructor.insertCommentToHtmlElement();
+        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertProcessingInstructionToHtmlElement();
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
@@ -109,6 +111,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.insertCharacter();
         } else if (tokenType == TT_COMMENT) {
             treeConstructor.insertComment();
+        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertProcessingInstruction();
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
@@ -129,6 +133,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
     static void afterAfterBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == TT_COMMENT) {
             treeConstructor.insertCommentToDocument();
+        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertProcessingInstructionToDocument();
         } else if (tokenType == TT_DOCTYPE || //
                 (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) || //
                 Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
@@ -145,6 +151,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
     static void afterAfterFrameset(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == TT_COMMENT) {
             treeConstructor.insertCommentToDocument();
+        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertProcessingInstructionToDocument();
         } else if ((tokenType == TT_DOCTYPE) || //
                 (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) || //
                 (Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID))) {
