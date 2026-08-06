@@ -74,7 +74,7 @@ final class TreeConstructorInFramesetSelectTemplate {
     }
 
     static void inTemplate(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        if (tokenType == TT_CHARACTER || tokenType == TT_COMMENT || tokenType == TT_DOCTYPE) {
+        if (tokenType == TT_CHARACTER || tokenType == TT_COMMENT || tokenType == TT_DOCTYPE || tokenType == TT_PROCESSING_INSTRUCTION) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
         } else if (
                 (tokenType == TT_START_TAG && (

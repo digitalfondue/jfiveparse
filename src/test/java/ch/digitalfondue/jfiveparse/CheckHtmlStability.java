@@ -28,8 +28,8 @@ class CheckHtmlStability {
     @Test
     @Disabled
     void checkFailure() {
-        var res = JFiveParse.parse("<body><?something>");
+        var res = JFiveParse.parse("<html><body><template><?something ></template>");
         var content = JFiveParse.serialize(res);
-        Assertions.assertEquals("<html><head></head><body><?something></body></html>", content);
+        // Assertions.assertEquals("<html><head></head><body><?something></body></html>", content);
     }
 }
