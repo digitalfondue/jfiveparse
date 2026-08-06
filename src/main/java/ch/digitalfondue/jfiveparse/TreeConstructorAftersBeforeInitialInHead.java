@@ -28,6 +28,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
             treeConstructor.insertCharacter();
         } else if (tokenType == TT_COMMENT) {
             treeConstructor.insertComment();
+        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertProcessingInstruction();
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
@@ -180,6 +182,9 @@ final class TreeConstructorAftersBeforeInitialInHead {
             case TT_START_TAG:
                 handleStartTagHead(tokenType, tagName, tagNameID, treeConstructor);
                 break;
+            case TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertProcessingInstruction();
+                break;
         }
     }
 
@@ -243,6 +248,9 @@ final class TreeConstructorAftersBeforeInitialInHead {
             case TT_START_TAG:
                 handleStartTagHtml(tagName, tagNameID, treeConstructor);
                 break;
+            case TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertProcessingInstructionToDocument();
+                break;
         }
     }
 
@@ -295,6 +303,9 @@ final class TreeConstructorAftersBeforeInitialInHead {
                 break;
             case TT_DOCTYPE:
                 handleDoctype(treeConstructor);
+                break;
+            case TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertProcessingInstructionToDocument();
                 break;
             case TT_EOF:
             /*initialOthers(treeConstructor);

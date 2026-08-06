@@ -250,6 +250,8 @@ public class TreeConstructionTest {
             sb.append("\"").append(((Text) node).getData()).append("\"");
         } else if (node instanceof Comment) {
             sb.append("<!-- ").append(((Comment) node).getData()).append(" -->");
+        } else if (node instanceof ProcessingInstruction p) {
+            sb.append("<?").append(p.getTarget()).append(" ").append(p.getData()).append("?>");
         } else if (node instanceof DocumentType dt) {
 
             sb.append("<!DOCTYPE ");

@@ -27,6 +27,14 @@ public final class ProcessingInstruction extends Node {
         this.data = data;
     }
 
+    public String getTarget() {
+        return target;
+    }
+
+    public String getData() {
+        return data;
+    }
+
     @Override
     public int getNodeType() {
         return PROCESSING_INSTRUCTION_NODE;

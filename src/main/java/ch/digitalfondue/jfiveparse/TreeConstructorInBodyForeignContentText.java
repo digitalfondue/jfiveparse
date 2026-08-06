@@ -941,6 +941,10 @@ final class TreeConstructorInBodyForeignContentText {
                 break;
             case TT_START_TAG:
                 inBodyStartTag(tagName, tagNameID, treeConstructor);
+                break;
+            case TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertProcessingInstruction();
+                break;
         }
     }
 

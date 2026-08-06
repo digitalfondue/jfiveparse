@@ -742,7 +742,7 @@ class TreeConstructor {
         return element;
     }
 
-    void insertComment() {
+    private void insertCommonCommentProcessingInstruction(Node node) {
         Node toInsert;
         int position;
         if (fosterParentingEnabled) {
@@ -760,7 +760,11 @@ class TreeConstructor {
             toInsert = openElements.get(openElements.size() - 1);
             position = toInsert.getChildCount();
         }
-        toInsert.insertChildren(position, new Comment(comment));
+        toInsert.insertChildren(position, node);
+    }
+
+    void insertComment() {
+        insertCommonCommentProcessingInstruction(new Comment(comment));
     }
 
     void insertCommentToDocument() {
@@ -769,6 +773,17 @@ class TreeConstructor {
 
     void insertCommentToHtmlElement() {
         openElements.get(0).appendChild(new Comment(comment));
+    }
+
+    // ------------------
+
+    // https://html.spec.whatwg.org/multipage/parsing.html#insert-a-processing-instruction
+    void insertProcessingInstruction() {
+        insertCommonCommentProcessingInstruction(new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
+    }
+
+    void insertProcessingInstructionToDocument() {
+        document.appendChild(new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
     }
 
     // ------------------
