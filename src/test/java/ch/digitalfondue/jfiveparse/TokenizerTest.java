@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,10 +79,31 @@ public class TokenizerTest {
 
     private static final Gson GSON = new GsonBuilder().create();
 
+    record ToSkip(String path, String description) {}
+
+    private static final Set<ToSkip> TO_SKIPS = Set.of(
+            new ToSkip("test2.test", "Simili processing instruction"),
+            new ToSkip("test2.test", "A bogus comment stops at >, even if preceded by two dashes"),
+            new ToSkip("test3.test", "<?"),
+            new ToSkip("test3.test", "<?A"),
+            new ToSkip("test3.test", "<?B"),
+            new ToSkip("test3.test", "<?Y"),
+            new ToSkip("test3.test", "<?Z"),
+            new ToSkip("test3.test", "<?a"),
+            new ToSkip("test3.test", "<?b"),
+            new ToSkip("test3.test", "<?y"),
+            new ToSkip("test3.test", "<?z")
+    );
+
     @MethodSource("data")
     @SuppressWarnings("unchecked")
     @ParameterizedTest(name = "{0}:''{1}'':{2}")
     public void test(String path, TokenizerTestDescriptor test, TokenizerStateForTest state) {
+
+        // we skip some tests that we know are no more correct
+        // due to the addition of the processing instructions
+        // still, the tokenizer tests are useful
+        Assumptions.assumeFalse(TO_SKIPS.contains(new ToSkip(path, test.description)));
 
         initTokenizerTest(path, test, state);
 
