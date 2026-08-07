@@ -1138,7 +1138,7 @@ final class TreeConstructorInBodyForeignContentText {
 
     // ----------- text
 
-    static void foreignText(int tokenType, TreeConstructor treeConstructor) {
+    static void text(int tokenType, TreeConstructor treeConstructor) {
         switch (tokenType) {
             case TT_CHARACTER:
                 treeConstructor.insertCharacter();

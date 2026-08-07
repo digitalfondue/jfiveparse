@@ -187,7 +187,7 @@ class TreeConstructor {
         // most used
         switch (insertionMode) {
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.foreignText(tokenType, this);
+            TreeConstructorInBodyForeignContentText.text(tokenType, this);
             break;
         case IM_IN_BODY:
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
@@ -226,7 +226,7 @@ class TreeConstructor {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.foreignText(tokenType, this);
+            TreeConstructorInBodyForeignContentText.text(tokenType, this);
             break;
         case IM_IN_TABLE:
             TreeConstructorHandlers.inTable(tokenType, tagName, tagNameID, this);
