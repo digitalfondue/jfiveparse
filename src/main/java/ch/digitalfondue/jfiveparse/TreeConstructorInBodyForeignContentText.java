@@ -22,20 +22,6 @@ import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 
 final class TreeConstructorInBodyForeignContentText {
 
-    private static void handleInBodyCharacter(TreeConstructor treeConstructor) {
-        int chr = treeConstructor.getChr();
-        if (chr != Characters.NULL) {
-            treeConstructor.activeFormattingElements.reconstruct();
-            treeConstructor.insertCharacter((char) chr);
-            if (!Common.isTabLfFfCrOrSpace(chr)) {
-                treeConstructor.framesetOkToFalse();
-            }
-        } else {
-            treeConstructor.emitParseError();
-            // ignore
-        }
-    }
-
     private static void inBodyStartTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tagNameID) {
             case ELEMENT_HTML_ID:
@@ -728,16 +714,10 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_LI_ID:
                 endLi(treeConstructor);
                 break;
-            case ELEMENT_DD_ID:
-            case ELEMENT_DT_ID:
+            case ELEMENT_DD_ID, ELEMENT_DT_ID:
                 endDdDt(tagName, tagNameID, treeConstructor);
                 break;
-            case ELEMENT_H1_ID:
-            case ELEMENT_H2_ID:
-            case ELEMENT_H3_ID:
-            case ELEMENT_H4_ID:
-            case ELEMENT_H5_ID:
-            case ELEMENT_H6_ID:
+            case ELEMENT_H1_ID, ELEMENT_H2_ID, ELEMENT_H3_ID, ELEMENT_H4_ID, ELEMENT_H5_ID, ELEMENT_H6_ID:
                 endH1H6(tagNameID, treeConstructor);
                 break;
             case ELEMENT_A_ID:
@@ -924,9 +904,21 @@ final class TreeConstructorInBodyForeignContentText {
 
     static void inBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tokenType) {
-            case TT_CHARACTER:
-                handleInBodyCharacter(treeConstructor);
+            case TT_CHARACTER: {
+                // in body character
+                int chr = treeConstructor.getChr();
+                if (chr != Characters.NULL) {
+                    treeConstructor.activeFormattingElements.reconstruct();
+                    treeConstructor.insertCharacter((char) chr);
+                    if (!Common.isTabLfFfCrOrSpace(chr)) {
+                        treeConstructor.framesetOkToFalse();
+                    }
+                } else {
+                    treeConstructor.emitParseError();
+                    // ignore
+                }
                 return;
+            }
             case TT_COMMENT, TT_PROCESSING_INSTRUCTION:
                 treeConstructor.insertCommentProcessInstruction(tokenType);
                 return;
