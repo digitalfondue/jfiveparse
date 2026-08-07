@@ -927,8 +927,8 @@ final class TreeConstructorInBodyForeignContentText {
             case TT_CHARACTER:
                 handleInBodyCharacter(treeConstructor);
                 return;
-            case TT_COMMENT:
-                treeConstructor.insertComment();
+            case TT_COMMENT, TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertCommentProcessInstruction(tokenType);
                 return;
             case TT_DOCTYPE:
                 treeConstructor.emitParseError(); // ignore
@@ -941,9 +941,6 @@ final class TreeConstructorInBodyForeignContentText {
                 break;
             case TT_START_TAG:
                 inBodyStartTag(tagName, tagNameID, treeConstructor);
-                break;
-            case TT_PROCESSING_INSTRUCTION:
-                treeConstructor.insertProcessingInstruction();
                 break;
         }
     }
@@ -1005,10 +1002,8 @@ final class TreeConstructorInBodyForeignContentText {
         } else if (tokenType == TT_CHARACTER) {
             treeConstructor.insertCharacter();
             treeConstructor.framesetOkToFalse();
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertComment();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstruction();
+        } else if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessInstruction(tokenType);
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore token

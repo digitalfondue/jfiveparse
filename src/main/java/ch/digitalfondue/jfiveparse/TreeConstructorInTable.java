@@ -32,10 +32,8 @@ final class TreeConstructorInTable {
             treeConstructor.saveInsertionMode();
             treeConstructor.setInsertionMode(IM_IN_TABLE_TEXT);
             treeConstructor.dispatch();
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertComment();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstruction();
+        } else if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessInstruction(tokenType);
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore token
@@ -391,10 +389,8 @@ final class TreeConstructorInTable {
 
         if (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertComment();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstruction();
+        } else if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessInstruction(tokenType);
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore

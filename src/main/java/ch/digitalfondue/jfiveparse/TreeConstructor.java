@@ -742,7 +742,11 @@ class TreeConstructor {
         return element;
     }
 
-    private void insertCommonCommentProcessingInstruction(Node node) {
+    // insert comment / processing instruction
+    // https://html.spec.whatwg.org/multipage/parsing.html#insert-a-processing-instruction
+    void insertCommentProcessInstruction(int tokenType) {
+        var node = buildCPI(tokenType);
+
         Node toInsert;
         int position;
         if (fosterParentingEnabled) {
@@ -763,32 +767,19 @@ class TreeConstructor {
         toInsert.insertChildren(position, node);
     }
 
-    void insertComment() {
-        insertCommonCommentProcessingInstruction(new Comment(comment));
+    private Node buildCPI(int tokenType) {
+        return tokenType == TT_COMMENT ? new Comment(comment) : new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData);
     }
 
-    void insertCommentToDocument() {
-        document.appendChild(new Comment(comment));
+    void insertCommentProcessingInstructionToDocument(int tokenType) {
+        document.appendChild(buildCPI(tokenType));
     }
 
-    void insertCommentToHtmlElement() {
-        openElements.get(0).appendChild(new Comment(comment));
+    void insertCommentProcessingInstructionToHtmlElement(int tokenType) {
+        openElements.get(0).appendChild(buildCPI(tokenType));
     }
 
     // ------------------
-
-    // https://html.spec.whatwg.org/multipage/parsing.html#insert-a-processing-instruction
-    void insertProcessingInstruction() {
-        insertCommonCommentProcessingInstruction(new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
-    }
-
-    void insertProcessingInstructionToDocument() {
-        document.appendChild(new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
-    }
-
-    void insertProcessingInstructionToHtmlElement() {
-        openElements.get(0).appendChild(new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
-    }
 
     // ------------------
 

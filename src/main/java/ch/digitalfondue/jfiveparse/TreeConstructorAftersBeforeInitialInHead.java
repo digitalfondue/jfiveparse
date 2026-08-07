@@ -26,10 +26,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
     static void afterHead(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertComment();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstruction();
+        } else if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessInstruction(tokenType);
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
@@ -82,10 +80,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
     static void afterBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, treeConstructor);
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertCommentToHtmlElement();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstructionToHtmlElement();
+        } else if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessingInstructionToHtmlElement(tokenType);
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
@@ -109,10 +105,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
 
         if (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertComment();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstruction();
+        } else if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessInstruction(tokenType);
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
@@ -131,10 +125,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
     }
 
     static void afterAfterBody(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        if (tokenType == TT_COMMENT) {
-            treeConstructor.insertCommentToDocument();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstructionToDocument();
+        if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessingInstructionToDocument(tokenType);
         } else if (tokenType == TT_DOCTYPE || //
                 (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) || //
                 Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID)) {
@@ -149,10 +141,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
     }
 
     static void afterAfterFrameset(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        if (tokenType == TT_COMMENT) {
-            treeConstructor.insertCommentToDocument();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstructionToDocument();
+        if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessingInstructionToDocument(tokenType);
         } else if ((tokenType == TT_DOCTYPE) || //
                 (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) || //
                 (Common.isStartTagNamed(tokenType, Common.ELEMENT_HTML_ID, tagNameID))) {
@@ -174,8 +164,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
             case TT_CHARACTER:
                 handleCharacterHead(treeConstructor);
                 break;
-            case TT_COMMENT:
-                treeConstructor.insertComment();
+            case TT_COMMENT, TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertCommentProcessInstruction(tokenType);
                 break;
             case TT_DOCTYPE:
                 treeConstructor.emitParseError();
@@ -189,9 +179,6 @@ final class TreeConstructorAftersBeforeInitialInHead {
                 break;
             case TT_START_TAG:
                 handleStartTagHead(tokenType, tagName, tagNameID, treeConstructor);
-                break;
-            case TT_PROCESSING_INSTRUCTION:
-                treeConstructor.insertProcessingInstruction();
                 break;
         }
     }
@@ -241,8 +228,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
             case TT_CHARACTER:
                 handleCharacterHtml(treeConstructor);
                 break;
-            case TT_COMMENT:
-                treeConstructor.insertCommentToDocument();
+            case TT_COMMENT, TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertCommentProcessingInstructionToDocument(tokenType);
                 break;
             case TT_DOCTYPE:
                 treeConstructor.emitParseError();
@@ -255,9 +242,6 @@ final class TreeConstructorAftersBeforeInitialInHead {
                 break;
             case TT_START_TAG:
                 handleStartTagHtml(tagName, tagNameID, treeConstructor);
-                break;
-            case TT_PROCESSING_INSTRUCTION:
-                treeConstructor.insertProcessingInstructionToDocument();
                 break;
         }
     }
@@ -306,22 +290,13 @@ final class TreeConstructorAftersBeforeInitialInHead {
             case TT_CHARACTER:
                 handleCharacters(treeConstructor);
                 break;
-            case TT_COMMENT:
-                treeConstructor.insertCommentToDocument();
+            case TT_COMMENT, TT_PROCESSING_INSTRUCTION:
+                treeConstructor.insertCommentProcessingInstructionToDocument(tokenType);
                 break;
             case TT_DOCTYPE:
                 handleDoctype(treeConstructor);
                 break;
-            case TT_PROCESSING_INSTRUCTION:
-                treeConstructor.insertProcessingInstructionToDocument();
-                break;
-            case TT_EOF:
-            /*initialOthers(treeConstructor);
-            break;*/
-            case TT_END_TAG:
-            /*initialOthers(treeConstructor);
-            break;*/
-            case TT_START_TAG:
+            case TT_EOF, TT_END_TAG, TT_START_TAG:
                 initialOthers(treeConstructor);
                 break;
         }
@@ -450,10 +425,8 @@ final class TreeConstructorAftersBeforeInitialInHead {
     static void inHead(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
         if (tokenType == TT_CHARACTER && Common.isTabLfFfCrOrSpace(treeConstructor.getChr())) {
             treeConstructor.insertCharacter();
-        } else if (tokenType == TT_COMMENT) {
-            treeConstructor.insertComment();
-        } else if (tokenType == TT_PROCESSING_INSTRUCTION) {
-            treeConstructor.insertProcessingInstruction();
+        } else if (tokenType == TT_COMMENT || tokenType == TT_PROCESSING_INSTRUCTION) {
+            treeConstructor.insertCommentProcessInstruction(tokenType);
         } else if (tokenType == TT_DOCTYPE) {
             treeConstructor.emitParseError();
             // ignore
