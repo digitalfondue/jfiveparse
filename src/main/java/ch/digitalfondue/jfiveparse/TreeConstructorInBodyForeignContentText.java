@@ -88,12 +88,7 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_MENU_ID:
                 startMenu(treeConstructor);
                 break;
-            case ELEMENT_H1_ID:
-            case ELEMENT_H2_ID:
-            case ELEMENT_H3_ID:
-            case ELEMENT_H4_ID:
-            case ELEMENT_H5_ID:
-            case ELEMENT_H6_ID:
+            case ELEMENT_H1_ID, ELEMENT_H2_ID, ELEMENT_H3_ID, ELEMENT_H4_ID, ELEMENT_H5_ID, ELEMENT_H6_ID:
                 startH1H6(treeConstructor);
                 break;
             case ELEMENT_PRE_ID:
@@ -155,9 +150,7 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_INPUT_ID:
                 startInput(treeConstructor);
                 break;
-            case ELEMENT_PARAM_ID:
-            case ELEMENT_SOURCE_ID:
-            case ELEMENT_TRACK_ID:
+            case ELEMENT_PARAM_ID, ELEMENT_SOURCE_ID, ELEMENT_TRACK_ID:
                 startParamTrack(treeConstructor);
                 break;
             case ELEMENT_HR_ID:
@@ -175,8 +168,7 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_IFRAME_ID:
                 startIframe(treeConstructor);
                 break;
-            case ELEMENT_NOEMBED_ID:
-            case ELEMENT_NOSCRIPT_ID:
+            case ELEMENT_NOEMBED_ID, ELEMENT_NOSCRIPT_ID:
                 startNoembedNoscript(tagNameID, treeConstructor);
                 break;
             case ELEMENT_SELECT_ID:
@@ -185,15 +177,33 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_OPTGROUP_ID:
                 startOptgroup(treeConstructor);
                 break;
-            case ELEMENT_OPTION_ID:
-                startOption(treeConstructor);
+            case ELEMENT_OPTION_ID: {
+                // startOption(treeConstructor);
+                // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
+                // A start tag whose tag name is "option"
+                if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
+                    treeConstructor.generateImpliedEndTag("optgroup", Node.NAMESPACE_HTML);
+                    // If the stack of open elements has an option element in scope, then this is a parse error.
+                } else if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
+                    treeConstructor.popCurrentNode();
+                }
+                treeConstructor.activeFormattingElements.reconstruct();
+                treeConstructor.insertHtmlElementToken();
                 break;
-            case ELEMENT_RB_ID:
-            case ELEMENT_RTC_ID:
-                startRbRtc(treeConstructor);
+            }
+            case ELEMENT_RB_ID, ELEMENT_RTC_ID: {
+                // startRbRtc(treeConstructor);
+                if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
+                    treeConstructor.generateImpliedEndTag();
+                }
+
+                if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RUBY_ID)) {
+                    treeConstructor.emitParseError();
+                }
+                treeConstructor.insertHtmlElementToken();
                 break;
-            case ELEMENT_RP_ID:
-            case ELEMENT_RT_ID: {
+            }
+            case ELEMENT_RP_ID, ELEMENT_RT_ID: {
                 // startRpRt(treeConstructor);
                 if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
                     treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
@@ -206,9 +216,21 @@ final class TreeConstructorInBodyForeignContentText {
                 treeConstructor.insertHtmlElementToken();
                 break;
             }
-            case ELEMENT_MATH_ID:
-                startMath(treeConstructor);
+            case ELEMENT_MATH_ID: {
+                // startMath(treeConstructor);
+                treeConstructor.activeFormattingElements.reconstruct();
+
+                Attributes attrs = treeConstructor.getAttributes();
+                Common.adjustMathMLAttributes(attrs);
+                Common.adjustForeignAttributes(attrs);
+
+                treeConstructor.insertElementToken("math", Common.ELEMENT_MATH_ID, Node.NAMESPACE_MATHML, Node.NAMESPACE_MATHML_ID, attrs);
+                if (treeConstructor.isSelfClosing()) {
+                    treeConstructor.popCurrentNode();
+                    treeConstructor.ackSelfClosingTagIfSet();
+                }
                 break;
+            }
             case ELEMENT_SVG_ID: {
                 // startSvg(treeConstructor);
                 Attributes attrs = treeConstructor.getAttributes();
@@ -244,45 +266,6 @@ final class TreeConstructorInBodyForeignContentText {
                 inBodyStartTagAnythingElse(treeConstructor);
                 break;
         }
-    }
-
-    private static void startMath(TreeConstructor treeConstructor) {
-        treeConstructor.activeFormattingElements.reconstruct();
-
-        Attributes attrs = treeConstructor.getAttributes();
-        Common.adjustMathMLAttributes(attrs);
-        Common.adjustForeignAttributes(attrs);
-
-        treeConstructor.insertElementToken("math", Common.ELEMENT_MATH_ID, Node.NAMESPACE_MATHML, Node.NAMESPACE_MATHML_ID, attrs);
-        if (treeConstructor.isSelfClosing()) {
-            treeConstructor.popCurrentNode();
-            treeConstructor.ackSelfClosingTagIfSet();
-        }
-    }
-
-
-    private static void startRbRtc(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
-            treeConstructor.generateImpliedEndTag();
-        }
-
-        if (!Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RUBY_ID)) {
-            treeConstructor.emitParseError();
-        }
-        treeConstructor.insertHtmlElementToken();
-    }
-
-    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
-    // A start tag whose tag name is "option"
-    private static void startOption(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInScope(ELEMENT_SELECT_ID)) {
-            treeConstructor.generateImpliedEndTag("optgroup", Node.NAMESPACE_HTML);
-            // If the stack of open elements has an option element in scope, then this is a parse error.
-        } else if (isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_OPTION_ID)) {
-            treeConstructor.popCurrentNode();
-        }
-        treeConstructor.activeFormattingElements.reconstruct();
-        treeConstructor.insertHtmlElementToken();
     }
 
     // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inbody
