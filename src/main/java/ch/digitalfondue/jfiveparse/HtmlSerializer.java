@@ -139,6 +139,12 @@ public class HtmlSerializer implements NodesVisitor {
 
             } else if (node instanceof Comment comment) {
                 appendable.append("<!--").append(comment.getData()).append("-->");
+            } else if (node instanceof ProcessingInstruction processingInstruction) {
+                appendable.append("<?").append(processingInstruction.getTarget());
+                if (processingInstruction.getData() != null) {
+                    appendable.append(' ').append(processingInstruction.getData());
+                }
+                appendable.append('>');
             } else if (node instanceof DocumentType dt) {
                 // TODO: should append the rest of the attributes if present
                 appendable.append("<!DOCTYPE ").append(dt.getName()).append('>');
