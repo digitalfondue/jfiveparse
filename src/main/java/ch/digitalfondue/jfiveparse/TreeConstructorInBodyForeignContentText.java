@@ -24,9 +24,23 @@ final class TreeConstructorInBodyForeignContentText {
 
     private static void inBodyStartTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tagNameID) {
-            case ELEMENT_HTML_ID:
-                startHtml(treeConstructor);
+            case ELEMENT_HTML_ID: {
+                // startHtml(treeConstructor);
+                treeConstructor.emitParseError();
+
+                // we ignore the token if template is present
+                if (!treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
+                    Element firstInserted = treeConstructor.openElementAt(0);
+                    if (treeConstructor.getAttributes() != null) {
+                        for (String attr : treeConstructor.getAttributes().keySet()) {
+                            if (!firstInserted.getAttributes().containsKey(attr)) {
+                                firstInserted.getAttributes().put(treeConstructor.getAttribute(attr));
+                            }
+                        }
+                    }
+                }
                 break;
+            }
             case ELEMENT_BASE_ID:
             case ELEMENT_BASEFONT_ID:
             case ELEMENT_BGSOUND_ID:
@@ -179,15 +193,35 @@ final class TreeConstructorInBodyForeignContentText {
                 startRbRtc(treeConstructor);
                 break;
             case ELEMENT_RP_ID:
-            case ELEMENT_RT_ID:
-                startRpRt(treeConstructor);
+            case ELEMENT_RT_ID: {
+                // startRpRt(treeConstructor);
+                if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
+                    treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
+                }
+
+                if (!(Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RUBY_ID) || Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RTC_ID))) {
+                    treeConstructor.emitParseError();
+                }
+
+                treeConstructor.insertHtmlElementToken();
                 break;
+            }
             case ELEMENT_MATH_ID:
                 startMath(treeConstructor);
                 break;
-            case ELEMENT_SVG_ID:
-                startSvg(treeConstructor);
+            case ELEMENT_SVG_ID: {
+                // startSvg(treeConstructor);
+                Attributes attrs = treeConstructor.getAttributes();
+                Common.adjustSVGAttributes(attrs);
+                Common.adjustForeignAttributes(attrs);
+
+                treeConstructor.insertElementToken("svg", Common.ELEMENT_SVG_ID, Node.NAMESPACE_SVG, Node.NAMESPACE_SVG_ID, attrs);
+                if (treeConstructor.isSelfClosing()) {
+                    treeConstructor.popCurrentNode();
+                    treeConstructor.ackSelfClosingTagIfSet();
+                }
                 break;
+            }
             case ELEMENT_CAPTION_ID:
             case ELEMENT_COL_ID:
             case ELEMENT_COLGROUP_ID:
@@ -212,18 +246,6 @@ final class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void startSvg(TreeConstructor treeConstructor) {
-        Attributes attrs = treeConstructor.getAttributes();
-        Common.adjustSVGAttributes(attrs);
-        Common.adjustForeignAttributes(attrs);
-
-        treeConstructor.insertElementToken("svg", Common.ELEMENT_SVG_ID, Node.NAMESPACE_SVG, Node.NAMESPACE_SVG_ID, attrs);
-        if (treeConstructor.isSelfClosing()) {
-            treeConstructor.popCurrentNode();
-            treeConstructor.ackSelfClosingTagIfSet();
-        }
-    }
-
     private static void startMath(TreeConstructor treeConstructor) {
         treeConstructor.activeFormattingElements.reconstruct();
 
@@ -238,17 +260,6 @@ final class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void startRpRt(TreeConstructor treeConstructor) {
-        if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
-            treeConstructor.generateImpliedEndTag("rtc", Node.NAMESPACE_HTML);
-        }
-
-        if (!(Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RUBY_ID) || Common.isHtmlNS(treeConstructor.getCurrentNode(), ELEMENT_RTC_ID))) {
-            treeConstructor.emitParseError();
-        }
-
-        treeConstructor.insertHtmlElementToken();
-    }
 
     private static void startRbRtc(TreeConstructor treeConstructor) {
         if (treeConstructor.hasElementInScope(ELEMENT_RUBY_ID)) {
@@ -629,22 +640,6 @@ final class TreeConstructorInBodyForeignContentText {
                 for (String attr : treeConstructor.getAttributes().keySet()) {
                     if (!secondInserted.getAttributes().containsKey(attr)) {
                         secondInserted.getAttributes().put(treeConstructor.getAttribute(attr));
-                    }
-                }
-            }
-        }
-    }
-
-    private static void startHtml(TreeConstructor treeConstructor) {
-        treeConstructor.emitParseError();
-
-        // we ignore the token if template is present
-        if (!treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
-            Element firstInserted = treeConstructor.openElementAt(0);
-            if (treeConstructor.getAttributes() != null) {
-                for (String attr : treeConstructor.getAttributes().keySet()) {
-                    if (!firstInserted.getAttributes().containsKey(attr)) {
-                        firstInserted.getAttributes().put(treeConstructor.getAttribute(attr));
                     }
                 }
             }
