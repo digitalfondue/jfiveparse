@@ -193,7 +193,7 @@ class TreeConstructor {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_CELL:
-            TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inCell(tokenType, tagName, tagNameID, this);
             break;
         // end most used
         default:
@@ -205,22 +205,22 @@ class TreeConstructor {
     private void insertionModeInHtmlContentAll() {
         switch (insertionMode) {
         case IM_INITIAL:
-            TreeConstructorAftersBeforeInitialInHead.initial(tokenType, this);
+            TreeConstructorHandlers.initial(tokenType, this);
             break;
         case IM_BEFORE_HTML:
-            TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.beforeHtml(tokenType, tagName, tagNameID, this);
             break;
         case IM_BEFORE_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.beforeHead(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.beforeHead(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inHead(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_HEAD_NOSCRIPT:
-            TreeConstructorAftersBeforeInitialInHead.inHeadNoScript(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inHeadNoScript(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.afterHead(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterHead(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_BODY:
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
@@ -229,43 +229,43 @@ class TreeConstructor {
             TreeConstructorInBodyForeignContentText.foreignText(tokenType, this);
             break;
         case IM_IN_TABLE:
-            TreeConstructorInTable.inTable(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTable(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_TABLE_TEXT:
-            TreeConstructorInTable.inTableText(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTableText(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_CAPTION:
-            TreeConstructorInTable.inCaption(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inCaption(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_COLUMN_GROUP:
-            TreeConstructorInTable.inColumnGroup(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inColumnGroup(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_TABLE_BODY:
-            TreeConstructorInTable.inTableBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTableBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_ROW:
-            TreeConstructorInTable.inRow(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inRow(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_CELL:
-            TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inCell(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_TEMPLATE:
-            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTemplate(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_BODY:
-            TreeConstructorAftersBeforeInitialInHead.afterBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_FRAMESET:
-            TreeConstructorInFramesetSelectTemplate.inFrameset(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inFrameset(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_FRAMESET:
-            TreeConstructorAftersBeforeInitialInHead.afterFrameset(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterFrameset(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_AFTER_BODY:
-            TreeConstructorAftersBeforeInitialInHead.afterAfterBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterAfterBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_AFTER_FRAMESET:
-            TreeConstructorAftersBeforeInitialInHead.afterAfterFrameset(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterAfterFrameset(tokenType, tagName, tagNameID, this);
             break;
         }
     }

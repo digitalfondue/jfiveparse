@@ -51,7 +51,7 @@ final class TreeConstructorInBodyForeignContentText {
             case ELEMENT_STYLE_ID:
             case ELEMENT_TEMPLATE_ID:
             case ELEMENT_TITLE_ID:
-                TreeConstructorAftersBeforeInitialInHead.inHead(TT_START_TAG, tagName, tagNameID, treeConstructor);
+                TreeConstructorHandlers.inHead(TT_START_TAG, tagName, tagNameID, treeConstructor);
                 break;
             case ELEMENT_BODY_ID:
                 startBody(treeConstructor);
@@ -661,7 +661,7 @@ final class TreeConstructorInBodyForeignContentText {
     private static void inBodyEndTag(String tagName, int tagNameID, TreeConstructor treeConstructor) {
         switch (tagNameID) {
             case ELEMENT_TEMPLATE_ID:
-                TreeConstructorAftersBeforeInitialInHead.inHead(TT_END_TAG, tagName, tagNameID, treeConstructor);
+                TreeConstructorHandlers.inHead(TT_END_TAG, tagName, tagNameID, treeConstructor);
                 break;
             case ELEMENT_BODY_ID:
                 endBody(treeConstructor);
@@ -922,7 +922,7 @@ final class TreeConstructorInBodyForeignContentText {
                 return;
             case TT_EOF: {
                 if (!treeConstructor.isStackTemplatesInsertionModeIsEmpty()) {
-                    TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, treeConstructor);
+                    TreeConstructorHandlers.inTemplate(tokenType, tagName, tagNameID, treeConstructor);
                 } else {
                     // FIXME add check:
                     // If there is a node in the stack of open elements that is not
