@@ -187,7 +187,7 @@ class TreeConstructor {
         // most used
         switch (insertionMode) {
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.text(tokenType, this);
+            TreeConstructorInBodyForeignContentText.foreignText(tokenType, this);
             break;
         case IM_IN_BODY:
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
@@ -226,7 +226,7 @@ class TreeConstructor {
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.text(tokenType, this);
+            TreeConstructorInBodyForeignContentText.foreignText(tokenType, this);
             break;
         case IM_IN_TABLE:
             TreeConstructorInTable.inTable(tokenType, tagName, tagNameID, this);
@@ -397,7 +397,7 @@ class TreeConstructor {
             // no such element
             if (formattingElementIdx == -1) {
                 // any other end tag
-                TreeConstructorInBodyForeignContentText.anyOtherEndTag(this.tagName, this);
+                TreeConstructorInBodyForeignContentText.foreignAnyOtherEndTag(this.tagName, this);
                 return;
             }
 

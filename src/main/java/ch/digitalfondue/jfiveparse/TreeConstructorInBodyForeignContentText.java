@@ -765,7 +765,7 @@ final class TreeConstructorInBodyForeignContentText {
                 endBr(treeConstructor);
                 break;
             default:
-                anyOtherEndTag(tagName, treeConstructor);
+                foreignAnyOtherEndTag(tagName, treeConstructor);
                 break;
         }
     }
@@ -933,9 +933,22 @@ final class TreeConstructorInBodyForeignContentText {
             case TT_DOCTYPE:
                 treeConstructor.emitParseError(); // ignore
                 return;
-            case TT_EOF:
-                inBodyEof(tokenType, tagName, tagNameID,treeConstructor);
+            case TT_EOF: {
+                if (!treeConstructor.isStackTemplatesInsertionModeIsEmpty()) {
+                    TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, treeConstructor);
+                } else {
+                    // FIXME add check:
+                    // If there is a node in the stack of open elements that is not
+                    // either a dd element, a dt element, an li element, an optgroup
+                    // element, an option element, a p element, an rb element, an rp
+                    // element, an rt element, an rtc element, a tbody element, a td
+                    // element, a tfoot element, a th element, a thead element, a tr
+                    // element, the body element, or the html element, then this is
+                    // a parse error.
+                    treeConstructor.stopParsing();
+                }
                 return;
+            }
             case TT_END_TAG:
                 inBodyEndTag(tagName, tagNameID, treeConstructor);
                 break;
@@ -945,23 +958,7 @@ final class TreeConstructorInBodyForeignContentText {
         }
     }
 
-    private static void inBodyEof(int tokenType, String tagName, int tagNameID, TreeConstructor treeConstructor) {
-        if (!treeConstructor.isStackTemplatesInsertionModeIsEmpty()) {
-            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, treeConstructor);
-        } else {
-            // FIXME add check:
-            // If there is a node in the stack of open elements that is not
-            // either a dd element, a dt element, an li element, an optgroup
-            // element, an option element, a p element, an rb element, an rp
-            // element, an rt element, an rtc element, a tbody element, a td
-            // element, a tfoot element, a th element, a thead element, a tr
-            // element, the body element, or the html element, then this is
-            // a parse error.
-            treeConstructor.stopParsing();
-        }
-    }
-
-    static void anyOtherEndTag(String tagName, TreeConstructor treeConstructor) {
+    static void foreignAnyOtherEndTag(String tagName, TreeConstructor treeConstructor) {
         int idx = treeConstructor.openElementsSize() - 1;
         Element node = treeConstructor.openElementAt(idx);
 
@@ -1171,41 +1168,35 @@ final class TreeConstructorInBodyForeignContentText {
 
     // ----------- text
 
-    static void text(int tokenType, TreeConstructor treeConstructor) {
+    static void foreignText(int tokenType, TreeConstructor treeConstructor) {
         switch (tokenType) {
             case TT_CHARACTER:
                 treeConstructor.insertCharacter();
                 break;
-            case TT_EOF:
-                textEof(treeConstructor);
+            case TT_EOF: {
+                // Element currentNode = treeConstructor.getCurrentNode();
+                // if (currentNode != null &&
+                // "script".equals(currentNode.getNodeName())) {
+                // // "already started".TODO
+                // }
+                treeConstructor.popCurrentNode();
+                treeConstructor.switchToOriginalInsertionMode();
+                treeConstructor.dispatch();
                 break;
-            case TT_END_TAG:
-                textEndTag(treeConstructor);
+            }
+            case TT_END_TAG: {
+                // if ("script".equals(tagName)) {
+                // // TODO check
+                // treeConstructor.popCurrentNode();
+                // treeConstructor.insertionMode =
+                // treeConstructor.originalInsertionMode;
+                // } else {
+                treeConstructor.popCurrentNode();
+                treeConstructor.switchToOriginalInsertionMode();
+
+                // }
                 break;
+            }
         }
-    }
-
-    private static void textEndTag(TreeConstructor treeConstructor) {
-        // if ("script".equals(tagName)) {
-        // // TODO check
-        // treeConstructor.popCurrentNode();
-        // treeConstructor.insertionMode =
-        // treeConstructor.originalInsertionMode;
-        // } else {
-        treeConstructor.popCurrentNode();
-        treeConstructor.switchToOriginalInsertionMode();
-
-        // }
-    }
-
-    private static void textEof(TreeConstructor treeConstructor) {
-        // Element currentNode = treeConstructor.getCurrentNode();
-        // if (currentNode != null &&
-        // "script".equals(currentNode.getNodeName())) {
-        // // "already started".TODO
-        // }
-        treeConstructor.popCurrentNode();
-        treeConstructor.switchToOriginalInsertionMode();
-        treeConstructor.dispatch();
     }
 }
