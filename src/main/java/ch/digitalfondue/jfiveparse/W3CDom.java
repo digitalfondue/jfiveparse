@@ -114,6 +114,8 @@ public final class W3CDom {
                 currentNode.appendChild(document.createTextNode(text.getData()));
             } else if (node instanceof Comment comment) {
                 currentNode.appendChild(document.createComment(comment.getData()));
+            } else if (node instanceof ProcessingInstruction processingInstruction) {
+                currentNode.appendChild(document.createProcessingInstruction(processingInstruction.getTarget(), processingInstruction.getData()));
             }
         }
 

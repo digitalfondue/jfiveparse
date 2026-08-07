@@ -53,6 +53,9 @@ final class Tokenizer {
     // comment related
     ResizableCharBuilder commentToken;
 
+    private String processingInstructionTokenTarget;
+    ResizableCharBuilder processingInstructionTokenData;
+
     //
     private final ResizableCharBuilder temporaryBuffer = new ResizableCharBuilder();
 
@@ -79,8 +82,7 @@ final class Tokenizer {
 
     //
 
-    //
-
+    // reset the buffer
     void createTemporaryBuffer() {
         temporaryBuffer.reset();
     }
@@ -96,6 +98,7 @@ final class Tokenizer {
         }
     }
 
+    /* ASCII case-insensitive match */
     boolean isTemporaryBufferEquals(char[] s) {
         return temporaryBuffer.equalsASCIICaseInsensitive(s);
     }
@@ -377,6 +380,21 @@ final class Tokenizer {
         case TokenizerState.CDATA_SECTION_STATE:
             TokenizerState.handleCDataSectionState(this, processedInputStream);
             break;
+        case TokenizerState.PROCESSING_INSTRUCTION_OPEN_STATE:
+            TokenizerState.handleProcessingInstructionOpenState(this, processedInputStream);
+            break;
+        case TokenizerState.PROCESSING_INSTRUCTION_TARGET_STATE:
+            TokenizerState.handleProcessingInstructionTargetState(this, processedInputStream);
+            break;
+        case TokenizerState.AFTER_PROCESSING_INSTRUCTION_TARGET_STATE:
+            TokenizerState.handleAfterProcessingInstructionTargetState(this, processedInputStream);
+            break;
+        case TokenizerState.PROCESSING_INSTRUCTION_DATA_STATE:
+            TokenizerState.handleProcessingInstructionDataState(this, processedInputStream);
+            break;
+        case TokenizerState.PROCESSING_INSTRUCTION_QUESTIONABLE_STATE:
+            TokenizerState.handleProcessingInstructionQuestionableState(this, processedInputStream);
+            break;
         }
     }
 
@@ -506,6 +524,12 @@ final class Tokenizer {
         commentToken = new ResizableCharBuilder();
     }
 
+
+    public void createProcessingInstructionToken() {
+        processingInstructionTokenTarget = temporaryBuffer.toString();
+        processingInstructionTokenData = new ResizableCharBuilder();
+    }
+
     void appendCommentCharacter(int chr) {
         commentToken.append((char) chr);
     }
@@ -513,6 +537,16 @@ final class Tokenizer {
     void appendCommentCharacter(int chr, int chr2) {
         commentToken.append((char) chr);
         commentToken.append((char) chr2);
+    }
+
+    void appendTemporaryBufferToComment() {
+        commentToken.append(temporaryBuffer);
+    }
+
+    void convertTemporaryBufferToComment() {
+        createNewCommentToken();
+        appendCommentCharacter('?');
+        appendTemporaryBufferToComment();
     }
 
     //
@@ -556,6 +590,10 @@ final class Tokenizer {
         } else {
             tokenHandler.emitEndTagToken(tagName);
         }
+    }
+
+    void emitProcessingInstructionToken() {
+        tokenHandler.emitProcessingInstructionToken(processingInstructionTokenTarget, processingInstructionTokenData.toString());
     }
 
     int getPreviousState() {

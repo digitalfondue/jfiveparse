@@ -34,6 +34,7 @@ class TreeConstructor {
     static final int TT_EOF = 3;
     static final int TT_END_TAG = 4;
     static final int TT_START_TAG = 5;
+    static final int TT_PROCESSING_INSTRUCTION = 6;
 
     //
     boolean scriptingFlag;
@@ -88,6 +89,11 @@ class TreeConstructor {
     boolean isHtmlFragmentParsing;
     private boolean fosterParentingEnabled;
     // --- ----
+
+    // --- processing instruction related ---
+    private String processingInstructionTokenTarget;
+    private String processingInstructionTokenData;
+    // --- ---
 
     // when textarea is present, if the first character is LF, it must be
     // skipped
@@ -181,13 +187,13 @@ class TreeConstructor {
         // most used
         switch (insertionMode) {
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.text(tokenType, this);
+            TreeConstructorInBodyForeignContentText.foreignText(tokenType, this);
             break;
         case IM_IN_BODY:
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_CELL:
-            TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inCell(tokenType, tagName, tagNameID, this);
             break;
         // end most used
         default:
@@ -199,67 +205,67 @@ class TreeConstructor {
     private void insertionModeInHtmlContentAll() {
         switch (insertionMode) {
         case IM_INITIAL:
-            TreeConstructorAftersBeforeInitialInHead.initial(tokenType, this);
+            TreeConstructorHandlers.initial(tokenType, this);
             break;
         case IM_BEFORE_HTML:
-            TreeConstructorAftersBeforeInitialInHead.beforeHtml(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.beforeHtml(tokenType, tagName, tagNameID, this);
             break;
         case IM_BEFORE_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.beforeHead(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.beforeHead(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.inHead(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inHead(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_HEAD_NOSCRIPT:
-            TreeConstructorAftersBeforeInitialInHead.inHeadNoScript(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inHeadNoScript(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_HEAD:
-            TreeConstructorAftersBeforeInitialInHead.afterHead(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterHead(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_BODY:
             TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.text(tokenType, this);
+            TreeConstructorInBodyForeignContentText.foreignText(tokenType, this);
             break;
         case IM_IN_TABLE:
-            TreeConstructorInTable.inTable(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTable(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_TABLE_TEXT:
-            TreeConstructorInTable.inTableText(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTableText(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_CAPTION:
-            TreeConstructorInTable.inCaption(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inCaption(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_COLUMN_GROUP:
-            TreeConstructorInTable.inColumnGroup(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inColumnGroup(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_TABLE_BODY:
-            TreeConstructorInTable.inTableBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTableBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_ROW:
-            TreeConstructorInTable.inRow(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inRow(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_CELL:
-            TreeConstructorInTable.inCell(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inCell(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_TEMPLATE:
-            TreeConstructorInFramesetSelectTemplate.inTemplate(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inTemplate(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_BODY:
-            TreeConstructorAftersBeforeInitialInHead.afterBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_FRAMESET:
-            TreeConstructorInFramesetSelectTemplate.inFrameset(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inFrameset(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_FRAMESET:
-            TreeConstructorAftersBeforeInitialInHead.afterFrameset(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterFrameset(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_AFTER_BODY:
-            TreeConstructorAftersBeforeInitialInHead.afterAfterBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterAfterBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_AFTER_AFTER_FRAMESET:
-            TreeConstructorAftersBeforeInitialInHead.afterAfterFrameset(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.afterAfterFrameset(tokenType, tagName, tagNameID, this);
             break;
         }
     }
@@ -391,7 +397,7 @@ class TreeConstructor {
             // no such element
             if (formattingElementIdx == -1) {
                 // any other end tag
-                TreeConstructorInBodyForeignContentText.anyOtherEndTag(this.tagName, this);
+                TreeConstructorInBodyForeignContentText.foreignAnyOtherEndTag(this.tagName, this);
                 return;
             }
 
@@ -736,7 +742,11 @@ class TreeConstructor {
         return element;
     }
 
-    void insertComment() {
+    // insert comment / processing instruction
+    // https://html.spec.whatwg.org/multipage/parsing.html#insert-a-processing-instruction
+    void insertCommentProcessInstruction(int tokenType) {
+        var node = buildCPI(tokenType);
+
         Node toInsert;
         int position;
         if (fosterParentingEnabled) {
@@ -754,16 +764,22 @@ class TreeConstructor {
             toInsert = openElements.get(openElements.size() - 1);
             position = toInsert.getChildCount();
         }
-        toInsert.insertChildren(position, new Comment(comment));
+        toInsert.insertChildren(position, node);
     }
 
-    void insertCommentToDocument() {
-        document.appendChild(new Comment(comment));
+    private Node buildCPI(int tokenType) {
+        return tokenType == TT_COMMENT ? new Comment(comment) : new ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData);
     }
 
-    void insertCommentToHtmlElement() {
-        openElements.get(0).appendChild(new Comment(comment));
+    void insertCommentProcessingInstructionToDocument(int tokenType) {
+        document.appendChild(buildCPI(tokenType));
     }
+
+    void insertCommentProcessingInstructionToHtmlElement(int tokenType) {
+        openElements.get(0).appendChild(buildCPI(tokenType));
+    }
+
+    // ------------------
 
     // ------------------
 
@@ -805,6 +821,14 @@ class TreeConstructor {
     void emitComment(ResizableCharBuilder comment) {
         this.comment = comment;
         tokenType = TT_COMMENT;
+        dispatch();
+    }
+
+    // https://html.spec.whatwg.org/multipage/parsing.html#insert-a-processing-instruction
+    void emitProcessingInstructionToken(String processingInstructionTokenTarget, String processingInstructionTokenData) {
+        this.processingInstructionTokenTarget = processingInstructionTokenTarget;
+        this.processingInstructionTokenData = processingInstructionTokenData;
+        tokenType = TT_PROCESSING_INSTRUCTION;
         dispatch();
     }
 

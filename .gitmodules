@@ -1,6 +1,0 @@
-[submodule "src/test/resources/html5lib-tests"]
-	path = src/test/resources/html5lib-tests
-	url = https://github.com/html5lib/html5lib-tests.git
-[submodule "src/test/resources/wpt"]
-	path = src/test/resources/wpt
-	url = https://github.com/web-platform-tests/wpt.git

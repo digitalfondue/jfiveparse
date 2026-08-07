@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 /**
  * Base class for all the nodes.
  */
-public sealed abstract class Node implements SelectableNode<Node> permits Comment, Document, DocumentType, Element, Text {
+public sealed abstract class Node implements SelectableNode<Node> permits Comment, Document, DocumentType, Element, Text, ProcessingInstruction {
 
     static final List<Node> EMPTY_LIST = List.of();
 
@@ -68,6 +68,11 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * {@link Text} node type value:
      */
     public static final int TEXT_NODE = 3;
+
+    /**
+     * {@link ProcessingInstruction} node type value:
+     */
+    public static final int PROCESSING_INSTRUCTION_NODE = 7;
 
     /**
      * {@link Comment} node type value:
