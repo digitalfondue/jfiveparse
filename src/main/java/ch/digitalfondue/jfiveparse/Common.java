@@ -27,18 +27,29 @@ final class Common {
 
     static int toLowerCase(int chr) {
         if (isUpperCaseASCIILetter(chr)) {
-            return chr + 0x0020;
+            return chr + 0x20;
         } else {
             return chr;
         }
     }
 
+    // convert only if necessary
     static String convertToAsciiLowerCase(String s) {
-        StringBuilder sb = new StringBuilder(s.length());
-        for (char c : s.toCharArray()) {
-            sb.append((char) toLowerCase(c));
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (isUpperCaseASCIILetter(c)) {
+                char[] chars = s.toCharArray();
+                chars[i] = (char) (c + 0x20);
+                for (int j = i + 1; j < len; j++) {
+                    if (isUpperCaseASCIILetter(chars[j])) {
+                        chars[j] = (char) (chars[j] + 0x20);
+                    }
+                }
+                return new String(chars);
+            }
         }
-        return sb.toString();
+        return s;
     }
 
     static boolean isUpperOrLowerCaseASCIILetter(int chr) {
