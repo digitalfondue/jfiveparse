@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -37,13 +37,25 @@ public class GenerateEntities {
         int[] codepoints;
     }
 
-    public static void main(String[] args) throws IOException {
+    private static Map<String, EntityValues> getEntitiesMap() throws IOException {
         Type type = (new TypeToken<Map<String, EntityValues>>() {
         }).getType();
         String json = Files.readString(Paths.get("src/test/resources/entities.json"));
         Map<String, EntityValues> m = new GsonBuilder().create().fromJson(json, type);
+        return m;
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        Map<String, EntityValues> m = getEntitiesMap();
+
+
+        // we can iterate for making a and array for mapping char -> id!
+        // and also generate the range!
+
 
         EntitiesPrefix p = new EntitiesPrefix(null);
+        //DoubleArrayTrie dat = new DoubleArrayTrie();
 
         ByteArrayOutputStream baosOneCodePoint = new ByteArrayOutputStream();
         GZIPOutputStream osOneCodePoint = new GZIPOutputStream(baosOneCodePoint);
@@ -53,6 +65,7 @@ public class GenerateEntities {
         int twoCodePointLength = 0;
 
         for (String key : m.keySet()) {
+            //dat.insert(key);
             p.addWord(key, m.get(key).codepoints);
 
             if (m.get(key).codepoints.length == 1) {
