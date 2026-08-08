@@ -25,7 +25,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
     private void contains(String value) {
         matchers.add((node, base) -> {
-            if (node instanceof SelectableNode.SelectableElement<?> e) {
+            if (node instanceof SelectableElement<?> e) {
                 var textContent = e.getTextContent();
                 return textContent != null && textContent.contains(value);
             }
@@ -40,7 +40,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
     public R element(String name, String namespace) {
         String namespaceToMatch = nameSpaceAlias.getOrDefault(namespace, namespace);
-        matchers.add((node, base) -> node instanceof SelectableNode.SelectableElement<?> ce && name.equals(ce.getNodeName())
+        matchers.add((node, base) -> node instanceof SelectableElement<?> ce && name.equals(ce.getNodeName())
                 && Objects.equals(namespaceToMatch, ce.getNamespaceURI()));
         return inst();
     }
@@ -443,9 +443,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         };
     }
 
-    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name, BiPredicate<String, SelectableNode.SelectableElement<?>> attributeValueMatcher) {
+    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name, BiPredicate<String, SelectableElement<?>> attributeValueMatcher) {
         return (node, base) -> {
-            if (node instanceof SelectableNode.SelectableElement<?> elem) {
+            if (node instanceof SelectableElement<?> elem) {
                 var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
                 var toCompareAttr = isHtml ? Common.convertToAsciiLowerCase(name) : name;
                 var attrVal = elem.getAttributeValue(toCompareAttr);

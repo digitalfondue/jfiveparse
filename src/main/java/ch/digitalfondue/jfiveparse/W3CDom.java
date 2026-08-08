@@ -268,7 +268,7 @@ public final class W3CDom {
         }
     }
 
-    private static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableNode.SelectableElement<org.w3c.dom.Node> {
+    private static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableElement<org.w3c.dom.Node> {
 
         SelectableElementWrapper(org.w3c.dom.Element node) {
             super(node);

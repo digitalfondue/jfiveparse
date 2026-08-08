@@ -18,7 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.*;
 import java.util.Map.Entry;
 
-public interface Token {
+interface Token {
 
     class CharacterToken implements Token {
         final ResizableCharBuilder chr;

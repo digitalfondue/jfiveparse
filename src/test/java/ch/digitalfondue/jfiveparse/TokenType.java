@@ -15,7 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-public interface TokenType {
+interface TokenType {
 
     String character = "Character";
     String parseError = "ParseError";

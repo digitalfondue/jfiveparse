@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 interface SelectableNode<T> {
     int getNodeType();
     String getNodeName();
-
     T getParentNode();
     T getFirstChild();
     T getLastChild();
@@ -15,14 +14,6 @@ interface SelectableNode<T> {
     T getPreviousElementSibling();
     List<T> getChildNodes();
     Stream<T> getAllNodesMatchingAsStream(NodeMatcher<T> matcher, boolean onlyFirst, T base);
-
     String getTextContent();
-
     boolean isSameNode(T node);
-
-    interface SelectableElement<T> extends SelectableNode<T> {
-        String getNamespaceURI();
-
-        String getAttributeValue(String name);
-    }
 }
