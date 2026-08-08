@@ -492,7 +492,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * element found during the traversal will be returned.
      */
     public Element getElementById(String idValue) {
-        return getAllNodesMatchingAsStream(Selector.select().id(idValue).toMatcher())
+        return getAllNodesMatchingAsStream(Selector.select().id(idValue).toMatcher(), true, this)
                 .findFirst().map(Element.class::cast).orElse(null);
     }
 
