@@ -59,6 +59,16 @@ public final class Element extends Node implements SelectableNode.SelectableElem
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
+        // TODO: check, name should be lower cased for first and second parameter
+        //       this will cause issue with:
+        //       #data
+        //       <figure></figure>
+        //       #errors
+        //       #document-fragment
+        //       svg foreignObject
+        //       #document
+        //       | <figure>
+        //       due to the fact that we are losing the case of foreignObject: to evaluate when we can lowercase safely
         this(name, Common.tagNameToID(name), name, nameSpace, Node.toNamespaceId(nameSpace), attributes);
     }
 
