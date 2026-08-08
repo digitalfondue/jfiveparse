@@ -32,13 +32,11 @@ public final class DOMTokenList extends AbstractList<String> {
 
     static List<String> extractValues(SelectableNode.SelectableElement<?> element, String attrName) {
         List<String> vals = new ArrayList<>();
-        if (element.containsAttribute(attrName)) {
-            String value = element.getAttributeValue(attrName);
-            if (value != null) {
-                for (String s : SPACES.split(value)) {
-                    if (!s.trim().isEmpty()) {
-                        vals.add(s);
-                    }
+        String value = element.getAttributeValue(attrName);
+        if (value != null) {
+            for (String s : SPACES.split(value)) {
+                if (!s.trim().isEmpty()) {
+                    vals.add(s);
                 }
             }
         }

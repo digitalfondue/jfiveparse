@@ -280,13 +280,9 @@ public final class W3CDom {
         }
 
         @Override
-        public boolean containsAttribute(String name) {
-            return node.getAttributes().getNamedItem(name) != null;
-        }
-
-        @Override
         public String getAttributeValue(String name) {
-            return node.getAttributes().getNamedItem(name).getNodeValue();
+            var namedIdem = node.getAttributes().getNamedItem(name);
+            return namedIdem != null ? namedIdem.getNodeValue() : null;
         }
     }
 

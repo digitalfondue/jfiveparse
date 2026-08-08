@@ -448,7 +448,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             if (node instanceof SelectableNode.SelectableElement<?> elem) {
                 var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
                 var toCompareAttr = isHtml ? Common.convertToAsciiLowerCase(name) : name;
-                return elem.containsAttribute(toCompareAttr) && attributeValueMatcher.test(elem.getAttributeValue(toCompareAttr), elem);
+                var attrVal = elem.getAttributeValue(toCompareAttr);
+                return attrVal != null && attributeValueMatcher.test(attrVal, elem);
             }
             return false;
         };

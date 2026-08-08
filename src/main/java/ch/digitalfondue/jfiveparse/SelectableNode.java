@@ -23,7 +23,6 @@ interface SelectableNode<T> {
     interface SelectableElement<T> extends SelectableNode<T> {
         String getNamespaceURI();
 
-        boolean containsAttribute(String name);
         String getAttributeValue(String name);
     }
 }

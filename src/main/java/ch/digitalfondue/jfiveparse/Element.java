@@ -125,9 +125,7 @@ public final class Element extends Node implements SelectableNode.SelectableElem
         return namespaceURI;
     }
 
-
     // case-sensitive check
-    @Override
     public boolean containsAttribute(String name) {
         return attributes != null && attributes.containsKey(name);
     }

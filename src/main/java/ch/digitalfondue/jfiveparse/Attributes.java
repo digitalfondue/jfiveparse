@@ -100,6 +100,10 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public String getNamedItem(String name) {
-        return attributes != null && attributes.containsKey(name) ? attributes.get(name).getValue() : null;
+        if (attributes == null) {
+            return null;
+        }
+        AttributeNode node = attributes.get(name);
+        return node != null ? node.getValue() : null;
     }
 }
