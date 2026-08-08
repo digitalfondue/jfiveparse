@@ -305,131 +305,6 @@ final class Common {
         return tokenType == TreeConstructor.TT_END_TAG && namedID == tagNameID;
     }
 
-    static int tagNameToID(String tagName) {
-        if (tagName == null) {
-            return 0;
-        }
-        return switch (tagName) {
-            case "address" -> ELEMENT_ADDRESS_ID;
-            case "applet" -> ELEMENT_APPLET_ID;
-            case "area" -> ELEMENT_AREA_ID;
-            case "article" -> ELEMENT_ARTICLE_ID;
-            case "aside" -> ELEMENT_ASIDE_ID;
-            case "base" -> ELEMENT_BASE_ID;
-            case "basefont" -> ELEMENT_BASEFONT_ID;
-            case "bgsound" -> ELEMENT_BGSOUND_ID;
-            case "blockquote" -> ELEMENT_BLOCKQUOTE_ID;
-            case "body" -> ELEMENT_BODY_ID;
-            case "br" -> ELEMENT_BR_ID;
-            case "button" -> ELEMENT_BUTTON_ID;
-            case "caption" -> ELEMENT_CAPTION_ID;
-            case "center" -> ELEMENT_CENTER_ID;
-            case "col" -> ELEMENT_COL_ID;
-            case "colgroup" -> ELEMENT_COLGROUP_ID;
-            case "dd" -> ELEMENT_DD_ID;
-            case "details" -> ELEMENT_DETAILS_ID;
-            case "dir" -> ELEMENT_DIR_ID;
-            case "div" -> ELEMENT_DIV_ID;
-            case "dl" -> ELEMENT_DL_ID;
-            case "dt" -> ELEMENT_DT_ID;
-            case "embed" -> ELEMENT_EMBED_ID;
-            case "fieldset" -> ELEMENT_FIELDSET_ID;
-            case "figcaption" -> ELEMENT_FIGCAPTION_ID;
-            case "figure" -> ELEMENT_FIGURE_ID;
-            case "footer" -> ELEMENT_FOOTER_ID;
-            case "form" -> ELEMENT_FORM_ID;
-            case "frame" -> ELEMENT_FRAME_ID;
-            case "frameset" -> ELEMENT_FRAMESET_ID;
-            case "h1" -> ELEMENT_H1_ID;
-            case "h2" -> ELEMENT_H2_ID;
-            case "h3" -> ELEMENT_H3_ID;
-            case "h4" -> ELEMENT_H4_ID;
-            case "h5" -> ELEMENT_H5_ID;
-            case "h6" -> ELEMENT_H6_ID;
-            case "head" -> ELEMENT_HEAD_ID;
-            case "header" -> ELEMENT_HEADER_ID;
-            case "hgroup" -> ELEMENT_HGROUP_ID;
-            case "hr" -> ELEMENT_HR_ID;
-            case "html" -> ELEMENT_HTML_ID;
-            case "iframe" -> ELEMENT_IFRAME_ID;
-            case "img" -> ELEMENT_IMG_ID;
-            case "input" -> ELEMENT_INPUT_ID;
-            case "li" -> ELEMENT_LI_ID;
-            case "link" -> ELEMENT_LINK_ID;
-            case "listing" -> ELEMENT_LISTING_ID;
-            case "main" -> ELEMENT_MAIN_ID;
-            case "marquee" -> ELEMENT_MARQUEE_ID;
-            case "menu" -> ELEMENT_MENU_ID;
-            case "meta" -> ELEMENT_META_ID;
-            case "nav" -> ELEMENT_NAV_ID;
-            case "noembed" -> ELEMENT_NOEMBED_ID;
-            case "noframes" -> ELEMENT_NOFRAMES_ID;
-            case "noscript" -> ELEMENT_NOSCRIPT_ID;
-            case "object" -> ELEMENT_OBJECT_ID;
-            case "ol" -> ELEMENT_OL_ID;
-            case "p" -> ELEMENT_P_ID;
-            case "param" -> ELEMENT_PARAM_ID;
-            case "plaintext" -> ELEMENT_PLAINTEXT_ID;
-            case "pre" -> ELEMENT_PRE_ID;
-            case "script" -> ELEMENT_SCRIPT_ID;
-            case "section" -> ELEMENT_SECTION_ID;
-            case "select" -> ELEMENT_SELECT_ID;
-            case "source" -> ELEMENT_SOURCE_ID;
-            case "style" -> ELEMENT_STYLE_ID;
-            case "summary" -> ELEMENT_SUMMARY_ID;
-            case "table" -> ELEMENT_TABLE_ID;
-            case "tbody" -> ELEMENT_TBODY_ID;
-            case "td" -> ELEMENT_TD_ID;
-            case "template" -> ELEMENT_TEMPLATE_ID;
-            case "textarea" -> ELEMENT_TEXTAREA_ID;
-            case "tfoot" -> ELEMENT_TFOOT_ID;
-            case "th" -> ELEMENT_TH_ID;
-            case "thead" -> ELEMENT_THEAD_ID;
-            case "title" -> ELEMENT_TITLE_ID;
-            case "tr" -> ELEMENT_TR_ID;
-            case "track" -> ELEMENT_TRACK_ID;
-            case "ul" -> ELEMENT_UL_ID;
-            case "wbr" -> ELEMENT_WBR_ID;
-            case "xmp" -> ELEMENT_XMP_ID;
-            //
-            case "optgroup" -> ELEMENT_OPTGROUP_ID;
-            case "option" -> ELEMENT_OPTION_ID;
-            case "rb" -> ELEMENT_RB_ID;
-            case "rp" -> ELEMENT_RP_ID;
-            case "rt" -> ELEMENT_RT_ID;
-            case "rtc" -> ELEMENT_RTC_ID;
-            //
-            case "a" -> ELEMENT_A_ID;
-            //
-
-            case "dialog" -> ELEMENT_DIALOG_ID;
-            case "search" -> ELEMENT_SEARCH_ID;
-            case "b" -> ELEMENT_B_ID;
-            case "big" -> ELEMENT_BIG_ID;
-            case "code" -> ELEMENT_CODE_ID;
-            case "em" -> ELEMENT_EM_ID;
-            case "font" -> ELEMENT_FONT_ID;
-            case "i" -> ELEMENT_I_ID;
-            case "s" -> ELEMENT_S_ID;
-            case "small" -> ELEMENT_SMALL_ID;
-            case "strike" -> ELEMENT_STRIKE_ID;
-            case "strong" -> ELEMENT_STRONG_ID;
-            case "tt" -> ELEMENT_TT_ID;
-            case "u" -> ELEMENT_U_ID;
-            case "nobr" -> ELEMENT_NO_BR_ID;
-            case "keygen" -> ELEMENT_KEYGEN_ID;
-            case "image" -> ELEMENT_IMAGE_ID;
-            case "math" -> ELEMENT_MATH_ID;
-            case "svg" -> ELEMENT_SVG_ID;
-            case "ruby" -> ELEMENT_RUBY_ID;
-            case "span" -> ELEMENT_SPAN_ID;
-            case "sub" -> ELEMENT_SUB_ID;
-            case "sup" -> ELEMENT_SUP_ID;
-            case "var" -> ELEMENT_VAR_ID;
-            default -> 0;
-        };
-    }
-
     // this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
     static final int ELEMENT_ADDRESS_ID = 1;
     static final int ELEMENT_APPLET_ID = 2;
@@ -547,6 +422,411 @@ final class Common {
     static final int ELEMENT_SUB_ID = 110;
     static final int ELEMENT_SUP_ID = 111;
     static final int ELEMENT_VAR_ID = 112;
+
+    static final String[] CANONICAL_TAG_NAMES = new String[113];
+    static {
+        CANONICAL_TAG_NAMES[ELEMENT_ADDRESS_ID] = "address";
+        CANONICAL_TAG_NAMES[ELEMENT_APPLET_ID] = "applet";
+        CANONICAL_TAG_NAMES[ELEMENT_AREA_ID] = "area";
+        CANONICAL_TAG_NAMES[ELEMENT_ARTICLE_ID] = "article";
+        CANONICAL_TAG_NAMES[ELEMENT_ASIDE_ID] = "aside";
+        CANONICAL_TAG_NAMES[ELEMENT_BASE_ID] = "base";
+        CANONICAL_TAG_NAMES[ELEMENT_BASEFONT_ID] = "basefont";
+        CANONICAL_TAG_NAMES[ELEMENT_BGSOUND_ID] = "bgsound";
+        CANONICAL_TAG_NAMES[ELEMENT_BLOCKQUOTE_ID] = "blockquote";
+        CANONICAL_TAG_NAMES[ELEMENT_BODY_ID] = "body";
+        CANONICAL_TAG_NAMES[ELEMENT_BR_ID] = "br";
+        CANONICAL_TAG_NAMES[ELEMENT_BUTTON_ID] = "button";
+        CANONICAL_TAG_NAMES[ELEMENT_CAPTION_ID] = "caption";
+        CANONICAL_TAG_NAMES[ELEMENT_CENTER_ID] = "center";
+        CANONICAL_TAG_NAMES[ELEMENT_COL_ID] = "col";
+        CANONICAL_TAG_NAMES[ELEMENT_COLGROUP_ID] = "colgroup";
+        CANONICAL_TAG_NAMES[ELEMENT_DD_ID] = "dd";
+        CANONICAL_TAG_NAMES[ELEMENT_DETAILS_ID] = "details";
+        CANONICAL_TAG_NAMES[ELEMENT_DIR_ID] = "dir";
+        CANONICAL_TAG_NAMES[ELEMENT_DIV_ID] = "div";
+        CANONICAL_TAG_NAMES[ELEMENT_DL_ID] = "dl";
+        CANONICAL_TAG_NAMES[ELEMENT_DT_ID] = "dt";
+        CANONICAL_TAG_NAMES[ELEMENT_EMBED_ID] = "embed";
+        CANONICAL_TAG_NAMES[ELEMENT_FIELDSET_ID] = "fieldset";
+        CANONICAL_TAG_NAMES[ELEMENT_FIGCAPTION_ID] = "figcaption";
+        CANONICAL_TAG_NAMES[ELEMENT_FIGURE_ID] = "figure";
+        CANONICAL_TAG_NAMES[ELEMENT_FOOTER_ID] = "footer";
+        CANONICAL_TAG_NAMES[ELEMENT_FORM_ID] = "form";
+        CANONICAL_TAG_NAMES[ELEMENT_FRAME_ID] = "frame";
+        CANONICAL_TAG_NAMES[ELEMENT_FRAMESET_ID] = "frameset";
+        CANONICAL_TAG_NAMES[ELEMENT_H1_ID] = "h1";
+        CANONICAL_TAG_NAMES[ELEMENT_H2_ID] = "h2";
+        CANONICAL_TAG_NAMES[ELEMENT_H3_ID] = "h3";
+        CANONICAL_TAG_NAMES[ELEMENT_H4_ID] = "h4";
+        CANONICAL_TAG_NAMES[ELEMENT_H5_ID] = "h5";
+        CANONICAL_TAG_NAMES[ELEMENT_H6_ID] = "h6";
+        CANONICAL_TAG_NAMES[ELEMENT_HEAD_ID] = "head";
+        CANONICAL_TAG_NAMES[ELEMENT_HEADER_ID] = "header";
+        CANONICAL_TAG_NAMES[ELEMENT_HGROUP_ID] = "hgroup";
+        CANONICAL_TAG_NAMES[ELEMENT_HR_ID] = "hr";
+        CANONICAL_TAG_NAMES[ELEMENT_HTML_ID] = "html";
+        CANONICAL_TAG_NAMES[ELEMENT_IFRAME_ID] = "iframe";
+        CANONICAL_TAG_NAMES[ELEMENT_IMG_ID] = "img";
+        CANONICAL_TAG_NAMES[ELEMENT_INPUT_ID] = "input";
+        CANONICAL_TAG_NAMES[ELEMENT_LI_ID] = "li";
+        CANONICAL_TAG_NAMES[ELEMENT_LINK_ID] = "link";
+        CANONICAL_TAG_NAMES[ELEMENT_LISTING_ID] = "listing";
+        CANONICAL_TAG_NAMES[ELEMENT_MAIN_ID] = "main";
+        CANONICAL_TAG_NAMES[ELEMENT_MARQUEE_ID] = "marquee";
+        CANONICAL_TAG_NAMES[ELEMENT_MENU_ID] = "menu";
+        CANONICAL_TAG_NAMES[ELEMENT_META_ID] = "meta";
+        CANONICAL_TAG_NAMES[ELEMENT_NAV_ID] = "nav";
+        CANONICAL_TAG_NAMES[ELEMENT_NOEMBED_ID] = "noembed";
+        CANONICAL_TAG_NAMES[ELEMENT_NOFRAMES_ID] = "noframes";
+        CANONICAL_TAG_NAMES[ELEMENT_NOSCRIPT_ID] = "noscript";
+        CANONICAL_TAG_NAMES[ELEMENT_OBJECT_ID] = "object";
+        CANONICAL_TAG_NAMES[ELEMENT_OL_ID] = "ol";
+        CANONICAL_TAG_NAMES[ELEMENT_P_ID] = "p";
+        CANONICAL_TAG_NAMES[ELEMENT_PARAM_ID] = "param";
+        CANONICAL_TAG_NAMES[ELEMENT_PLAINTEXT_ID] = "plaintext";
+        CANONICAL_TAG_NAMES[ELEMENT_PRE_ID] = "pre";
+        CANONICAL_TAG_NAMES[ELEMENT_SCRIPT_ID] = "script";
+        CANONICAL_TAG_NAMES[ELEMENT_SECTION_ID] = "section";
+        CANONICAL_TAG_NAMES[ELEMENT_SELECT_ID] = "select";
+        CANONICAL_TAG_NAMES[ELEMENT_SOURCE_ID] = "source";
+        CANONICAL_TAG_NAMES[ELEMENT_STYLE_ID] = "style";
+        CANONICAL_TAG_NAMES[ELEMENT_SUMMARY_ID] = "summary";
+        CANONICAL_TAG_NAMES[ELEMENT_TABLE_ID] = "table";
+        CANONICAL_TAG_NAMES[ELEMENT_TBODY_ID] = "tbody";
+        CANONICAL_TAG_NAMES[ELEMENT_TD_ID] = "td";
+        CANONICAL_TAG_NAMES[ELEMENT_TEMPLATE_ID] = "template";
+        CANONICAL_TAG_NAMES[ELEMENT_TEXTAREA_ID] = "textarea";
+        CANONICAL_TAG_NAMES[ELEMENT_TFOOT_ID] = "tfoot";
+        CANONICAL_TAG_NAMES[ELEMENT_TH_ID] = "th";
+        CANONICAL_TAG_NAMES[ELEMENT_THEAD_ID] = "thead";
+        CANONICAL_TAG_NAMES[ELEMENT_TITLE_ID] = "title";
+        CANONICAL_TAG_NAMES[ELEMENT_TR_ID] = "tr";
+        CANONICAL_TAG_NAMES[ELEMENT_TRACK_ID] = "track";
+        CANONICAL_TAG_NAMES[ELEMENT_UL_ID] = "ul";
+        CANONICAL_TAG_NAMES[ELEMENT_WBR_ID] = "wbr";
+        CANONICAL_TAG_NAMES[ELEMENT_XMP_ID] = "xmp";
+        CANONICAL_TAG_NAMES[ELEMENT_OPTGROUP_ID] = "optgroup";
+        CANONICAL_TAG_NAMES[ELEMENT_OPTION_ID] = "option";
+        CANONICAL_TAG_NAMES[ELEMENT_RB_ID] = "rb";
+        CANONICAL_TAG_NAMES[ELEMENT_RP_ID] = "rp";
+        CANONICAL_TAG_NAMES[ELEMENT_RT_ID] = "rt";
+        CANONICAL_TAG_NAMES[ELEMENT_RTC_ID] = "rtc";
+        CANONICAL_TAG_NAMES[ELEMENT_A_ID] = "a";
+        CANONICAL_TAG_NAMES[ELEMENT_DIALOG_ID] = "dialog";
+        CANONICAL_TAG_NAMES[ELEMENT_SEARCH_ID] = "search";
+        CANONICAL_TAG_NAMES[ELEMENT_B_ID] = "b";
+        CANONICAL_TAG_NAMES[ELEMENT_BIG_ID] = "big";
+        CANONICAL_TAG_NAMES[ELEMENT_CODE_ID] = "code";
+        CANONICAL_TAG_NAMES[ELEMENT_EM_ID] = "em";
+        CANONICAL_TAG_NAMES[ELEMENT_FONT_ID] = "font";
+        CANONICAL_TAG_NAMES[ELEMENT_I_ID] = "i";
+        CANONICAL_TAG_NAMES[ELEMENT_S_ID] = "s";
+        CANONICAL_TAG_NAMES[ELEMENT_SMALL_ID] = "small";
+        CANONICAL_TAG_NAMES[ELEMENT_STRIKE_ID] = "strike";
+        CANONICAL_TAG_NAMES[ELEMENT_STRONG_ID] = "strong";
+        CANONICAL_TAG_NAMES[ELEMENT_TT_ID] = "tt";
+        CANONICAL_TAG_NAMES[ELEMENT_U_ID] = "u";
+        CANONICAL_TAG_NAMES[ELEMENT_NO_BR_ID] = "nobr";
+        CANONICAL_TAG_NAMES[ELEMENT_KEYGEN_ID] = "keygen";
+        CANONICAL_TAG_NAMES[ELEMENT_IMAGE_ID] = "image";
+        CANONICAL_TAG_NAMES[ELEMENT_MATH_ID] = "math";
+        CANONICAL_TAG_NAMES[ELEMENT_SVG_ID] = "svg";
+        CANONICAL_TAG_NAMES[ELEMENT_RUBY_ID] = "ruby";
+        CANONICAL_TAG_NAMES[ELEMENT_SPAN_ID] = "span";
+        CANONICAL_TAG_NAMES[ELEMENT_SUB_ID] = "sub";
+        CANONICAL_TAG_NAMES[ELEMENT_SUP_ID] = "sup";
+        CANONICAL_TAG_NAMES[ELEMENT_VAR_ID] = "var";
+    }
+
+    private static boolean equalsIgnoreCase(char[] buff, int pos, String expected) {
+        if (pos != expected.length()) {
+            return false;
+        }
+        for (int i = 0; i < pos; i++) {
+            if ((char) toLowerCase(buff[i]) != expected.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static int lookupTagNameID(ResizableCharBuilder builder) {
+        //return lookupTagNameID(builder.getBuff(), builder.pos());
+        int pos = builder.pos();
+        if (pos < 1 || pos > 10) {
+            return 0;
+        }
+        char[] buff = builder.getBuff();
+        char c0 = (char) toLowerCase(buff[0]);
+        switch (pos) {
+            case 1:
+                switch (c0) {
+                    case 'a': return ELEMENT_A_ID;
+                    case 'b': return ELEMENT_B_ID;
+                    case 'i': return ELEMENT_I_ID;
+                    case 'p': return ELEMENT_P_ID;
+                    case 's': return ELEMENT_S_ID;
+                    case 'u': return ELEMENT_U_ID;
+                    default: return 0;
+                }
+            case 2:
+                switch (c0) {
+                    case 'b': return equalsIgnoreCase(buff, pos, "br") ? ELEMENT_BR_ID : 0;
+                    case 'd': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        switch (c1) {
+                            case 'd': return ELEMENT_DD_ID;
+                            case 'l': return ELEMENT_DL_ID;
+                            case 't': return ELEMENT_DT_ID;
+                            default: return 0;
+                        }
+                    }
+                    case 'e': return equalsIgnoreCase(buff, pos, "em") ? ELEMENT_EM_ID : 0;
+                    case 'h': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        switch (c1) {
+                            case '1': return ELEMENT_H1_ID;
+                            case '2': return ELEMENT_H2_ID;
+                            case '3': return ELEMENT_H3_ID;
+                            case '4': return ELEMENT_H4_ID;
+                            case '5': return ELEMENT_H5_ID;
+                            case '6': return ELEMENT_H6_ID;
+                            case 'r': return ELEMENT_HR_ID;
+                            default: return 0;
+                        }
+                    }
+                    case 'l': return equalsIgnoreCase(buff, pos, "li") ? ELEMENT_LI_ID : 0;
+                    case 'r': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        switch (c1) {
+                            case 'b': return ELEMENT_RB_ID;
+                            case 'p': return ELEMENT_RP_ID;
+                            case 't': return ELEMENT_RT_ID;
+                            default: return 0;
+                        }
+                    }
+                    case 't': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        switch (c1) {
+                            case 'd': return ELEMENT_TD_ID;
+                            case 'h': return ELEMENT_TH_ID;
+                            case 'r': return ELEMENT_TR_ID;
+                            case 't': return ELEMENT_TT_ID;
+                            default: return 0;
+                        }
+                    }
+                    case 'o': return equalsIgnoreCase(buff, pos, "ol") ? ELEMENT_OL_ID : 0;
+                    case 'u': return equalsIgnoreCase(buff, pos, "ul") ? ELEMENT_UL_ID : 0;
+                    default: return 0;
+                }
+            case 3:
+                switch (c0) {
+                    case 'b': return equalsIgnoreCase(buff, pos, "big") ? ELEMENT_BIG_ID : 0;
+                    case 'c': return equalsIgnoreCase(buff, pos, "col") ? ELEMENT_COL_ID : 0;
+                    case 'd': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'i') {
+                            char c2 = (char) toLowerCase(buff[2]);
+                            if (c2 == 'r') return ELEMENT_DIR_ID;
+                            if (c2 == 'v') return ELEMENT_DIV_ID;
+                        }
+                        return 0;
+                    }
+                    case 'i': return equalsIgnoreCase(buff, pos, "img") ? ELEMENT_IMG_ID : 0;
+                    case 'n': return equalsIgnoreCase(buff, pos, "nav") ? ELEMENT_NAV_ID : 0;
+                    case 'p': return equalsIgnoreCase(buff, pos, "pre") ? ELEMENT_PRE_ID : 0;
+                    case 'r': return equalsIgnoreCase(buff, pos, "rtc") ? ELEMENT_RTC_ID : 0;
+                    case 's': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'u') {
+                            char c2 = (char) toLowerCase(buff[2]);
+                            if (c2 == 'b') return ELEMENT_SUB_ID;
+                            if (c2 == 'p') return ELEMENT_SUP_ID;
+                        } else if (c1 == 'v' && (char) toLowerCase(buff[2]) == 'g') {
+                            return ELEMENT_SVG_ID;
+                        }
+                        return 0;
+                    }
+                    case 'v': return equalsIgnoreCase(buff, pos, "var") ? ELEMENT_VAR_ID : 0;
+                    case 'w': return equalsIgnoreCase(buff, pos, "wbr") ? ELEMENT_WBR_ID : 0;
+                    case 'x': return equalsIgnoreCase(buff, pos, "xmp") ? ELEMENT_XMP_ID : 0;
+                    default: return 0;
+                }
+            case 4:
+                switch (c0) {
+                    case 'a': return equalsIgnoreCase(buff, pos, "area") ? ELEMENT_AREA_ID : 0;
+                    case 'b': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'a') return equalsIgnoreCase(buff, pos, "base") ? ELEMENT_BASE_ID : 0;
+                        if (c1 == 'o') return equalsIgnoreCase(buff, pos, "body") ? ELEMENT_BODY_ID : 0;
+                        return 0;
+                    }
+                    case 'c': return equalsIgnoreCase(buff, pos, "code") ? ELEMENT_CODE_ID : 0;
+                    case 'f': {
+                        char c2 = (char) toLowerCase(buff[2]);
+                        if (c2 == 'r') return equalsIgnoreCase(buff, pos, "form") ? ELEMENT_FORM_ID : 0;
+                        if (c2 == 'n') return equalsIgnoreCase(buff, pos, "font") ? ELEMENT_FONT_ID : 0;
+                        return 0;
+                    }
+                    case 'h': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'e') return equalsIgnoreCase(buff, pos, "head") ? ELEMENT_HEAD_ID : 0;
+                        if (c1 == 't') return equalsIgnoreCase(buff, pos, "html") ? ELEMENT_HTML_ID : 0;
+                        return 0;
+                    }
+                    case 'l': return equalsIgnoreCase(buff, pos, "link") ? ELEMENT_LINK_ID : 0;
+                    case 'm': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'a') {
+                            char c2 = (char) toLowerCase(buff[2]);
+                            if (c2 == 'i') return equalsIgnoreCase(buff, pos, "main") ? ELEMENT_MAIN_ID : 0;
+                            if (c2 == 't') return equalsIgnoreCase(buff, pos, "math") ? ELEMENT_MATH_ID : 0;
+                        } else if (c1 == 'e') {
+                            char c2 = (char) toLowerCase(buff[2]);
+                            if (c2 == 'n') return equalsIgnoreCase(buff, pos, "menu") ? ELEMENT_MENU_ID : 0;
+                            if (c2 == 't') return equalsIgnoreCase(buff, pos, "meta") ? ELEMENT_META_ID : 0;
+                        }
+                        return 0;
+                    }
+                    case 'n': return equalsIgnoreCase(buff, pos, "nobr") ? ELEMENT_NO_BR_ID : 0;
+                    case 'r': return equalsIgnoreCase(buff, pos, "ruby") ? ELEMENT_RUBY_ID : 0;
+                    case 's': return equalsIgnoreCase(buff, pos, "span") ? ELEMENT_SPAN_ID : 0;
+                    default: return 0;
+                }
+            case 5:
+                switch (c0) {
+                    case 'a': return equalsIgnoreCase(buff, pos, "aside") ? ELEMENT_ASIDE_ID : 0;
+                    case 'e': return equalsIgnoreCase(buff, pos, "embed") ? ELEMENT_EMBED_ID : 0;
+                    case 'f': return equalsIgnoreCase(buff, pos, "frame") ? ELEMENT_FRAME_ID : 0;
+                    case 'i': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'n') return equalsIgnoreCase(buff, pos, "input") ? ELEMENT_INPUT_ID : 0;
+                        if (c1 == 'm') return equalsIgnoreCase(buff, pos, "image") ? ELEMENT_IMAGE_ID : 0;
+                        return 0;
+                    }
+                    case 'p': return equalsIgnoreCase(buff, pos, "param") ? ELEMENT_PARAM_ID : 0;
+                    case 's': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'm') return equalsIgnoreCase(buff, pos, "small") ? ELEMENT_SMALL_ID : 0;
+                        if (c1 == 't') return equalsIgnoreCase(buff, pos, "style") ? ELEMENT_STYLE_ID : 0;
+                        return 0;
+                    }
+                    case 't': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'a') return equalsIgnoreCase(buff, pos, "table") ? ELEMENT_TABLE_ID : 0;
+                        if (c1 == 'b') return equalsIgnoreCase(buff, pos, "tbody") ? ELEMENT_TBODY_ID : 0;
+                        if (c1 == 'f') return equalsIgnoreCase(buff, pos, "tfoot") ? ELEMENT_TFOOT_ID : 0;
+                        if (c1 == 'h') return equalsIgnoreCase(buff, pos, "thead") ? ELEMENT_THEAD_ID : 0;
+                        if (c1 == 'i') return equalsIgnoreCase(buff, pos, "title") ? ELEMENT_TITLE_ID : 0;
+                        if (c1 == 'r') return equalsIgnoreCase(buff, pos, "track") ? ELEMENT_TRACK_ID : 0;
+                        return 0;
+                    }
+                    default: return 0;
+                }
+            case 6:
+                switch (c0) {
+                    case 'a': return equalsIgnoreCase(buff, pos, "applet") ? ELEMENT_APPLET_ID : 0;
+                    case 'b': return equalsIgnoreCase(buff, pos, "button") ? ELEMENT_BUTTON_ID : 0;
+                    case 'c': return equalsIgnoreCase(buff, pos, "center") ? ELEMENT_CENTER_ID : 0;
+                    case 'd': return equalsIgnoreCase(buff, pos, "dialog") ? ELEMENT_DIALOG_ID : 0;
+                    case 'f': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'i') return equalsIgnoreCase(buff, pos, "figure") ? ELEMENT_FIGURE_ID : 0;
+                        if (c1 == 'o') return equalsIgnoreCase(buff, pos, "footer") ? ELEMENT_FOOTER_ID : 0;
+                        return 0;
+                    }
+                    case 'h': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'e') return equalsIgnoreCase(buff, pos, "header") ? ELEMENT_HEADER_ID : 0;
+                        if (c1 == 'g') return equalsIgnoreCase(buff, pos, "hgroup") ? ELEMENT_HGROUP_ID : 0;
+                        return 0;
+                    }
+                    case 'i': return equalsIgnoreCase(buff, pos, "iframe") ? ELEMENT_IFRAME_ID : 0;
+                    case 'k': return equalsIgnoreCase(buff, pos, "keygen") ? ELEMENT_KEYGEN_ID : 0;
+                    case 'o': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'b') return equalsIgnoreCase(buff, pos, "object") ? ELEMENT_OBJECT_ID : 0;
+                        if (c1 == 'p') return equalsIgnoreCase(buff, pos, "option") ? ELEMENT_OPTION_ID : 0;
+                        return 0;
+                    }
+                    case 's': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'c') return equalsIgnoreCase(buff, pos, "script") ? ELEMENT_SCRIPT_ID : 0;
+                        if (c1 == 'e') {
+                            char c2 = (char) toLowerCase(buff[2]);
+                            if (c2 == 'a') return equalsIgnoreCase(buff, pos, "search") ? ELEMENT_SEARCH_ID : 0;
+                            if (c2 == 'l') return equalsIgnoreCase(buff, pos, "select") ? ELEMENT_SELECT_ID : 0;
+                        }
+                        if (c1 == 'o') return equalsIgnoreCase(buff, pos, "source") ? ELEMENT_SOURCE_ID : 0;
+                        if (c1 == 't') {
+                            char c3 = (char) toLowerCase(buff[3]);
+                            if (c3 == 'i') return equalsIgnoreCase(buff, pos, "strike") ? ELEMENT_STRIKE_ID : 0;
+                            if (c3 == 'o') return equalsIgnoreCase(buff, pos, "strong") ? ELEMENT_STRONG_ID : 0;
+                        }
+                        return 0;
+                    }
+                    default: return 0;
+                }
+            case 7:
+                switch (c0) {
+                    case 'a': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'd') return equalsIgnoreCase(buff, pos, "address") ? ELEMENT_ADDRESS_ID : 0;
+                        if (c1 == 'r') return equalsIgnoreCase(buff, pos, "article") ? ELEMENT_ARTICLE_ID : 0;
+                        return 0;
+                    }
+                    case 'b': return equalsIgnoreCase(buff, pos, "bgsound") ? ELEMENT_BGSOUND_ID : 0;
+                    case 'c': return equalsIgnoreCase(buff, pos, "caption") ? ELEMENT_CAPTION_ID : 0;
+                    case 'd': return equalsIgnoreCase(buff, pos, "details") ? ELEMENT_DETAILS_ID : 0;
+                    case 'l': return equalsIgnoreCase(buff, pos, "listing") ? ELEMENT_LISTING_ID : 0;
+                    case 'm': return equalsIgnoreCase(buff, pos, "marquee") ? ELEMENT_MARQUEE_ID : 0;
+                    case 'n': return equalsIgnoreCase(buff, pos, "noembed") ? ELEMENT_NOEMBED_ID : 0;
+                    case 's': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'e') return equalsIgnoreCase(buff, pos, "section") ? ELEMENT_SECTION_ID : 0;
+                        if (c1 == 'u') return equalsIgnoreCase(buff, pos, "summary") ? ELEMENT_SUMMARY_ID : 0;
+                        return 0;
+                    }
+                    default: return 0;
+                }
+            case 8:
+                switch (c0) {
+                    case 'b': return equalsIgnoreCase(buff, pos, "basefont") ? ELEMENT_BASEFONT_ID : 0;
+                    case 'c': return equalsIgnoreCase(buff, pos, "colgroup") ? ELEMENT_COLGROUP_ID : 0;
+                    case 'f': {
+                        char c1 = (char) toLowerCase(buff[1]);
+                        if (c1 == 'i') return equalsIgnoreCase(buff, pos, "fieldset") ? ELEMENT_FIELDSET_ID : 0;
+                        if (c1 == 'r') return equalsIgnoreCase(buff, pos, "frameset") ? ELEMENT_FRAMESET_ID : 0;
+                        return 0;
+                    }
+                    case 'n': {
+                        char c2 = (char) toLowerCase(buff[2]);
+                        if (c2 == 'f') return equalsIgnoreCase(buff, pos, "noframes") ? ELEMENT_NOFRAMES_ID : 0;
+                        if (c2 == 's') return equalsIgnoreCase(buff, pos, "noscript") ? ELEMENT_NOSCRIPT_ID : 0;
+                        return 0;
+                    }
+                    case 'o': return equalsIgnoreCase(buff, pos, "optgroup") ? ELEMENT_OPTGROUP_ID : 0;
+                    case 't': {
+                        char c2 = (char) toLowerCase(buff[2]);
+                        if (c2 == 'm') return equalsIgnoreCase(buff, pos, "template") ? ELEMENT_TEMPLATE_ID : 0;
+                        if (c2 == 'x') return equalsIgnoreCase(buff, pos, "textarea") ? ELEMENT_TEXTAREA_ID : 0;
+                        return 0;
+                    }
+                    default: return 0;
+                }
+            case 9:
+                return equalsIgnoreCase(buff, pos, "plaintext") ? ELEMENT_PLAINTEXT_ID : 0;
+            case 10:
+                switch (c0) {
+                    case 'b': return equalsIgnoreCase(buff, pos, "blockquote") ? ELEMENT_BLOCKQUOTE_ID : 0;
+                    case 'f': return equalsIgnoreCase(buff, pos, "figcaption") ? ELEMENT_FIGCAPTION_ID : 0;
+                    default: return 0;
+                }
+            default:
+                return 0;
+        }
+    }
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;

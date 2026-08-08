@@ -32,11 +32,25 @@ final class ResizableCharBuilder {
         buff = new char[16];
     }
 
+    public ResizableCharBuilder(String value) {
+        set(value);
+    }
+
+    char[] getBuff() {
+        return buff;
+    }
+
     // reset and set the given string
     void set(String s) {
         buff = s.toCharArray();
         pos = buff.length;
         containsUpperCase = false;
+        for (int i = 0; i < pos; i++) {
+            if (Common.isUpperCaseASCIILetter(buff[i])) {
+                containsUpperCase = true;
+                break;
+            }
+        }
     }
 
     void reset() {
@@ -56,18 +70,17 @@ final class ResizableCharBuilder {
         if (pos == buff.length) {
             buff = Arrays.copyOf(buff, buff.length * 2 + 2);
         }
+        if (Common.isUpperCaseASCIILetter(c)) {
+            containsUpperCase = true;
+        }
         buff[pos++] = c;
     }
 
     String toLowerCase() {
-        containsUpperCase = false;
-        for (int i = 0; i < pos; i++) {
-            if (Common.isUpperCaseASCIILetter(buff[i])) {
-                containsUpperCase = true;
-                return lowerCaseInternal();
-            }
+        if (!containsUpperCase) {
+            return toString();
         }
-        return toString();
+        return lowerCaseInternal();
     }
 
     private String lowerCaseInternal() {
@@ -105,11 +118,18 @@ final class ResizableCharBuilder {
         if (pos + length >= buff.length) {
             buff = Arrays.copyOf(buff, Math.max(pos + length, buff.length * 2 + 2));
         }
+        for (int i = offset; i < offset + length; i++) {
+            if (Common.isUpperCaseASCIILetter(c[i])) {
+                containsUpperCase = true;
+                break;
+            }
+        }
         System.arraycopy(c, offset, buff, pos, length);
         pos += length;
     }
 
     void append(ResizableCharBuilder other) {
+        containsUpperCase |= other.containsUpperCase;
         append(other.buff, 0, other.pos);
     }
 }

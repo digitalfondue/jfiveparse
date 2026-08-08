@@ -123,11 +123,16 @@ class TreeConstructor {
         this.disableInTableTextForsterParenting = disableInTableTextForsterParenting;
     }
 
-    void setTagName(String lowerCasedTagName) {
-        this.tagName = lowerCasedTagName;
-        this.tagNameID = Common.tagNameToID(lowerCasedTagName);
+    void setTagName(ResizableCharBuilder name) {
+        int id = Common.lookupTagNameID(name);
+        if (id != 0) {
+            this.tagNameID = id;
+            this.tagName = Common.CANONICAL_TAG_NAMES[id];
+        } else {
+            this.tagNameID = 0;
+            this.tagName = name.toLowerCase();
+        }
     }
-
     //
 
     Element getAdjustedCurrentNode() {
@@ -848,14 +853,14 @@ class TreeConstructor {
     }
 
     void emitEndTagToken(ResizableCharBuilder name) {
-        setTagName(name.toLowerCase());
+        setTagName(name);
         tokenType = TT_END_TAG;
         dispatch();
     }
 
     void emitStartTagToken(ResizableCharBuilder name, Attributes attrs, boolean selfClosing) {
         //
-        setTagName(name.toLowerCase());
+        setTagName(name);
         this.originalTagName = name.containsUpperCase ? name.toString() : this.tagName;
         //
         this.attrs = attrs;

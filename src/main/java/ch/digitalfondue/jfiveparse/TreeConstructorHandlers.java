@@ -1490,9 +1490,11 @@ final class TreeConstructorHandlers {
         treeConstructor.ignoreCharacterTokenLF();
     }
 
+    private static final ResizableCharBuilder IMG = new ResizableCharBuilder("img");
+
     private static void startImage(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();
-        treeConstructor.setTagName("img");
+        treeConstructor.setTagName(IMG);
         treeConstructor.dispatch();
     }
 
@@ -2207,7 +2209,7 @@ final class TreeConstructorHandlers {
 
         adjustForeignAttributes(treeConstructor.getAttributes());
 
-        treeConstructor.insertElementToken(tagName, Common.tagNameToID(tagName), currentNode.getNamespaceURI(), currentNode.namespaceID, treeConstructor.getAttributes());
+        treeConstructor.insertElementToken(tagName, Common.lookupTagNameID(new ResizableCharBuilder(tagName)), currentNode.getNamespaceURI(), currentNode.namespaceID, treeConstructor.getAttributes());
 
         if (treeConstructor.isSelfClosing()) {
             // we don't execute scripts

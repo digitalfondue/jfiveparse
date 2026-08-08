@@ -69,7 +69,7 @@ public final class Element extends Node implements SelectableElement<Node> {
         //       #document
         //       | <figure>
         //       due to the fact that we are losing the case of foreignObject: to evaluate when we can lowercase safely
-        this(name, Common.tagNameToID(name), name, nameSpace, Node.toNamespaceId(nameSpace), attributes);
+        this(name, Common.lookupTagNameID(new ResizableCharBuilder(name)), name, nameSpace, Node.toNamespaceId(nameSpace), attributes);
     }
 
     Element(String name,
