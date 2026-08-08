@@ -161,7 +161,7 @@ class TreeConstructor {
             insertionModeInHtmlContent();
         } else {
             // -> foreign
-            TreeConstructorInBodyForeignContentText.foreignContent(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.foreignContent(tokenType, tagName, tagNameID, this);
         }
     }
 
@@ -187,10 +187,10 @@ class TreeConstructor {
         // most used
         switch (insertionMode) {
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.text(tokenType, this);
+            TreeConstructorHandlers.text(tokenType, this);
             break;
         case IM_IN_BODY:
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_CELL:
             TreeConstructorHandlers.inCell(tokenType, tagName, tagNameID, this);
@@ -223,10 +223,10 @@ class TreeConstructor {
             TreeConstructorHandlers.afterHead(tokenType, tagName, tagNameID, this);
             break;
         case IM_IN_BODY:
-            TreeConstructorInBodyForeignContentText.inBody(tokenType, tagName, tagNameID, this);
+            TreeConstructorHandlers.inBody(tokenType, tagName, tagNameID, this);
             break;
         case IM_TEXT:
-            TreeConstructorInBodyForeignContentText.text(tokenType, this);
+            TreeConstructorHandlers.text(tokenType, this);
             break;
         case IM_IN_TABLE:
             TreeConstructorHandlers.inTable(tokenType, tagName, tagNameID, this);
@@ -397,7 +397,7 @@ class TreeConstructor {
             // no such element
             if (formattingElementIdx == -1) {
                 // any other end tag
-                TreeConstructorInBodyForeignContentText.foreignAnyOtherEndTag(this.tagName, this);
+                TreeConstructorHandlers.foreignAnyOtherEndTag(this.tagName, this);
                 return;
             }
 

@@ -144,7 +144,7 @@ public class HtmlSerializer implements NodesVisitor {
                 if (processingInstruction.getData() != null) {
                     appendable.append(' ').append(processingInstruction.getData());
                 }
-                appendable.append('>');
+                appendable.append("?>");
             } else if (node instanceof DocumentType dt) {
                 // TODO: should append the rest of the attributes if present
                 appendable.append("<!DOCTYPE ").append(dt.getName()).append('>');

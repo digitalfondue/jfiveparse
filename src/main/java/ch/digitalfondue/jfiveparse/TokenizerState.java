@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.Arrays;
 
-class TokenizerState {
+final class TokenizerState {
     //
     static final int DATA_STATE = 0;
     static final int ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE = 1;

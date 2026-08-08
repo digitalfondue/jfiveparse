@@ -183,6 +183,10 @@ character, the transformation is done in a single call in the TreeConstructor
 (see setTagName). This is used for saving the original case of the attributes 
 and tag names. 
 
+## Development notes:
+- if the tests in the ide has an error related to modules: make them run in a classpath (see .run/*.xml configuration).
+  In intellij: modify run configuration, modify options, "Do not use --module-path option"
+- to update the wpt test suite, run the [update_external_resources.java](update_external_resources.java) script with jbang.
 
 ## TODO:
 - additional doc

@@ -29,6 +29,6 @@ class CheckHtmlStability {
     void checkProcessingInstructionSerialization() {
         var res = JFiveParse.parse("<html><body><template><?something data></template>");
         var content = JFiveParse.serialize(res);
-        Assertions.assertEquals("<html><head></head><body><template><?something data></template></body></html>", content);
+        Assertions.assertEquals("<html><head></head><body><template><?something data?></template></body></html>", content);
     }
 }
