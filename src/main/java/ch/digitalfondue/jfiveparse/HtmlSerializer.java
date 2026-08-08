@@ -77,13 +77,15 @@ public class HtmlSerializer implements NodesVisitor {
         return "\"";
     }
 
+    private static final String NO_BREAK_SPACE = Character.valueOf(Characters.NO_BREAK_SPACE).toString();
+
     protected String escapeAttributeValue(AttributeNode attribute) {
         String s = attribute.getValue();
         if (s != null) {
             if (transformEntities) {
                 s = s.replace("&", "&amp;").replace("\"", "&quot;");
             }
-            s = s.replace(Character.valueOf(Characters.NO_BREAK_SPACE).toString(), "&nbsp;");
+            s = s.replace(NO_BREAK_SPACE, "&nbsp;");
         }
         return s;
     }
@@ -93,7 +95,7 @@ public class HtmlSerializer implements NodesVisitor {
             if (transformEntities) {
                 s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
             }
-            s = s.replace(Character.valueOf(Characters.NO_BREAK_SPACE).toString(), "&nbsp;");
+            s = s.replace(NO_BREAK_SPACE, "&nbsp;");
         }
         return s;
     }
