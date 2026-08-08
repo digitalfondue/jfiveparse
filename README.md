@@ -1,11 +1,11 @@
 # jfiveparse: a java html5 parser
 
-[![Maven Central](https://img.shields.io/maven-central/v/ch.digitalfondue.jfiveparse/jfiveparse.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jfiveparse%22)
+[![Maven Central](https://img.shields.io/maven-central/v/ch.digitalfondue.jfiveparse/jfiveparse.svg)](https://central.sonatype.com/artifact/ch.digitalfondue.jfiveparse/jfiveparse)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/digitalfondue/jfiveparse/.github/workflows/maven.yml)](https://github.com/digitalfondue/jfiveparse/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 
 
 
-jfiveparse pass all the non-scripted tests for the tokenizer and tree construction from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
+jfiveparse pass all the non-scripted tests for the tree construction (the .dat files) from the [wpt test suite](https://github.com/web-platform-tests/wpt/tree/master/html/syntax/parsing/resources), and all the tokenizer tests (except the ones that are no more compatible with the processing instruction changes) from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
 
 It provides both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
@@ -35,14 +35,14 @@ maven:
 <dependency>
     <groupId>ch.digitalfondue.jfiveparse</groupId>
     <artifactId>jfiveparse</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
 gradle:
 
 ```
-compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.0.1'
+compile 'ch.digitalfondue.jfiveparse:jfiveparse:2.1.0'
 ```
 
 ## Use:
