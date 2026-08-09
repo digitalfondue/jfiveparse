@@ -22,8 +22,11 @@ final class ProcessedInputStream2 {
         try {
             charBuffer.clear();
             var count = reader.read(charBuffer);
-            // after reading, handle \r\n
-            //
+            // after reading, handle "CR LF" pair and single "CR"
+            // see https://infra.spec.whatwg.org/#normalize-newlines
+            // note, we need to take care of the special case where CR is at the end of
+            // the buffer, in this case, we replace it with LF, and at the next fill, if the first
+            // char is a LF, we advance position by 1 thus skipping it
             charBuffer.position(0);
             charBuffer.limit(Math.max(count, 0));
             return count < 1;
