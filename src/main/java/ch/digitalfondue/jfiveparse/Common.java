@@ -423,121 +423,122 @@ final class Common {
     static final int ELEMENT_SUP_ID = 111;
     static final int ELEMENT_VAR_ID = 112;
 
-    static final String[] CANONICAL_TAG_NAMES = new String[113];
-    static {
-        CANONICAL_TAG_NAMES[ELEMENT_ADDRESS_ID] = "address";
-        CANONICAL_TAG_NAMES[ELEMENT_APPLET_ID] = "applet";
-        CANONICAL_TAG_NAMES[ELEMENT_AREA_ID] = "area";
-        CANONICAL_TAG_NAMES[ELEMENT_ARTICLE_ID] = "article";
-        CANONICAL_TAG_NAMES[ELEMENT_ASIDE_ID] = "aside";
-        CANONICAL_TAG_NAMES[ELEMENT_BASE_ID] = "base";
-        CANONICAL_TAG_NAMES[ELEMENT_BASEFONT_ID] = "basefont";
-        CANONICAL_TAG_NAMES[ELEMENT_BGSOUND_ID] = "bgsound";
-        CANONICAL_TAG_NAMES[ELEMENT_BLOCKQUOTE_ID] = "blockquote";
-        CANONICAL_TAG_NAMES[ELEMENT_BODY_ID] = "body";
-        CANONICAL_TAG_NAMES[ELEMENT_BR_ID] = "br";
-        CANONICAL_TAG_NAMES[ELEMENT_BUTTON_ID] = "button";
-        CANONICAL_TAG_NAMES[ELEMENT_CAPTION_ID] = "caption";
-        CANONICAL_TAG_NAMES[ELEMENT_CENTER_ID] = "center";
-        CANONICAL_TAG_NAMES[ELEMENT_COL_ID] = "col";
-        CANONICAL_TAG_NAMES[ELEMENT_COLGROUP_ID] = "colgroup";
-        CANONICAL_TAG_NAMES[ELEMENT_DD_ID] = "dd";
-        CANONICAL_TAG_NAMES[ELEMENT_DETAILS_ID] = "details";
-        CANONICAL_TAG_NAMES[ELEMENT_DIR_ID] = "dir";
-        CANONICAL_TAG_NAMES[ELEMENT_DIV_ID] = "div";
-        CANONICAL_TAG_NAMES[ELEMENT_DL_ID] = "dl";
-        CANONICAL_TAG_NAMES[ELEMENT_DT_ID] = "dt";
-        CANONICAL_TAG_NAMES[ELEMENT_EMBED_ID] = "embed";
-        CANONICAL_TAG_NAMES[ELEMENT_FIELDSET_ID] = "fieldset";
-        CANONICAL_TAG_NAMES[ELEMENT_FIGCAPTION_ID] = "figcaption";
-        CANONICAL_TAG_NAMES[ELEMENT_FIGURE_ID] = "figure";
-        CANONICAL_TAG_NAMES[ELEMENT_FOOTER_ID] = "footer";
-        CANONICAL_TAG_NAMES[ELEMENT_FORM_ID] = "form";
-        CANONICAL_TAG_NAMES[ELEMENT_FRAME_ID] = "frame";
-        CANONICAL_TAG_NAMES[ELEMENT_FRAMESET_ID] = "frameset";
-        CANONICAL_TAG_NAMES[ELEMENT_H1_ID] = "h1";
-        CANONICAL_TAG_NAMES[ELEMENT_H2_ID] = "h2";
-        CANONICAL_TAG_NAMES[ELEMENT_H3_ID] = "h3";
-        CANONICAL_TAG_NAMES[ELEMENT_H4_ID] = "h4";
-        CANONICAL_TAG_NAMES[ELEMENT_H5_ID] = "h5";
-        CANONICAL_TAG_NAMES[ELEMENT_H6_ID] = "h6";
-        CANONICAL_TAG_NAMES[ELEMENT_HEAD_ID] = "head";
-        CANONICAL_TAG_NAMES[ELEMENT_HEADER_ID] = "header";
-        CANONICAL_TAG_NAMES[ELEMENT_HGROUP_ID] = "hgroup";
-        CANONICAL_TAG_NAMES[ELEMENT_HR_ID] = "hr";
-        CANONICAL_TAG_NAMES[ELEMENT_HTML_ID] = "html";
-        CANONICAL_TAG_NAMES[ELEMENT_IFRAME_ID] = "iframe";
-        CANONICAL_TAG_NAMES[ELEMENT_IMG_ID] = "img";
-        CANONICAL_TAG_NAMES[ELEMENT_INPUT_ID] = "input";
-        CANONICAL_TAG_NAMES[ELEMENT_LI_ID] = "li";
-        CANONICAL_TAG_NAMES[ELEMENT_LINK_ID] = "link";
-        CANONICAL_TAG_NAMES[ELEMENT_LISTING_ID] = "listing";
-        CANONICAL_TAG_NAMES[ELEMENT_MAIN_ID] = "main";
-        CANONICAL_TAG_NAMES[ELEMENT_MARQUEE_ID] = "marquee";
-        CANONICAL_TAG_NAMES[ELEMENT_MENU_ID] = "menu";
-        CANONICAL_TAG_NAMES[ELEMENT_META_ID] = "meta";
-        CANONICAL_TAG_NAMES[ELEMENT_NAV_ID] = "nav";
-        CANONICAL_TAG_NAMES[ELEMENT_NOEMBED_ID] = "noembed";
-        CANONICAL_TAG_NAMES[ELEMENT_NOFRAMES_ID] = "noframes";
-        CANONICAL_TAG_NAMES[ELEMENT_NOSCRIPT_ID] = "noscript";
-        CANONICAL_TAG_NAMES[ELEMENT_OBJECT_ID] = "object";
-        CANONICAL_TAG_NAMES[ELEMENT_OL_ID] = "ol";
-        CANONICAL_TAG_NAMES[ELEMENT_P_ID] = "p";
-        CANONICAL_TAG_NAMES[ELEMENT_PARAM_ID] = "param";
-        CANONICAL_TAG_NAMES[ELEMENT_PLAINTEXT_ID] = "plaintext";
-        CANONICAL_TAG_NAMES[ELEMENT_PRE_ID] = "pre";
-        CANONICAL_TAG_NAMES[ELEMENT_SCRIPT_ID] = "script";
-        CANONICAL_TAG_NAMES[ELEMENT_SECTION_ID] = "section";
-        CANONICAL_TAG_NAMES[ELEMENT_SELECT_ID] = "select";
-        CANONICAL_TAG_NAMES[ELEMENT_SOURCE_ID] = "source";
-        CANONICAL_TAG_NAMES[ELEMENT_STYLE_ID] = "style";
-        CANONICAL_TAG_NAMES[ELEMENT_SUMMARY_ID] = "summary";
-        CANONICAL_TAG_NAMES[ELEMENT_TABLE_ID] = "table";
-        CANONICAL_TAG_NAMES[ELEMENT_TBODY_ID] = "tbody";
-        CANONICAL_TAG_NAMES[ELEMENT_TD_ID] = "td";
-        CANONICAL_TAG_NAMES[ELEMENT_TEMPLATE_ID] = "template";
-        CANONICAL_TAG_NAMES[ELEMENT_TEXTAREA_ID] = "textarea";
-        CANONICAL_TAG_NAMES[ELEMENT_TFOOT_ID] = "tfoot";
-        CANONICAL_TAG_NAMES[ELEMENT_TH_ID] = "th";
-        CANONICAL_TAG_NAMES[ELEMENT_THEAD_ID] = "thead";
-        CANONICAL_TAG_NAMES[ELEMENT_TITLE_ID] = "title";
-        CANONICAL_TAG_NAMES[ELEMENT_TR_ID] = "tr";
-        CANONICAL_TAG_NAMES[ELEMENT_TRACK_ID] = "track";
-        CANONICAL_TAG_NAMES[ELEMENT_UL_ID] = "ul";
-        CANONICAL_TAG_NAMES[ELEMENT_WBR_ID] = "wbr";
-        CANONICAL_TAG_NAMES[ELEMENT_XMP_ID] = "xmp";
-        CANONICAL_TAG_NAMES[ELEMENT_OPTGROUP_ID] = "optgroup";
-        CANONICAL_TAG_NAMES[ELEMENT_OPTION_ID] = "option";
-        CANONICAL_TAG_NAMES[ELEMENT_RB_ID] = "rb";
-        CANONICAL_TAG_NAMES[ELEMENT_RP_ID] = "rp";
-        CANONICAL_TAG_NAMES[ELEMENT_RT_ID] = "rt";
-        CANONICAL_TAG_NAMES[ELEMENT_RTC_ID] = "rtc";
-        CANONICAL_TAG_NAMES[ELEMENT_A_ID] = "a";
-        CANONICAL_TAG_NAMES[ELEMENT_DIALOG_ID] = "dialog";
-        CANONICAL_TAG_NAMES[ELEMENT_SEARCH_ID] = "search";
-        CANONICAL_TAG_NAMES[ELEMENT_B_ID] = "b";
-        CANONICAL_TAG_NAMES[ELEMENT_BIG_ID] = "big";
-        CANONICAL_TAG_NAMES[ELEMENT_CODE_ID] = "code";
-        CANONICAL_TAG_NAMES[ELEMENT_EM_ID] = "em";
-        CANONICAL_TAG_NAMES[ELEMENT_FONT_ID] = "font";
-        CANONICAL_TAG_NAMES[ELEMENT_I_ID] = "i";
-        CANONICAL_TAG_NAMES[ELEMENT_S_ID] = "s";
-        CANONICAL_TAG_NAMES[ELEMENT_SMALL_ID] = "small";
-        CANONICAL_TAG_NAMES[ELEMENT_STRIKE_ID] = "strike";
-        CANONICAL_TAG_NAMES[ELEMENT_STRONG_ID] = "strong";
-        CANONICAL_TAG_NAMES[ELEMENT_TT_ID] = "tt";
-        CANONICAL_TAG_NAMES[ELEMENT_U_ID] = "u";
-        CANONICAL_TAG_NAMES[ELEMENT_NO_BR_ID] = "nobr";
-        CANONICAL_TAG_NAMES[ELEMENT_KEYGEN_ID] = "keygen";
-        CANONICAL_TAG_NAMES[ELEMENT_IMAGE_ID] = "image";
-        CANONICAL_TAG_NAMES[ELEMENT_MATH_ID] = "math";
-        CANONICAL_TAG_NAMES[ELEMENT_SVG_ID] = "svg";
-        CANONICAL_TAG_NAMES[ELEMENT_RUBY_ID] = "ruby";
-        CANONICAL_TAG_NAMES[ELEMENT_SPAN_ID] = "span";
-        CANONICAL_TAG_NAMES[ELEMENT_SUB_ID] = "sub";
-        CANONICAL_TAG_NAMES[ELEMENT_SUP_ID] = "sup";
-        CANONICAL_TAG_NAMES[ELEMENT_VAR_ID] = "var";
-    }
+    // must have the same exact index
+    static final String[] CANONICAL_TAG_NAMES = new String[]{
+            null,
+            "address", // 1
+            "applet",
+            "area",
+            "article",
+            "aside",
+            "base",
+            "basefont",
+            "bgsound",
+            "blockquote",
+            "body",
+            "br",
+            "button",
+            "caption",
+            "center",
+            "col",
+            "colgroup",
+            "dd",
+            "details",
+            "dir",
+            "div",
+            "dl",
+            "dt",
+            "embed",
+            "fieldset",
+            "figcaption",
+            "figure",
+            "footer",
+            "form",
+            "frame",
+            "frameset",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "head",
+            "header",
+            "hgroup",
+            "hr",
+            "html",
+            "iframe",
+            "img",
+            "input",
+            "li",
+            "link",
+            "listing",
+            "main",
+            "marquee",
+            "menu",
+            "meta",
+            "nav",
+            "noembed",
+            "noframes",
+            "noscript",
+            "object",
+            "ol",
+            "p",
+            "param",
+            "plaintext",
+            "pre",
+            "script",
+            "section",
+            "select",
+            "source",
+            "style",
+            "summary",
+            "table",
+            "tbody",
+            "td",
+            "template",
+            "textarea",
+            "tfoot",
+            "th",
+            "thead",
+            "title",
+            "tr",
+            "track",
+            "ul",
+            "wbr",
+            "xmp",
+            "optgroup",
+            "option",
+            "rb",
+            "rp",
+            "rt",
+            "rtc",
+            "a",
+            "dialog",
+            "search",
+            "b",
+            "big",
+            "code",
+            "em",
+            "font",
+            "i",
+            "s",
+            "small",
+            "strike",
+            "strong",
+            "tt",
+            "u",
+            "nobr",
+            "keygen",
+            "image",
+            "math",
+            "svg",
+            "ruby",
+            "span",
+            "sub",
+            "sup",
+            "var"
+    };
 
     private static boolean equalsIgnoreCase(char[] buff, int pos, String expected) {
         if (pos != expected.length()) {
@@ -552,7 +553,6 @@ final class Common {
     }
 
     static int lookupTagNameID(ResizableCharBuilder builder) {
-        //return lookupTagNameID(builder.getBuff(), builder.pos());
         int pos = builder.pos();
         if (pos < 1 || pos > 10) {
             return 0;
@@ -795,7 +795,7 @@ final class Common {
                     case 'b': return equalsIgnoreCase(buff, pos, "basefont") ? ELEMENT_BASEFONT_ID : 0;
                     case 'c': return equalsIgnoreCase(buff, pos, "colgroup") ? ELEMENT_COLGROUP_ID : 0;
                     case 'f': {
-                        char c1 = (char) toLowerCase(buff[1]);
+                        int c1 = toLowerCase(buff[1]);
                         if (c1 == 'i') return equalsIgnoreCase(buff, pos, "fieldset") ? ELEMENT_FIELDSET_ID : 0;
                         if (c1 == 'r') return equalsIgnoreCase(buff, pos, "frameset") ? ELEMENT_FRAMESET_ID : 0;
                         return 0;
