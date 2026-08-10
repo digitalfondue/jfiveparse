@@ -2,7 +2,10 @@ package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.CharBuffer;
+import java.nio.LongBuffer;
 
 /// goal of this class is
 /// - replace the processed input stream
@@ -11,7 +14,10 @@ import java.nio.CharBuffer;
 final class ProcessedInputStream2 {
 
     private final Reader reader;
-    private final CharBuffer charBuffer = CharBuffer.allocate(1024);
+    private final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024 * Character.BYTES);
+    private final CharBuffer charBuffer = byteBuffer.asCharBuffer();
+    //private final LongBuffer longBuffer = byteBuffer.asLongBuffer();
+    //private final CharBuffer charBuffer = CharBuffer.allocate(1024);
 
     ProcessedInputStream2(Reader reader) {
         this.reader = reader;
