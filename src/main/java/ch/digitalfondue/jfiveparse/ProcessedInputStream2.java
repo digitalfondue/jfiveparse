@@ -14,13 +14,15 @@ import java.nio.LongBuffer;
 final class ProcessedInputStream2 {
 
     private final Reader reader;
-    private final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024 * Character.BYTES);
-    private final CharBuffer charBuffer = byteBuffer.asCharBuffer();
-    private final LongBuffer longBuffer = byteBuffer.asLongBuffer();
-    //private final CharBuffer charBuffer = CharBuffer.allocate(1024);
+    private final ByteBuffer byteBuffer;
+    private final CharBuffer charBuffer;
+    private final LongBuffer longBuffer;
 
-    ProcessedInputStream2(Reader reader) {
+    ProcessedInputStream2(Reader reader, int capacity) {
         this.reader = reader;
+        this.byteBuffer = ByteBuffer.allocateDirect(capacity * Character.BYTES);
+        this.charBuffer = byteBuffer.asCharBuffer();
+        this.longBuffer = byteBuffer.asLongBuffer();
         fillBuffer();
     }
 
@@ -39,7 +41,11 @@ final class ProcessedInputStream2 {
             /*
             for (int i = 0; i < limit/4; i++) {
                 // TODO: here can do SWAR for CR LF search
-                //       and rewrite
+                //       and rewrite, note the code is quite complex,
+                //       maybe we can simply do a CR ad rewrite byte by byte,
+                //       most likely CR is not that present anyway.
+                //       what we must take care of is if the CR/LF is at the boundary, we will need to check if LF
+                //       is present
                 long packed = longBuffer.get(i);
                 char c1 = (char) (packed >>> 48);
                 char c2 = (char) (packed >>> 32);
