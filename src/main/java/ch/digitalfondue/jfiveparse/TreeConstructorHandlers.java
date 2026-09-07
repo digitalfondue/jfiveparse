@@ -762,11 +762,14 @@ final class TreeConstructorHandlers {
             }
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_FORM_ID, tagNameID)) {
             treeConstructor.emitParseError();
-            if (treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml() || treeConstructor.getForm() != null) {
+            boolean parsingTemplateContents = treeConstructor.parsingTemplateContents();
+            if (treeConstructor.getForm() != null && !parsingTemplateContents) {
                 // ignore
             } else {
                 Element form = treeConstructor.insertHtmlElementToken();
-                treeConstructor.setForm(form);
+                if (!parsingTemplateContents) {
+                    treeConstructor.setForm(form);
+                }
                 treeConstructor.popCurrentNode();
             }
         } else if (tokenType == TT_EOF) {
@@ -1692,8 +1695,8 @@ final class TreeConstructorHandlers {
     }
 
     private static void startForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml();
-        if (treeConstructor.getForm() != null && templateIsNotPresent) {
+        boolean parsingTemplateContents = treeConstructor.parsingTemplateContents();
+        if (treeConstructor.getForm() != null && !parsingTemplateContents) {
             treeConstructor.emitParseError();
             // ignore the token
         } else {
@@ -1701,7 +1704,7 @@ final class TreeConstructorHandlers {
                 treeConstructor.closePElement();
             }
             Element formElement = treeConstructor.insertHtmlElementToken();
-            if (templateIsNotPresent) {
+            if (!parsingTemplateContents) {
                 treeConstructor.setForm(formElement);
             }
         }
@@ -1939,8 +1942,8 @@ final class TreeConstructorHandlers {
     }
 
     private static void endForm(TreeConstructor treeConstructor) {
-        boolean templateIsNotPresent = !treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml();
-        if (templateIsNotPresent) {
+        boolean parsingTemplateContents = treeConstructor.parsingTemplateContents();
+        if (!parsingTemplateContents) {
             Element node = treeConstructor.getForm();
             treeConstructor.setForm(null);
             if (node == null || !treeConstructor.hasElementInScope(node)) {
