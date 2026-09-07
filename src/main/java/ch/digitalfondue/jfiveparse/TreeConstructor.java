@@ -674,6 +674,11 @@ class TreeConstructor {
         return findLastElementPositionMatchingInNamespaceHtml(Common.ELEMENT_TEMPLATE_ID) != -1;
     }
 
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-template-contents
+    boolean parsingTemplateContents() {
+        return stackOfOpenElementsContainsElementTemplateAndNamespaceHtml() || (context != null && Common.isHtmlNS(context, Common.ELEMENT_TEMPLATE_ID));
+    }
+
     // FIXME optimize(?)
     void insertCharacter(char charToInsert) {
         Node toInsert;
@@ -1032,6 +1037,10 @@ class TreeConstructor {
 
     void framesetOkToFalse() {
         framesetOk = Boolean.FALSE;
+    }
+
+    void framesetOkToTrue() {
+        framesetOk = Boolean.TRUE;
     }
     //
 
