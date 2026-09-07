@@ -1038,6 +1038,10 @@ class TreeConstructor {
     void framesetOkToFalse() {
         framesetOk = Boolean.FALSE;
     }
+
+    void framesetOkToTrue() {
+        framesetOk = Boolean.TRUE;
+    }
     //
 
     void saveInsertionMode() {

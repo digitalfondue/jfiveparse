@@ -65,8 +65,9 @@ final class TreeConstructorHandlers {
                 Common.ELEMENT_HTML_ID == tagNameID || //
                 Common.ELEMENT_BR_ID == tagNameID
         )) {
-            // anything below
+            // Act as described in the "anything else" entry below.
             treeConstructor.insertHtmlElementWithEmptyAttributes("body", Common.ELEMENT_BODY_ID);
+            treeConstructor.framesetOkToTrue();
             treeConstructor.setInsertionMode(IM_IN_BODY);
             treeConstructor.dispatch();
         } else if (Common.isStartTagNamed(tokenType, Common.ELEMENT_HEAD_ID, tagNameID) || tokenType == TT_END_TAG) {
@@ -74,6 +75,7 @@ final class TreeConstructorHandlers {
             // ignore token
         } else {
             treeConstructor.insertHtmlElementWithEmptyAttributes("body", Common.ELEMENT_BODY_ID);
+            treeConstructor.framesetOkToTrue();
             treeConstructor.setInsertionMode(IM_IN_BODY);
             treeConstructor.dispatch();
         }
