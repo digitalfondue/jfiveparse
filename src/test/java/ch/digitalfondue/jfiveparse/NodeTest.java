@@ -157,9 +157,14 @@ class NodeTest {
         assertEquals(Arrays.asList("hurr", "plop"), e.getClassList());
 
         assertFalse(e.getClassList().toggle("plop", false));
-        assertEquals(Arrays.asList("hurr", "plop"), e.getClassList());
-        assertFalse(e.getClassList().toggle("plop", true));
-        assertEquals(List.of("hurr"), e.getClassList());
+        assertEquals(Arrays.asList("hurr"), e.getClassList());
+        assertFalse(e.getClassList().toggle("plop", false));
+        assertEquals(Arrays.asList("hurr"), e.getClassList());
+
+        assertTrue(e.getClassList().toggle("plop", true));
+        assertEquals(List.of("hurr", "plop"), e.getClassList());
+        assertTrue(e.getClassList().toggle("plop", true));
+        assertEquals(List.of("hurr", "plop"), e.getClassList());
 
         Document doc2 = parser.parse("<div id=myid class=' my class    \n abc '></div>");
         Element e2 = doc2.getElementById("myid");

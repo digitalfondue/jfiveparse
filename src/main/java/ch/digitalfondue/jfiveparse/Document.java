@@ -109,7 +109,7 @@ public final class Document extends Node {
         Document cloned = new Document();
         if (doctype != null) {
             cloned.doctype = (DocumentType) doctype.cloneNode(true);
-            cloned.doctype.parentNode = this;
+            cloned.doctype.parentNode = cloned;
         }
         if (!deep) {
             return cloned;
