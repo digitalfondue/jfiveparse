@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class DocumentTest {
@@ -43,5 +43,39 @@ class DocumentTest {
         d1.setBody(body);
 
         assertEquals("<body id=\"newBody\"></body>", d1.getBody().getOuterHTML());
+    }
+
+    @Test
+    void cloneNodeShallowDoctypeParentIsClone() {
+        Document original = new Parser().parse("<!DOCTYPE html><div>Hello</div>");
+        Document cloned = (Document) original.cloneNode(false);
+
+        assertNotNull(cloned.getDoctype());
+        assertSame(cloned, cloned.getDoctype().getParentNode());
+        assertNotSame(original, cloned.getDoctype().getParentNode());
+    }
+
+    @Test
+    void cloneNodeDeepDoctypeParentIsClone() {
+        Document original = new Parser().parse("<!DOCTYPE html><div>Hello</div>");
+        Document cloned = (Document) original.cloneNode(true);
+
+        assertNotNull(cloned.getDoctype());
+        assertSame(cloned, cloned.getDoctype().getParentNode());
+        assertNotSame(original, cloned.getDoctype().getParentNode());
+    }
+
+    @Test
+    void cloneNodeDeepPreservesContent() {
+        Document original = new Parser().parse("<!DOCTYPE html><div>Hello</div>");
+        Document cloned = (Document) original.cloneNode(true);
+        assertEquals(HtmlSerializer.serialize(original), HtmlSerializer.serialize(cloned));
+    }
+
+    @Test
+    void cloneNodeShallowHasNoChildren() {
+        Document original = new Parser().parse("<!DOCTYPE html><div>Hello</div>");
+        Document cloned = (Document) original.cloneNode(false);
+        assertEquals(0, cloned.getChildNodes().size());
     }
 }

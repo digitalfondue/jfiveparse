@@ -99,7 +99,7 @@ public final class AttributeNode {
 
         if (obj instanceof AttributeNode other) {
             return name.equals(other.name) && //
-                    getValue().equals(other.getValue()) && //
+                    Objects.equals(getValue(), other.getValue()) && //
                     Objects.equals(prefix, other.prefix) && //
                     Objects.equals(namespace, other.namespace);
         }
