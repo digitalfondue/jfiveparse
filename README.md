@@ -5,7 +5,7 @@
 
 
 
-jfiveparse pass all the non-scripted tests for the tree construction (the .dat files) from the [wpt test suite](https://github.com/web-platform-tests/wpt/tree/master/html/syntax/parsing/resources), and all the tokenizer tests (except the ones that are no more compatible with the processing instruction changes) from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
+jfiveparse pass all the non-scripted tests for the tree construction (the .dat files) from the [wpt test suite](https://github.com/web-platform-tests/wpt/tree/master/html/syntax/parsing/resources), and all the tokenizer tests from the [html5lib-tests suite](https://github.com/html5lib/html5lib-tests).
 
 It provides both fragment and full document parsing. It can parse directly from a String or by streaming through a Reader 
 (note: the encoding must be known, currently the parser does not implement an autodetect feature).
