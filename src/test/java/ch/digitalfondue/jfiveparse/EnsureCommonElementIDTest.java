@@ -73,6 +73,7 @@ class EnsureCommonElementIDTest {
                 ELEMENT_PLAINTEXT_ID,
                 ELEMENT_PRE_ID,
                 ELEMENT_SCRIPT_ID,
+                ELEMENT_SEARCH_ID,
                 ELEMENT_SECTION_ID,
                 ELEMENT_SELECT_ID,
                 ELEMENT_SOURCE_ID,

@@ -61,6 +61,11 @@ class TokenSaver extends TreeConstructor {
     }
 
     @Override
+    void emitProcessingInstructionToken(String processingInstructionTokenTarget, String processingInstructionTokenData) {
+        tokens.add(new Token.ProcessingInstruction(processingInstructionTokenTarget, processingInstructionTokenData));
+    }
+
+    @Override
     public void emitStartTagToken(ResizableCharBuilder name, Attributes attrs, boolean selfClosing) {
         Map<String, AttributeNode> m = new LinkedHashMap<>();
         if (attrs != null) {
