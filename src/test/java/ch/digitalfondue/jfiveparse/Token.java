@@ -108,4 +108,21 @@ interface Token {
             return Arrays.asList(TokenType.endTag, name).toString();
         }
     }
+
+    class ProcessingInstruction implements Token {
+
+        final String target;
+        final String data;
+
+        public ProcessingInstruction(String target, String data) {
+            this.target = target;
+            this.data = data;
+        }
+
+
+        @Override
+        public String toString() {
+            return Arrays.asList(TokenType.processingInstruction, target, data).toString();
+        }
+    }
 }

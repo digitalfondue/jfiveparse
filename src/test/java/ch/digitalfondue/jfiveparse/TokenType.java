@@ -23,5 +23,6 @@ interface TokenType {
     String doctype = "DOCTYPE";
     String startTag = "StartTag";
     String endTag = "EndTag";
+    String processingInstruction = "ProcessingInstruction";
     String EOF = "EOF";
 }
