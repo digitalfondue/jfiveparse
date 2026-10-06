@@ -81,6 +81,7 @@ public class TokenizerTest {
 
     record ToSkip(String path, String description) {}
 
+    /*
     private static final Set<ToSkip> TO_SKIPS = Set.of(
             new ToSkip("test2.test", "Simili processing instruction"),
             new ToSkip("test2.test", "A bogus comment stops at >, even if preceded by two dashes"),
@@ -93,7 +94,7 @@ public class TokenizerTest {
             new ToSkip("test3.test", "<?b"),
             new ToSkip("test3.test", "<?y"),
             new ToSkip("test3.test", "<?z")
-    );
+    );*/
 
     @MethodSource("data")
     @SuppressWarnings("unchecked")
@@ -103,7 +104,7 @@ public class TokenizerTest {
         // we skip some tests that we know are no more correct
         // due to the addition of the processing instructions
         // still, the tokenizer tests are useful
-        Assumptions.assumeFalse(TO_SKIPS.contains(new ToSkip(path, test.description)));
+        // Assumptions.assumeFalse(TO_SKIPS.contains(new ToSkip(path, test.description)));
 
         initTokenizerTest(path, test, state);
 
