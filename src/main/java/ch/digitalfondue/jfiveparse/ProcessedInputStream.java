@@ -19,13 +19,71 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * Wrapped and abstracted input. Can most likely be optimized.
+ * Wrapped and abstracted input with on-demand buffering from a {@link Reader}.
  */
-abstract class ProcessedInputStream {
+class ProcessedInputStream {
+
+    private static final int BUFFER_SIZE = 8192;
 
     protected final ResizableIntBuffer buffer = new ResizableIntBuffer();
 
-    protected abstract int read();
+    private final Reader reader;
+    private final char[] buff = new char[BUFFER_SIZE];
+    private int buffPos = 0;
+    private int buffCount = 0;
+    private boolean eof = false;
+    private boolean crFound = false;
+
+    ProcessedInputStream(Reader reader) {
+        this.reader = reader;
+    }
+
+    protected int read() {
+        if (buffPos < buffCount) {
+            return buff[buffPos++];
+        }
+        if (fill()) {
+            return buff[buffPos++];
+        }
+        return Characters.EOF;
+    }
+
+    private boolean fill() {
+        if (eof) {
+            return false;
+        }
+        try {
+            int out = 0;
+            while (out == 0) {
+                int read = reader.read(buff);
+                if (read == -1) {
+                    eof = true;
+                    buffCount = 0;
+                    buffPos = 0;
+                    return false;
+                }
+                for (int in = 0; in < read; in++) {
+                    char c = buff[in];
+                    if (crFound) {
+                        crFound = false;
+                        if (c == Characters.LF) {
+                            continue;
+                        }
+                    }
+                    if (c == Characters.CR) {
+                        crFound = true;
+                        c = Characters.LF;
+                    }
+                    buff[out++] = c;
+                }
+            }
+            buffPos = 0;
+            buffCount = out;
+            return true;
+        } catch (IOException ioe) {
+            throw new ParserException(ioe);
+        }
+    }
 
     int readUntil(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
         int chr;
@@ -111,73 +169,144 @@ abstract class ProcessedInputStream {
         return readUntilCommentInternal(builder);
     }
 
-    protected int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
-        int chr;
-        while ((chr = read()) != Characters.EOF) {
-            if ((stopAtAmpersand && chr == Characters.AMPERSAND) || (stopAtLessThan && chr == Characters.LESSTHAN_SIGN) || chr == Characters.NULL) {
-                return chr;
+    private int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
+        for (;;) {
+            if (buffPos >= buffCount) {
+                if (!fill()) {
+                    return Characters.EOF;
+                }
             }
-            builder.append((char) chr);
+            int n = buffCount;
+            int i = buffPos;
+            while (i < n) {
+                char c = buff[i];
+                if ((stopAtAmpersand && c == Characters.AMPERSAND) || (stopAtLessThan && c == Characters.LESSTHAN_SIGN) || c == Characters.NULL) {
+                    builder.append(buff, buffPos, i - buffPos);
+                    buffPos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(buff, buffPos, n - buffPos);
+            buffPos = n;
         }
-        return Characters.EOF;
     }
 
-    protected int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
-        int chr;
-        while ((chr = read()) != Characters.EOF) {
-            if (chr == quoteChar || (stopAtAmpersand && chr == Characters.AMPERSAND) || chr == Characters.NULL) {
-                return chr;
+    private int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
+        for (;;) {
+            if (buffPos >= buffCount) {
+                if (!fill()) {
+                    return Characters.EOF;
+                }
             }
-            builder.append((char) chr);
+            int n = buffCount;
+            int i = buffPos;
+            while (i < n) {
+                char c = buff[i];
+                if (c == quoteChar || (stopAtAmpersand && c == Characters.AMPERSAND) || c == Characters.NULL) {
+                    builder.append(buff, buffPos, i - buffPos);
+                    buffPos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(buff, buffPos, n - buffPos);
+            buffPos = n;
         }
-        return Characters.EOF;
     }
 
-    protected int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
-        int chr;
-        while ((chr = read()) != Characters.EOF) {
-            if (mustStopReadUntilAttributeValueUnquoted(chr)) {
-                return chr;
+    private int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
+        for (;;) {
+            if (buffPos >= buffCount) {
+                if (!fill()) {
+                    return Characters.EOF;
+                }
             }
-            builder.append((char) chr);
+            int n = buffCount;
+            int i = buffPos;
+            while (i < n) {
+                char c = buff[i];
+                if (mustStopReadUntilAttributeValueUnquoted(c)) {
+                    builder.append(buff, buffPos, i - buffPos);
+                    buffPos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(buff, buffPos, n - buffPos);
+            buffPos = n;
         }
-        return Characters.EOF;
     }
 
-    protected int readUntilTagNameInternal(ResizableCharBuilder builder) {
-        int chr;
-        while ((chr = read()) != Characters.EOF) {
-            if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.SOLIDUS || chr == Characters.GREATERTHAN_SIGN || chr == Characters.NULL) {
-                return chr;
+    private int readUntilTagNameInternal(ResizableCharBuilder builder) {
+        for (;;) {
+            if (buffPos >= buffCount) {
+                if (!fill()) {
+                    return Characters.EOF;
+                }
             }
-            builder.append((char) chr);
+            int n = buffCount;
+            int i = buffPos;
+            while (i < n) {
+                char c = buff[i];
+                if (Common.isTabLfFfCrOrSpace(c) || c == Characters.SOLIDUS || c == Characters.GREATERTHAN_SIGN || c == Characters.NULL) {
+                    builder.append(buff, buffPos, i - buffPos);
+                    buffPos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(buff, buffPos, n - buffPos);
+            buffPos = n;
         }
-        return Characters.EOF;
     }
 
-    protected int readUntilAttributeNameInternal(ResizableCharBuilder builder) {
-        int chr;
-        while ((chr = read()) != Characters.EOF) {
-            if (mustStopReadUntilAttributeName(chr)) {
-                return chr;
+    private int readUntilAttributeNameInternal(ResizableCharBuilder builder) {
+        for (;;) {
+            if (buffPos >= buffCount) {
+                if (!fill()) {
+                    return Characters.EOF;
+                }
             }
-            builder.append((char) chr);
+            int n = buffCount;
+            int i = buffPos;
+            while (i < n) {
+                char c = buff[i];
+                if (mustStopReadUntilAttributeName(c)) {
+                    builder.append(buff, buffPos, i - buffPos);
+                    buffPos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(buff, buffPos, n - buffPos);
+            buffPos = n;
         }
-        return Characters.EOF;
     }
 
-    protected int readUntilCommentInternal(ResizableCharBuilder builder) {
-        int chr;
-        while ((chr = read()) != Characters.EOF) {
-            if (chr == Characters.HYPHEN_MINUS || chr == Characters.NULL) {
-                return chr;
+    private int readUntilCommentInternal(ResizableCharBuilder builder) {
+        for (;;) {
+            if (buffPos >= buffCount) {
+                if (!fill()) {
+                    return Characters.EOF;
+                }
             }
-            builder.append((char) chr);
+            int n = buffCount;
+            int i = buffPos;
+            while (i < n) {
+                char c = buff[i];
+                if (c == Characters.HYPHEN_MINUS || c == Characters.NULL) {
+                    builder.append(buff, buffPos, i - buffPos);
+                    buffPos = i + 1;
+                    return c;
+                }
+                i++;
+            }
+            builder.append(buff, buffPos, n - buffPos);
+            buffPos = n;
         }
-        return Characters.EOF;
     }
 
-    //
     int peekNextInputCharacter(int offset) {
         if (buffer.length() < offset) {
             // fill buffer
@@ -209,188 +338,6 @@ abstract class ProcessedInputStream {
     void consume(int count) {
         for (int i = 0; i < count; i++) {
             consume();
-        }
-    }
-
-
-
-    static class StringProcessedInputStream extends ProcessedInputStream {
-        private int pos = 0;
-        private final char[] input;
-        private final int length;
-
-
-        StringProcessedInputStream(String input) {
-            char[] toNormalize = input.toCharArray();
-            int j = 0;
-            for (int i = 0; i < toNormalize.length; i++) {
-                char c = toNormalize[i];
-                if (c == Characters.CR) {
-                    toNormalize[j++] = Characters.LF;
-                    if (i + 1 < toNormalize.length && toNormalize[i + 1] == Characters.LF) {
-                        i++;
-                    }
-                } else {
-                    toNormalize[j++] = c;
-                }
-            }
-            this.input = toNormalize;
-            this.length = j;
-        }
-
-        // used for test
-        protected int getCharAt(int pos) {
-            if (pos >= length) {
-                return Characters.EOF;
-            }
-            return input[pos];
-        }
-
-        @Override
-        protected int read() {
-            if (pos < length) {
-                return input[pos++];
-            }
-            return Characters.EOF;
-        }
-
-        @Override
-        protected int readUntilInternal(ResizableCharBuilder builder, boolean stopAtAmpersand, boolean stopAtLessThan) {
-            int n = length;
-            int i = pos;
-            while (i < n) {
-                char c = input[i];
-                if ((stopAtAmpersand && c == Characters.AMPERSAND) || (stopAtLessThan && c == Characters.LESSTHAN_SIGN) || c == Characters.NULL) {
-                    builder.append(input, pos, i - pos);
-                    pos = i + 1;
-                    return c;
-                }
-                i++;
-            }
-            builder.append(input, pos, n - pos);
-            pos = n;
-            return Characters.EOF;
-        }
-
-        @Override
-        protected int readUntilAttributeValueInternal(ResizableCharBuilder builder, int quoteChar, boolean stopAtAmpersand) {
-            int n = length;
-            int i = pos;
-            while (i < n) {
-                char c = input[i];
-                if (c == quoteChar || (stopAtAmpersand && c == Characters.AMPERSAND) || c == Characters.NULL) {
-                    builder.append(input, pos, i - pos);
-                    pos = i + 1;
-                    return c;
-                }
-                i++;
-            }
-            builder.append(input, pos, n - pos);
-            pos = n;
-            return Characters.EOF;
-        }
-
-        @Override
-        protected int readUntilAttributeValueUnquotedInternal(ResizableCharBuilder builder) {
-            int n = length;
-            int i = pos;
-            while (i < n) {
-                char c = input[i];
-                if (mustStopReadUntilAttributeValueUnquoted(c)) {
-                    builder.append(input, pos, i - pos);
-                    pos = i + 1;
-                    return c;
-                }
-                i++;
-            }
-            builder.append(input, pos, n - pos);
-            pos = n;
-            return Characters.EOF;
-        }
-
-        @Override
-        protected int readUntilTagNameInternal(ResizableCharBuilder builder) {
-            int n = length;
-            int i = pos;
-            while (i < n) {
-                char c = input[i];
-                if (Common.isTabLfFfCrOrSpace(c) || c == Characters.SOLIDUS || c == Characters.GREATERTHAN_SIGN || c == Characters.NULL) {
-                    builder.append(input, pos, i - pos);
-                    pos = i + 1;
-                    return c;
-                }
-                i++;
-            }
-            builder.append(input, pos, n - pos);
-            pos = n;
-            return Characters.EOF;
-        }
-
-        @Override
-        protected int readUntilAttributeNameInternal(ResizableCharBuilder builder) {
-            int n = length;
-            int i = pos;
-            while (i < n) {
-                char c = input[i];
-                if (mustStopReadUntilAttributeName(c)) {
-                    builder.append(input, pos, i - pos); // append remaining
-                    pos = i + 1;
-                    return c;
-                }
-                i++;
-            }
-            builder.append(input, pos, n - pos);
-            pos = n;
-            return Characters.EOF;
-        }
-
-        @Override
-        protected int readUntilCommentInternal(ResizableCharBuilder builder) {
-            int n = length;
-            int i = pos;
-            while (i < n) {
-                char c = input[i];
-                if (c == Characters.HYPHEN_MINUS || c == Characters.NULL) {
-                    builder.append(input, pos, i - pos);
-                    pos = i + 1;
-                    return c;
-                }
-                i++;
-            }
-            builder.append(input, pos, n - pos);
-            pos = n;
-            return Characters.EOF;
-        }
-    }
-
-    static final class ReaderProcessedInputStream extends ProcessedInputStream {
-
-        private final Reader reader;
-        private boolean crFound;
-
-        ReaderProcessedInputStream(Reader reader) {
-            this.reader = reader;
-        }
-
-        @Override
-        protected int read() {
-            try {
-                int chr = reader.read();
-                if (crFound) {
-                    crFound = false;
-                    if (chr == Characters.LF) {
-                        chr = reader.read();
-                    }
-                }
-
-                if (chr == Characters.CR) {
-                    crFound = true;
-                    chr = Characters.LF;
-                }
-                return chr;
-            } catch (IOException ioe) {
-                throw new ParserException(ioe);
-            }
         }
     }
 }

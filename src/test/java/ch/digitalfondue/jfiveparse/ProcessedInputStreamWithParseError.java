@@ -15,17 +15,41 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import ch.digitalfondue.jfiveparse.ProcessedInputStream.StringProcessedInputStream;
+import java.io.StringReader;
 
-final class ProcessedInputStreamWithParseError extends StringProcessedInputStream {
+final class ProcessedInputStreamWithParseError extends ProcessedInputStream {
 
     private final TreeConstructor tokenHandler;
     private int alreadyVisitedPosition = -1;
     private int position = -1;
+    private final char[] input;
+    private final int length;
 
     ProcessedInputStreamWithParseError(String input, TokenSaver tokenHandler) {
-        super(input);
+        super(new StringReader(input));
         this.tokenHandler = tokenHandler;
+        char[] toNormalize = input.toCharArray();
+        int j = 0;
+        for (int i = 0; i < toNormalize.length; i++) {
+            char c = toNormalize[i];
+            if (c == Characters.CR) {
+                toNormalize[j++] = Characters.LF;
+                if (i + 1 < toNormalize.length && toNormalize[i + 1] == Characters.LF) {
+                    i++;
+                }
+            } else {
+                toNormalize[j++] = c;
+            }
+        }
+        this.input = toNormalize;
+        this.length = j;
+    }
+
+    private int getCharAt(int pos) {
+        if (pos < 0 || pos >= length) {
+            return Characters.EOF;
+        }
+        return input[pos];
     }
 
     private int previousCharacter = -1;

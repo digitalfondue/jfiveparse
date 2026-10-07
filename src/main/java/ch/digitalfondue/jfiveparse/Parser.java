@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class Parser {
      * @return the parsed {@link Document}
      */
     public Document parse(String input) {
-        return parse(new ProcessedInputStream.StringProcessedInputStream(input));
+        return parse(new ProcessedInputStream(new StringReader(input)));
     }
 
     /**
@@ -87,7 +88,7 @@ public class Parser {
      * @return the parsed {@link Document}
      */
     public Document parse(Reader input) {
-        return parse(new ProcessedInputStream.ReaderProcessedInputStream(input));
+        return parse(new ProcessedInputStream(input));
     }
 
     /***
@@ -101,7 +102,7 @@ public class Parser {
      * @return
      */
     public List<Node> parseFragment(Element node, String input) {
-        return parseFragment(new ProcessedInputStream.StringProcessedInputStream(input), node);
+        return parseFragment(new ProcessedInputStream(new StringReader(input)), node);
     }
 
     /**
@@ -112,7 +113,7 @@ public class Parser {
      * @return
      */
     public List<Node> parseFragment(Element node, Reader input) {
-        return parseFragment(new ProcessedInputStream.ReaderProcessedInputStream(input), node);
+        return parseFragment(new ProcessedInputStream(input), node);
     }
 
     private List<Node> parseFragment(ProcessedInputStream is, Element node) {
