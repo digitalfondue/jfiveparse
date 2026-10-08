@@ -21,14 +21,13 @@ import java.io.Reader;
 /**
  * Wrapped and abstracted input with on-demand buffering from a {@link Reader}.
  */
+// can be improved, see SWAR..., also we could improve code sharing with the readUntil*Internal code
 class ProcessedInputStream {
-
-    private static final int BUFFER_SIZE = 8192;
 
     protected final ResizableIntBuffer buffer = new ResizableIntBuffer();
 
     private final Reader reader;
-    private final char[] buff = new char[BUFFER_SIZE];
+    private final char[] buff = new char[8192];
     private int buffPos = 0;
     private int buffCount = 0;
     private boolean eof = false;

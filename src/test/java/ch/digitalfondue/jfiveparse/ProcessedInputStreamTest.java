@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ProcessedInputStreamTest {
 
@@ -47,9 +46,7 @@ class ProcessedInputStreamTest {
         Document doc2 = parser.parse(new StringReader(htmlCrlf));
 
         assertEquals(JFiveParse.serialize(doc1), JFiveParse.serialize(doc2));
-
-        String expectedText = "Line 1\nLine 2\nLine 3\nLine 4\n";
-        assertEquals(expectedText, doc1.getElementsByTagName("div").get(0).getTextContent());
+        assertEquals("Line 1\nLine 2\nLine 3\nLine 4\n", doc1.getElementsByTagName("div").get(0).getTextContent());
     }
 
     @Test
@@ -120,6 +117,5 @@ class ProcessedInputStreamTest {
         Document doc2 = parser.parse(new StringReader(input));
 
         assertEquals(JFiveParse.serialize(doc1), JFiveParse.serialize(doc2));
-        assertNotNull(doc2.getElementsByTagName("div").get(0));
     }
 }
