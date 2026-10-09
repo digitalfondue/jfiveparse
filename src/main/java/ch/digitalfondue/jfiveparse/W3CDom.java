@@ -140,21 +140,27 @@ public final class W3CDom {
         }
 
         protected org.w3c.dom.Element toElement(Element elem) {
-            for (AttributeNode attr : elem.getAttributes()) {
-                if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
-                    xmlNamespaces.peek().put(extractXmlnsPrefix(attr.getName()), attr.getValue());
+
+            if (elem.hasAttributes()) {
+                for (AttributeNode attr : elem.getAttributes()) {
+                    if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
+                        xmlNamespaces.peek().put(extractXmlnsPrefix(attr.getName()), attr.getValue());
+                    }
                 }
             }
 
+
             org.w3c.dom.Element e = buildNamespacedElement(elem);
 
-            for (AttributeNode attr : elem.getAttributes()) {
-                if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
-                    e.setAttributeNS("http://www.w3.org/2000/xmlns/", attr.getName(), attr.getValue());
-                } else {
-                    String prefix = extractXmlnsPrefixFromAttrOrElem(attr.getName());
-                    String attrNs = prefix.isEmpty() ? attr.getNamespace() : xmlNamespaces.peek().getOrDefault(prefix, attr.getNamespace());
-                    e.setAttributeNS(attrNs, attr.getName(), attr.getValue());
+            if (elem.hasAttributes()) {
+                for (AttributeNode attr : elem.getAttributes()) {
+                    if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
+                        e.setAttributeNS("http://www.w3.org/2000/xmlns/", attr.getName(), attr.getValue());
+                    } else {
+                        String prefix = extractXmlnsPrefixFromAttrOrElem(attr.getName());
+                        String attrNs = prefix.isEmpty() ? attr.getNamespace() : xmlNamespaces.peek().getOrDefault(prefix, attr.getNamespace());
+                        e.setAttributeNS(attrNs, attr.getName(), attr.getValue());
+                    }
                 }
             }
             return e;

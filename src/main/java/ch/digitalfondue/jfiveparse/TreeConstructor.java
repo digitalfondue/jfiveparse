@@ -479,7 +479,9 @@ class TreeConstructor {
                 }
 
                 // 13.7
-                Element newElement = buildElement(node.nodeName, node.nodeNameID, node.originalNodeName, node.namespaceURI, node.namespaceID, node.getAttributes().copy());
+                Element newElement = buildElement(node.nodeName, node.nodeNameID, node.originalNodeName,
+                        node.namespaceURI, node.namespaceID,
+                        node.hasAttributes() ? node.getAttributes().copy() : null);
                 commonAncestor.appendChild(newElement);
                 activeFormattingElements.replace(node, newElement);
                 openElements.set(openElements.lastIndexOf(node), newElement);
@@ -520,7 +522,7 @@ class TreeConstructor {
                     formattingElement.originalNodeName,
                     formattingElement.getNamespaceURI(),
                     formattingElement.namespaceID,
-                    formattingElement.getAttributes().copy()
+                    formattingElement.hasAttributes() ? formattingElement.getAttributes().copy() : null
             );
 
             // 16

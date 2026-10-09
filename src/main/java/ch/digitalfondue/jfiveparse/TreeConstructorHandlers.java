@@ -1248,9 +1248,10 @@ final class TreeConstructorHandlers {
                 if (!treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
                     Element firstInserted = treeConstructor.openElementAt(0);
                     if (treeConstructor.getAttributes() != null) {
+                        Attributes firstInsertedAttrs = firstInserted.getAttributes();
                         for (String attr : treeConstructor.getAttributes().keySet()) {
-                            if (!firstInserted.getAttributes().containsKey(attr)) {
-                                firstInserted.getAttributes().put(treeConstructor.getAttribute(attr));
+                            if (!firstInsertedAttrs.containsKey(attr)) {
+                                firstInsertedAttrs.put(treeConstructor.getAttribute(attr));
                             }
                         }
                     }
@@ -1542,7 +1543,7 @@ final class TreeConstructorHandlers {
         Element element = treeConstructor.insertHtmlElementToken();
         treeConstructor.popCurrentNode();
         treeConstructor.ackSelfClosingTagIfSet();
-        boolean hasTypeAttr = element.getAttributes().containsKey("type");
+        boolean hasTypeAttr = element.hasAttributes() && element.getAttributes().containsKey("type");
         if (!hasTypeAttr || (!"hidden".equalsIgnoreCase(element.getAttributes().get("type").getValue()))) {
             treeConstructor.framesetOkToFalse();
         }
@@ -1782,9 +1783,10 @@ final class TreeConstructorHandlers {
             treeConstructor.framesetOkToFalse();
             Element secondInserted = treeConstructor.openElementAt(1);
             if (treeConstructor.getAttributes() != null) {
+                Attributes secondInsertedAttrs = secondInserted.getAttributes();
                 for (String attr : treeConstructor.getAttributes().keySet()) {
-                    if (!secondInserted.getAttributes().containsKey(attr)) {
-                        secondInserted.getAttributes().put(treeConstructor.getAttribute(attr));
+                    if (!secondInsertedAttrs.containsKey(attr)) {
+                        secondInsertedAttrs.put(treeConstructor.getAttribute(attr));
                     }
                 }
             }

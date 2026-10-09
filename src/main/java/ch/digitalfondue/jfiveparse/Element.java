@@ -379,7 +379,9 @@ public final class Element extends Node implements SelectableElement<Node> {
             var equalityCheck = Objects.equals(getNodeName(), otherElement.getNodeName()) &&
                     Objects.equals(getNamespaceURI(), otherElement.getNamespaceURI()) &&
                     Objects.equals(count, otherElement.getChildCount()) &&
-                    Objects.equals(getAttributes(), otherElement.getAttributes());
+                    Objects.equals(
+                            hasAttributes() ? getAttributes() : null,
+                            otherElement.hasAttributes() ? otherElement.getAttributes() : null);
 
             if (!equalityCheck) {
                 return false;
