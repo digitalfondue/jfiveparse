@@ -248,6 +248,7 @@ final class Common {
         int namespaceID = e.namespaceID;
 
         return ((Node.NAMESPACE_MATHML_ID == namespaceID && "annotation-xml".equals(nodeName)) && //
+                e.hasAttributes() &&
                 matchEncoding(e.getAttributes().get("encoding")))
                 || //
                 (Node.NAMESPACE_SVG_ID == namespaceID && (//

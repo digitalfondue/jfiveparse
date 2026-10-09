@@ -110,14 +110,16 @@ public class HtmlSerializer implements NodesVisitor {
             if (node instanceof Element e) {
                 // TODO: for tag outside of html,mathml,svg namespace : use qualified name!
                 appendable.append('<').append(getNodeName(e));
-                for (AttributeNode attr : e.getAttributes()) {
-                    appendable.append(' ').append(serializeAttributeName(attr));//
+                if (e.hasAttributes()) {
+                    for (AttributeNode attr : e.getAttributes()) {
+                        appendable.append(' ').append(serializeAttributeName(attr));//
 
-                    if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE))
-                            && (attr.getValue() == null || attr.getValue().isEmpty())) {
-                        continue;
+                        if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE))
+                                && (attr.getValue() == null || attr.getValue().isEmpty())) {
+                            continue;
+                        }
+                        appendable.append('=').append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
                     }
-                    appendable.append('=').append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
                 }
                 appendable.append('>');
                 if ((Common.isHtmlNS(e, Common.ELEMENT_PRE_ID) || Common.isHtmlNS(e, Common.ELEMENT_TEXTAREA_ID) || Common.isHtmlNS(e, Common.ELEMENT_LISTING_ID)) && //

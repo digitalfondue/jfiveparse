@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 final class TreeConstructorActiveFormattingElements {
 
@@ -70,7 +71,7 @@ final class TreeConstructorActiveFormattingElements {
 
         String elementName = element.getNodeName();
         String elementNS = element.getNamespaceURI();
-        Attributes elementAttrs = element.getAttributes();
+        Attributes elementAttrs = element.hasAttributes() ? element.getAttributes() : null;
 
         // TODO: not optimal at all :D
 
@@ -79,7 +80,7 @@ final class TreeConstructorActiveFormattingElements {
             if (!(MARKER_ELEMENT == current) && //
                     elementName.equals(current.getNodeName()) && //
                     elementNS.equals(current.getNamespaceURI()) && //
-                    elementAttrs.equals(current.getAttributes())) {
+                    Objects.equals(elementAttrs, current.hasAttributes() ? current.getAttributes() : null)) {
                 sameElementCount++;
                 if (sameElementPosition == -1) {
                     sameElementPosition = i;
