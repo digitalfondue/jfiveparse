@@ -1682,14 +1682,15 @@ final class TokenizerState {
                 }
             }
             default:
-                return parseEntity(inAttribute, processedInputStream, tokenHandler, chr);
+                return parseEntity(inAttribute, processedInputStream, tokenHandler/*, chr*/);
         }
     }
 
-    private static char[] parseEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler, int chr) {
+    private static char[] parseEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler/*, int chr*/) {
         int matchedCount = 0;
         var currentPrefix = EntitiesPrefix.ENTITIES;
-        ResizableCharBuilder tentativelyMatched = new ResizableCharBuilder();
+        tokenHandler.characterReferenceTmpBuffer.reset();
+        ResizableCharBuilder tentativelyMatched = tokenHandler.characterReferenceTmpBuffer;
 
         for (;;) {
             int next = processedInputStream.peekNextInputCharacter(matchedCount + 1);
@@ -1776,7 +1777,9 @@ final class TokenizerState {
     private static char[] parseDecSection(ProcessedInputStream processedInputStream, Tokenizer tokenHandler) {
 
         int matchedCount = 0;
-        ResizableCharBuilder sb = new ResizableCharBuilder();
+        tokenHandler.characterReferenceTmpBuffer.reset();
+        //ResizableCharBuilder sb = new ResizableCharBuilder();
+        ResizableCharBuilder sb = tokenHandler.characterReferenceTmpBuffer;
 
         for (;;) {
             int nextPossibleHexDigit = processedInputStream.peekNextInputCharacter(matchedCount + 1);
@@ -1815,7 +1818,9 @@ final class TokenizerState {
         processedInputStream.consume();
 
         int matchedCount = 0;
-        ResizableCharBuilder sb = new ResizableCharBuilder();
+        tokenHandler.characterReferenceTmpBuffer.reset();
+
+        ResizableCharBuilder sb = tokenHandler.characterReferenceTmpBuffer;
 
         for (;;) {
             int nextPossibleHexDigit = processedInputStream.peekNextInputCharacter(matchedCount + 1);

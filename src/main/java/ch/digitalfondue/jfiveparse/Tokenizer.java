@@ -59,6 +59,8 @@ final class Tokenizer {
     //
     private final ResizableCharBuilder temporaryBuffer = new ResizableCharBuilder();
 
+    final ResizableCharBuilder characterReferenceTmpBuffer = new ResizableCharBuilder();
+
     final boolean transformEntities;
 
     Tokenizer(TreeConstructor tokenHandler) {
