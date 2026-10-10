@@ -644,7 +644,7 @@ final class TokenizerState {
         processedInputStream.reconsume(chr);
     }
 
-    private static final char[] SCRIPT = new char[] {'s', 'c', 'r', 'i', 'p', 't'};
+    private static final ResizableCharBuilder SCRIPT = new ResizableCharBuilder(new char[] {'s', 'c', 'r', 'i', 'p', 't'});
 
     static void handleScriptDataDoubleEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();

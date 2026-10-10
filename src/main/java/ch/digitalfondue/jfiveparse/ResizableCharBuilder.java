@@ -32,6 +32,12 @@ final class ResizableCharBuilder {
         buff = new char[16];
     }
 
+    ResizableCharBuilder(char[] s) {
+        buff = s;
+        pos = buff.length;
+    }
+
+
     // reset and set the given string
     void set(String s) {
         buff = s.toCharArray();
@@ -85,20 +91,21 @@ final class ResizableCharBuilder {
         return new String(buff, 0, pos);
     }
 
-    boolean equalsASCIICaseInsensitive(char[] cb) {
-        if (pos != cb.length) {
+    boolean equalsASCIICaseInsensitive(ResizableCharBuilder rb) {
+        if (pos != rb.pos) {
             return false;
         }
         for (int i = 0; i < pos; i++) {
-            if (Common.toLowerCase(buff[i]) != Common.toLowerCase(cb[i])) {
+            if (Common.toLowerCase(buff[i]) != Common.toLowerCase(rb.buff[i])) {
                 return false;
             }
         }
         return true;
     }
 
-    char[] copyBackingCharArray() {
-        return Arrays.copyOf(buff, pos);
+    void copyTo(ResizableCharBuilder target) {
+        target.reset();
+        target.append(buff, 0, pos);
     }
 
     void append(char[] c, int offset, int length) {

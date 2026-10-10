@@ -79,8 +79,8 @@ final class Common {
     static final char[] DOCTYPE = new char[] {'d', 'o', 'c', 't', 'y', 'p', 'e'}; //doctype
 
 
-    static final char[] XML = new char[] {'x', 'm', 'l'};
-    static final char[] XML_STYLESHEET = new char[] {'x', 'm', 'l', '-', 's', 't', 'y', 'l', 'e', 's', 'h', 'e', 'e', 't'};
+    static final ResizableCharBuilder XML = new ResizableCharBuilder(new char[] {'x', 'm', 'l'});
+    static final ResizableCharBuilder XML_STYLESHEET = new ResizableCharBuilder(new char[] {'x', 'm', 'l', '-', 's', 't', 'y', 'l', 'e', 's', 'h', 'e', 'e', 't'});
 
     static boolean matchCharsCaseInsensitive(char[] str, int[] chars) {
         for (int i = 0; i < chars.length; i++) {

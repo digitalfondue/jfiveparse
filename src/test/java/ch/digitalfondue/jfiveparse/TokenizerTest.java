@@ -152,7 +152,8 @@ public class TokenizerTest {
         tokenizer.setState(initialState.ordinal());
 
         if (desc.lastStartTag != null) {
-            tokenizer.lastEmittedStartTagName = desc.lastStartTag.toCharArray();
+            tokenizer.lastEmittedStartTagName.set(desc.lastStartTag);
+            // tokenizer.lastEmittedStartTagName = desc.lastStartTag.toCharArray();
         }
 
         ProcessedInputStream is = new ProcessedInputStreamWithParseError(desc.input, tokenSaver);

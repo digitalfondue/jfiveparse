@@ -42,7 +42,7 @@ final class Tokenizer {
     private boolean selfClosing;
     final ResizableCharBuilder tagName = new ResizableCharBuilder();
     private boolean isEndTagToken;
-    char[] lastEmittedStartTagName;
+    final ResizableCharBuilder lastEmittedStartTagName = new ResizableCharBuilder();
 
     // doctype related
     private boolean doctypeForceQuirksFlag;
@@ -101,7 +101,7 @@ final class Tokenizer {
     }
 
     /* ASCII case-insensitive match */
-    boolean isTemporaryBufferEquals(char[] s) {
+    boolean isTemporaryBufferEquals(ResizableCharBuilder s) {
         return temporaryBuffer.equalsASCIICaseInsensitive(s);
     }
 
@@ -405,7 +405,7 @@ final class Tokenizer {
     // ------------
 
     boolean isAppropriateEndTagToken() {
-        return tagName.pos() != 0 && lastEmittedStartTagName != null && tagName.equalsASCIICaseInsensitive(lastEmittedStartTagName);
+        return tagName.pos() != 0 && tagName.equalsASCIICaseInsensitive(lastEmittedStartTagName);
     }
 
     // When the user agent leaves the attribute name state (and before emitting
@@ -487,7 +487,7 @@ final class Tokenizer {
          * seems nope
          */
         if (!isEndTagToken) {
-            lastEmittedStartTagName = tagName.copyBackingCharArray();
+            tagName.copyTo(lastEmittedStartTagName);
         }
 
         emitTagToken();
