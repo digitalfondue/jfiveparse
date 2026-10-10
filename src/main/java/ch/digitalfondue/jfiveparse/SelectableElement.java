@@ -1,6 +1,6 @@
 package ch.digitalfondue.jfiveparse;
 
-interface SelectableElement<T> extends SelectableNode<T> {
+sealed interface SelectableElement<T> extends SelectableNode<T> permits Element, W3CDom.SelectableElementWrapper {
     String getNamespaceURI();
     String getAttributeValue(String name);
 }

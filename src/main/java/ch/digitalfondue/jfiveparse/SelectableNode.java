@@ -3,7 +3,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.List;
 import java.util.stream.Stream;
 
-interface SelectableNode<T> {
+sealed interface SelectableNode<T> permits Node, SelectableElement, W3CDom.SelectableNodeWrapper {
     int getNodeType();
     String getNodeName();
     T getParentNode();

@@ -185,7 +185,7 @@ public final class W3CDom {
         return new SelectableNodeWrapper(node);
     }
 
-    private static class SelectableNodeWrapper implements SelectableNode<org.w3c.dom.Node> {
+    static sealed class SelectableNodeWrapper implements SelectableNode<org.w3c.dom.Node> {
 
         protected final org.w3c.dom.Node node;
 
@@ -274,7 +274,7 @@ public final class W3CDom {
         }
     }
 
-    private static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableElement<org.w3c.dom.Node> {
+    static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableElement<org.w3c.dom.Node> {
 
         SelectableElementWrapper(org.w3c.dom.Element node) {
             super(node);
