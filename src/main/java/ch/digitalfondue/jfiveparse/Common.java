@@ -107,12 +107,19 @@ final class Common {
         }
     }
 
+    // most commonly used attributes:
     private static final Interned[][] INTERNED_ATTRS = new Interned[][]{
             buildInterned("d"),  // length 1
             buildInterned("id"), // 2
             buildInterned("alt", "rel", "src"), // 3
-            buildInterned("href", "type", "fill", "role", "name"), // 4
-            // TODO: ecc...
+            buildInterned("fill", "href", "name", "role", "type"), // 4
+            buildInterned("class", "media", "sizes", "style", "title", "value", "width", "xmlns"), // 5
+            buildInterned("height", "srcset", "stroke", "target"), // 6
+            buildInterned("content", "loading", "onclick", "viewbox"), // 7
+            buildInterned("decoding", "itemprop", "property", "tabindex"), // 8
+            buildInterned(), // 9
+            buildInterned("aria-label"), // 10
+            buildInterned("aria-hidden") // 11
     };
 
     private static Interned[] buildInterned(String... v) {
@@ -120,18 +127,15 @@ final class Common {
     }
 
     static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, AttributeName res) {
-        // most commonly used attributes:
-        // class, href, id, src, style, alt, title, type, width, height, rel, d, target, fill, role, loading, value, name, content, viewBox,
-        // srcset, aria-label, xmlns, aria-hidden, media, tabindex, sizes, decoding, itemprop, stroke, property, onclick
         int size = resizableCharBuilder.pos();
         if (size < 1) {
             res.lowerCaseAttribute = "";
             res.containsUpperCase = false;
             return;
         }
-
-        // TODO add here logic for fetching interned string
-
+        if (size < 12) {
+            // TODO add here logic for fetching interned string
+        }
         var s = resizableCharBuilder.toLowerCase();
         res.lowerCaseAttribute = s;
         res.containsUpperCase = resizableCharBuilder.containsUpperCase;
