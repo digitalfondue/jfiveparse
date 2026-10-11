@@ -16,11 +16,10 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class Attributes implements Iterable<AttributeNode> {
 
-    private ArrayList<AttributeNode> attributes;
+    ArrayList<AttributeNode> attributes;
 
     public Attributes() {
     }
@@ -65,20 +64,12 @@ public final class Attributes implements Iterable<AttributeNode> {
         if (attributes == null) {
             return null;
         }
-        var attrSize = attributes.size();
         for (AttributeNode attr : attributes) {
             if (Objects.equals(attr.getName(), key)) {
                 return attr;
             }
         }
         return null;
-    }
-
-    Set<String> keySet() {
-        return attributes == null ? Set.of() : attributes
-                .stream()
-                .map(AttributeNode::getName)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private void ensureAttributes() {

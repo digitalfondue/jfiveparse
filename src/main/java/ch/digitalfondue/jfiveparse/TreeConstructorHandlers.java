@@ -1248,10 +1248,13 @@ final class TreeConstructorHandlers {
                 if (!treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
                     Element firstInserted = treeConstructor.openElementAt(0);
                     if (treeConstructor.getAttributes() != null) {
-                        Attributes firstInsertedAttrs = firstInserted.getAttributes();
-                        for (String attr : treeConstructor.getAttributes().keySet()) {
-                            if (!firstInsertedAttrs.containsKey(attr)) {
-                                firstInsertedAttrs.put(treeConstructor.getAttribute(attr));
+                        var attrs = treeConstructor.getAttributes().attributes;
+                        if (attrs != null) {
+                            Attributes firstInsertedAttrs = firstInserted.getAttributes();
+                            for (AttributeNode attr : attrs) {
+                                if (!firstInsertedAttrs.containsKey(attr.name)) {
+                                    firstInsertedAttrs.put(attr);
+                                }
                             }
                         }
                     }
@@ -1783,10 +1786,13 @@ final class TreeConstructorHandlers {
             treeConstructor.framesetOkToFalse();
             Element secondInserted = treeConstructor.openElementAt(1);
             if (treeConstructor.getAttributes() != null) {
-                Attributes secondInsertedAttrs = secondInserted.getAttributes();
-                for (String attr : treeConstructor.getAttributes().keySet()) {
-                    if (!secondInsertedAttrs.containsKey(attr)) {
-                        secondInsertedAttrs.put(treeConstructor.getAttribute(attr));
+                var attrs = treeConstructor.getAttributes().attributes;
+                if (attrs != null) {
+                    Attributes secondInsertedAttrs = secondInserted.getAttributes();
+                    for (AttributeNode attr : attrs) {
+                        if (!secondInsertedAttrs.containsKey(attr.name)) {
+                            secondInsertedAttrs.put(attr);
+                        }
                     }
                 }
             }

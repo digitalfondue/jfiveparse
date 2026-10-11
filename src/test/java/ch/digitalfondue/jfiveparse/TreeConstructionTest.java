@@ -219,7 +219,7 @@ public class TreeConstructionTest {
 
             sb.append(elem.getNodeName()).append(">");
 
-            Set<String> attributesName = new TreeSet<>(elem.getAttributes().keySet());
+            Set<String> attributesName = new TreeSet<>(AttributesUtils.keySet(elem.getAttributes()));
             if (!attributesName.isEmpty()) {
                 sb.append("\n");
                 for (String k : attributesName) {

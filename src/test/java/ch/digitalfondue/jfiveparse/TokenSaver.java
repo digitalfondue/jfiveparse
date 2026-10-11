@@ -69,7 +69,7 @@ class TokenSaver extends TreeConstructor {
     public void emitStartTagToken(ResizableCharBuilder name, Attributes attrs, boolean selfClosing) {
         Map<String, AttributeNode> m = new LinkedHashMap<>();
         if (attrs != null) {
-            for (String key : attrs.keySet()) {
+            for (String key : AttributesUtils.keySet(attrs)) {
                 m.put(key, attrs.get(key));
             }
         }
