@@ -37,7 +37,7 @@ final class Tokenizer {
     // tag related
     private Attributes attributes;
     final ResizableCharBuilder currentAttributeName = new ResizableCharBuilder();
-    ResizableCharBuilder currentAttributeValue;
+    final ResizableCharBuilder currentAttributeValue = new ResizableCharBuilder();
     private int currentAttributeQuoteType;
     private boolean selfClosing;
     final ResizableCharBuilder tagName = new ResizableCharBuilder();
@@ -427,18 +427,14 @@ final class Tokenizer {
                     attributes.attributes.add(new AttributeNode(
                             curAttrName,
                             currentAttributeName.containsUpperCase ? currentAttributeName.toString() : curAttrName,
-                            currentAttributeValue,
+                            currentAttributeValue.toString(),
                             currentAttributeQuoteType
                     ));
                 }
             }
-        } catch (NullPointerException npe) {
-            // Failing on End Tag w/attribute -> the attributes map is not
-            // initialized, will launch a npe
-            tokenHandler.emitParseError();
         } finally {
             currentAttributeName.reset();
-            currentAttributeValue = null;
+            currentAttributeValue.reset();
         }
     }
 
@@ -448,7 +444,7 @@ final class Tokenizer {
         }
         addCurrentAttributeInAttributes();
         currentAttributeName.reset();
-        currentAttributeValue = new ResizableCharBuilder();
+        currentAttributeValue.reset();
         currentAttributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE;
         appendCurrentAttributeName(chr);
     }
@@ -462,7 +458,7 @@ final class Tokenizer {
         isEndTagToken = true;
         attributes = null;
         currentAttributeName.reset();
-        currentAttributeValue = null;
+        currentAttributeValue.reset();
     }
 
 
@@ -476,7 +472,7 @@ final class Tokenizer {
         isEndTagToken = false;
         attributes = null;
         currentAttributeName.reset();
-        currentAttributeValue = null;
+        currentAttributeValue.reset();
         selfClosing = false;
     }
 
