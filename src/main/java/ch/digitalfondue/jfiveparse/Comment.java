@@ -22,15 +22,10 @@ import java.util.Objects;
  */
 public final class Comment extends Node {
 
-    private ResizableCharBuilder dataBuilder;
     private String data;
 
     public Comment(String data) {
         this.data = data;
-    }
-
-    Comment(ResizableCharBuilder dataBuilder) {
-        this.dataBuilder = dataBuilder;
     }
 
     @Override
@@ -39,16 +34,11 @@ public final class Comment extends Node {
     }
 
     public String getData() {
-        if (data == null && dataBuilder != null) {
-            data = dataBuilder.toString();
-            dataBuilder = null;
-        }
         return data;
     }
 
     public void setData(String data) {
         this.data = data;
-        this.dataBuilder = null;
     }
 
     /**
@@ -61,11 +51,11 @@ public final class Comment extends Node {
 
 	@Override
 	public Node cloneNode(boolean deep) {
-		return new Comment(getData());
+		return new Comment(data);
 	}
 
     @Override
     public boolean isEqualNode(Node other) {
-        return this == other || (other instanceof Comment c && Objects.equals(getData(), c.getData()));
+        return this == other || (other instanceof Comment c && Objects.equals(data, c.data));
     }
 }

@@ -51,7 +51,7 @@ final class Tokenizer {
     private StringBuilder doctypeSystemIdentifier;
 
     // comment related
-    ResizableCharBuilder commentToken;
+    final ResizableCharBuilder commentToken = new ResizableCharBuilder();
 
     private String processingInstructionTokenTarget;
     ResizableCharBuilder processingInstructionTokenData;
@@ -521,7 +521,7 @@ final class Tokenizer {
     // -------
 
     void createNewCommentToken() {
-        commentToken = new ResizableCharBuilder();
+        commentToken.reset();
     }
 
 
@@ -566,11 +566,13 @@ final class Tokenizer {
     }
 
     void emitComment() {
-        tokenHandler.emitComment(commentToken);
+        emitComment(commentToken);
     }
 
     void emitComment(ResizableCharBuilder cb) {
-        tokenHandler.emitComment(cb);
+        var s = cb.toString();
+        cb.reset();
+        tokenHandler.emitComment(s);
     }
 
     void emitTagToken() {

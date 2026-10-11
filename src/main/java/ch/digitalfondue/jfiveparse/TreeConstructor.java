@@ -63,7 +63,7 @@ class TreeConstructor {
     private char chr;
     // --- ---
     // --- comment---
-    private ResizableCharBuilder comment;
+    private String comment;
     // --- ---
 
     // ---doctype related ---
@@ -825,7 +825,7 @@ class TreeConstructor {
         dispatch();
     }
 
-    void emitComment(ResizableCharBuilder comment) {
+    void emitComment(String comment) {
         this.comment = comment;
         tokenType = TT_COMMENT;
         dispatch();
