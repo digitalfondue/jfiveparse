@@ -91,6 +91,56 @@ final class Common {
         return true;
     }
 
+    static class AttributeName {
+        String lowerCaseAttribute;
+        boolean containsUpperCase;
+    }
+
+    static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, AttributeName res) {
+        // most commonly used attributes:
+        // class, href, id, src, style, alt, title, type, width, height, rel, d, target, fill, role, loading, value, name, content, viewBox,
+        // srcset, aria-label, xmlns, aria-hidden, media, tabindex, sizes, decoding, itemprop, stroke, property, onclick
+        int size = resizableCharBuilder.pos();
+        if (size < 1) {
+            res.lowerCaseAttribute = "";
+            res.containsUpperCase = false;
+            return;
+        }
+        int c0 = resizableCharBuilder.at(0);
+        int c0Lower = toLowerCase(c0);
+        switch (size) {
+            case 1: {
+                if (c0Lower == 'd') {
+                    res.lowerCaseAttribute = "d";
+                    res.containsUpperCase = c0 == 'D';
+                    return;
+                }
+                break;
+            }
+            case 2: {
+                int c1 = resizableCharBuilder.at(1);
+                if (c0Lower == 'i' && toLowerCase(c1) == 'd') { // id
+                    res.lowerCaseAttribute = "id";
+                    res.containsUpperCase = c0 == 'I' || c1 == 'D';
+                    return;
+                }
+                break;
+            }
+            case 3: {
+                // src, alt, rel,
+                break;
+            }
+            case 4: {
+                // href, type, fill, role, name,
+                break;
+            }
+
+        }
+        var s = resizableCharBuilder.toLowerCase();
+        res.lowerCaseAttribute = s;
+        res.containsUpperCase = resizableCharBuilder.containsUpperCase;
+    }
+
     // ------------
 
     static void adjustMathMLAttributes(Attributes attrs) {
