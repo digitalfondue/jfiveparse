@@ -72,7 +72,7 @@ public final class Attributes implements Iterable<AttributeNode> {
         return null;
     }
 
-    private void ensureAttributes() {
+    void ensureAttributes() {
         if (attributes == null) {
             attributes = new ArrayList<>(3);
         }

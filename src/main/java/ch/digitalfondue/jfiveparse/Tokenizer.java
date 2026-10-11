@@ -422,7 +422,9 @@ final class Tokenizer {
                 if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
-                    attributes.put(new AttributeNode(
+                    // we know the attribute with name 'curAttrName' is not present
+                    attributes.ensureAttributes();
+                    attributes.attributes.add(new AttributeNode(
                             curAttrName,
                             currentAttributeName.containsUpperCase ? currentAttributeName.toString() : curAttrName,
                             currentAttributeValue,
