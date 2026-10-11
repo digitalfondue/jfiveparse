@@ -16,20 +16,21 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class Attributes implements Iterable<AttributeNode> {
 
-    private Map<String, AttributeNode> attributes;
+    private ArrayList<AttributeNode> attributes;
 
     public Attributes() {
     }
 
     public Attributes(Map<String, AttributeNode> attributes) {
-        this.attributes = attributes;
+        this.attributes = new ArrayList<>(attributes.values());
     }
 
     public boolean containsKey(String key) {
-        return attributes != null && attributes.containsKey(key);
+        return get(key) != null;
     }
 
     @Override
@@ -52,7 +53,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     public Attributes copy() {
         Attributes a = new Attributes();
         if (attributes != null) {
-            for (var v : attributes.values()) {
+            for (var v : attributes) {
                 a.put(new AttributeNode(v));
             }
             return a;
@@ -61,32 +62,59 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public AttributeNode get(String key) {
-        return attributes == null ? null : attributes.get(key);
+        if (attributes == null) {
+            return null;
+        }
+        var attrSize = attributes.size();
+        for (AttributeNode attr : attributes) {
+            if (Objects.equals(attr.getName(), key)) {
+                return attr;
+            }
+        }
+        return null;
     }
 
     Set<String> keySet() {
-        return attributes == null ? Set.of() : attributes.keySet();
+        return attributes == null ? Set.of() : attributes
+                .stream()
+                .map(AttributeNode::getName)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private void ensureMap() {
+    private void ensureAttributes() {
         if (attributes == null) {
-            attributes = new LinkedHashMap<>(8);
+            attributes = new ArrayList<>(3);
         }
     }
 
     public void put(AttributeNode attribute) {
-        ensureMap();
-        attributes.put(attribute.getName(), attribute);
+        ensureAttributes();
+        // replace
+        var attrSize = attributes.size();
+        for (var i = 0; i < attrSize; i++) {
+            if (Objects.equals(attribute.getName(), attributes.get(i).getName())) {
+                attributes.set(i, attribute); // replace
+                return;
+            }
+        }
+        // add if not present
+        attributes.add(attribute);
     }
 
     public void put(String key, String value) {
-        ensureMap();
-        attributes.put(key, new AttributeNode(key, value));
+        put(new AttributeNode(key, value));
     }
 
     public void remove(String key) {
-        if (attributes != null) {
-            attributes.remove(key);
+        if (attributes == null) {
+            return;
+        }
+        var attrSize = attributes.size();
+        for (var i = 0; i < attrSize; i++) {
+            if (Objects.equals(key, attributes.get(i).getName())) {
+                attributes.remove(i);
+                return;
+            }
         }
     }
 
@@ -96,14 +124,11 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     @Override
     public Iterator<AttributeNode> iterator() {
-        return attributes == null ? Collections.emptyIterator() : attributes.values().iterator();
+        return attributes == null ? Collections.emptyIterator() : attributes.iterator();
     }
 
     public String getNamedItem(String name) {
-        if (attributes == null) {
-            return null;
-        }
-        AttributeNode node = attributes.get(name);
-        return node != null ? node.getValue() : null;
+        var attr = get(name);
+        return attr != null ? attr.getValue() : null;
     }
 }
