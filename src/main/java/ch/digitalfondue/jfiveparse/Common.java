@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.IntFunction;
 
@@ -96,6 +97,28 @@ final class Common {
         boolean containsUpperCase;
     }
 
+    private static class Interned {
+        final String interned;
+        final char[] raw;
+
+        Interned(String interned) {
+            this.interned = interned;
+            this.raw = interned.toCharArray();
+        }
+    }
+
+    private static final Interned[][] INTERNED_ATTRS = new Interned[][]{
+            buildInterned("d"),  // length 1
+            buildInterned("id"), // 2
+            buildInterned("alt", "rel", "src"), // 3
+            buildInterned("href", "type", "fill", "role", "name"), // 4
+            // TODO: ecc...
+    };
+
+    private static Interned[] buildInterned(String... v) {
+        return Arrays.stream(v).map(Interned::new).toArray(Interned[]::new);
+    }
+
     static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, AttributeName res) {
         // most commonly used attributes:
         // class, href, id, src, style, alt, title, type, width, height, rel, d, target, fill, role, loading, value, name, content, viewBox,
@@ -106,36 +129,9 @@ final class Common {
             res.containsUpperCase = false;
             return;
         }
-        int c0 = resizableCharBuilder.at(0);
-        int c0Lower = toLowerCase(c0);
-        switch (size) {
-            case 1: {
-                if (c0Lower == 'd') {
-                    res.lowerCaseAttribute = "d";
-                    res.containsUpperCase = c0 == 'D';
-                    return;
-                }
-                break;
-            }
-            case 2: {
-                int c1 = resizableCharBuilder.at(1);
-                if (c0Lower == 'i' && toLowerCase(c1) == 'd') { // id
-                    res.lowerCaseAttribute = "id";
-                    res.containsUpperCase = c0 == 'I' || c1 == 'D';
-                    return;
-                }
-                break;
-            }
-            case 3: {
-                // src, alt, rel,
-                break;
-            }
-            case 4: {
-                // href, type, fill, role, name,
-                break;
-            }
 
-        }
+        // TODO add here logic for fetching interned string
+
         var s = resizableCharBuilder.toLowerCase();
         res.lowerCaseAttribute = s;
         res.containsUpperCase = resizableCharBuilder.containsUpperCase;
