@@ -98,12 +98,14 @@ final class Common {
     }
 
     private static class Interned {
-        final String interned;
+        final char firstChar;
         final char[] raw;
+        final String interned;
 
         Interned(String interned) {
             this.interned = interned;
             this.raw = interned.toCharArray();
+            this.firstChar = raw[0];
         }
     }
 
@@ -133,7 +135,14 @@ final class Common {
             res.containsUpperCase = false;
             return;
         }
+        var firstCharLower = toLowerCase(resizableCharBuilder.at(0));
         if (size < 12) {
+            for (var interned : INTERNED_ATTRS[size]) {
+                // TODO. match must do 2 thing, 1) lower case comparison 2) check if the whole string contains an upper case
+                if (interned.firstChar == firstCharLower /* && match */) {
+
+                }
+            }
             // TODO add here logic for fetching interned string
         }
         var s = resizableCharBuilder.toLowerCase();
