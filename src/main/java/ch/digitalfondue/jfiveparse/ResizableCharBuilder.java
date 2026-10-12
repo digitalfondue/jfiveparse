@@ -76,6 +76,15 @@ final class ResizableCharBuilder {
         return toString();
     }
 
+    boolean containsUpperCase() {
+        for (int i = 0; i < pos; i++) {
+            if (Common.isUpperCaseASCIILetter(buff[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private String lowerCaseInternal() {
         char[] newBuff = Arrays.copyOf(buff, pos);
         for (int i = 0; i < pos; i++) {

@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.IntFunction;
 
@@ -89,6 +90,78 @@ final class Common {
             }
         }
         return true;
+    }
+
+    static class AttributeName {
+        String lowerCaseAttribute;
+        boolean containsUpperCase;
+    }
+
+    private static class Interned {
+        final char firstChar;
+        final char[] raw;
+        final String interned;
+
+        Interned(String interned) {
+            this.interned = interned;
+            this.raw = interned.toCharArray();
+            this.firstChar = raw[0];
+        }
+    }
+
+    // most commonly used attributes:
+    private static final Interned[][] INTERNED_ATTRS = new Interned[][]{
+            buildInterned("d", "x", "y"),  // length 1
+            buildInterned("as", "id", "is"), // 2
+            buildInterned("alt", "dir", "for", "low", "max", "min", "rel", "src"), // 3
+            buildInterned("fill", "href", "lang", "name", "open", "role", "type"), // 4
+            buildInterned("async", "class", "color", "defer", "label", "media", "sizes", "style", "title", "value", "width", "xmlns"), // 5
+            buildInterned("accept", "action", "coords", "height", "hidden", "srcset", "stroke", "target"), // 6
+            buildInterned("content", "loading", "onclick", "version", "viewbox"), // 7
+            buildInterned("datetime", "decoding", "hreflang", "itemprop", "property", "tabindex"), // 8
+            buildInterned("accesskey", "fill-rule", "integrity"), // 9
+            buildInterned("aria-label"), // 10
+            buildInterned("aria-hidden", "crossorigin"), // 11
+            buildInterned(), // 12
+            buildInterned(), // 13
+            buildInterned(), // 14
+            buildInterned("aria-labelledby") // 15
+    };
+
+    private static Interned[] buildInterned(String... v) {
+        return Arrays.stream(v).map(Interned::new).toArray(Interned[]::new);
+    }
+
+    private static boolean matchAttributeCaseInsensitive(Interned interned, ResizableCharBuilder builder, AttributeName res) {
+        var length = interned.raw.length;
+        boolean match = true, containsUpperCase = false;
+        for (int i = 0; i < length; i++) {
+            var c = builder.at(i);
+            containsUpperCase |= isUpperCaseASCIILetter(c);
+            match &= toLowerCase(c) == interned.raw[i];
+        }
+        res.containsUpperCase = containsUpperCase;
+        return match;
+    }
+
+    static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, AttributeName res) {
+        int size = resizableCharBuilder.pos();
+        if (size < 1) {
+            res.lowerCaseAttribute = "";
+            res.containsUpperCase = false;
+            return;
+        }
+        var firstCharLower = toLowerCase(resizableCharBuilder.at(0));
+        if (size < 16) {
+            for (var interned : INTERNED_ATTRS[size - 1]) {
+                if (interned.firstChar == firstCharLower && matchAttributeCaseInsensitive(interned, resizableCharBuilder, res)) {
+                    res.lowerCaseAttribute = interned.interned;
+                    return;
+                }
+            }
+        }
+        res.lowerCaseAttribute = resizableCharBuilder.toLowerCase();
+        res.containsUpperCase = resizableCharBuilder.containsUpperCase;
     }
 
     // ------------

@@ -43,6 +43,7 @@ final class Tokenizer {
     final ResizableCharBuilder tagName = new ResizableCharBuilder();
     private boolean isEndTagToken;
     final ResizableCharBuilder lastEmittedStartTagName = new ResizableCharBuilder();
+    private final Common.AttributeName attributeName = new Common.AttributeName();
 
     // doctype related
     private boolean doctypeForceQuirksFlag;
@@ -54,7 +55,7 @@ final class Tokenizer {
     final ResizableCharBuilder commentToken = new ResizableCharBuilder();
 
     private String processingInstructionTokenTarget;
-    ResizableCharBuilder processingInstructionTokenData;
+    final ResizableCharBuilder processingInstructionTokenData = new ResizableCharBuilder();
 
     //
     private final ResizableCharBuilder temporaryBuffer = new ResizableCharBuilder();
@@ -418,7 +419,8 @@ final class Tokenizer {
     void addCurrentAttributeInAttributes() {
         try {
             if (currentAttributeName.pos() != 0) { // not empty
-                String curAttrName = currentAttributeName.toLowerCase();
+                Common.withAttributeNameAsLower(currentAttributeName, attributeName);
+                String curAttrName = attributeName.lowerCaseAttribute;
                 if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
@@ -426,7 +428,7 @@ final class Tokenizer {
                     attributes.ensureAttributes();
                     attributes.attributes.add(new AttributeNode(
                             curAttrName,
-                            currentAttributeName.containsUpperCase ? currentAttributeName.toString() : curAttrName,
+                            attributeName.containsUpperCase ? currentAttributeName.toString() : curAttrName,
                             currentAttributeValue.toString(),
                             currentAttributeQuoteType
                     ));
@@ -527,7 +529,7 @@ final class Tokenizer {
 
     public void createProcessingInstructionToken() {
         processingInstructionTokenTarget = temporaryBuffer.toString();
-        processingInstructionTokenData = new ResizableCharBuilder();
+        processingInstructionTokenData.reset();
     }
 
     void appendCommentCharacter(int chr) {
