@@ -16,7 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.IntFunction;
@@ -167,11 +166,12 @@ final class Common {
     // ------------
 
     static void adjustMathMLAttributes(Attributes attrs) {
-        if (attrs != null && attrs.containsKey("definitionurl")) {
-            AttributeNode attr = attrs.get("definitionurl");
+        if (attrs == null) {
+            return;
+        }
+        var attr = attrs.get("definitionurl");
+        if (attr != null) {
             attr.name = "definitionURL";
-            attrs.put(attr);
-            attrs.remove("definitionurl");
         }
     }
 
@@ -238,24 +238,13 @@ final class Common {
     }
 
     static void adjustSVGAttributes(Attributes attrs) {
-        if (attrs == null || attrs.isEmpty()) {
+        if (attrs == null) {
             return;
         }
-        ArrayList<String> toAdjust = null;
         for (AttributeNode attr : attrs) {
-            if (SVG_ATTRIBUTES.containsKey(attr.name)) {
-                if (toAdjust == null) {
-                    toAdjust = new ArrayList<>(4);
-                }
-                toAdjust.add(attr.name);
-            }
-        }
-        if (toAdjust != null) {
-            for (String lowerCaseAttr : toAdjust) {
-                AttributeNode attr = attrs.get(lowerCaseAttr);
-                attrs.remove(lowerCaseAttr);
-                attr.name = SVG_ATTRIBUTES.get(lowerCaseAttr);
-                attrs.put(attr);
+            var toReplace = SVG_ATTRIBUTES.get(attr.name);
+            if (toReplace != null) {
+                attr.name = toReplace;
             }
         }
     }
@@ -277,29 +266,16 @@ final class Common {
 
     static void adjustForeignAttributes(Attributes attrs) {
 
-        if (attrs == null || attrs.isEmpty()) {
+        if (attrs == null) {
             return;
         }
 
-        ArrayList<String> toAdjust = null;
         for (AttributeNode attr : attrs) {
-            if (FOREIGN_ATTRIBUTES_TO_ADJUST.containsKey(attr.name)) {
-                if (toAdjust == null) {
-                    toAdjust = new ArrayList<>(4);
-                }
-                toAdjust.add(attr.name);
-            }
-        }
-
-        if (toAdjust != null) {
-            for (String lowerCaseAttr : toAdjust) {
-                String[] adj = FOREIGN_ATTRIBUTES_TO_ADJUST.get(lowerCaseAttr);
-                AttributeNode attr = attrs.get(lowerCaseAttr);
-                attrs.remove(lowerCaseAttr);
-                attr.prefix = adj[0];
-                attr.name = adj[1];
-                attr.namespace = adj[2];
-                attrs.put(attr);
+            var adjust = FOREIGN_ATTRIBUTES_TO_ADJUST.get(attr.name);
+            if (adjust != null) {
+                attr.prefix = adjust[0];
+                attr.name = adjust[1];
+                attr.namespace = adjust[2];
             }
         }
     }
