@@ -63,6 +63,7 @@ final class EntitiesPrefix {
 
     char c;
     char[] chars;
+    final int length;
 
     // temporary holder
     private TreeMap<Character, EntitiesPrefix> tmpChilds;
@@ -74,6 +75,7 @@ final class EntitiesPrefix {
 
     EntitiesPrefix(EntitiesPrefix prefix) {
         this.parent = prefix;
+        this.length = parent == null ? 1 : parent.length + 1;
     }
 
     void compact() {
@@ -94,20 +96,6 @@ final class EntitiesPrefix {
                 }
             }
         }
-    }
-
-    String getString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(c);
-
-        var p = parent;
-        while (p != null) {
-            sb.append(p.c);
-            p = p.parent;
-        }
-
-        return sb.reverse().toString();
     }
 
     EntitiesPrefix getMaybeCompleteParent() {
