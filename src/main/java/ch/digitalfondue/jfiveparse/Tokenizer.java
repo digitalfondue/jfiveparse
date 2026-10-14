@@ -179,9 +179,6 @@ final class Tokenizer {
 
     private void allStates(ProcessedInputStream processedInputStream) {
         switch (state) {
-        case TokenizerState.DATA_STATE:
-            TokenizerState.handleDataState(this, processedInputStream);
-            break;
         case TokenizerState.CHARACTER_REFERENCE_IN_DATA_STATE:
             TokenizerState.handleCharacterReferenceInDataState(this, processedInputStream);
             break;
@@ -191,23 +188,8 @@ final class Tokenizer {
         case TokenizerState.CHARACTER_REFERENCE_IN_RCDATA_STATE:
             TokenizerState.handleCharacterReferenceInRCDataState(this, processedInputStream);
             break;
-        case TokenizerState.RAWTEXT_STATE:
-            TokenizerState.handleRawtextState(this, processedInputStream);
-            break;
-        case TokenizerState.SCRIPT_DATA_STATE:
-            TokenizerState.handleScriptDataState(this, processedInputStream);
-            break;
         case TokenizerState.PLAINTEXT_STATE:
             TokenizerState.handlePlainTextState(this, processedInputStream);
-            break;
-        case TokenizerState.TAG_OPEN_STATE:
-            TokenizerState.handleTagOpenState(this, processedInputStream);
-            break;
-        case TokenizerState.END_TAG_OPEN_STATE:
-            TokenizerState.handleEndTagOpenState(this, processedInputStream);
-            break;
-        case TokenizerState.TAG_NAME_STATE:
-            TokenizerState.handleTagNameState(this, processedInputStream);
             break;
         case TokenizerState.RCDATA_LESS_THAN_SIGN_STATE:
             TokenizerState.handleRCDataLessThanSignState(this, processedInputStream);
@@ -278,20 +260,8 @@ final class Tokenizer {
         case TokenizerState.SCRIPT_DATA_DOUBLE_ESCAPE_END_STATE:
             TokenizerState.handleScriptDataDoubleEscapedEndState(this, processedInputStream);
             break;
-        case TokenizerState.BEFORE_ATTRIBUTE_NAME_STATE:
-            TokenizerState.handleBeforeAttributeNameState(this, processedInputStream);
-            break;
-        case TokenizerState.ATTRIBUTE_NAME_STATE:
-            TokenizerState.handleAttributeNameState(this, processedInputStream);
-            break;
         case TokenizerState.AFTER_ATTRIBUTE_NAME_STATE:
             TokenizerState.handleAfterAttributeNameState(this, processedInputStream);
-            break;
-        case TokenizerState.BEFORE_ATTRIBUTE_VALUE_STATE:
-            TokenizerState.handleBeforeAttributeValueState(this, processedInputStream);
-            break;
-        case TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE:
-            TokenizerState.handleAttributeValueDoubleQuotedState(this, processedInputStream);
             break;
         case TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE:
             TokenizerState.handleAttributeValueSingleQuotedState(this, processedInputStream);
@@ -301,9 +271,6 @@ final class Tokenizer {
             break;
         case TokenizerState.CHARACTER_REFERENCE_IN_ATTRIBUTE_VALUE_STATE:
             TokenizerState.handleCharacterReferenceInAttributeValueState(this, processedInputStream);
-            break;
-        case TokenizerState.AFTER_ATTRIBUTE_VALUE_QUOTED_STATE:
-            TokenizerState.handleAfterAttributeValueQuotedState(this, processedInputStream);
             break;
         case TokenizerState.SELF_CLOSING_START_TAG_STATE:
             TokenizerState.handleSelfClosingStartTagState(this, processedInputStream);
