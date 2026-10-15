@@ -76,7 +76,31 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R attrValInList(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> DOMTokenList.extractValues(elem, name).contains(value)));
+        matchers.add(matchAttr(name, (attrValue, elem) -> {
+            if (attrValue == null || attrValue.isEmpty()) {
+                return false;
+            }
+            int attrValueLength = attrValue.length();
+            int valueLength = value.length();
+            // scan the whole attribute, skipping the whitespace -> register the start
+            // scan until the end of the attribute -> register the end
+            // check if the attribute{start,end} has same length of value and match value
+            // continue until we don't have space
+            for (int i = 0; i <= attrValueLength - valueLength; ) {
+                while (i < attrValueLength && Common.isTabLfFfCrOrSpace(attrValue.charAt(i))) {
+                    i++;
+                }
+                int startCheck = i;
+                while (i < attrValueLength && !Common.isTabLfFfCrOrSpace(attrValue.charAt(i))) {
+                    i++;
+                }
+                int endCheck = i;
+                if (endCheck - startCheck == valueLength && attrValue.regionMatches(startCheck, value, 0, valueLength)) {
+                    return true;
+                }
+            }
+            return false;
+        }));
         return inst();
     }
 

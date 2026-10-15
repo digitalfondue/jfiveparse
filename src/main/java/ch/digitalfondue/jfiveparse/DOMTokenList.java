@@ -31,6 +31,7 @@ public final class DOMTokenList extends AbstractList<String> {
     private static final Pattern SPACES = Pattern.compile("\\s+");
 
     static List<String> extractValues(SelectableElement<?> element, String attrName) {
+        // TODO: rewrite -> return an iterator and work from there...
         List<String> vals = new ArrayList<>();
         String value = element.getAttributeValue(attrName);
         if (value != null) {
