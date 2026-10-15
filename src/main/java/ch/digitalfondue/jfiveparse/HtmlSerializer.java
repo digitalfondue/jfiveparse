@@ -77,27 +77,37 @@ public class HtmlSerializer implements NodesVisitor {
         return "\"";
     }
 
-    private static final String NO_BREAK_SPACE = Character.valueOf(Characters.NO_BREAK_SPACE).toString();
-
-    protected String escapeAttributeValue(AttributeNode attribute) {
-        String s = attribute.getValue();
-        if (s != null) {
-            if (transformEntities) {
-                s = s.replace("&", "&amp;").replace("\"", "&quot;");
+    // escape handling for both text data and attribute value
+    protected void escapeTextDataAttributeValue(Appendable appendable, String data, boolean isAttr) throws IOException {
+        if (data == null) {
+            if (isAttr) {
+                appendable.append("null");
             }
-            s = s.replace(NO_BREAK_SPACE, "&nbsp;");
+            return;
         }
-        return s;
-    }
-
-    protected String escapeTextData(String s) {
-        if (s != null) {
-            if (transformEntities) {
-                s = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        int len = data.length();
+        int start = 0;
+        for (int i = 0; i < len; i++) {
+            char c = data.charAt(i);
+            String replacement = switch (c) {
+                case '&' -> "&amp;";
+                case '<' -> isAttr ? null : "&lt;";
+                case '>' -> isAttr ? null : "&gt;";
+                case '"' -> isAttr ? "&quot;" : null;
+                case Characters.NO_BREAK_SPACE -> "&nbsp;";
+                default -> null;
+            };
+            if (replacement != null) {
+                if (i > start) {
+                    appendable.append(data, start, i);
+                }
+                appendable.append(replacement);
+                start = i + 1;
             }
-            s = s.replace(NO_BREAK_SPACE, "&nbsp;");
         }
-        return s;
+        if (start < len) {
+            appendable.append(data, start, len);
+        }
     }
 
     protected static boolean skipEndTag(Element e) {
@@ -118,7 +128,9 @@ public class HtmlSerializer implements NodesVisitor {
                                 && (attr.getValue() == null || attr.getValue().isEmpty())) {
                             continue;
                         }
-                        appendable.append('=').append(quoteCharacters(attr)).append(escapeAttributeValue(attr)).append(quoteCharacters(attr));
+                        appendable.append('=').append(quoteCharacters(attr));
+                        escapeTextDataAttributeValue(appendable, attr.getValue(), true);
+                        appendable.append(quoteCharacters(attr));
                     }
                 }
                 appendable.append('>');
@@ -139,8 +151,11 @@ public class HtmlSerializer implements NodesVisitor {
                     literalAppend = Node.NAMESPACE_HTML_ID == p.namespaceID
                             && (isTextNodeParent(p.nodeNameID) || (Common.ELEMENT_NOSCRIPT_ID == p.nodeNameID && !scriptingDisabled));
                 }
-                appendable.append(literalAppend ? t.getData() : escapeTextData(t.getData()));
-
+                if (literalAppend) {
+                    appendable.append(t.getData());
+                } else {
+                    escapeTextDataAttributeValue(appendable, t.getData(), false);
+                }
             } else if (node instanceof Comment comment) {
                 appendable.append("<!--").append(comment.getData()).append("-->");
             } else if (node instanceof ProcessingInstruction processingInstruction) {
