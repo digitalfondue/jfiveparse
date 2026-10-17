@@ -80,21 +80,15 @@ public final class AttributeNode {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, getValue(), prefix, namespace);
+        return Objects.hash(name, value, prefix, namespace);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj instanceof AttributeNode other) {
-            return name.equals(other.name) && //
-                    Objects.equals(getValue(), other.getValue()) && //
-                    Objects.equals(prefix, other.prefix) && //
-                    Objects.equals(namespace, other.namespace);
-        }
-        return false;
+        return this == obj || (obj instanceof AttributeNode other &&
+                Objects.equals(value, other.value) && //
+                Objects.equals(prefix, other.prefix) && //
+                Objects.equals(namespace, other.namespace)
+        );
     }
 }

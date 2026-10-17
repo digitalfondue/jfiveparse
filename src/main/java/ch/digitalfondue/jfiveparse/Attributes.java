@@ -34,14 +34,7 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj instanceof Attributes a) {
-            return Objects.equals(attributes, a.attributes);
-        }
-        return false;
+        return this == obj || (obj instanceof Attributes a && Objects.equals(attributes, a.attributes));
     }
 
     @Override
