@@ -42,6 +42,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <surefire.useModulePath>false</surefire.useModulePath>
+        <japicmp.oldVersion>2.1.1</japicmp.oldVersion>
     </properties>
 
     <dependencyManagement>
@@ -142,6 +143,39 @@
                     <source>17</source>
                     <additionalOptions>-Xdoclint:none</additionalOptions>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.siom79.japicmp</groupId>
+                <artifactId>japicmp-maven-plugin</artifactId>
+                <version>0.23.1</version>
+                <configuration>
+                    <oldVersion>
+                        <dependency>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <version>${japicmp.oldVersion}</version>
+                            <type>jar</type>
+                        </dependency>
+                    </oldVersion>
+                    <newVersion>
+                        <file>
+                            <path>${project.build.directory}/${project.build.finalName}.jar</path>
+                        </file>
+                    </newVersion>
+                    <parameter>
+                        <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
+                        <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
+                    </parameter>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>api-compatibility-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <!-- <goal>cmp</goal> -->
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

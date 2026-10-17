@@ -22,8 +22,8 @@ jobs:
         cache: maven
     - name: Maven -v
       run: ./mvnw -v
-    - name: Build with Maven
-      run: ./mvnw -B package --file pom.xml
+    - name: Build with Maven (includes API backward compatibility check)
+      run: ./mvnw -B verify --file pom.xml
 # don't work at the moment it seems, see https://github.com/trautonen/coveralls-maven-plugin/issues/136      
 #    - name: Coverage 
 #      run: mvn jacoco:report coveralls:report
