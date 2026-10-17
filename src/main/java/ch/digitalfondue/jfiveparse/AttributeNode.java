@@ -86,6 +86,7 @@ public final class AttributeNode {
     @Override
     public boolean equals(Object obj) {
         return this == obj || (obj instanceof AttributeNode other &&
+                Objects.equals(name, other.name) && //
                 Objects.equals(value, other.value) && //
                 Objects.equals(prefix, other.prefix) && //
                 Objects.equals(namespace, other.namespace)
