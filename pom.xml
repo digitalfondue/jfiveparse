@@ -42,7 +42,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <surefire.useModulePath>false</surefire.useModulePath>
-        <japicmp.oldVersion>2.1.1</japicmp.oldVersion>
+        <jfiveparse.oldVersion>3.0.0-M0</jfiveparse.oldVersion>
     </properties>
 
     <dependencyManagement>
@@ -153,7 +153,7 @@
                         <dependency>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>${project.artifactId}</artifactId>
-                            <version>${japicmp.oldVersion}</version>
+                            <version>${jfiveparse.oldVersion}</version>
                             <type>jar</type>
                         </dependency>
                     </oldVersion>
@@ -172,7 +172,7 @@
                         <id>api-compatibility-check</id>
                         <phase>verify</phase>
                         <goals>
-                            <!-- <goal>cmp</goal> -->
+                            <goal>cmp</goal>
                         </goals>
                     </execution>
                 </executions>
