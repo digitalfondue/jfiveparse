@@ -67,6 +67,35 @@ class HtmlSerializationTest {
     }
 
     @Test
+    void transformEntitiesInTextData() {
+        Element div = new Element("div");
+        div.appendChild(new Text("a & b < c > d \" e \u00A0 f"));
+        assertEquals("<div>a &amp; b &lt; c &gt; d \" e &nbsp; f</div>", HtmlSerializer.serialize(div));
+        assertEquals("<div>a & b < c > d \" e &nbsp; f</div>",
+                HtmlSerializer.serialize(div, EnumSet.of(Option.DONT_TRANSFORM_ENTITIES)));
+    }
+
+    @Test
+    void transformEntitiesInAttributeValue() {
+        Element div = new Element("div");
+        div.setAttribute("title", "a & b < c > d \" e \u00A0 f");
+        assertEquals("<div title=\"a &amp; b < c > d &quot; e &nbsp; f\"></div>", HtmlSerializer.serialize(div));
+        assertEquals("<div title=\"a & b < c > d \" e &nbsp; f\"></div>",
+                HtmlSerializer.serialize(div, EnumSet.of(Option.DONT_TRANSFORM_ENTITIES)));
+    }
+
+    @Test
+    void transformEntitiesInMixedContent() {
+        Element div = new Element("div");
+        div.setAttribute("title", "& < > \" \u00A0");
+        div.appendChild(new Text("& < > \" \u00A0"));
+        assertEquals("<div title=\"&amp; < > &quot; &nbsp;\">&amp; &lt; &gt; \" &nbsp;</div>",
+                HtmlSerializer.serialize(div));
+        assertEquals("<div title=\"& < > \" &nbsp;\">& < > \" &nbsp;</div>",
+                HtmlSerializer.serialize(div, EnumSet.of(Option.DONT_TRANSFORM_ENTITIES)));
+    }
+
+    @Test
     void serializeToByteArray() throws IOException {
         Parser p = parser();
         Document d = p.parse("<DiV></dIV><sPaN></SPAN>");

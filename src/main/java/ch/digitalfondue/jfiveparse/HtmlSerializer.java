@@ -93,9 +93,9 @@ public class HtmlSerializer implements NodesVisitor {
         for (int i = 0; i < len; i++) {
             char c = data.charAt(i);
             String replacement = switch (c) {
-                case '&' -> transformEntities ? "&amp;" : null;
-                case '<' -> !isAttr && transformEntities ? "&lt;" : null;
-                case '>' -> isAttr && transformEntities ? "&gt;" : null;
+                case Characters.AMPERSAND -> transformEntities ? "&amp;" : null;
+                case Characters.LESSTHAN_SIGN -> !isAttr && transformEntities ? "&lt;" : null;
+                case Characters.GREATERTHAN_SIGN -> !isAttr && transformEntities ? "&gt;" : null;
                 case '"' -> isAttr && transformEntities ? "&quot;" : null;
                 case Characters.NO_BREAK_SPACE -> "&nbsp;";
                 default -> null;
