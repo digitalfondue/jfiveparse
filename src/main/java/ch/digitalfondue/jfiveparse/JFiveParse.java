@@ -33,7 +33,7 @@ public final class JFiveParse {
      * @return a {@link Document}
      */
     public static Document parse(String input) {
-        return parse(input, Set.of());
+        return parse(input, Option.EMPTY_OPTIONS);
     }
 
     /**
@@ -54,7 +54,7 @@ public final class JFiveParse {
      * @return
      */
     public static Document parse(Reader input) {
-        return parse(input, Set.of());
+        return parse(input, Option.EMPTY_OPTIONS);
     }
 
     public static Document parse(Reader input, Set<Option> options) {
@@ -68,11 +68,11 @@ public final class JFiveParse {
      * @return
      */
     public static List<Node> parseFragment(String input) {
-        return parseFragment(input, Set.of());
+        return parseFragment(input, Option.EMPTY_OPTIONS);
     }
 
     public static List<Node> parseFragment(Reader input) {
-        return parseFragment(input, Set.of());
+        return parseFragment(input, Option.EMPTY_OPTIONS);
     }
 
     public static List<Node> parseFragment(Reader input, Set<Option> options) {
@@ -99,7 +99,7 @@ public final class JFiveParse {
     }
 
     public static String serialize(Node node) {
-        return serialize(node, Set.of());
+        return serialize(node, Option.EMPTY_OPTIONS);
     }
 
     public static String serialize(Node node, Set<Option> options) {
@@ -107,7 +107,7 @@ public final class JFiveParse {
     }
 
     public static void serialize(Node node, Writer writer) throws IOException {
-        serialize(node, Set.of(), writer);
+        serialize(node, Option.EMPTY_OPTIONS, writer);
     }
 
     public static void serialize(Node node, Set<Option> options, Writer writer) throws IOException {

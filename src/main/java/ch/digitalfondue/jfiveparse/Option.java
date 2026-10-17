@@ -15,6 +15,8 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import java.util.Set;
+
 /**
  * Configuration options for the {@link Parser} and when calling the
  * serialization methods: {@link Element#getInnerHTML(java.util.Set)} and
@@ -94,5 +96,7 @@ public enum Option {
      */
     INTERPRET_SELF_CLOSING_ANYTHING_ELSE,
 
-    DISABLE_IN_TABLE_TEXT_FOSTER_PARENTING
+    DISABLE_IN_TABLE_TEXT_FOSTER_PARENTING;
+
+    static final Set<Option> EMPTY_OPTIONS = Set.of();
 }

@@ -401,7 +401,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      * Get the html content of the child of this node.
      */
     public String getInnerHTML() {
-        return getInnerHTML(Set.of());
+        return getInnerHTML(Option.EMPTY_OPTIONS);
     }
 
     /**
@@ -422,7 +422,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      * Get the html content of this node and his child.
      */
     public String getOuterHTML() {
-        return getOuterHTML(Set.of());
+        return getOuterHTML(Option.EMPTY_OPTIONS);
     }
 
     /**

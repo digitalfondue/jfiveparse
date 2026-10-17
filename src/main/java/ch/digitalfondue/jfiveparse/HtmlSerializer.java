@@ -205,7 +205,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     public static void serialize(Node node, Writer writer) throws IOException {
-        serialize(node, Set.of(), writer);
+        serialize(node, Option.EMPTY_OPTIONS, writer);
     }
 
     public static void serialize(Node node, Set<Option> options, Writer writer) throws IOException {
@@ -214,7 +214,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     public static String serialize(Node node) {
-        return serialize(node, Set.of());
+        return serialize(node, Option.EMPTY_OPTIONS);
     }
 
     public static String serialize(Node node, Set<Option> options) {
