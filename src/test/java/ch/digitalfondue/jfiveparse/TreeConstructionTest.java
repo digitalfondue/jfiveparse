@@ -75,8 +75,14 @@ public class TreeConstructionTest {
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get("external-resources/wpt/html/syntax/parsing/resources"), "*.dat")) {
             for (Path p : ds) {
                 String file = Files.readString(p);
-                String[] testsAsString = file.split("\n\n#data\n");
+                // A test block starts with "#data" or "#description"
+                String[] testsAsString = file.split("\n\n(?=#description\n|#data\n)");
                 for (String t : testsAsString) {
+                    if (t.startsWith("#description\n")) {
+                        t = t.substring(t.indexOf("\n#data\n") + "\n#data\n".length());
+                    } else if (t.startsWith("#data\n")) {
+                        t = t.substring("#data\n".length());
+                    }
                     TreeConstruction treeTest = parse(t);
                     if (treeTest.scriptingFlag == null) {
                         data.add(new Object[] { p.getFileName().toString(), treeTest, false });
