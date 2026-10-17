@@ -100,11 +100,17 @@ final class Common {
         final char firstChar;
         final char[] raw;
         final String interned;
+        final int id;
 
         Interned(String interned) {
+            this(interned, -1);
+        }
+
+        Interned(String interned, int id) {
             this.interned = interned;
             this.raw = interned.toCharArray();
             this.firstChar = raw[0];
+            this.id = id;
         }
     }
 
@@ -358,6 +364,10 @@ final class Common {
     static boolean isEndTagNamed(int tokenType, int namedID, int tagNameID) {
         return tokenType == TreeConstructor.TT_END_TAG && namedID == tagNameID;
     }
+
+    private static final Interned[][] TAG_NAME_INTERNED = new Interned[][] {
+
+    };
 
     static int tagNameToID(String tagName) {
         if (tagName == null) {
