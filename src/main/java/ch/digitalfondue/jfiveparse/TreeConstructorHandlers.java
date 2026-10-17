@@ -382,8 +382,9 @@ final class TreeConstructorHandlers {
             return 2;
         }
 
-        for (var prefix : PUBLIC_ID_PREFIXES) {
-            if (publicId != null && publicId.startsWith(prefix)) {
+        int size = PUBLIC_ID_PREFIXES.size();
+        for (int i = 0; i < size; i++) {
+            if (publicId != null && publicId.startsWith(PUBLIC_ID_PREFIXES.get(i))) {
                 return 2;
             }
         }

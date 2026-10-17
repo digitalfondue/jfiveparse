@@ -52,9 +52,10 @@ public final class Attributes implements Iterable<AttributeNode> {
     public Attributes copy() {
         Attributes a = new Attributes();
         if (attributes != null) {
-            a.attributes = new ArrayList<>(attributes.size());
-            for (var v : attributes) {
-                a.attributes.add(new AttributeNode(v));
+            var size = attributes.size();
+            a.attributes = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                a.attributes.add(new AttributeNode(attributes.get(i)));
             }
             return a;
         }
@@ -65,7 +66,9 @@ public final class Attributes implements Iterable<AttributeNode> {
         if (attributes == null) {
             return null;
         }
-        for (AttributeNode attr : attributes) {
+        var size = attributes.size();
+        for (int i = 0; i < size; i++) {
+            var attr = attributes.get(i);
             if (Objects.equals(attr.getName(), key)) {
                 return attr;
             }
