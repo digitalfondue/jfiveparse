@@ -226,6 +226,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     res.attrValEq(name, value);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT && "class".equals(name)) {
                     res.hasClass(value);
+                } else if (action == CSS.ATTR_ACTION_ELEMENT) {
+                    res.attrValInList(name, value);
                 } else if (action == CSS.ATTR_ACTION_EXISTS) {
                     res.attr(name);
                 } else if (action == CSS.ATTR_ACTION_START) {
