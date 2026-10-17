@@ -297,8 +297,15 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 } else {
                     throw new ParserException("PseudoSelector '" + name + "' is not supported");
                 }
-            } else if (part instanceof CSS.UniversalSelector) {
-                res.matchers.add(BaseSelector::isElement);
+            } else if (part instanceof CSS.UniversalSelector u) {
+                String namespace = u.namespace();
+                if (namespace != null && !"*".equals(namespace) && nameSpaceAlias.containsKey(namespace)) {
+                    var ns = nameSpaceAlias.get(namespace);
+                    res.matchers.add((node, base) ->
+                            node instanceof SelectableElement<?> elem && Objects.equals(ns, elem.getNamespaceURI()));
+                } else {
+                    res.matchers.add(BaseSelector::isElement);
+                }
             } else {
                 throw new ParserException(part + " is not supported");
             }
