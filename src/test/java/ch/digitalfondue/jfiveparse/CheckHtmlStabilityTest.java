@@ -1,16 +1,14 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Set;
 
-class CheckHtmlStability {
+class CheckHtmlStabilityTest {
 
     @Test
     void checkWikipediaPage() throws IOException {
