@@ -16,9 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import static ch.digitalfondue.jfiveparse.TreeConstructor.*;
 import static ch.digitalfondue.jfiveparse.Common.*;
@@ -306,7 +304,7 @@ final class TreeConstructorHandlers {
         }
     }
 
-    private static final List<String> PUBLIC_ID_PREFIXES = List.of(
+    private static final String[] PUBLIC_ID_PREFIXES = new String[]{
             "+//silmaril//dtd html pro v0r11 19970101//",
             "-//as//dtd html 3.0 aswedit + extensions//",
             "-//advasoft ltd//dtd html 3.0 aswedit + extensions//",
@@ -360,7 +358,8 @@ final class TreeConstructorHandlers {
             "-//w3c//dtd w3 html//",
             "-//w3o//dtd w3 html 3.0//",
             "-//webtechs//dtd mozilla html 2.0//",
-            "-//webtechs//dtd mozilla html//");
+            "-//webtechs//dtd mozilla html//"
+    };
 
     // 0 = no-quirks-mode, 1 =  limited-quirks mode, 2 = quirks-mode
     private static int quirksType(DocumentType documentType) {
@@ -375,20 +374,22 @@ final class TreeConstructorHandlers {
         if (systemId != null) {
             systemId = systemId.toLowerCase(Locale.ROOT);
         }
-        if (Set.of("-//w3o//dtd w3 html strict 3.0//en//", "-/w3c/dtd html 4.0 transitional/en", "html").contains(publicId)) {
+        if ("html".equals(publicId) ||
+                "-//w3o//dtd w3 html strict 3.0//en//".equals(publicId) ||
+                "-/w3c/dtd html 4.0 transitional/en".equals(publicId)) {
             return 2;
         }
         if ("http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd".equals(systemId)) {
             return 2;
         }
 
-        int size = PUBLIC_ID_PREFIXES.size();
+        int size = PUBLIC_ID_PREFIXES.length;
         for (int i = 0; i < size; i++) {
-            if (publicId != null && publicId.startsWith(PUBLIC_ID_PREFIXES.get(i))) {
+            if (publicId != null && publicId.startsWith(PUBLIC_ID_PREFIXES[i])) {
                 return 2;
             }
         }
-        if ((systemId == null || systemId.isEmpty()) && (
+        if ((systemId == null || systemId.isEmpty()) && publicId != null && (
                 publicId.startsWith("-//w3c//dtd html 4.01 frameset//") || publicId.startsWith("-//w3c//dtd html 4.01 transitional//")
         )) {
             return 2;
