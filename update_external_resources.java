@@ -12,9 +12,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class update_external_resources {
+
+    private record ExternalRepo(String url, String directory, String... sparsePaths) {
+    }
 
     public static void main(String[] args) {
         Path tempDir = null;
@@ -25,33 +29,38 @@ public class update_external_resources {
 
             List<String> commitLogs = new ArrayList<>();
 
-            // 2. Clone repositories
-            String repo1Url = "https://github.com/html5lib/html5lib-tests.git";
-            Path repo1Path = tempDir.resolve("html5lib-tests");
-            cloneRepo(tempDir, repo1Url);
-            String repo1Hash = getCommitHash(repo1Path);
-            commitLogs.add(repo1Url + " " + repo1Hash);
+            // 2. Repositories to fetch
+            ExternalRepo html5libTests = new ExternalRepo(
+                    "https://github.com/html5lib/html5lib-tests.git",
+                    "html5lib-tests",
+                    "/tokenizer/**");
+            ExternalRepo wpt = new ExternalRepo(
+                    "https://github.com/web-platform-tests/wpt.git",
+                    "wpt",
+                    "/html/syntax/parsing/resources/**");
 
-            String repo2Url = "https://github.com/web-platform-tests/wpt.git";
-            Path repo2Path = tempDir.resolve("wpt");
-            cloneRepo(tempDir, repo2Url);
-            String repo2Hash = getCommitHash(repo2Path);
-            commitLogs.add(repo2Url + " " + repo2Hash);
+            for (ExternalRepo repo : List.of(html5libTests, wpt)) {
+                cloneRepo(tempDir, repo);
+                String hash = getCommitHash(tempDir.resolve(repo.directory()));
+                commitLogs.add(repo.url() + " " + hash);
+            }
 
-            MoreFiles.deleteRecursively(Path.of("external-resources"));
+            Path externalResourcesDir = Path.of("external-resources");
+            if (Files.exists(externalResourcesDir)) {
+                MoreFiles.deleteRecursively(externalResourcesDir);
+            }
 
             // 3. Copy html5lib-tests/tokenizer
-            Path sourceTokenizer = tempDir.resolve("html5lib-tests").resolve("tokenizer");
-            Path targetTokenizer = Path.of("external-resources", "html5lib-tests", "tokenizer");
-            copyDirectoryIfExists(sourceTokenizer, targetTokenizer);
+            copyDirectoryIfExists(
+                    tempDir.resolve("html5lib-tests").resolve("tokenizer"),
+                    externalResourcesDir.resolve("html5lib-tests").resolve("tokenizer"));
 
             // 4. Copy wpt/html/syntax/parsing/resources
-            Path sourceWptResources = tempDir.resolve("wpt").resolve("html").resolve("syntax").resolve("parsing").resolve("resources");
-            Path targetWptResources = Path.of("external-resources", "wpt", "html", "syntax", "parsing", "resources");
-            copyDirectoryIfExists(sourceWptResources, targetWptResources);
+            copyDirectoryIfExists(
+                    tempDir.resolve("wpt").resolve("html").resolve("syntax").resolve("parsing").resolve("resources"),
+                    externalResourcesDir.resolve("wpt").resolve("html").resolve("syntax").resolve("parsing").resolve("resources"));
 
             // 5. Write external-resources/commit.md
-            Path externalResourcesDir = Path.of("external-resources");
             Files.createDirectories(externalResourcesDir);
             Path commitFile = externalResourcesDir.resolve("commit.md");
             System.out.println("\nWriting commit info to " + commitFile.toAbsolutePath() + " ...");
@@ -75,16 +84,36 @@ public class update_external_resources {
         }
     }
 
-    private static void cloneRepo(Path workDir, String repoUrl) throws IOException, InterruptedException {
-        System.out.println("\nCloning: " + repoUrl + " ...");
-        ProcessBuilder pb = new ProcessBuilder("git", "clone", "--depth", "1", repoUrl);
-        pb.directory(workDir.toFile());
+    /**
+     * Clones only the requested sparse paths using a partial clone.
+     */
+    private static void cloneRepo(Path workDir, ExternalRepo repo) throws IOException, InterruptedException {
+        System.out.println("\nCloning: " + repo.url() + " -> " + repo.directory() + " ...");
+        runCommand(workDir, List.of(
+                "git", "clone",
+                "--depth", "1",
+                "--filter=blob:none",
+                "--sparse",
+                repo.url(),
+                repo.directory()));
+
+        if (repo.sparsePaths().length > 0) {
+            System.out.println("Sparse-checkout paths: " + Arrays.toString(repo.sparsePaths()));
+            List<String> command = new ArrayList<>(List.of("git", "sparse-checkout", "set", "--no-cone"));
+            command.addAll(Arrays.asList(repo.sparsePaths()));
+            runCommand(workDir.resolve(repo.directory()), command);
+        }
+    }
+
+    private static void runCommand(Path directory, List<String> command) throws IOException, InterruptedException {
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.directory(directory.toFile());
         pb.inheritIO();
 
         Process process = pb.start();
         int exitCode = process.waitFor();
         if (exitCode != 0) {
-            throw new RuntimeException("Failed to clone " + repoUrl + " (Exit code: " + exitCode + ")");
+            throw new RuntimeException("Command failed (exit code " + exitCode + "): " + String.join(" ", command));
         }
     }
 
