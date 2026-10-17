@@ -238,10 +238,12 @@ final class Common {
     }
 
     static void adjustSVGAttributes(Attributes attrs) {
-        if (attrs == null) {
+        if (attrs == null || attrs.attributes == null) {
             return;
         }
-        for (AttributeNode attr : attrs) {
+        int attrSize = attrs.attributes.size();
+        for (int i = 0; i < attrSize; i++) {
+            var attr = attrs.attributes.get(i);
             var toReplace = SVG_ATTRIBUTES.get(attr.name);
             if (toReplace != null) {
                 attr.name = toReplace;
@@ -266,11 +268,13 @@ final class Common {
 
     static void adjustForeignAttributes(Attributes attrs) {
 
-        if (attrs == null) {
+        if (attrs == null || attrs.attributes == null) {
             return;
         }
 
-        for (AttributeNode attr : attrs) {
+        int attrsCount = attrs.attributes.size();
+        for (int i = 0; i < attrsCount; i++) {
+            var attr = attrs.attributes.get(i);
             var adjust = FOREIGN_ATTRIBUTES_TO_ADJUST.get(attr.name);
             if (adjust != null) {
                 attr.prefix = adjust[0];
