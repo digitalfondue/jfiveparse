@@ -16,7 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.AbstractList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.IntFunction;
 
@@ -135,7 +134,11 @@ final class Common {
     };
 
     private static Interned[] buildInterned(String... v) {
-        return Arrays.stream(v).map(Interned::new).toArray(Interned[]::new);
+        var res = new Interned[v.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = new Interned(v[i]);
+        }
+        return res;
     }
 
     private static boolean matchCaseASCIIInsensitive(Interned interned, ResizableCharBuilder builder, InternedRes res) {
