@@ -155,6 +155,22 @@ final class Common {
         matchInterned(resizableCharBuilder, res, INTERNED_ATTRS);
     }
 
+    static int tagNameToID(String s) {
+        if (s == null) {
+            return 0;
+        }
+        var size = s.length();
+        var c = s.charAt(0);
+        if (size < INTERNED_TAG_NAME.length + 1) {
+            for (var interned : INTERNED_TAG_NAME[size - 1]) {
+                if (interned.firstChar == c && interned.interned.equals(s)) {
+                    return interned.id;
+                }
+            }
+        }
+        return 0;
+    }
+
     private static void matchInterned(ResizableCharBuilder resizableCharBuilder, InternedRes res, Interned[][] internedToMatch) {
         int size = resizableCharBuilder.pos();
         if (size < 1) {
@@ -374,132 +390,6 @@ final class Common {
         return tokenType == TreeConstructor.TT_END_TAG && namedID == tagNameID;
     }
 
-
-    static int tagNameToID(String tagName) {
-        if (tagName == null) {
-            return 0;
-        }
-        return switch (tagName) {
-            case "address" -> ELEMENT_ADDRESS_ID;
-            case "applet" -> ELEMENT_APPLET_ID;
-            case "area" -> ELEMENT_AREA_ID;
-            case "article" -> ELEMENT_ARTICLE_ID;
-            case "aside" -> ELEMENT_ASIDE_ID;
-            case "base" -> ELEMENT_BASE_ID;
-            case "basefont" -> ELEMENT_BASEFONT_ID;
-            case "bgsound" -> ELEMENT_BGSOUND_ID;
-            case "blockquote" -> ELEMENT_BLOCKQUOTE_ID;
-            case "body" -> ELEMENT_BODY_ID;
-            case "br" -> ELEMENT_BR_ID;
-            case "button" -> ELEMENT_BUTTON_ID;
-            case "caption" -> ELEMENT_CAPTION_ID;
-            case "center" -> ELEMENT_CENTER_ID;
-            case "col" -> ELEMENT_COL_ID;
-            case "colgroup" -> ELEMENT_COLGROUP_ID;
-            case "dd" -> ELEMENT_DD_ID;
-            case "details" -> ELEMENT_DETAILS_ID;
-            case "dir" -> ELEMENT_DIR_ID;
-            case "div" -> ELEMENT_DIV_ID;
-            case "dl" -> ELEMENT_DL_ID;
-            case "dt" -> ELEMENT_DT_ID;
-            case "embed" -> ELEMENT_EMBED_ID;
-            case "fieldset" -> ELEMENT_FIELDSET_ID;
-            case "figcaption" -> ELEMENT_FIGCAPTION_ID;
-            case "figure" -> ELEMENT_FIGURE_ID;
-            case "footer" -> ELEMENT_FOOTER_ID;
-            case "form" -> ELEMENT_FORM_ID;
-            case "frame" -> ELEMENT_FRAME_ID;
-            case "frameset" -> ELEMENT_FRAMESET_ID;
-            case "h1" -> ELEMENT_H1_ID;
-            case "h2" -> ELEMENT_H2_ID;
-            case "h3" -> ELEMENT_H3_ID;
-            case "h4" -> ELEMENT_H4_ID;
-            case "h5" -> ELEMENT_H5_ID;
-            case "h6" -> ELEMENT_H6_ID;
-            case "head" -> ELEMENT_HEAD_ID;
-            case "header" -> ELEMENT_HEADER_ID;
-            case "hgroup" -> ELEMENT_HGROUP_ID;
-            case "hr" -> ELEMENT_HR_ID;
-            case "html" -> ELEMENT_HTML_ID;
-            case "iframe" -> ELEMENT_IFRAME_ID;
-            case "img" -> ELEMENT_IMG_ID;
-            case "input" -> ELEMENT_INPUT_ID;
-            case "li" -> ELEMENT_LI_ID;
-            case "link" -> ELEMENT_LINK_ID;
-            case "listing" -> ELEMENT_LISTING_ID;
-            case "main" -> ELEMENT_MAIN_ID;
-            case "marquee" -> ELEMENT_MARQUEE_ID;
-            case "menu" -> ELEMENT_MENU_ID;
-            case "meta" -> ELEMENT_META_ID;
-            case "nav" -> ELEMENT_NAV_ID;
-            case "noembed" -> ELEMENT_NOEMBED_ID;
-            case "noframes" -> ELEMENT_NOFRAMES_ID;
-            case "noscript" -> ELEMENT_NOSCRIPT_ID;
-            case "object" -> ELEMENT_OBJECT_ID;
-            case "ol" -> ELEMENT_OL_ID;
-            case "p" -> ELEMENT_P_ID;
-            case "param" -> ELEMENT_PARAM_ID;
-            case "plaintext" -> ELEMENT_PLAINTEXT_ID;
-            case "pre" -> ELEMENT_PRE_ID;
-            case "script" -> ELEMENT_SCRIPT_ID;
-            case "section" -> ELEMENT_SECTION_ID;
-            case "select" -> ELEMENT_SELECT_ID;
-            case "source" -> ELEMENT_SOURCE_ID;
-            case "style" -> ELEMENT_STYLE_ID;
-            case "summary" -> ELEMENT_SUMMARY_ID;
-            case "table" -> ELEMENT_TABLE_ID;
-            case "tbody" -> ELEMENT_TBODY_ID;
-            case "td" -> ELEMENT_TD_ID;
-            case "template" -> ELEMENT_TEMPLATE_ID;
-            case "textarea" -> ELEMENT_TEXTAREA_ID;
-            case "tfoot" -> ELEMENT_TFOOT_ID;
-            case "th" -> ELEMENT_TH_ID;
-            case "thead" -> ELEMENT_THEAD_ID;
-            case "title" -> ELEMENT_TITLE_ID;
-            case "tr" -> ELEMENT_TR_ID;
-            case "track" -> ELEMENT_TRACK_ID;
-            case "ul" -> ELEMENT_UL_ID;
-            case "wbr" -> ELEMENT_WBR_ID;
-            case "xmp" -> ELEMENT_XMP_ID;
-            //
-            case "optgroup" -> ELEMENT_OPTGROUP_ID;
-            case "option" -> ELEMENT_OPTION_ID;
-            case "rb" -> ELEMENT_RB_ID;
-            case "rp" -> ELEMENT_RP_ID;
-            case "rt" -> ELEMENT_RT_ID;
-            case "rtc" -> ELEMENT_RTC_ID;
-            //
-            case "a" -> ELEMENT_A_ID;
-            //
-
-            case "dialog" -> ELEMENT_DIALOG_ID;
-            case "search" -> ELEMENT_SEARCH_ID;
-            case "b" -> ELEMENT_B_ID;
-            case "big" -> ELEMENT_BIG_ID;
-            case "code" -> ELEMENT_CODE_ID;
-            case "em" -> ELEMENT_EM_ID;
-            case "font" -> ELEMENT_FONT_ID;
-            case "i" -> ELEMENT_I_ID;
-            case "s" -> ELEMENT_S_ID;
-            case "small" -> ELEMENT_SMALL_ID;
-            case "strike" -> ELEMENT_STRIKE_ID;
-            case "strong" -> ELEMENT_STRONG_ID;
-            case "tt" -> ELEMENT_TT_ID;
-            case "u" -> ELEMENT_U_ID;
-            case "nobr" -> ELEMENT_NOBR_ID;
-            case "keygen" -> ELEMENT_KEYGEN_ID;
-            case "image" -> ELEMENT_IMAGE_ID;
-            case "math" -> ELEMENT_MATH_ID;
-            case "svg" -> ELEMENT_SVG_ID;
-            case "ruby" -> ELEMENT_RUBY_ID;
-            case "span" -> ELEMENT_SPAN_ID;
-            case "sub" -> ELEMENT_SUB_ID;
-            case "sup" -> ELEMENT_SUP_ID;
-            case "var" -> ELEMENT_VAR_ID;
-            default -> 0;
-        };
-    }
-
     // this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
     static final int ELEMENT_ADDRESS_ID = 1;
     static final int ELEMENT_APPLET_ID = 2;
@@ -619,7 +509,7 @@ final class Common {
     static final int ELEMENT_VAR_ID = 112;
 
 
-    private static final Interned[][] TAG_NAME_INTERNED = new Interned[][]{
+    private static final Interned[][] INTERNED_TAG_NAME = new Interned[][]{
             new Interned[]{
                     new Interned("a", ELEMENT_A_ID),
                     new Interned("b", ELEMENT_B_ID),
