@@ -1501,9 +1501,11 @@ final class TreeConstructorHandlers {
         treeConstructor.ignoreCharacterTokenLF();
     }
 
+    private static final ResizableCharBuilder IMG = new ResizableCharBuilder(new char[]{'i', 'm', 'g'});
+
     private static void startImage(TreeConstructor treeConstructor) {
         treeConstructor.emitParseError();
-        treeConstructor.setTagName("img");
+        treeConstructor.setTagName(IMG);
         treeConstructor.dispatch();
     }
 

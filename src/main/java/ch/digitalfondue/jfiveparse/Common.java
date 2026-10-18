@@ -155,6 +155,10 @@ final class Common {
         matchInterned(resizableCharBuilder, res, INTERNED_ATTRS);
     }
 
+    static void withTagNameAsLower(ResizableCharBuilder resizableCharBuilder, InternedRes res) {
+        matchInterned(resizableCharBuilder, res, INTERNED_TAG_NAME);
+    }
+
     static int tagNameToID(String s) {
         if (s == null) {
             return 0;
