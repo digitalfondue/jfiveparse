@@ -107,6 +107,10 @@ class TreeConstructor {
     // ----
     // used in findAppropriatePlaceForInsertingNode
     private final Node[] insertionBase = new Node[2];
+
+    // ----
+    // used for tag name interning
+    private final Common.InternedRes tagNameInternedRes = new Common.InternedRes();
     // ----
 
     void setTokenizerState(int state) {
@@ -123,9 +127,10 @@ class TreeConstructor {
         this.disableInTableTextForsterParenting = disableInTableTextForsterParenting;
     }
 
-    void setTagName(String lowerCasedTagName) {
-        this.tagName = lowerCasedTagName;
-        this.tagNameID = Common.tagNameToID(lowerCasedTagName);
+    void setTagName(ResizableCharBuilder name) {
+        Common.withTagNameAsLower(name, tagNameInternedRes);
+        this.tagName = tagNameInternedRes.lowerCaseValue;
+        this.tagNameID = tagNameInternedRes.id;
     }
 
     //
@@ -855,14 +860,14 @@ class TreeConstructor {
     }
 
     void emitEndTagToken(ResizableCharBuilder name) {
-        setTagName(name.toLowerCase());
+        setTagName(name);
         tokenType = TT_END_TAG;
         dispatch();
     }
 
     void emitStartTagToken(ResizableCharBuilder name, Attributes attrs, boolean selfClosing) {
         //
-        setTagName(name.toLowerCase());
+        setTagName(name);
         this.originalTagName = name.containsUpperCase ? name.toString() : this.tagName;
         //
         this.attrs = attrs;

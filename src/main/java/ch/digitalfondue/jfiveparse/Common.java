@@ -91,20 +91,27 @@ final class Common {
         return true;
     }
 
-    static class AttributeName {
-        String lowerCaseAttribute;
+    static final class InternedRes {
+        String lowerCaseValue;
         boolean containsUpperCase;
+        int id;
     }
 
-    private static class Interned {
+    private static final class Interned {
         final char firstChar;
         final char[] raw;
         final String interned;
+        final int id;
 
         Interned(String interned) {
+            this(interned, 0);
+        }
+
+        Interned(String interned, int id) {
             this.interned = interned;
             this.raw = interned.toCharArray();
             this.firstChar = raw[0];
+            this.id = id;
         }
     }
 
@@ -131,7 +138,7 @@ final class Common {
         return Arrays.stream(v).map(Interned::new).toArray(Interned[]::new);
     }
 
-    private static boolean matchAttributeCaseInsensitive(Interned interned, ResizableCharBuilder builder, AttributeName res) {
+    private static boolean matchCaseASCIIInsensitive(Interned interned, ResizableCharBuilder builder, InternedRes res) {
         var length = interned.raw.length;
         boolean match = true, containsUpperCase = false;
         for (int i = 0; i < length; i++) {
@@ -140,27 +147,55 @@ final class Common {
             match &= toLowerCase(c) == interned.raw[i];
         }
         res.containsUpperCase = containsUpperCase;
+        builder.containsUpperCase = containsUpperCase;
         return match;
     }
 
-    static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, AttributeName res) {
+    static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, InternedRes res) {
+        matchInterned(resizableCharBuilder, res, INTERNED_ATTRS);
+    }
+
+    static void withTagNameAsLower(ResizableCharBuilder resizableCharBuilder, InternedRes res) {
+        matchInterned(resizableCharBuilder, res, INTERNED_TAG_NAME);
+    }
+
+    static int tagNameToID(String s) {
+        if (s == null) {
+            return 0;
+        }
+        var size = s.length();
+        var c = s.charAt(0);
+        if (size < INTERNED_TAG_NAME.length + 1) {
+            for (var interned : INTERNED_TAG_NAME[size - 1]) {
+                if (interned.firstChar == c && interned.interned.equals(s)) {
+                    return interned.id;
+                }
+            }
+        }
+        return 0;
+    }
+
+    private static void matchInterned(ResizableCharBuilder resizableCharBuilder, InternedRes res, Interned[][] internedToMatch) {
         int size = resizableCharBuilder.pos();
         if (size < 1) {
-            res.lowerCaseAttribute = "";
+            res.lowerCaseValue = "";
             res.containsUpperCase = false;
+            res.id = 0;
             return;
         }
         var firstCharLower = toLowerCase(resizableCharBuilder.at(0));
-        if (size < 16) {
-            for (var interned : INTERNED_ATTRS[size - 1]) {
-                if (interned.firstChar == firstCharLower && matchAttributeCaseInsensitive(interned, resizableCharBuilder, res)) {
-                    res.lowerCaseAttribute = interned.interned;
+        if (size < internedToMatch.length + 1) {
+            for (var interned : internedToMatch[size - 1]) {
+                if (interned.firstChar == firstCharLower && matchCaseASCIIInsensitive(interned, resizableCharBuilder, res)) {
+                    res.lowerCaseValue = interned.interned;
+                    res.id = interned.id;
                     return;
                 }
             }
         }
-        res.lowerCaseAttribute = resizableCharBuilder.toLowerCase();
+        res.lowerCaseValue = resizableCharBuilder.toLowerCase();
         res.containsUpperCase = resizableCharBuilder.containsUpperCase;
+        res.id = 0;
     }
 
     // ------------
@@ -359,131 +394,6 @@ final class Common {
         return tokenType == TreeConstructor.TT_END_TAG && namedID == tagNameID;
     }
 
-    static int tagNameToID(String tagName) {
-        if (tagName == null) {
-            return 0;
-        }
-        return switch (tagName) {
-            case "address" -> ELEMENT_ADDRESS_ID;
-            case "applet" -> ELEMENT_APPLET_ID;
-            case "area" -> ELEMENT_AREA_ID;
-            case "article" -> ELEMENT_ARTICLE_ID;
-            case "aside" -> ELEMENT_ASIDE_ID;
-            case "base" -> ELEMENT_BASE_ID;
-            case "basefont" -> ELEMENT_BASEFONT_ID;
-            case "bgsound" -> ELEMENT_BGSOUND_ID;
-            case "blockquote" -> ELEMENT_BLOCKQUOTE_ID;
-            case "body" -> ELEMENT_BODY_ID;
-            case "br" -> ELEMENT_BR_ID;
-            case "button" -> ELEMENT_BUTTON_ID;
-            case "caption" -> ELEMENT_CAPTION_ID;
-            case "center" -> ELEMENT_CENTER_ID;
-            case "col" -> ELEMENT_COL_ID;
-            case "colgroup" -> ELEMENT_COLGROUP_ID;
-            case "dd" -> ELEMENT_DD_ID;
-            case "details" -> ELEMENT_DETAILS_ID;
-            case "dir" -> ELEMENT_DIR_ID;
-            case "div" -> ELEMENT_DIV_ID;
-            case "dl" -> ELEMENT_DL_ID;
-            case "dt" -> ELEMENT_DT_ID;
-            case "embed" -> ELEMENT_EMBED_ID;
-            case "fieldset" -> ELEMENT_FIELDSET_ID;
-            case "figcaption" -> ELEMENT_FIGCAPTION_ID;
-            case "figure" -> ELEMENT_FIGURE_ID;
-            case "footer" -> ELEMENT_FOOTER_ID;
-            case "form" -> ELEMENT_FORM_ID;
-            case "frame" -> ELEMENT_FRAME_ID;
-            case "frameset" -> ELEMENT_FRAMESET_ID;
-            case "h1" -> ELEMENT_H1_ID;
-            case "h2" -> ELEMENT_H2_ID;
-            case "h3" -> ELEMENT_H3_ID;
-            case "h4" -> ELEMENT_H4_ID;
-            case "h5" -> ELEMENT_H5_ID;
-            case "h6" -> ELEMENT_H6_ID;
-            case "head" -> ELEMENT_HEAD_ID;
-            case "header" -> ELEMENT_HEADER_ID;
-            case "hgroup" -> ELEMENT_HGROUP_ID;
-            case "hr" -> ELEMENT_HR_ID;
-            case "html" -> ELEMENT_HTML_ID;
-            case "iframe" -> ELEMENT_IFRAME_ID;
-            case "img" -> ELEMENT_IMG_ID;
-            case "input" -> ELEMENT_INPUT_ID;
-            case "li" -> ELEMENT_LI_ID;
-            case "link" -> ELEMENT_LINK_ID;
-            case "listing" -> ELEMENT_LISTING_ID;
-            case "main" -> ELEMENT_MAIN_ID;
-            case "marquee" -> ELEMENT_MARQUEE_ID;
-            case "menu" -> ELEMENT_MENU_ID;
-            case "meta" -> ELEMENT_META_ID;
-            case "nav" -> ELEMENT_NAV_ID;
-            case "noembed" -> ELEMENT_NOEMBED_ID;
-            case "noframes" -> ELEMENT_NOFRAMES_ID;
-            case "noscript" -> ELEMENT_NOSCRIPT_ID;
-            case "object" -> ELEMENT_OBJECT_ID;
-            case "ol" -> ELEMENT_OL_ID;
-            case "p" -> ELEMENT_P_ID;
-            case "param" -> ELEMENT_PARAM_ID;
-            case "plaintext" -> ELEMENT_PLAINTEXT_ID;
-            case "pre" -> ELEMENT_PRE_ID;
-            case "script" -> ELEMENT_SCRIPT_ID;
-            case "section" -> ELEMENT_SECTION_ID;
-            case "select" -> ELEMENT_SELECT_ID;
-            case "source" -> ELEMENT_SOURCE_ID;
-            case "style" -> ELEMENT_STYLE_ID;
-            case "summary" -> ELEMENT_SUMMARY_ID;
-            case "table" -> ELEMENT_TABLE_ID;
-            case "tbody" -> ELEMENT_TBODY_ID;
-            case "td" -> ELEMENT_TD_ID;
-            case "template" -> ELEMENT_TEMPLATE_ID;
-            case "textarea" -> ELEMENT_TEXTAREA_ID;
-            case "tfoot" -> ELEMENT_TFOOT_ID;
-            case "th" -> ELEMENT_TH_ID;
-            case "thead" -> ELEMENT_THEAD_ID;
-            case "title" -> ELEMENT_TITLE_ID;
-            case "tr" -> ELEMENT_TR_ID;
-            case "track" -> ELEMENT_TRACK_ID;
-            case "ul" -> ELEMENT_UL_ID;
-            case "wbr" -> ELEMENT_WBR_ID;
-            case "xmp" -> ELEMENT_XMP_ID;
-            //
-            case "optgroup" -> ELEMENT_OPTGROUP_ID;
-            case "option" -> ELEMENT_OPTION_ID;
-            case "rb" -> ELEMENT_RB_ID;
-            case "rp" -> ELEMENT_RP_ID;
-            case "rt" -> ELEMENT_RT_ID;
-            case "rtc" -> ELEMENT_RTC_ID;
-            //
-            case "a" -> ELEMENT_A_ID;
-            //
-
-            case "dialog" -> ELEMENT_DIALOG_ID;
-            case "search" -> ELEMENT_SEARCH_ID;
-            case "b" -> ELEMENT_B_ID;
-            case "big" -> ELEMENT_BIG_ID;
-            case "code" -> ELEMENT_CODE_ID;
-            case "em" -> ELEMENT_EM_ID;
-            case "font" -> ELEMENT_FONT_ID;
-            case "i" -> ELEMENT_I_ID;
-            case "s" -> ELEMENT_S_ID;
-            case "small" -> ELEMENT_SMALL_ID;
-            case "strike" -> ELEMENT_STRIKE_ID;
-            case "strong" -> ELEMENT_STRONG_ID;
-            case "tt" -> ELEMENT_TT_ID;
-            case "u" -> ELEMENT_U_ID;
-            case "nobr" -> ELEMENT_NO_BR_ID;
-            case "keygen" -> ELEMENT_KEYGEN_ID;
-            case "image" -> ELEMENT_IMAGE_ID;
-            case "math" -> ELEMENT_MATH_ID;
-            case "svg" -> ELEMENT_SVG_ID;
-            case "ruby" -> ELEMENT_RUBY_ID;
-            case "span" -> ELEMENT_SPAN_ID;
-            case "sub" -> ELEMENT_SUB_ID;
-            case "sup" -> ELEMENT_SUP_ID;
-            case "var" -> ELEMENT_VAR_ID;
-            default -> 0;
-        };
-    }
-
     // this order is the SPECIAL_ELEMENTS_HTML container from 1 to 81
     static final int ELEMENT_ADDRESS_ID = 1;
     static final int ELEMENT_APPLET_ID = 2;
@@ -590,7 +500,7 @@ final class Common {
     static final int ELEMENT_STRONG_ID = 100;
     static final int ELEMENT_TT_ID = 101;
     static final int ELEMENT_U_ID = 102;
-    static final int ELEMENT_NO_BR_ID = 103;
+    static final int ELEMENT_NOBR_ID = 103;
     static final int ELEMENT_KEYGEN_ID = 104;
     static final int ELEMENT_IMAGE_ID = 105;
     static final int ELEMENT_MATH_ID = 106;
@@ -601,6 +511,142 @@ final class Common {
     static final int ELEMENT_SUB_ID = 110;
     static final int ELEMENT_SUP_ID = 111;
     static final int ELEMENT_VAR_ID = 112;
+
+
+    private static final Interned[][] INTERNED_TAG_NAME = new Interned[][]{
+            new Interned[]{
+                    new Interned("a", ELEMENT_A_ID),
+                    new Interned("b", ELEMENT_B_ID),
+                    new Interned("i", ELEMENT_I_ID),
+                    new Interned("p", ELEMENT_P_ID),
+                    new Interned("s", ELEMENT_S_ID),
+                    new Interned("u", ELEMENT_U_ID),
+            }, // 1
+            new Interned[]{
+                    new Interned("br", ELEMENT_BR_ID),
+                    new Interned("dd", ELEMENT_DD_ID),
+                    new Interned("dl", ELEMENT_DL_ID),
+                    new Interned("dt", ELEMENT_DT_ID),
+                    new Interned("em", ELEMENT_EM_ID),
+                    new Interned("h1", ELEMENT_H1_ID),
+                    new Interned("h2", ELEMENT_H2_ID),
+                    new Interned("h3", ELEMENT_H3_ID),
+                    new Interned("h4", ELEMENT_H4_ID),
+                    new Interned("h5", ELEMENT_H5_ID),
+                    new Interned("h6", ELEMENT_H6_ID),
+                    new Interned("hr", ELEMENT_HR_ID),
+                    new Interned("li", ELEMENT_LI_ID),
+                    new Interned("ol", ELEMENT_OL_ID),
+                    new Interned("rb", ELEMENT_RB_ID),
+                    new Interned("rp", ELEMENT_RP_ID),
+                    new Interned("rt", ELEMENT_RT_ID),
+                    new Interned("td", ELEMENT_TD_ID),
+                    new Interned("th", ELEMENT_TH_ID),
+                    new Interned("tr", ELEMENT_TR_ID),
+                    new Interned("tt", ELEMENT_TT_ID),
+                    new Interned("ul", ELEMENT_UL_ID),
+            }, // 2
+            new Interned[]{
+                    new Interned("big", ELEMENT_BIG_ID),
+                    new Interned("col", ELEMENT_COL_ID),
+                    new Interned("dir", ELEMENT_DIR_ID),
+                    new Interned("div", ELEMENT_DIV_ID),
+                    new Interned("img", ELEMENT_IMG_ID),
+                    new Interned("nav", ELEMENT_NAV_ID),
+                    new Interned("pre", ELEMENT_PRE_ID),
+                    new Interned("rtc", ELEMENT_RTC_ID),
+                    new Interned("sub", ELEMENT_SUB_ID),
+                    new Interned("sup", ELEMENT_SUP_ID),
+                    new Interned("svg", ELEMENT_SVG_ID),
+                    new Interned("var", ELEMENT_VAR_ID),
+                    new Interned("wbr", ELEMENT_WBR_ID),
+                    new Interned("xmp", ELEMENT_XMP_ID),
+            }, // 3
+            new Interned[]{
+                    new Interned("area", ELEMENT_AREA_ID),
+                    new Interned("base", ELEMENT_BASE_ID),
+                    new Interned("body", ELEMENT_BODY_ID),
+                    new Interned("code", ELEMENT_CODE_ID),
+                    new Interned("font", ELEMENT_FONT_ID),
+                    new Interned("form", ELEMENT_FORM_ID),
+                    new Interned("head", ELEMENT_HEAD_ID),
+                    new Interned("html", ELEMENT_HTML_ID),
+                    new Interned("link", ELEMENT_LINK_ID),
+                    new Interned("main", ELEMENT_MAIN_ID),
+                    new Interned("math", ELEMENT_MATH_ID),
+                    new Interned("menu", ELEMENT_MENU_ID),
+                    new Interned("meta", ELEMENT_META_ID),
+                    new Interned("nobr", ELEMENT_NOBR_ID),
+                    new Interned("ruby", ELEMENT_RUBY_ID),
+                    new Interned("span", ELEMENT_SPAN_ID),
+            }, // 4
+            new Interned[]{
+                    new Interned("aside", ELEMENT_ASIDE_ID),
+                    new Interned("embed", ELEMENT_EMBED_ID),
+                    new Interned("frame", ELEMENT_FRAME_ID),
+                    new Interned("image", ELEMENT_IMAGE_ID),
+                    new Interned("input", ELEMENT_INPUT_ID),
+                    new Interned("param", ELEMENT_PARAM_ID),
+                    new Interned("small", ELEMENT_SMALL_ID),
+                    new Interned("style", ELEMENT_STYLE_ID),
+                    new Interned("table", ELEMENT_TABLE_ID),
+                    new Interned("tbody", ELEMENT_TBODY_ID),
+                    new Interned("tfoot", ELEMENT_TFOOT_ID),
+                    new Interned("thead", ELEMENT_THEAD_ID),
+                    new Interned("title", ELEMENT_TITLE_ID),
+                    new Interned("track", ELEMENT_TRACK_ID),
+            }, // 5
+            new Interned[]{
+                    new Interned("applet", ELEMENT_APPLET_ID),
+                    new Interned("button", ELEMENT_BUTTON_ID),
+                    new Interned("center", ELEMENT_CENTER_ID),
+                    new Interned("dialog", ELEMENT_DIALOG_ID),
+                    new Interned("figure", ELEMENT_FIGURE_ID),
+                    new Interned("footer", ELEMENT_FOOTER_ID),
+                    new Interned("header", ELEMENT_HEADER_ID),
+                    new Interned("hgroup", ELEMENT_HGROUP_ID),
+                    new Interned("iframe", ELEMENT_IFRAME_ID),
+                    new Interned("keygen", ELEMENT_KEYGEN_ID),
+                    new Interned("object", ELEMENT_OBJECT_ID),
+                    new Interned("option", ELEMENT_OPTION_ID),
+                    new Interned("script", ELEMENT_SCRIPT_ID),
+                    new Interned("search", ELEMENT_SEARCH_ID),
+                    new Interned("select", ELEMENT_SELECT_ID),
+                    new Interned("source", ELEMENT_SOURCE_ID),
+                    new Interned("strike", ELEMENT_STRIKE_ID),
+                    new Interned("strong", ELEMENT_STRONG_ID),
+            }, // 6
+            new Interned[]{
+                    new Interned("address", ELEMENT_ADDRESS_ID),
+                    new Interned("article", ELEMENT_ARTICLE_ID),
+                    new Interned("bgsound", ELEMENT_BGSOUND_ID),
+                    new Interned("caption", ELEMENT_CAPTION_ID),
+                    new Interned("details", ELEMENT_DETAILS_ID),
+                    new Interned("listing", ELEMENT_LISTING_ID),
+                    new Interned("marquee", ELEMENT_MARQUEE_ID),
+                    new Interned("noembed", ELEMENT_NOEMBED_ID),
+                    new Interned("section", ELEMENT_SECTION_ID),
+                    new Interned("summary", ELEMENT_SUMMARY_ID),
+            }, // 7
+            new Interned[]{
+                    new Interned("basefont", ELEMENT_BASEFONT_ID),
+                    new Interned("colgroup", ELEMENT_COLGROUP_ID),
+                    new Interned("fieldset", ELEMENT_FIELDSET_ID),
+                    new Interned("frameset", ELEMENT_FRAMESET_ID),
+                    new Interned("noframes", ELEMENT_NOFRAMES_ID),
+                    new Interned("noscript", ELEMENT_NOSCRIPT_ID),
+                    new Interned("optgroup", ELEMENT_OPTGROUP_ID),
+                    new Interned("template", ELEMENT_TEMPLATE_ID),
+                    new Interned("textarea", ELEMENT_TEXTAREA_ID),
+            }, // 8
+            new Interned[]{
+                    new Interned("plaintext", ELEMENT_PLAINTEXT_ID),
+            },// 9
+            new Interned[]{
+                    new Interned("blockquote", ELEMENT_BLOCKQUOTE_ID),
+                    new Interned("figcaption", ELEMENT_FIGCAPTION_ID),
+            }
+    };
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;
