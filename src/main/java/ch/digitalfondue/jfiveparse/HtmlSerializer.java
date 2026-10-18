@@ -48,21 +48,24 @@ public class HtmlSerializer implements NodesVisitor {
         this.printOriginalTagName = options.contains(Option.PRINT_ORIGINAL_TAG_CASE);
     }
 
-    private String serializeAttributeName(AttributeNode attribute) {
+    private void serializeAttributeName(Appendable appendable, AttributeNode attribute) throws IOException {
         String lowercaseName = attribute.getName();
-        String name = printOriginalAttributeCase ? attribute.originalName : lowercaseName;
+        String name = printOriginalAttributeCase && attribute.originalName != null ? attribute.originalName : lowercaseName;
         String namespace = attribute.getNamespace();
 
         if (Node.NAMESPACE_XML.equals(namespace)) {
-            return "xml:" + name;
+            appendable.append("xml:").append(name);
         } else if (Node.NAMESPACE_XMLNS.equals(namespace)) {
-            return "xmlns".equals(lowercaseName) ? "xmlns" : ("xmlns:" + name);
+            appendable.append("xmlns");
+            if ("xmlns".equals(lowercaseName)) {
+                appendable.append(':').append(name);
+            }
         } else if (Node.NAMESPACE_XLINK.equals(namespace)) {
-            return "xlink:" + name;
+            appendable.append("xlink:").append(name);
         } else if (namespace != null) {
-            return namespace + ":" + name;// TODO check
+            appendable.append(namespace).append(':').append(name);// TODO check
         } else {
-            return name;
+            appendable.append(name);
         }
     }
 
@@ -125,7 +128,8 @@ public class HtmlSerializer implements NodesVisitor {
                 appendable.append('<').append(getNodeName(e));
                 if (e.hasAttributes()) {
                     for (AttributeNode attr : e.getAttributes()) {
-                        appendable.append(' ').append(serializeAttributeName(attr));//
+                        appendable.append(' ');
+                        serializeAttributeName(appendable, attr);//
 
                         if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.attributeQuoteType == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE))
                                 && (attr.getValue() == null || attr.getValue().isEmpty())) {
@@ -177,7 +181,7 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     private String getNodeName(Element e) {
-        return printOriginalTagName ? e.originalNodeName : e.getNodeName();
+        return printOriginalTagName && e.originalNodeName != null ? e.originalNodeName : e.nodeName;
     }
 
     @Override
