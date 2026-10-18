@@ -91,9 +91,10 @@ final class Common {
         return true;
     }
 
-    static class AttributeName {
-        String lowerCaseAttribute;
+    static class InternedRes {
+        String lowerCaseValue;
         boolean containsUpperCase;
+        int id;
     }
 
     private static class Interned {
@@ -137,7 +138,7 @@ final class Common {
         return Arrays.stream(v).map(Interned::new).toArray(Interned[]::new);
     }
 
-    private static boolean matchAttributeCaseInsensitive(Interned interned, ResizableCharBuilder builder, AttributeName res) {
+    private static boolean matchCaseASCIIInsensitive(Interned interned, ResizableCharBuilder builder, InternedRes res) {
         var length = interned.raw.length;
         boolean match = true, containsUpperCase = false;
         for (int i = 0; i < length; i++) {
@@ -146,27 +147,35 @@ final class Common {
             match &= toLowerCase(c) == interned.raw[i];
         }
         res.containsUpperCase = containsUpperCase;
+        builder.containsUpperCase = containsUpperCase;
         return match;
     }
 
-    static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, AttributeName res) {
+    static void withAttributeNameAsLower(ResizableCharBuilder resizableCharBuilder, InternedRes res) {
+        matchInterned(resizableCharBuilder, res, INTERNED_ATTRS);
+    }
+
+    private static void matchInterned(ResizableCharBuilder resizableCharBuilder, InternedRes res, Interned[][] internedToMatch) {
         int size = resizableCharBuilder.pos();
         if (size < 1) {
-            res.lowerCaseAttribute = "";
+            res.lowerCaseValue = "";
             res.containsUpperCase = false;
+            res.id = 0;
             return;
         }
         var firstCharLower = toLowerCase(resizableCharBuilder.at(0));
-        if (size < 16) {
-            for (var interned : INTERNED_ATTRS[size - 1]) {
-                if (interned.firstChar == firstCharLower && matchAttributeCaseInsensitive(interned, resizableCharBuilder, res)) {
-                    res.lowerCaseAttribute = interned.interned;
+        if (size < internedToMatch.length + 1) {
+            for (var interned : internedToMatch[size - 1]) {
+                if (interned.firstChar == firstCharLower && matchCaseASCIIInsensitive(interned, resizableCharBuilder, res)) {
+                    res.lowerCaseValue = interned.interned;
+                    res.id = interned.id;
                     return;
                 }
             }
         }
-        res.lowerCaseAttribute = resizableCharBuilder.toLowerCase();
+        res.lowerCaseValue = resizableCharBuilder.toLowerCase();
         res.containsUpperCase = resizableCharBuilder.containsUpperCase;
+        res.id = 0;
     }
 
     // ------------

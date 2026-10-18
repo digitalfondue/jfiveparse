@@ -43,7 +43,7 @@ final class Tokenizer {
     final ResizableCharBuilder tagName = new ResizableCharBuilder();
     private boolean isEndTagToken;
     final ResizableCharBuilder lastEmittedStartTagName = new ResizableCharBuilder();
-    private final Common.AttributeName attributeName = new Common.AttributeName();
+    private final Common.InternedRes attributeName = new Common.InternedRes();
 
     // doctype related
     private boolean doctypeForceQuirksFlag;
@@ -387,7 +387,7 @@ final class Tokenizer {
         try {
             if (currentAttributeName.pos() != 0) { // not empty
                 Common.withAttributeNameAsLower(currentAttributeName, attributeName);
-                String curAttrName = attributeName.lowerCaseAttribute;
+                String curAttrName = attributeName.lowerCaseValue;
                 if (attributes.containsKey(curAttrName)) {
                     tokenHandler.emitParseError();
                 } else {
