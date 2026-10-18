@@ -91,20 +91,20 @@ final class Common {
         return true;
     }
 
-    static class InternedRes {
+    static final class InternedRes {
         String lowerCaseValue;
         boolean containsUpperCase;
         int id;
     }
 
-    private static class Interned {
+    private static final class Interned {
         final char firstChar;
         final char[] raw;
         final String interned;
         final int id;
 
         Interned(String interned) {
-            this(interned, -1);
+            this(interned, 0);
         }
 
         Interned(String interned, int id) {
