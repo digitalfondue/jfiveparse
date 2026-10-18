@@ -365,9 +365,6 @@ final class Common {
         return tokenType == TreeConstructor.TT_END_TAG && namedID == tagNameID;
     }
 
-    private static final Interned[][] TAG_NAME_INTERNED = new Interned[][] {
-
-    };
 
     static int tagNameToID(String tagName) {
         if (tagName == null) {
@@ -480,7 +477,7 @@ final class Common {
             case "strong" -> ELEMENT_STRONG_ID;
             case "tt" -> ELEMENT_TT_ID;
             case "u" -> ELEMENT_U_ID;
-            case "nobr" -> ELEMENT_NO_BR_ID;
+            case "nobr" -> ELEMENT_NOBR_ID;
             case "keygen" -> ELEMENT_KEYGEN_ID;
             case "image" -> ELEMENT_IMAGE_ID;
             case "math" -> ELEMENT_MATH_ID;
@@ -600,7 +597,7 @@ final class Common {
     static final int ELEMENT_STRONG_ID = 100;
     static final int ELEMENT_TT_ID = 101;
     static final int ELEMENT_U_ID = 102;
-    static final int ELEMENT_NO_BR_ID = 103;
+    static final int ELEMENT_NOBR_ID = 103;
     static final int ELEMENT_KEYGEN_ID = 104;
     static final int ELEMENT_IMAGE_ID = 105;
     static final int ELEMENT_MATH_ID = 106;
@@ -611,6 +608,142 @@ final class Common {
     static final int ELEMENT_SUB_ID = 110;
     static final int ELEMENT_SUP_ID = 111;
     static final int ELEMENT_VAR_ID = 112;
+
+
+    private static final Interned[][] TAG_NAME_INTERNED = new Interned[][]{
+            new Interned[]{
+                    new Interned("a", ELEMENT_A_ID),
+                    new Interned("b", ELEMENT_B_ID),
+                    new Interned("i", ELEMENT_I_ID),
+                    new Interned("p", ELEMENT_P_ID),
+                    new Interned("s", ELEMENT_S_ID),
+                    new Interned("u", ELEMENT_U_ID),
+            }, // 1
+            new Interned[]{
+                    new Interned("br", ELEMENT_BR_ID),
+                    new Interned("dd", ELEMENT_DD_ID),
+                    new Interned("dl", ELEMENT_DL_ID),
+                    new Interned("dt", ELEMENT_DT_ID),
+                    new Interned("em", ELEMENT_EM_ID),
+                    new Interned("h1", ELEMENT_H1_ID),
+                    new Interned("h2", ELEMENT_H2_ID),
+                    new Interned("h3", ELEMENT_H3_ID),
+                    new Interned("h4", ELEMENT_H4_ID),
+                    new Interned("h5", ELEMENT_H5_ID),
+                    new Interned("h6", ELEMENT_H6_ID),
+                    new Interned("hr", ELEMENT_HR_ID),
+                    new Interned("li", ELEMENT_LI_ID),
+                    new Interned("ol", ELEMENT_OL_ID),
+                    new Interned("rb", ELEMENT_RB_ID),
+                    new Interned("rp", ELEMENT_RP_ID),
+                    new Interned("rt", ELEMENT_RT_ID),
+                    new Interned("td", ELEMENT_TD_ID),
+                    new Interned("th", ELEMENT_TH_ID),
+                    new Interned("tr", ELEMENT_TR_ID),
+                    new Interned("tt", ELEMENT_TT_ID),
+                    new Interned("ul", ELEMENT_UL_ID),
+            }, // 2
+            new Interned[]{
+                    new Interned("big", ELEMENT_BIG_ID),
+                    new Interned("col", ELEMENT_COL_ID),
+                    new Interned("dir", ELEMENT_DIR_ID),
+                    new Interned("div", ELEMENT_DIV_ID),
+                    new Interned("img", ELEMENT_IMG_ID),
+                    new Interned("nav", ELEMENT_NAV_ID),
+                    new Interned("pre", ELEMENT_PRE_ID),
+                    new Interned("rtc", ELEMENT_RTC_ID),
+                    new Interned("sub", ELEMENT_SUB_ID),
+                    new Interned("sup", ELEMENT_SUP_ID),
+                    new Interned("svg", ELEMENT_SVG_ID),
+                    new Interned("var", ELEMENT_VAR_ID),
+                    new Interned("wbr", ELEMENT_WBR_ID),
+                    new Interned("xmp", ELEMENT_XMP_ID),
+            }, // 3
+            new Interned[]{
+                    new Interned("area", ELEMENT_AREA_ID),
+                    new Interned("base", ELEMENT_BASE_ID),
+                    new Interned("body", ELEMENT_BODY_ID),
+                    new Interned("code", ELEMENT_CODE_ID),
+                    new Interned("font", ELEMENT_FONT_ID),
+                    new Interned("form", ELEMENT_FORM_ID),
+                    new Interned("head", ELEMENT_HEAD_ID),
+                    new Interned("html", ELEMENT_HTML_ID),
+                    new Interned("link", ELEMENT_LINK_ID),
+                    new Interned("main", ELEMENT_MAIN_ID),
+                    new Interned("math", ELEMENT_MATH_ID),
+                    new Interned("menu", ELEMENT_MENU_ID),
+                    new Interned("meta", ELEMENT_META_ID),
+                    new Interned("nobr", ELEMENT_NOBR_ID),
+                    new Interned("ruby", ELEMENT_RUBY_ID),
+                    new Interned("span", ELEMENT_SPAN_ID),
+            }, // 4
+            new Interned[]{
+                    new Interned("aside", ELEMENT_ASIDE_ID),
+                    new Interned("embed", ELEMENT_EMBED_ID),
+                    new Interned("frame", ELEMENT_FRAME_ID),
+                    new Interned("image", ELEMENT_IMAGE_ID),
+                    new Interned("input", ELEMENT_INPUT_ID),
+                    new Interned("param", ELEMENT_PARAM_ID),
+                    new Interned("small", ELEMENT_SMALL_ID),
+                    new Interned("style", ELEMENT_STYLE_ID),
+                    new Interned("table", ELEMENT_TABLE_ID),
+                    new Interned("tbody", ELEMENT_TBODY_ID),
+                    new Interned("tfoot", ELEMENT_TFOOT_ID),
+                    new Interned("thead", ELEMENT_THEAD_ID),
+                    new Interned("title", ELEMENT_TITLE_ID),
+                    new Interned("track", ELEMENT_TRACK_ID),
+            }, // 5
+            new Interned[]{
+                    new Interned("applet", ELEMENT_APPLET_ID),
+                    new Interned("button", ELEMENT_BUTTON_ID),
+                    new Interned("center", ELEMENT_CENTER_ID),
+                    new Interned("dialog", ELEMENT_DIALOG_ID),
+                    new Interned("figure", ELEMENT_FIGURE_ID),
+                    new Interned("footer", ELEMENT_FOOTER_ID),
+                    new Interned("header", ELEMENT_HEADER_ID),
+                    new Interned("hgroup", ELEMENT_HGROUP_ID),
+                    new Interned("iframe", ELEMENT_IFRAME_ID),
+                    new Interned("keygen", ELEMENT_KEYGEN_ID),
+                    new Interned("object", ELEMENT_OBJECT_ID),
+                    new Interned("option", ELEMENT_OPTION_ID),
+                    new Interned("script", ELEMENT_SCRIPT_ID),
+                    new Interned("search", ELEMENT_SEARCH_ID),
+                    new Interned("select", ELEMENT_SELECT_ID),
+                    new Interned("source", ELEMENT_SOURCE_ID),
+                    new Interned("strike", ELEMENT_STRIKE_ID),
+                    new Interned("strong", ELEMENT_STRONG_ID),
+            }, // 6
+            new Interned[]{
+                    new Interned("address", ELEMENT_ADDRESS_ID),
+                    new Interned("article", ELEMENT_ARTICLE_ID),
+                    new Interned("bgsound", ELEMENT_BGSOUND_ID),
+                    new Interned("caption", ELEMENT_CAPTION_ID),
+                    new Interned("details", ELEMENT_DETAILS_ID),
+                    new Interned("listing", ELEMENT_LISTING_ID),
+                    new Interned("marquee", ELEMENT_MARQUEE_ID),
+                    new Interned("noembed", ELEMENT_NOEMBED_ID),
+                    new Interned("section", ELEMENT_SECTION_ID),
+                    new Interned("summary", ELEMENT_SUMMARY_ID),
+            }, // 7
+            new Interned[]{
+                    new Interned("basefont", ELEMENT_BASEFONT_ID),
+                    new Interned("colgroup", ELEMENT_COLGROUP_ID),
+                    new Interned("fieldset", ELEMENT_FIELDSET_ID),
+                    new Interned("frameset", ELEMENT_FRAMESET_ID),
+                    new Interned("noframes", ELEMENT_NOFRAMES_ID),
+                    new Interned("noscript", ELEMENT_NOSCRIPT_ID),
+                    new Interned("optgroup", ELEMENT_OPTGROUP_ID),
+                    new Interned("template", ELEMENT_TEMPLATE_ID),
+                    new Interned("textarea", ELEMENT_TEXTAREA_ID),
+            }, // 8
+            new Interned[]{
+                    new Interned("plaintext", ELEMENT_PLAINTEXT_ID),
+            },// 9
+            new Interned[]{
+                    new Interned("blockquote", ELEMENT_BLOCKQUOTE_ID),
+                    new Interned("figcaption", ELEMENT_FIGCAPTION_ID),
+            }
+    };
 
     static boolean isSpecialCategory(Element element) {
     	String nodeName = element.nodeName;

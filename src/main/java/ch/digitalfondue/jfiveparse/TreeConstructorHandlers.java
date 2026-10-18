@@ -1312,7 +1312,7 @@ final class TreeConstructorHandlers {
                  ELEMENT_S_ID, ELEMENT_SMALL_ID, ELEMENT_STRIKE_ID, ELEMENT_STRONG_ID, ELEMENT_TT_ID, ELEMENT_U_ID:
                 startBU(treeConstructor);
                 break;
-            case ELEMENT_NO_BR_ID:
+            case ELEMENT_NOBR_ID:
                 startNobr(treeConstructor);
                 break;
             case ELEMENT_APPLET_ID, ELEMENT_MARQUEE_ID, ELEMENT_OBJECT_ID:
@@ -1580,9 +1580,9 @@ final class TreeConstructorHandlers {
 
     private static void startNobr(TreeConstructor treeConstructor) {
         treeConstructor.activeFormattingElements.reconstruct(); // we know it's NOBR
-        if (treeConstructor.hasElementInScope(ELEMENT_NO_BR_ID)) {
+        if (treeConstructor.hasElementInScope(ELEMENT_NOBR_ID)) {
             treeConstructor.emitParseError();
-            treeConstructor.adoptionAgencyAlgorithm(ELEMENT_NO_BR_ID);
+            treeConstructor.adoptionAgencyAlgorithm(ELEMENT_NOBR_ID);
             treeConstructor.activeFormattingElements.reconstruct();
         }
         Element nobr = treeConstructor.insertHtmlElementToken();
@@ -1849,7 +1849,7 @@ final class TreeConstructorHandlers {
                 endH1H6(tagNameID, treeConstructor);
                 break;
             case ELEMENT_A_ID, ELEMENT_B_ID, ELEMENT_BIG_ID, ELEMENT_CODE_ID, ELEMENT_EM_ID, ELEMENT_FONT_ID,
-                 ELEMENT_I_ID, ELEMENT_NO_BR_ID, ELEMENT_S_ID, ELEMENT_SMALL_ID, ELEMENT_STRIKE_ID, ELEMENT_STRONG_ID,
+                 ELEMENT_I_ID, ELEMENT_NOBR_ID, ELEMENT_S_ID, ELEMENT_SMALL_ID, ELEMENT_STRIKE_ID, ELEMENT_STRONG_ID,
                  ELEMENT_TT_ID, ELEMENT_U_ID:
                 treeConstructor.adoptionAgencyAlgorithm(tagNameID);
                 break;
@@ -2140,7 +2140,7 @@ final class TreeConstructorHandlers {
                                 ELEMENT_LISTING_ID == tagNameID || //
                                 ELEMENT_MENU_ID == tagNameID || //
                                 ELEMENT_META_ID == tagNameID || //
-                                ELEMENT_NO_BR_ID == tagNameID || //
+                                ELEMENT_NOBR_ID == tagNameID || //
                                 ELEMENT_OL_ID == tagNameID || //
                                 ELEMENT_P_ID == tagNameID || //
                                 ELEMENT_PRE_ID == tagNameID || //
