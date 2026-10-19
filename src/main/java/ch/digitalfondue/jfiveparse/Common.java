@@ -279,9 +279,9 @@ final class Common {
         if (attrs == null || attrs.attributes == null) {
             return;
         }
-        int attrSize = attrs.attributes.size();
+        int attrSize = attrs.count;
         for (int i = 0; i < attrSize; i++) {
-            var attr = attrs.attributes.get(i);
+            var attr = attrs.attributes[i];
             var toReplace = SVG_ATTRIBUTES.get(attr.name);
             if (toReplace != null) {
                 attr.name = toReplace;
@@ -310,9 +310,9 @@ final class Common {
             return;
         }
 
-        int attrsCount = attrs.attributes.size();
+        int attrsCount = attrs.count;
         for (int i = 0; i < attrsCount; i++) {
-            var attr = attrs.attributes.get(i);
+            var attr = attrs.attributes[i];
             var adjust = FOREIGN_ATTRIBUTES_TO_ADJUST.get(attr.name);
             if (adjust != null) {
                 attr.prefix = adjust[0];

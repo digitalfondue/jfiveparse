@@ -19,13 +19,15 @@ import java.util.*;
 
 public final class Attributes implements Iterable<AttributeNode> {
 
-    ArrayList<AttributeNode> attributes;
+    AttributeNode[] attributes;
+    int count;
 
     public Attributes() {
     }
 
     public Attributes(Map<String, AttributeNode> attributes) {
-        this.attributes = new ArrayList<>(attributes.values());
+        this.attributes = attributes.values().toArray(new AttributeNode[0]);
+        this.count = attributes.size();
     }
 
     public boolean containsKey(String key) {
@@ -34,21 +36,36 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     @Override
     public boolean equals(Object obj) {
-        return this == obj || (obj instanceof Attributes a && Objects.equals(attributes, a.attributes));
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Attributes a) || count != a.count) {
+            return false;
+        }
+        for (int i = 0; i < count; i++) {
+            if (!Objects.equals(attributes[i], a.attributes[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(attributes);
+        int result = 0;
+        for (int i = 0; i < count; i++) {
+            result = 31 * result + Objects.hashCode(attributes[i]);
+        }
+        return result;
     }
 
     public Attributes copy() {
         Attributes a = new Attributes();
         if (attributes != null) {
-            var size = attributes.size();
-            a.attributes = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                a.attributes.add(new AttributeNode(attributes.get(i)));
+            a.attributes = new AttributeNode[count];
+            a.count = count;
+            for (int i = 0; i < count; i++) {
+                a.attributes[i] = new AttributeNode(attributes[i]);
             }
             return a;
         }
@@ -59,9 +76,8 @@ public final class Attributes implements Iterable<AttributeNode> {
         if (attributes == null) {
             return null;
         }
-        var size = attributes.size();
-        for (int i = 0; i < size; i++) {
-            var attr = attributes.get(i);
+        for (int i = 0; i < count; i++) {
+            var attr = attributes[i];
             if (Objects.equals(attr.getName(), key)) {
                 return attr;
             }
@@ -71,22 +87,29 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     void ensureAttributes() {
         if (attributes == null) {
-            attributes = new ArrayList<>(3);
+            attributes = new AttributeNode[3];
         }
     }
 
     public void put(AttributeNode attribute) {
         ensureAttributes();
         // replace
-        var attrSize = attributes.size();
-        for (var i = 0; i < attrSize; i++) {
-            if (Objects.equals(attribute.getName(), attributes.get(i).getName())) {
-                attributes.set(i, attribute); // replace
+        for (var i = 0; i < count; i++) {
+            if (Objects.equals(attribute.getName(), attributes[i].getName())) {
+                attributes[i] = attribute; // replace
                 return;
             }
         }
         // add if not present
-        attributes.add(attribute);
+        add(attribute);
+    }
+
+    void add(AttributeNode attributeNode) {
+        if (count == attributes.length) {
+            attributes = Arrays.copyOf(attributes, attributes.length + 3);
+        }
+        attributes[count] = attributeNode;
+        count++;
     }
 
     public void put(String key, String value) {
@@ -97,22 +120,26 @@ public final class Attributes implements Iterable<AttributeNode> {
         if (attributes == null) {
             return;
         }
-        var attrSize = attributes.size();
-        for (var i = 0; i < attrSize; i++) {
-            if (Objects.equals(key, attributes.get(i).getName())) {
-                attributes.remove(i);
+        for (var i = 0; i < count; i++) {
+            if (Objects.equals(key, attributes[i].getName())) {
+                // identify how many we need to shift left:
+                int amountToShiftLeft = count - i - 1;
+                // shift left
+                System.arraycopy(attributes, i + 1, attributes, i, amountToShiftLeft);
+                // set to null last element
+                attributes[--count] = null;
                 return;
             }
         }
     }
 
     public boolean isEmpty() {
-        return attributes == null || attributes.isEmpty();
+        return attributes == null || count == 0;
     }
 
     @Override
     public Iterator<AttributeNode> iterator() {
-        return attributes == null ? Collections.emptyIterator() : attributes.iterator();
+        return attributes == null ? Collections.emptyIterator() : Arrays.stream(attributes, 0, count).iterator();
     }
 
     public String getNamedItem(String name) {
