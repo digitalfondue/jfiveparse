@@ -85,7 +85,7 @@ public final class Attributes implements Iterable<AttributeNode> {
         return null;
     }
 
-    void ensureAttributes() {
+    private void ensureAttributes() {
         if (attributes == null) {
             attributes = new AttributeNode[3];
         }
@@ -105,6 +105,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     void add(AttributeNode attributeNode) {
+        ensureAttributes();
         if (count == attributes.length) {
             attributes = Arrays.copyOf(attributes, attributes.length + 3);
         }
