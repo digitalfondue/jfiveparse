@@ -276,11 +276,10 @@ final class Common {
     }
 
     static void adjustSVGAttributes(Attributes attrs) {
-        if (attrs == null || attrs.attributes == null) {
+        if (attrs == null || attrs.count == 0) {
             return;
         }
-        int attrSize = attrs.count;
-        for (int i = 0; i < attrSize; i++) {
+        for (int i = 0; i < attrs.count; i++) {
             var attr = attrs.attributes[i];
             var toReplace = SVG_ATTRIBUTES.get(attr.name);
             if (toReplace != null) {
@@ -306,12 +305,10 @@ final class Common {
 
     static void adjustForeignAttributes(Attributes attrs) {
 
-        if (attrs == null || attrs.attributes == null) {
+        if (attrs == null || attrs.count == 0) {
             return;
         }
-
-        int attrsCount = attrs.count;
-        for (int i = 0; i < attrsCount; i++) {
+        for (int i = 0; i < attrs.count; i++) {
             var attr = attrs.attributes[i];
             var adjust = FOREIGN_ATTRIBUTES_TO_ADJUST.get(attr.name);
             if (adjust != null) {
