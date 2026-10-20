@@ -50,8 +50,12 @@ public final class Attributes implements Iterable<AttributeNode> {
         if (!(obj instanceof Attributes a) || count != a.count) {
             return false;
         }
+
+        // order of insertion is not important
         for (int i = 0; i < count; i++) {
-            if (!Objects.equals(attributes[i], a.attributes[i])) {
+            var attr = attributes[i];
+            var aAttr = a.get(attr.name);
+            if (aAttr == null || !Objects.equals(attr, aAttr)) {
                 return false;
             }
         }
@@ -62,7 +66,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     public int hashCode() {
         int result = 0;
         for (int i = 0; i < count; i++) {
-            result = 31 * result + Objects.hashCode(attributes[i]);
+            result = result + Objects.hashCode(attributes[i]);
         }
         return result;
     }
