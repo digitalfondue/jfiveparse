@@ -86,12 +86,6 @@ public final class Element extends Node implements SelectableElement<Node> {
         this.attributes = attributes;
     }
 
-    private void ensureAttributesPresence() {
-        if (attributes == null) {
-            this.attributes = new Attributes();
-        }
-    }
-
     /**
      * @see Node#getChildNodes().
      */
@@ -239,7 +233,9 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     public Attributes getAttributes() {
-        ensureAttributesPresence();
+        if (attributes == null) {
+            attributes = new Attributes();
+        }
         return attributes;
     }
 
@@ -274,7 +270,9 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @param value
      */
     public void setAttribute(String name, String value) {
-        ensureAttributesPresence();
+        if (attributes == null) {
+            attributes = new Attributes();
+        }
         attributes.put(Common.convertToAsciiLowerCase(name), value);
     }
 

@@ -1249,14 +1249,12 @@ final class TreeConstructorHandlers {
                 // we ignore the token if template is present
                 if (!treeConstructor.stackOfOpenElementsContainsElementTemplateAndNamespaceHtml()) {
                     Element firstInserted = treeConstructor.openElementAt(0);
-                    if (treeConstructor.getAttributes() != null) {
-                        var attrs = treeConstructor.getAttributes().attributes;
-                        if (attrs != null) {
-                            Attributes firstInsertedAttrs = firstInserted.getAttributes();
-                            for (AttributeNode attr : attrs) {
-                                if (!firstInsertedAttrs.containsKey(attr.name)) {
-                                    firstInsertedAttrs.put(attr);
-                                }
+                    Attributes attrs = treeConstructor.getAttributes();
+                    if (attrs != null) {
+                        Attributes firstInsertedAttrs = firstInserted.getAttributes();
+                        for (AttributeNode attr : attrs) {
+                            if (!firstInsertedAttrs.containsKey(attr.name)) {
+                                firstInsertedAttrs.put(attr);
                             }
                         }
                     }
@@ -1789,14 +1787,12 @@ final class TreeConstructorHandlers {
         } else {
             treeConstructor.framesetOkToFalse();
             Element secondInserted = treeConstructor.openElementAt(1);
-            if (treeConstructor.getAttributes() != null) {
-                var attrs = treeConstructor.getAttributes().attributes;
-                if (attrs != null) {
-                    Attributes secondInsertedAttrs = secondInserted.getAttributes();
-                    for (AttributeNode attr : attrs) {
-                        if (!secondInsertedAttrs.containsKey(attr.name)) {
-                            secondInsertedAttrs.put(attr);
-                        }
+            Attributes attrs = treeConstructor.getAttributes();
+            if (attrs != null) {
+                Attributes secondInsertedAttrs = secondInserted.getAttributes();
+                for (AttributeNode attr : attrs) {
+                    if (!secondInsertedAttrs.containsKey(attr.name)) {
+                        secondInsertedAttrs.put(attr);
                     }
                 }
             }
