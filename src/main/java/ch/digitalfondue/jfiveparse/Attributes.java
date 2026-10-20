@@ -25,9 +25,17 @@ public final class Attributes implements Iterable<AttributeNode> {
     public Attributes() {
     }
 
+    public Attributes(Collection<AttributeNode> attributes) {
+        if (attributes == null) {
+            return;
+        }
+        for (var a : attributes) {
+            put(a);
+        }
+    }
+
     public Attributes(Map<String, AttributeNode> attributes) {
-        this.attributes = attributes.values().toArray(new AttributeNode[0]);
-        this.count = attributes.size();
+        this(attributes.values());
     }
 
     public boolean containsKey(String key) {
@@ -104,6 +112,7 @@ public final class Attributes implements Iterable<AttributeNode> {
         add(attribute);
     }
 
+    // add without checking if the attribute name is already present
     void add(AttributeNode attributeNode) {
         ensureAttributes();
         if (count == attributes.length) {
