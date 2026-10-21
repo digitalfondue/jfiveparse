@@ -19,8 +19,8 @@ import java.util.Objects;
 
 public final class ProcessingInstruction extends Node {
 
-    private String target;
-    private String data;
+    private final String target;
+    private final String data;
 
     public ProcessingInstruction(String target, String data) {
         this.target = target;
