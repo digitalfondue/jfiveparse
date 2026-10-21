@@ -19,7 +19,8 @@ import java.util.*;
 
 public final class Attributes implements Iterable<AttributeNode> {
 
-    AttributeNode[] attributes;
+    // either an AttributeNode (single attribute, the common case) or an AttributeNode[]
+    Object attributes;
     int count;
 
     public Attributes() {
@@ -53,7 +54,7 @@ public final class Attributes implements Iterable<AttributeNode> {
 
         // order of insertion is not important
         for (int i = 0; i < count; i++) {
-            var attr = attributes[i];
+            var attr = attributeAt(i);
             var aAttr = a.get(attr.name);
             if (aAttr == null || !Objects.equals(attr, aAttr)) {
                 return false;
@@ -66,49 +67,66 @@ public final class Attributes implements Iterable<AttributeNode> {
     public int hashCode() {
         int result = 0;
         for (int i = 0; i < count; i++) {
-            result = result + Objects.hashCode(attributes[i]);
+            result = result + Objects.hashCode(attributeAt(i));
         }
         return result;
     }
 
+    AttributeNode attributeAt(int index) {
+        return attributes instanceof AttributeNode[] arr ? arr[index] : (AttributeNode) attributes;
+    }
+
     public Attributes copy() {
         Attributes a = new Attributes();
-        if (attributes != null) {
-            a.attributes = new AttributeNode[count];
-            a.count = count;
+        if (attributes instanceof AttributeNode single) {
+            a.attributes = new AttributeNode(single);
+            a.count = 1;
+        } else if (attributes instanceof AttributeNode[] arr) {
+            var newArr = new AttributeNode[count];
             for (int i = 0; i < count; i++) {
-                a.attributes[i] = new AttributeNode(attributes[i]);
+                newArr[i] = new AttributeNode(arr[i]);
             }
-            return a;
+            a.attributes = newArr;
+            a.count = count;
         }
         return a;
     }
 
     public AttributeNode get(String key) {
-        if (attributes == null) {
-            return null;
+        if (attributes instanceof AttributeNode single) {
+            return Objects.equals(single.getName(), key) ? single : null;
         }
-        for (int i = 0; i < count; i++) {
-            var attr = attributes[i];
-            if (Objects.equals(attr.getName(), key)) {
-                return attr;
+        if (attributes instanceof AttributeNode[] arr) {
+            for (int i = 0; i < count; i++) {
+                var attr = arr[i];
+                if (Objects.equals(attr.getName(), key)) {
+                    return attr;
+                }
             }
         }
         return null;
     }
 
-    private void ensureAttributes() {
-        if (attributes == null) {
-            attributes = new AttributeNode[3];
-        }
-    }
-
     public void put(AttributeNode attribute) {
-        ensureAttributes();
+        if (attributes == null) {
+            attributes = attribute;
+            count = 1;
+            return;
+        }
+        if (attributes instanceof AttributeNode single) {
+            if (Objects.equals(attribute.getName(), single.getName())) {
+                attributes = attribute; // replace
+            } else {
+                attributes = new AttributeNode[] { single, attribute };
+                count = 2;
+            }
+            return;
+        }
+        var arr = (AttributeNode[]) attributes;
         // replace
         for (var i = 0; i < count; i++) {
-            if (Objects.equals(attribute.getName(), attributes[i].getName())) {
-                attributes[i] = attribute; // replace
+            if (Objects.equals(attribute.getName(), arr[i].getName())) {
+                arr[i] = attribute; // replace
                 return;
             }
         }
@@ -118,12 +136,21 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     // add without checking if the attribute name is already present
     void add(AttributeNode attributeNode) {
-        ensureAttributes();
-        if (count == attributes.length) {
-            attributes = Arrays.copyOf(attributes, attributes.length + 3);
+        if (attributes == null) {
+            attributes = attributeNode;
+            count = 1;
+        } else if (attributes instanceof AttributeNode single) {
+            attributes = new AttributeNode[] { single, attributeNode };
+            count = 2;
+        } else {
+            var arr = (AttributeNode[]) attributes;
+            if (count == arr.length) {
+                arr = Arrays.copyOf(arr, arr.length + 3);
+                attributes = arr;
+            }
+            arr[count] = attributeNode;
+            count++;
         }
-        attributes[count] = attributeNode;
-        count++;
     }
 
     public void put(String key, String value) {
@@ -131,18 +158,28 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void remove(String key) {
-        if (attributes == null) {
+        if (attributes instanceof AttributeNode single) {
+            if (Objects.equals(key, single.getName())) {
+                attributes = null;
+                count = 0;
+            }
             return;
         }
-        for (var i = 0; i < count; i++) {
-            if (Objects.equals(key, attributes[i].getName())) {
-                // identify how many we need to shift left:
-                int amountToShiftLeft = count - i - 1;
-                // shift left
-                System.arraycopy(attributes, i + 1, attributes, i, amountToShiftLeft);
-                // set to null last element
-                attributes[--count] = null;
-                return;
+        if (attributes instanceof AttributeNode[] arr) {
+            for (var i = 0; i < count; i++) {
+                if (Objects.equals(key, arr[i].getName())) {
+                    // identify how many we need to shift left:
+                    int amountToShiftLeft = count - i - 1;
+                    // shift left
+                    System.arraycopy(arr, i + 1, arr, i, amountToShiftLeft);
+                    // set to null last element
+                    arr[--count] = null;
+                    // collapse back to a single attribute when possible
+                    if (count == 1) {
+                        attributes = arr[0];
+                    }
+                    return;
+                }
             }
         }
     }
@@ -153,7 +190,10 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     @Override
     public Iterator<AttributeNode> iterator() {
-        return attributes == null ? Collections.emptyIterator() : Arrays.stream(attributes, 0, count).iterator();
+        if (attributes instanceof AttributeNode single) {
+            return Collections.singleton(single).iterator();
+        }
+        return attributes == null ? Collections.emptyIterator() : Arrays.stream((AttributeNode[]) attributes, 0, count).iterator();
     }
 
     public String getNamedItem(String name) {
