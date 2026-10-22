@@ -280,7 +280,7 @@ final class Common {
             return;
         }
         for (int i = 0; i < attrs.count; i++) {
-            var attr = attrs.attributes[i];
+            var attr = attrs.attributeAt(i);
             var toReplace = SVG_ATTRIBUTES.get(attr.name);
             if (toReplace != null) {
                 attr.name = toReplace;
@@ -309,7 +309,7 @@ final class Common {
             return;
         }
         for (int i = 0; i < attrs.count; i++) {
-            var attr = attrs.attributes[i];
+            var attr = attrs.attributeAt(i);
             var adjust = FOREIGN_ATTRIBUTES_TO_ADJUST.get(attr.name);
             if (adjust != null) {
                 attr.prefix = adjust[0];
