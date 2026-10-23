@@ -377,4 +377,13 @@ class NodeTest {
         assertTrue(JFiveParse.parse("<html><body>hello</body></html>").isEqualNode(JFiveParse.parse("<html><body>hello</body></html>")));
         assertFalse(JFiveParse.parse("<!DOCTYPE html><html><body>hello</body></html>").isEqualNode(JFiveParse.parse("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html><body>hello</body></html>")));
     }
+
+    @Test
+    void replaceChildWithItself() {
+        Element e = (Element) parser.parseFragment(new Element("div"), "<div><a></a><b></b></div>").get(0);
+        Node b = e.getChildNodes().get(1);
+        e.replaceChild(b, b);
+        assertEquals("<div><a></a><b></b></div>", e.getOuterHTML());
+        assertSame(e, b.getParentNode());
+    }
 }

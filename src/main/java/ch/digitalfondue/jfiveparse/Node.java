@@ -225,6 +225,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     public void replaceChild(Node node, Node oldChild) {
         Objects.requireNonNull(node);
         Objects.requireNonNull(oldChild);
+        if (node == oldChild) {
+            return;
+        }
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
