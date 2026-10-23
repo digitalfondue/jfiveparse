@@ -379,6 +379,27 @@ class NodeTest {
     }
 
     @Test
+    void insertChildrenMoveExistingChild() {
+        Element e = (Element) parser.parseFragment(new Element("div"), "<div><a></a><b></b><c></c></div>").get(0);
+        Node c = e.getChildNodes().get(2);
+        e.insertChildren(0, c);
+        assertEquals("<div><c></c><a></a><b></b></div>", e.getOuterHTML());
+        assertEquals(3, e.getChildCount());
+        assertSame(e, c.getParentNode());
+    }
+
+    @Test
+    void replaceChildWithExistingSibling() {
+        Element e = (Element) parser.parseFragment(new Element("div"), "<div><a></a><b></b><c></c></div>").get(0);
+        Node a = e.getChildNodes().get(0);
+        Node c = e.getChildNodes().get(2);
+        e.replaceChild(c, a);
+        assertEquals("<div><c></c><b></b></div>", e.getOuterHTML());
+        assertSame(e, c.getParentNode());
+        assertNull(a.getParentNode());
+    }
+
+    @Test
     void replaceChildWithItself() {
         Element e = (Element) parser.parseFragment(new Element("div"), "<div><a></a><b></b></div>").get(0);
         Node b = e.getChildNodes().get(1);

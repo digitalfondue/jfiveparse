@@ -183,17 +183,27 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         }
 
         Node previousParent = node.parentNode;
-        node.parentNode = this;
 
-        if (position == childs.size()) {
-            childs.add(node);
-        } else {
-            childs.add(position, node);
-        }
-
-        if (previousParent != null) {
+        // case where we insert/move existing child
+        if (previousParent == this) {
+            int currentIndex = childs.indexOf(node);
+            if (currentIndex >= 0) {
+                childs.remove(currentIndex);
+                if (currentIndex < position) {
+                    // adjust position
+                    // example childs [a 0, b 1, c 2, d 3]
+                    // b: currentIndex 1, position 3
+                    // after removing, we got [a, c, d]
+                    // the position cannot be 4, but it should 3
+                    position--;
+                }
+            }
+        } else if (previousParent != null) {
             previousParent.getMutableChildNodes().remove(node);
         }
+
+        node.parentNode = this;
+        childs.add(position, node);
     }
 
     /**
@@ -233,15 +243,29 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
             return;
         }
         int idx = childs.indexOf(oldChild);
-        if (idx >= 0) {
-            Node previousParent = node.parentNode;
-            node.parentNode = this;
-            childs.set(idx, node);
-            if (previousParent != null) {
-                previousParent.getMutableChildNodes().remove(node);
-            }
-            oldChild.parentNode = null;
+        if (idx < 0) {
+            return;
         }
+
+
+        Node previousParent = node.parentNode;
+        if (previousParent == this) {
+            // handle case node has the same parent as before
+            int currentIndex = childs.indexOf(node);
+            if (currentIndex >= 0) {
+                // we need to adjust the idx,
+                // as we remove it and will shift all
+                childs.remove(currentIndex);
+                if (currentIndex < idx) {
+                    idx--;
+                }
+            }
+        } else if (previousParent != null) {
+            previousParent.getMutableChildNodes().remove(node);
+        }
+        node.parentNode = this;
+        childs.set(idx, node);
+        oldChild.parentNode = null;
     }
 
     /**
