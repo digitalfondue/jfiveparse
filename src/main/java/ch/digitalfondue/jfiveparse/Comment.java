@@ -58,4 +58,14 @@ public final class Comment extends Node {
     public boolean isEqualNode(Node other) {
         return this == other || (other instanceof Comment c && Objects.equals(data, c.data));
     }
+
+    @Override
+    public String getTextContent() {
+        return data;
+    }
+
+    @Override
+    public void setTextContent(String text) {
+        setData(text);
+    }
 }

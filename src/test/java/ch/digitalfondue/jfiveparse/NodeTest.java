@@ -199,6 +199,7 @@ class NodeTest {
         Element e = doc.getElementById("myid");
         Element cont = doc.getElementById("cont");
         assertTrue(cont.contains(e));
+        assertTrue(cont.contains(cont)); // should contain itself
         assertFalse(e.contains(cont));
     }
 

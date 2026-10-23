@@ -49,6 +49,15 @@ public final class DocumentType extends Node {
         return systemId;
     }
 
+    @Override
+    public String getTextContent() {
+        return null;
+    }
+
+    @Override
+    public void setTextContent(String text) {
+    }
+
     /**
      * Return the {@link String} "#doctype".
      */

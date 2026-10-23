@@ -497,14 +497,13 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     }
 
     /**
-     * Return true if node is descendant.
+     * Return true if node is this node or a descendant of this node.
      *
      * @param node
      * @return
      */
     public boolean contains(Node node) {
-        // check same reference
-        return getAllNodesMatchingAsStream(new NodeMatcher<>((n, b) -> n.isSameNode(node)), true, this).anyMatch(s -> true);
+        return isSameNode(node) || getAllNodesMatchingAsStream(new NodeMatcher<>((n, b) -> n.isSameNode(node)), true, this).anyMatch(s -> true);
     }
 
     /**
@@ -514,9 +513,6 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     public String getTextContent() {
         if (!hasChildNodes()) {
             return "";
-        }
-        if (this instanceof Text t) {
-            return t.getData();
         }
         StringBuilder sb = new StringBuilder();
         traverse((n) -> {
@@ -529,7 +525,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 
     public void setTextContent(String text) {
         empty();
-        appendChild(new Text(text));
+        if (text != null && !text.isEmpty()) {
+            appendChild(new Text(text));
+        }
     }
 
     /**

@@ -96,6 +96,15 @@ public final class Document extends Node {
         }
     }
 
+    @Override
+    public String getTextContent() {
+        return null;
+    }
+
+    @Override
+    public void setTextContent(String text) {
+    }
+
     /**
      * Return the {@link String} "#document".
      */

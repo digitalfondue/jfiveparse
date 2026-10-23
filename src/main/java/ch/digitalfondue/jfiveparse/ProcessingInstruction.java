@@ -20,7 +20,7 @@ import java.util.Objects;
 public final class ProcessingInstruction extends Node {
 
     private final String target;
-    private final String data;
+    private String data;
 
     public ProcessingInstruction(String target, String data) {
         this.target = target;
@@ -33,6 +33,10 @@ public final class ProcessingInstruction extends Node {
 
     public String getData() {
         return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     @Override
@@ -53,5 +57,15 @@ public final class ProcessingInstruction extends Node {
     @Override
     public boolean isEqualNode(Node other) {
         return this == other || (other instanceof ProcessingInstruction pi && Objects.equals(target, pi.target) && Objects.equals(data, pi.data));
+    }
+
+    @Override
+    public String getTextContent() {
+        return data;
+    }
+
+    @Override
+    public void setTextContent(String text) {
+        setData(text);
     }
 }
