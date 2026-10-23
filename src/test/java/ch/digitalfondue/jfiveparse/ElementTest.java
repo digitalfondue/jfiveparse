@@ -157,6 +157,49 @@ class ElementTest {
     }
 
     @Test
+    void insertAdjacentHTMLAfterBeginOnEmptyElement() {
+        Element empty = new Element("div");
+        empty.insertAdjacentHTML("afterbegin", "<h1>1</h1><h2>2</h2>");
+        assertEquals("<div><h1>1</h1><h2>2</h2></div>", empty.getOuterHTML());
+    }
+
+    @Test
+    void insertAdjacentElementAfterBeginOnEmptyElement() {
+        Element empty = new Element("div");
+        empty.insertAdjacentElement("afterbegin", new Element("span"));
+        assertEquals("<div><span></span></div>", empty.getOuterHTML());
+    }
+
+    @Test
+    void insertAdjacentElementAfterEndReparent() {
+        Document doc = parser.parse("<div id=a><span id=s></span></div><div id=b></div>");
+        Element a = doc.getElementById("a");
+        Element b = doc.getElementById("b");
+        Element s = doc.getElementById("s");
+        b.insertAdjacentElement("afterend", s);
+        assertEquals("<div id=\"a\"></div>", a.getOuterHTML());
+        assertEquals(0, b.getChildCount());
+        assertSame(b.getParentNode(), s.getParentNode());
+    }
+
+    @Test
+    void insertAdjacentElementSameParent() {
+        Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><a></a><b></b><c></c></div>").get(0);
+        Element a = (Element) startNode.getChildNodes().get(0);
+        Element b = (Element) startNode.getChildNodes().get(1);
+        a.insertAdjacentElement("beforebegin", b);
+        assertEquals("<div><b></b><a></a><c></c></div>", startNode.getOuterHTML());
+    }
+
+    @Test
+    void insertAdjacentHTMLNonElementParent() {
+        Document doc = parser.parse("<html><body></body></html>");
+        Element html = doc.getDocumentElement();
+        assertThrows(ParserException.class, () -> html.insertAdjacentHTML("beforebegin", "<div></div>"));
+        assertThrows(ParserException.class, () -> html.insertAdjacentHTML("afterend", "<div></div>"));
+    }
+
+    @Test
     void checkAttributes() {
         Element div = new Element("div");
         assertTrue(div.getAttributes().isEmpty());
