@@ -66,6 +66,6 @@ public final class ProcessingInstruction extends Node {
 
     @Override
     public void setTextContent(String text) {
-        setData(text);
+        setData(text == null ? "" : text);
     }
 }

@@ -148,6 +148,26 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     }
 
     /**
+     * Reject insertions that would create a cycle (a node being inserted as a
+     * child/descendant of itself), which would otherwise lead to infinite
+     * recursion during traversal/serialization.
+     */
+    private void ensureNoCycle(Node node) {
+        if (node == this) {
+            throw new ParserException("A node cannot be inserted as a child of itself.");
+        }
+        // a node without children cannot be an ancestor of this node
+        if (node.getChildCount() == 0) {
+            return;
+        }
+        for (Node p = parentNode; p != null; p = p.parentNode) {
+            if (p == node) {
+                throw new ParserException("A node cannot be inserted as a descendant of itself.");
+            }
+        }
+    }
+
+    /**
      * Append the {@link Node} at the end of this node. If the node has a
      * parentNode defined, it will be removed from the original parent.
      */
@@ -177,6 +197,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void insertChildren(int position, Node node) {
         Objects.requireNonNull(node);
+        ensureNoCycle(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
@@ -217,7 +238,11 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void insertBefore(Node toInsert, Node before) {
         Objects.requireNonNull(toInsert);
-        Objects.requireNonNull(before);
+        // per the DOM spec, a null reference node means "append at the end"
+        if (before == null) {
+            appendChild(toInsert);
+            return;
+        }
         int idx = getRawChildNodes().indexOf(before);
         if (idx >= 0) {
             insertChildren(idx, toInsert);
@@ -238,6 +263,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         if (node == oldChild) {
             return;
         }
+        ensureNoCycle(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;

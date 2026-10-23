@@ -75,7 +75,7 @@ public final class Text extends Node {
 
     @Override
     public void setTextContent(String text) {
-        setData(text);
+        setData(text == null ? "" : text);
     }
 
     @Override

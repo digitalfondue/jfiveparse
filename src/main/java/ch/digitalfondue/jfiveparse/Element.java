@@ -59,17 +59,15 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
-        // TODO: check, name should be lower cased for first and second parameter
-        //       this will cause issue with:
-        //       #data
-        //       <figure></figure>
-        //       #errors
-        //       #document-fragment
-        //       svg foreignObject
-        //       #document
-        //       | <figure>
-        //       due to the fact that we are losing the case of foreignObject: to evaluate when we can lowercase safely
-        this(name, Common.tagNameToID(Common.convertToAsciiLowerCase(name)), name, nameSpace, Node.toNamespaceId(nameSpace), attributes);
+        // HTML element names are ASCII case-insensitive and are normalized to
+        // lower case (matching the parser). Foreign (SVG/MathML/XML) names must
+        // keep their original case (e.g. "foreignObject").
+        this(Node.NAMESPACE_HTML.equals(nameSpace) ? Common.convertToAsciiLowerCase(name) : name,
+                Common.tagNameToID(Common.convertToAsciiLowerCase(name)),
+                name,
+                nameSpace,
+                Node.toNamespaceId(nameSpace),
+                attributes);
     }
 
     Element(String name,
@@ -129,14 +127,19 @@ public final class Element extends Node implements SelectableElement<Node> {
         return namespaceURI;
     }
 
-    // case-sensitive check
     public boolean containsAttribute(String name) {
-        return attributes != null && attributes.containsKey(name);
+        return attributes != null && attributes.containsKey(Common.convertToAsciiLowerCase(name));
     }
 
     @Override
     public String getAttributeValue(String name) {
-        return attributes != null ? attributes.getNamedItem(name) : null;
+        if (attributes == null) {
+            return null;
+        }
+        // HTML attribute names are ASCII case-insensitive; foreign attribute
+        // names are case-sensitive.
+        String key = namespaceID == Node.NAMESPACE_HTML_ID ? Common.convertToAsciiLowerCase(name) : name;
+        return attributes.getNamedItem(key);
     }
 
     void setInnerHtml(List<Node> nodes) {

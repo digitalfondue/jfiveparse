@@ -124,12 +124,53 @@ public final class Document extends Node {
             return cloned;
         }
         for (Node child : childNodes) {
-            Node clonedChild = child.cloneNode(true);
+            // reuse the already cloned doctype so that getDoctype() is the same
+            // instance as the one present in the child list
+            Node clonedChild = child == doctype && cloned.doctype != null ? cloned.doctype : child.cloneNode(true);
             clonedChild.parentNode = cloned;
             cloned.childNodes.add(clonedChild);
         }
         return cloned;
 	}
+
+    /**
+     * Keep the {@link #doctype} field consistent with the child list after any
+     * structural mutation (a DocumentType is stored both as a field and as a
+     * regular child).
+     */
+    private void syncDoctype() {
+        for (Node child : childNodes) {
+            if (child instanceof DocumentType dt) {
+                doctype = dt;
+                return;
+            }
+        }
+        doctype = null;
+    }
+
+    @Override
+    public void insertChildren(int position, Node node) {
+        super.insertChildren(position, node);
+        syncDoctype();
+    }
+
+    @Override
+    public void replaceChild(Node node, Node oldChild) {
+        super.replaceChild(node, oldChild);
+        syncDoctype();
+    }
+
+    @Override
+    public void removeChild(Node node) {
+        super.removeChild(node);
+        syncDoctype();
+    }
+
+    @Override
+    public void empty() {
+        super.empty();
+        syncDoctype();
+    }
 
     @Override
     public boolean isEqualNode(Node other) {
