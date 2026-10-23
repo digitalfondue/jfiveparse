@@ -225,4 +225,13 @@ class ElementTest {
         Assertions.assertThrows(NullPointerException.class, () -> div.appendChild(null));
         Assertions.assertThrows(NullPointerException.class, () -> div.insertChildren(0, null));
     }
+
+    @Test
+    void htmlElementNameIsNormalizedToLowerCase() {
+        Element e = new Element("DIV");
+        assertEquals("div", e.getNodeName());
+        assertEquals("DIV", e.getTagName());
+        assertEquals("<div></div>", e.getOuterHTML());
+        assertTrue(e.matches("div"));
+    }
 }
