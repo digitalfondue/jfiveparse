@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.Objects;
 
+// TODO: need to align with the html dom api behaviour in term of case sensitive+namespace handling
 public final class AttributeNode {
 
     String name;

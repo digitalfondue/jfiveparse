@@ -20,6 +20,7 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
+// TODO: need to expose NS variant for attributes, + align more correctly with the dom spec for case sensitivity + namespace handling
 public final class Element extends Node implements SelectableElement<Node> {
 
     final String nodeName;

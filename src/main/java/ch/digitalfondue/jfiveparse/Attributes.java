@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
 
+// TODO: we need to 1) expose NS variant, 2) align with the dom api in term of case sensitive + namespace handling
 public final class Attributes implements Iterable<AttributeNode> {
 
     // either an AttributeNode (single attribute, the common case) or an AttributeNode[]
@@ -154,6 +155,8 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void put(String key, String value) {
+        // TODO, should have a reference to the parent, so we can set the namespace of the attribute node
+        //       if namespace is html -> key is lowercased
         put(new AttributeNode(key, value));
     }
 
