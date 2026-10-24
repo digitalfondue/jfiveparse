@@ -407,4 +407,40 @@ class NodeTest {
         assertEquals("<div><a></a><b></b></div>", e.getOuterHTML());
         assertSame(e, b.getParentNode());
     }
+
+    @Test
+    void compactChildStorageTransitions() {
+        Element e = new Element("div");
+        Text a = new Text("a");
+        Text b = new Text("b");
+        Text c = new Text("c");
+
+        e.appendChild(a);
+        assertEquals(1, e.getChildCount());
+        assertSame(a, e.getFirstChild());
+        assertSame(a, e.getLastChild());
+
+        e.appendChild(b);
+        assertEquals(2, e.getChildCount());
+        assertSame(b, e.getLastChild());
+
+        e.appendChild(c);
+        assertEquals(3, e.getChildCount());
+
+        e.removeChild(a);
+        assertEquals(2, e.getChildCount());
+        assertSame(b, e.getFirstChild());
+        assertNull(a.getParentNode());
+
+        e.removeChild(b);
+        assertEquals(1, e.getChildCount());
+        assertSame(c, e.getFirstChild());
+        assertSame(c, e.getLastChild());
+        assertNull(b.getParentNode());
+
+        e.removeChild(c);
+        assertEquals(0, e.getChildCount());
+        assertFalse(e.hasChildNodes());
+        assertNull(c.getParentNode());
+    }
 }

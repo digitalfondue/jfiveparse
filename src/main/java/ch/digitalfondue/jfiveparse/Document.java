@@ -37,13 +37,43 @@ public final class Document extends Node {
     }
 
     @Override
-    List<Node> getMutableChildNodes() {
-        return childNodes;
+    boolean isChildContainer() {
+        return true;
     }
 
     @Override
-    List<Node> getRawChildNodes() {
-        return childNodes;
+    int getRawChildCount() {
+        return childNodes.size();
+    }
+
+    @Override
+    Node getRawChildAt(int index) {
+        return childNodes.get(index);
+    }
+
+    @Override
+    int indexOfRawChild(Node node) {
+        return childNodes.indexOf(node);
+    }
+
+    @Override
+    void addRawChild(int position, Node node) {
+        childNodes.add(position, node);
+    }
+
+    @Override
+    void removeRawChildAt(int index) {
+        childNodes.remove(index);
+    }
+
+    @Override
+    void setRawChildAt(int index, Node node) {
+        childNodes.set(index, node);
+    }
+
+    @Override
+    void clearRawChildren() {
+        childNodes.clear();
     }
 
     public void setDoctype(DocumentType doctype) {
@@ -61,8 +91,9 @@ public final class Document extends Node {
     private Element getChildOfDocumentElementMatching(int nameId1, int nameId2) {
         Element e = getFirstElementChild();
         if (e != null) {
-            for (Node c : e.getRawChildNodes()) {
-                if (c instanceof Element ce && NAMESPACE_HTML_ID == ce.namespaceID && (ce.nodeNameID == nameId1 || ce.nodeNameID == nameId2)) {
+            int count = e.getRawChildCount();
+            for (int i = 0; i < count; i++) {
+                if (e.getRawChildAt(i) instanceof Element ce && NAMESPACE_HTML_ID == ce.namespaceID && (ce.nodeNameID == nameId1 || ce.nodeNameID == nameId2)) {
                     return ce;
                 }
             }

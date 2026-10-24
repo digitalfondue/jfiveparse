@@ -516,7 +516,7 @@ class TreeConstructor {
             } else {
                 toInsert = place[0];
                 // insert before
-                position = toInsert.getRawChildNodes().indexOf(place[1]);
+                position = toInsert.indexOfRawChild(place[1]);
             }
             toInsert.insertChildren(position, lastNode);
 
@@ -531,7 +531,7 @@ class TreeConstructor {
             );
 
             // 16
-            List<Node> childs = new ArrayList<>(furthestBlock.getRawChildNodes());
+            List<Node> childs = furthestBlock.copyRawChildNodes();
             furthestBlock.empty();
             for (Node n : childs) {
                 elem.appendChild(n);
@@ -689,30 +689,26 @@ class TreeConstructor {
     // FIXME optimize(?)
     void insertCharacter(char charToInsert) {
         Node toInsert;
-        List<Node> nodes;
         int position;
 
 
         if (!fosterParentingEnabled) {
             toInsert = getCurrentNode();
-            nodes = toInsert.getRawChildNodes();
-            position = nodes.size();
+            position = toInsert.getRawChildCount();
         } else {
             Node[] place = findAppropriatePlaceForInsertingNode(null);
             if (place[1] == null) { // insert as a last child
                 toInsert = place[0];
-                nodes = toInsert.getRawChildNodes();
-                position = nodes.size();
+                position = toInsert.getRawChildCount();
             } else { // insert before
                 toInsert = place[0];
-                nodes = toInsert.getRawChildNodes();
-                position = nodes.indexOf(place[1]);
+                position = toInsert.indexOfRawChild(place[1]);
             }
         }
 
         Text t;
 
-        if (!nodes.isEmpty() && position > 0 && (nodes.get(position - 1)) instanceof Text lastText) {
+        if (position > 0 && toInsert.getRawChildAt(position - 1) instanceof Text lastText) {
             t = lastText;
             t.dataBuilder.append(charToInsert);
         } else {
@@ -737,7 +733,7 @@ class TreeConstructor {
             } else {
                 toInsert = place[0];
                 // insert before
-                position = toInsert.getRawChildNodes().indexOf(place[1]);
+                position = toInsert.indexOfRawChild(place[1]);
             }
 
         } else {
@@ -770,7 +766,7 @@ class TreeConstructor {
             } else {
                 toInsert = place[0];
                 // insert before
-                position = toInsert.getRawChildNodes().indexOf(place[1]);
+                position = toInsert.indexOfRawChild(place[1]);
             }
         } else {
             toInsert = openElements.get(openElements.size() - 1);

@@ -111,40 +111,69 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         return parentNode;
     }
 
-    List<Node> getMutableChildNodes() {
-        return EMPTY_LIST;
+    boolean isChildContainer() {
+        return false;
     }
 
-    /**
-     * Get the child nodes without generating allocations (wrapping with unmodifiable _or_ creating a mutable array).
-     *
-     * @return
-     */
-    List<Node> getRawChildNodes() {
-        return EMPTY_LIST;
+    int getRawChildCount() {
+        return 0;
+    }
+
+    Node getRawChildAt(int index) {
+        throw new IndexOutOfBoundsException("Index: " + index);
+    }
+
+    int indexOfRawChild(Node node) {
+        int count = getRawChildCount();
+        for (int i = 0; i < count; i++) {
+            if (getRawChildAt(i) == node) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    void addRawChild(int position, Node node) {
+    }
+
+    void removeRawChildAt(int index) {
+    }
+
+    void setRawChildAt(int index, Node node) {
+    }
+
+    void clearRawChildren() {
+    }
+
+    List<Node> copyRawChildNodes() {
+        int count = getRawChildCount();
+        var res = new ArrayList<Node>(count);
+        for (int i = 0; i < count; i++) {
+            res.add(getRawChildAt(i));
+        }
+        return res;
     }
 
     /**
      * Remove all child nodes from this node.
      */
     public void empty() {
-        List<Node> childs = getMutableChildNodes();
-        if (childs == EMPTY_LIST) {
+        if (!isChildContainer()) {
             return;
         }
 
-        for (Node n : childs) {
-            n.parentNode = null;
+        int count = getRawChildCount();
+        for (int i = 0; i < count; i++) {
+            getRawChildAt(i).parentNode = null;
         }
-
-        childs.clear();
+        clearRawChildren();
     }
 
     /**
      * Get the number of child of the current node.
      */
     public int getChildCount() {
-        return getRawChildNodes().size();
+        return getRawChildCount();
     }
 
     /**
@@ -153,17 +182,19 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void appendChild(Node node) {
         Objects.requireNonNull(node);
-        List<Node> childs = getMutableChildNodes();
-        if (childs == EMPTY_LIST) {
+        if (!isChildContainer()) {
             return;
         }
 
         if (node.parentNode == this) {
-            childs.remove(node);
+            int currentIndex = indexOfRawChild(node);
+            if (currentIndex >= 0) {
+                removeRawChildAt(currentIndex);
+            }
             node.parentNode = null;
         }
 
-        insertChildren(childs.size(), node);
+        insertChildren(getRawChildCount(), node);
     }
 
     /**
@@ -177,8 +208,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void insertChildren(int position, Node node) {
         Objects.requireNonNull(node);
-        List<Node> childs = getMutableChildNodes();
-        if (childs == EMPTY_LIST) {
+        if (!isChildContainer()) {
             return;
         }
 
@@ -186,9 +216,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 
         // case where we insert/move existing child
         if (previousParent == this) {
-            int currentIndex = childs.indexOf(node);
+            int currentIndex = indexOfRawChild(node);
             if (currentIndex >= 0) {
-                childs.remove(currentIndex);
+                removeRawChildAt(currentIndex);
                 if (currentIndex < position) {
                     // adjust position
                     // example childs [a 0, b 1, c 2, d 3]
@@ -199,11 +229,11 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
                 }
             }
         } else if (previousParent != null) {
-            previousParent.getMutableChildNodes().remove(node);
+            previousParent.removeChild(node);
         }
 
         node.parentNode = this;
-        childs.add(position, node);
+        addRawChild(position, node);
     }
 
     /**
@@ -218,7 +248,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     public void insertBefore(Node toInsert, Node before) {
         Objects.requireNonNull(toInsert);
         Objects.requireNonNull(before);
-        int idx = getRawChildNodes().indexOf(before);
+        int idx = indexOfRawChild(before);
         if (idx >= 0) {
             insertChildren(idx, toInsert);
         }
@@ -238,11 +268,10 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         if (node == oldChild) {
             return;
         }
-        List<Node> childs = getMutableChildNodes();
-        if (childs == EMPTY_LIST) {
+        if (!isChildContainer()) {
             return;
         }
-        int idx = childs.indexOf(oldChild);
+        int idx = indexOfRawChild(oldChild);
         if (idx < 0) {
             return;
         }
@@ -251,20 +280,20 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         Node previousParent = node.parentNode;
         if (previousParent == this) {
             // handle case node has the same parent as before
-            int currentIndex = childs.indexOf(node);
+            int currentIndex = indexOfRawChild(node);
             if (currentIndex >= 0) {
                 // we need to adjust the idx,
                 // as we remove it and will shift all
-                childs.remove(currentIndex);
+                removeRawChildAt(currentIndex);
                 if (currentIndex < idx) {
                     idx--;
                 }
             }
         } else if (previousParent != null) {
-            previousParent.getMutableChildNodes().remove(node);
+            previousParent.removeChild(node);
         }
         node.parentNode = this;
-        childs.set(idx, node);
+        setRawChildAt(idx, node);
         oldChild.parentNode = null;
     }
 
@@ -276,11 +305,12 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void removeChild(Node node) {
         Objects.requireNonNull(node);
-        List<Node> childs = getMutableChildNodes();
-        if (childs == EMPTY_LIST) {
+        if (!isChildContainer()) {
             return;
         }
-        if (childs.remove(node)) {
+        int idx = indexOfRawChild(node);
+        if (idx >= 0) {
+            removeRawChildAt(idx);
             node.parentNode = null;
         }
     }
@@ -297,8 +327,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * Get the first child, if present or else null.
      */
     public Node getFirstChild() {
-        List<Node> childs = getRawChildNodes();
-        return childs.isEmpty() ? null : childs.get(0);
+        return getRawChildCount() == 0 ? null : getRawChildAt(0);
     }
 
     /**
@@ -306,8 +335,8 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     @Override
     public Node getLastChild() {
-        List<Node> childs = getRawChildNodes();
-        return childs.isEmpty() ? null : childs.get(childs.size() - 1);
+        int count = getRawChildCount();
+        return count == 0 ? null : getRawChildAt(count - 1);
     }
 
     /**
@@ -316,8 +345,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     @Override
     public Element getFirstElementChild() {
-        for (Node n : getRawChildNodes()) {
-            if (n instanceof Element e) {
+        int count = getRawChildCount();
+        for (int i = 0; i < count; i++) {
+            if (getRawChildAt(i) instanceof Element e) {
                 return e;
             }
         }
@@ -330,10 +360,8 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     @Override
     public Element getLastElementChild() {
-        List<Node> childs = getRawChildNodes();
-        for (int i = childs.size() - 1; i >= 0; i--) {
-            Node n = childs.get(i);
-            if (n instanceof Element e) {
+        for (int i = getRawChildCount() - 1; i >= 0; i--) {
+            if (getRawChildAt(i) instanceof Element e) {
                 return e;
             }
         }
@@ -348,9 +376,8 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
             return null;
         }
 
-        List<Node> siblings = parentNode.getRawChildNodes();
-        int currentElemIdx = siblings.indexOf(this);
-        return currentElemIdx == 0 ? null : siblings.get(currentElemIdx - 1);
+        int currentElemIdx = parentNode.indexOfRawChild(this);
+        return currentElemIdx <= 0 ? null : parentNode.getRawChildAt(currentElemIdx - 1);
     }
 
     /**
@@ -361,10 +388,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         if (parentNode == null) {
             return null;
         }
-        List<Node> siblings = parentNode.getRawChildNodes();
-        int currentElemIdx = siblings.indexOf(this);
+        int currentElemIdx = parentNode.indexOfRawChild(this);
         for (int i = currentElemIdx - 1; i >= 0; i--) {
-            if (siblings.get(i) instanceof Element e) {
+            if (parentNode.getRawChildAt(i) instanceof Element e) {
                 return e;
             }
         }
@@ -379,10 +405,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
             return null;
         }
 
-        List<Node> siblings = parentNode.getRawChildNodes();
-        int currentElemIdx = siblings.indexOf(this);
+        int currentElemIdx = parentNode.indexOfRawChild(this);
 
-        return currentElemIdx == siblings.size() - 1 ? null : siblings.get(currentElemIdx + 1);
+        return currentElemIdx == parentNode.getRawChildCount() - 1 ? null : parentNode.getRawChildAt(currentElemIdx + 1);
     }
 
     /**
@@ -393,12 +418,11 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         if (parentNode == null) {
             return null;
         }
-        List<Node> siblings = parentNode.getRawChildNodes();
-        int currentElemIdx = siblings.indexOf(this);
-        int count = siblings.size();
+        int currentElemIdx = parentNode.indexOfRawChild(this);
+        int count = parentNode.getRawChildCount();
 
         for (int i = currentElemIdx + 1; i < count; i++) {
-            if (siblings.get(i) instanceof Element e) {
+            if (parentNode.getRawChildAt(i) instanceof Element e) {
                 return e;
             }
         }
@@ -409,7 +433,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * @return true if this node has at least one child.
      */
     public boolean hasChildNodes() {
-        return !getRawChildNodes().isEmpty();
+        return getRawChildCount() != 0;
     }
 
     /**
@@ -562,7 +586,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void normalize() {
 
-		List<Node> childs = new ArrayList<>(getRawChildNodes());
+		List<Node> childs = copyRawChildNodes();
 
 		// iterator helpers
 		Node text = null;

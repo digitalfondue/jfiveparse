@@ -29,7 +29,8 @@ public final class Element extends Node implements SelectableElement<Node> {
     final int nodeNameID;
     Attributes attributes;
 
-    private List<Node> childNodes = null;
+    // null, a single Node, or an ArrayList<Node> for 2+ children
+    private Object childNodes;
 
     /**
      * Create an element in the {@link Node#NAMESPACE_HTML} namespace with no
@@ -93,20 +94,127 @@ public final class Element extends Node implements SelectableElement<Node> {
      */
     @Override
     public List<Node> getChildNodes() {
-        return childNodes == null ? EMPTY_LIST : Collections.unmodifiableList(childNodes);
-    }
-
-    @Override
-    List<Node> getRawChildNodes() {
-        return childNodes == null ? EMPTY_LIST : childNodes;
-    }
-
-    @Override
-    List<Node> getMutableChildNodes() {
         if (childNodes == null) {
-            this.childNodes = new ArrayList<>(2);
+            return EMPTY_LIST;
         }
-        return childNodes;
+        if (childNodes instanceof Node single) {
+            return Collections.singletonList(single);
+        }
+        return Collections.unmodifiableList(children());
+    }
+
+    @SuppressWarnings("unchecked")
+    private ArrayList<Node> children() {
+        return (ArrayList<Node>) childNodes;
+    }
+
+    @Override
+    boolean isChildContainer() {
+        return true;
+    }
+
+    @Override
+    int getRawChildCount() {
+        if (childNodes == null) {
+            return 0;
+        }
+        if (childNodes instanceof Node) {
+            return 1;
+        }
+        return children().size();
+    }
+
+    @Override
+    Node getRawChildAt(int index) {
+        if (childNodes instanceof Node single) {
+            if (index == 0) {
+                return single;
+            }
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        if (childNodes == null) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        return children().get(index);
+    }
+
+    @Override
+    int indexOfRawChild(Node node) {
+        if (childNodes instanceof Node single) {
+            return single == node ? 0 : -1;
+        }
+        if (childNodes == null) {
+            return -1;
+        }
+        return children().indexOf(node);
+    }
+
+    @Override
+    void addRawChild(int position, Node node) {
+        if (childNodes == null) {
+            if (position != 0) {
+                throw new IndexOutOfBoundsException("Index: " + position);
+            }
+            childNodes = node;
+            return;
+        }
+        if (childNodes instanceof Node single) {
+            if (position < 0 || position > 1) {
+                throw new IndexOutOfBoundsException("Index: " + position);
+            }
+            var nodes = new ArrayList<Node>(2);
+            if (position == 0) {
+                nodes.add(node);
+                nodes.add(single);
+            } else {
+                nodes.add(single);
+                nodes.add(node);
+            }
+            childNodes = nodes;
+            return;
+        }
+        children().add(position, node);
+    }
+
+    @Override
+    void removeRawChildAt(int index) {
+        if (childNodes instanceof Node) {
+            if (index != 0) {
+                throw new IndexOutOfBoundsException("Index: " + index);
+            }
+            childNodes = null;
+            return;
+        }
+        if (childNodes == null) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        var nodes = children();
+        nodes.remove(index);
+        if (nodes.isEmpty()) {
+            childNodes = null;
+        } else if (nodes.size() == 1) {
+            childNodes = nodes.get(0);
+        }
+    }
+
+    @Override
+    void setRawChildAt(int index, Node node) {
+        if (childNodes instanceof Node) {
+            if (index != 0) {
+                throw new IndexOutOfBoundsException("Index: " + index);
+            }
+            childNodes = node;
+            return;
+        }
+        if (childNodes == null) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
+        children().set(index, node);
+    }
+
+    @Override
+    void clearRawChildren() {
+        childNodes = null;
     }
 
     @Override
@@ -170,7 +278,7 @@ public final class Element extends Node implements SelectableElement<Node> {
                 if (parentNode == null) {
                     throw new ParserException("The element has no parent. Cannot use afterend.");
                 }
-                parentNode.insertChildren(parentNode.getRawChildNodes().indexOf(this) + 1, node);
+                parentNode.insertChildren(parentNode.indexOfRawChild(this) + 1, node);
                 break;
             default:
                 throw new ParserException("The position provided ('" + position + "') is not one of 'beforeBegin', 'afterBegin', 'beforeEnd', or 'afterEnd'.");
@@ -222,7 +330,7 @@ public final class Element extends Node implements SelectableElement<Node> {
                 if (!(parentNode instanceof Element afterEndContext)) {
                     throw new ParserException("The parent node is not an element. Cannot use afterend.");
                 }
-                int afterEndIndex = parentNode.getRawChildNodes().indexOf(this) + 1;
+                int afterEndIndex = parentNode.indexOfRawChild(this) + 1;
                 for (Node node : parser.parseFragment(afterEndContext, text)) {
                     parentNode.insertChildren(afterEndIndex++, node);
                 }
@@ -388,13 +496,11 @@ public final class Element extends Node implements SelectableElement<Node> {
         if (!deep) {
             return clone;
         }
-        if (childNodes != null) {
-            clone.childNodes = new ArrayList<>(childNodes.size());
-            for (Node node : childNodes) {
-                Node clonedChild = node.cloneNode(true);
-                clonedChild.parentNode = clone;
-                clone.childNodes.add(clonedChild);
-            }
+        int count = getRawChildCount();
+        for (int i = 0; i < count; i++) {
+            Node clonedChild = getRawChildAt(i).cloneNode(true);
+            clonedChild.parentNode = clone;
+            clone.addRawChild(i, clonedChild);
         }
         return clone;
 	}
@@ -418,7 +524,7 @@ public final class Element extends Node implements SelectableElement<Node> {
             }
 
             for (var i = 0; i < count; i++) {
-                if (!Node.nodesEquals(childNodes.get(i), otherElement.childNodes.get(i))) {
+                if (!Node.nodesEquals(getRawChildAt(i), otherElement.getRawChildAt(i))) {
                     return false;
                 }
             }
@@ -491,4 +597,5 @@ public final class Element extends Node implements SelectableElement<Node> {
     public boolean matches(String cssSelector) {
         return Selector.parseSelector(cssSelector).matcher.test(this, this);
     }
+
 }
