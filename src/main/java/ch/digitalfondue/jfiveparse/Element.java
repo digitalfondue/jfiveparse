@@ -302,7 +302,7 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     public void setAttributeNS(String namespaceURI, String qualifiedName, String value) {
-        getAttributes().set(AttributeNode.createWithNamespace(namespaceURI, qualifiedName, value));
+        getAttributes().put(namespaceURI, qualifiedName, value);
     }
 
     public void removeAttributeNS(String namespaceURI, String localName) {
@@ -312,7 +312,12 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     public AttributeNode setAttributeNode(AttributeNode attribute) {
-        return getAttributes().set(attribute);
+        var old = getAttributes().get(attribute.namespace, attribute.localName);
+        if (old != null) {
+            getAttributes().remove(old.namespace, old.localName);
+        }
+        getAttributes().add(attribute);
+        return old;
     }
 
     /**

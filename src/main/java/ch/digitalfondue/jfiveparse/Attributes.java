@@ -163,34 +163,6 @@ public final class Attributes implements Iterable<AttributeNode> {
         add(attribute);
     }
 
-    public AttributeNode set(AttributeNode attribute) {
-        var namespace = AttributeNode.normalizeNamespace(attribute.namespace);
-        if (attributes == null) {
-            attributes = attribute;
-            count = 1;
-            return null;
-        }
-        if (attributes instanceof AttributeNode single) {
-            if (single.matches(namespace, attribute.localName)) {
-                attributes = attribute;
-                return single;
-            }
-            attributes = new AttributeNode[] { single, attribute };
-            count = 2;
-            return null;
-        }
-        var arr = (AttributeNode[]) attributes;
-        for (var i = 0; i < count; i++) {
-            if (arr[i].matches(namespace, attribute.localName)) {
-                var old = arr[i];
-                arr[i] = attribute;
-                return old;
-            }
-        }
-        add(attribute);
-        return null;
-    }
-
     // add without checking if the attribute name is already present
     void add(AttributeNode attributeNode) {
         if (attributes == null) {
@@ -215,7 +187,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void put(String namespace, String name, String value) {
-        set(AttributeNode.createWithNamespace(namespace, name, value));
+        put(AttributeNode.createWithNamespace(namespace, name, value));
     }
 
     public void remove(String key) {
