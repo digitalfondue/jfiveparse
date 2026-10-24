@@ -21,70 +21,91 @@ public final class AttributeNode {
 
     // qualified name: "xlink:href"
     String name;
-    // local name: "href"
-    String localName;
-    String originalName;
-
     private String value;
-    //
-    String prefix;
-    String namespace;
-    //
+
+    // optional fields, only allocated for namespaced/foreign or case-preserved
+    // attributes
+    private Misc misc;
 
     // double/single/not quoted
     int attributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
 
+    private static final class Misc {
+        // null means: same as name
+        String localName;
+        // null means: no original case to preserve
+        String originalName;
+        String prefix;
+        String namespace;
+    }
+
     public AttributeNode(String name, String value) {
         this.name = name;
-        this.localName = name;
         this.value = value;
     }
 
     AttributeNode(String name, String originalName, String value, int attributeQuoteType) {
         this.name = name;
-        this.localName = name;
         this.value = value;
-        this.originalName = originalName;
         this.attributeQuoteType = attributeQuoteType;
+        if (!Objects.equals(name, originalName)) {
+            misc().originalName = originalName;
+        }
     }
 
     AttributeNode(AttributeNode a) {
         this.name = a.name;
-        this.localName = a.localName;
-        this.originalName = a.originalName;
         this.value = a.value;
-        this.prefix = a.prefix;
-        this.namespace = a.namespace;
         this.attributeQuoteType = a.attributeQuoteType;
+        if (a.misc != null) {
+            var e = new Misc();
+            e.localName = a.misc.localName;
+            e.originalName = a.misc.originalName;
+            e.prefix = a.misc.prefix;
+            e.namespace = a.misc.namespace;
+            this.misc = e;
+        }
     }
 
     public AttributeNode(String name, String value, String prefix, String namespace) {
         this(name, value);
-        this.prefix = prefix;
-        this.namespace = normalizeNamespace(namespace);
+        String normalizedNamespace = normalizeNamespace(namespace);
         if (prefix != null && !prefix.isEmpty()) {
-            if (this.namespace == null) {
+            if (normalizedNamespace == null) {
                 throw new ParserException("A prefix is not allowed when the namespace is null: " + name);
             }
+            misc().prefix = prefix;
             if (name.startsWith(prefix + ":")) {
-                this.localName = name.substring(prefix.length() + 1);
+                misc().localName = name.substring(prefix.length() + 1);
             }
+        }
+        if (normalizedNamespace != null) {
+            misc().namespace = normalizedNamespace;
         }
     }
 
     static AttributeNode createWithNamespace(String namespace, String qualifiedName, String value) {
         namespace = normalizeNamespace(namespace);
         var attribute = new AttributeNode(qualifiedName, value);
-        attribute.namespace = namespace;
+        if (namespace != null) {
+            attribute.misc().namespace = namespace;
+        }
         var separator = qualifiedName.indexOf(':');
         if (separator > 0) {
             if (namespace == null) {
                 throw new ParserException("A prefix is not allowed when the namespace is null: " + qualifiedName);
             }
-            attribute.prefix = qualifiedName.substring(0, separator);
-            attribute.localName = qualifiedName.substring(separator + 1);
+            attribute.misc().prefix = qualifiedName.substring(0, separator);
+            attribute.misc().localName = qualifiedName.substring(separator + 1);
         }
         return attribute;
+    }
+
+    private Misc misc() {
+        if (misc == null) {
+            misc = new Misc();
+        }
+        return misc;
     }
 
     static String normalizeNamespace(String namespace) {
@@ -92,23 +113,23 @@ public final class AttributeNode {
     }
 
     boolean matches(String namespace, String localName) {
-        return Objects.equals(this.namespace, namespace) && Objects.equals(this.localName, localName);
+        return Objects.equals(getNamespace(), namespace) && Objects.equals(getLocalName(), localName);
     }
 
     public String getValue() {
         return value;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
 
     public String getNamespace() {
-        return namespace;
+        return misc == null ? null : misc.namespace;
     }
 
     public String getPrefix() {
-        return prefix;
+        return misc == null ? null : misc.prefix;
     }
 
     public String getName() {
@@ -116,20 +137,47 @@ public final class AttributeNode {
     }
 
     public String getLocalName() {
-        return localName;
+        if (misc != null && misc.localName != null) {
+            return misc.localName;
+        }
+        return name;
     }
 
+    String getOriginalName() {
+        if (misc != null && misc.originalName != null) {
+            return misc.originalName;
+        }
+        return name;
+    }
+
+    int getAttributeQuoteType() {
+        return attributeQuoteType;
+    }
+
+    void setNameAndLocalName(String name) {
+        this.name = name;
+        if (misc != null) {
+            misc.localName = null;
+        }
+    }
+
+    void setForeignAttributes(String prefix, String localName, String namespace) {
+        var e = misc();
+        e.prefix = prefix;
+        e.localName = localName;
+        e.namespace = namespace;
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(namespace, localName, value);
+        return Objects.hash(getNamespace(), getLocalName(), value);
     }
 
     @Override
     public boolean equals(Object obj) {
         return this == obj || (obj instanceof AttributeNode other &&
-                Objects.equals(namespace, other.namespace) && //
-                Objects.equals(localName, other.localName) && //
+                Objects.equals(getNamespace(), other.getNamespace()) && //
+                Objects.equals(getLocalName(), other.getLocalName()) && //
                 Objects.equals(value, other.value)
         );
     }

@@ -39,4 +39,27 @@ class AttributeNodeTest {
         assertNotEquals(a, b);
         assertNotEquals(b, a);
     }
+
+    @Test
+    void originalCaseAndNamespaceExtras() {
+        AttributeNode originalCase = new AttributeNode("class", "CLASS", "value", TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
+        assertEquals("class", originalCase.getName());
+        assertEquals("class", originalCase.getLocalName());
+        assertEquals("CLASS", originalCase.getOriginalName());
+        assertNull(originalCase.getNamespace());
+        assertNull(originalCase.getPrefix());
+
+        AttributeNode foreign = AttributeNode.createWithNamespace(Node.NAMESPACE_XLINK, "xlink:href", "value");
+        assertEquals("xlink:href", foreign.getName());
+        assertEquals("href", foreign.getLocalName());
+        assertEquals("xlink", foreign.getPrefix());
+        assertEquals(Node.NAMESPACE_XLINK, foreign.getNamespace());
+
+        AttributeNode copy = new AttributeNode(foreign);
+        assertEquals(foreign, copy);
+        assertEquals(foreign.getOriginalName(), copy.getOriginalName());
+        assertEquals(foreign.getLocalName(), copy.getLocalName());
+        assertEquals(foreign.getNamespace(), copy.getNamespace());
+        assertEquals(foreign.getPrefix(), copy.getPrefix());
+    }
 }

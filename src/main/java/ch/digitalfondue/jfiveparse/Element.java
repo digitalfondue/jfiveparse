@@ -312,9 +312,9 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     public AttributeNode setAttributeNode(AttributeNode attribute) {
-        var old = getAttributes().get(attribute.namespace, attribute.localName);
+        var old = getAttributes().get(attribute.getNamespace(), attribute.getLocalName());
         if (old != null) {
-            getAttributes().remove(old.namespace, old.localName);
+            getAttributes().remove(old.getNamespace(), old.getLocalName());
         }
         getAttributes().add(attribute);
         return old;

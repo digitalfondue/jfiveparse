@@ -63,7 +63,7 @@ public final class Attributes implements Iterable<AttributeNode> {
         // order of insertion is not important
         for (int i = 0; i < count; i++) {
             var attr = attributeAt(i);
-            var aAttr = a.get(attr.namespace, attr.localName);
+            var aAttr = a.get(attr.getNamespace(), attr.getLocalName());
             if (aAttr == null || !Objects.equals(attr.getValue(), aAttr.getValue())) {
                 return false;
             }
