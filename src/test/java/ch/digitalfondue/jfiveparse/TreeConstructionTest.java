@@ -225,13 +225,14 @@ public class TreeConstructionTest {
 
             sb.append(elem.getNodeName()).append(">");
 
-            Set<String> attributesName = new TreeSet<>(AttributesUtils.keySet(elem.getAttributes()));
-            if (!attributesName.isEmpty()) {
+            var attributes = new ArrayList<AttributeNode>();
+            elem.getAttributes().forEach(attributes::add);
+            if (!attributes.isEmpty()) {
+                attributes.sort(Comparator.comparing(AttributeNode::getLocalName));
                 sb.append("\n");
-                for (String k : attributesName) {
+                for (AttributeNode attribute : attributes) {
                     sb.append("|").append(" ".repeat(spaces + 2));
 
-                    AttributeNode attribute = elem.getAttributes().get(k);
                     if (attribute.getNamespace() != null) {
                         if (Node.NAMESPACE_XLINK.equals(attribute.getNamespace())) {
                             sb.append("xlink ");
@@ -242,7 +243,7 @@ public class TreeConstructionTest {
                         }
                     }
 
-                    sb.append(k).append("=\"").append(attribute.getValue()).append("\"\n");
+                    sb.append(attribute.getLocalName()).append("=\"").append(attribute.getValue()).append("\"\n");
                 }
                 sb.deleteCharAt(sb.length() - 1);
             }

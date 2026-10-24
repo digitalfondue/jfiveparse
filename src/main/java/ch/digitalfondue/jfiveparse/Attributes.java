@@ -17,7 +17,6 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
 
-// TODO: we need to 1) expose NS variant, 2) align with the dom api in term of case sensitive + namespace handling
 public final class Attributes implements Iterable<AttributeNode> {
 
     // either an AttributeNode (single attribute, the common case) or an AttributeNode[]
@@ -44,6 +43,10 @@ public final class Attributes implements Iterable<AttributeNode> {
         return get(key) != null;
     }
 
+    public boolean containsKey(String namespace, String localName) {
+        return get(namespace, localName) != null;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -56,8 +59,8 @@ public final class Attributes implements Iterable<AttributeNode> {
         // order of insertion is not important
         for (int i = 0; i < count; i++) {
             var attr = attributeAt(i);
-            var aAttr = a.get(attr.name);
-            if (aAttr == null || !Objects.equals(attr, aAttr)) {
+            var aAttr = a.get(attr.namespace, attr.localName);
+            if (aAttr == null || !Objects.equals(attr.getValue(), aAttr.getValue())) {
                 return false;
             }
         }
@@ -108,6 +111,21 @@ public final class Attributes implements Iterable<AttributeNode> {
         return null;
     }
 
+    public AttributeNode get(String namespace, String localName) {
+        namespace = AttributeNode.normalizeNamespace(namespace);
+        if (attributes instanceof AttributeNode single) {
+            return single.matches(namespace, localName) ? single : null;
+        }
+        if (attributes instanceof AttributeNode[] arr) {
+            for (int i = 0; i < count; i++) {
+                if (arr[i].matches(namespace, localName)) {
+                    return arr[i];
+                }
+            }
+        }
+        return null;
+    }
+
     public void put(AttributeNode attribute) {
         if (attributes == null) {
             attributes = attribute;
@@ -135,6 +153,34 @@ public final class Attributes implements Iterable<AttributeNode> {
         add(attribute);
     }
 
+    public AttributeNode set(AttributeNode attribute) {
+        var namespace = AttributeNode.normalizeNamespace(attribute.namespace);
+        if (attributes == null) {
+            attributes = attribute;
+            count = 1;
+            return null;
+        }
+        if (attributes instanceof AttributeNode single) {
+            if (single.matches(namespace, attribute.localName)) {
+                attributes = attribute;
+                return single;
+            }
+            attributes = new AttributeNode[] { single, attribute };
+            count = 2;
+            return null;
+        }
+        var arr = (AttributeNode[]) attributes;
+        for (var i = 0; i < count; i++) {
+            if (arr[i].matches(namespace, attribute.localName)) {
+                var old = arr[i];
+                arr[i] = attribute;
+                return old;
+            }
+        }
+        add(attribute);
+        return null;
+    }
+
     // add without checking if the attribute name is already present
     void add(AttributeNode attributeNode) {
         if (attributes == null) {
@@ -155,9 +201,11 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void put(String key, String value) {
-        // TODO, should have a reference to the parent, so we can set the namespace of the attribute node
-        //       if namespace is html -> key is lowercased
         put(new AttributeNode(key, value));
+    }
+
+    public void put(String namespace, String name, String value) {
+        set(AttributeNode.createWithNamespace(namespace, name, value));
     }
 
     public void remove(String key) {
@@ -171,19 +219,46 @@ public final class Attributes implements Iterable<AttributeNode> {
         if (attributes instanceof AttributeNode[] arr) {
             for (var i = 0; i < count; i++) {
                 if (Objects.equals(key, arr[i].getName())) {
-                    // identify how many we need to shift left:
-                    int amountToShiftLeft = count - i - 1;
-                    // shift left
-                    System.arraycopy(arr, i + 1, arr, i, amountToShiftLeft);
-                    // set to null last element
-                    arr[--count] = null;
-                    // collapse back to a single attribute when possible
-                    if (count == 1) {
-                        attributes = arr[0];
-                    }
+                    removeAt(arr, i);
                     return;
                 }
             }
+        }
+    }
+
+    /**
+     * Remove the attribute with the given namespace and local name. An empty
+     * namespace is treated as null.
+     */
+    public void remove(String namespace, String localName) {
+        namespace = AttributeNode.normalizeNamespace(namespace);
+        if (attributes instanceof AttributeNode single) {
+            if (single.matches(namespace, localName)) {
+                attributes = null;
+                count = 0;
+            }
+            return;
+        }
+        if (attributes instanceof AttributeNode[] arr) {
+            for (var i = 0; i < count; i++) {
+                if (arr[i].matches(namespace, localName)) {
+                    removeAt(arr, i);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void removeAt(AttributeNode[] arr, int index) {
+        // identify how many we need to shift left:
+        int amountToShiftLeft = count - index - 1;
+        // shift left
+        System.arraycopy(arr, index + 1, arr, index, amountToShiftLeft);
+        // set to null last element
+        arr[--count] = null;
+        // collapse back to a single attribute when possible
+        if (count == 1) {
+            attributes = arr[0];
         }
     }
 
@@ -201,6 +276,12 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     public String getNamedItem(String name) {
         var attr = get(name);
+        return attr != null ? attr.getValue() : null;
+    }
+
+
+    public String getNamedItemNS(String namespace, String localName) {
+        var attr = get(namespace, localName);
         return attr != null ? attr.getValue() : null;
     }
 }

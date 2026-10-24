@@ -210,6 +210,7 @@ final class Common {
         var attr = attrs.get("definitionurl");
         if (attr != null) {
             attr.name = "definitionURL";
+            attr.localName = "definitionURL";
         }
     }
 
@@ -284,6 +285,7 @@ final class Common {
             var toReplace = SVG_ATTRIBUTES.get(attr.name);
             if (toReplace != null) {
                 attr.name = toReplace;
+                attr.localName = toReplace;
             }
         }
     }
@@ -313,7 +315,7 @@ final class Common {
             var adjust = FOREIGN_ATTRIBUTES_TO_ADJUST.get(attr.name);
             if (adjust != null) {
                 attr.prefix = adjust[0];
-                attr.name = adjust[1];
+                attr.localName = adjust[1];
                 attr.namespace = adjust[2];
             }
         }

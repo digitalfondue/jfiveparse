@@ -20,7 +20,6 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-// TODO: need to expose NS variant for attributes, + align more correctly with the dom spec for case sensitivity + namespace handling
 public final class Element extends Node implements SelectableElement<Node> {
 
     final String nodeName;
@@ -128,12 +127,17 @@ public final class Element extends Node implements SelectableElement<Node> {
 
     // case-sensitive check
     public boolean containsAttribute(String name) {
-        return attributes != null && attributes.containsKey(name);
+        return attributes != null && attributes.containsKey(attributeName(name));
     }
 
     @Override
     public String getAttributeValue(String name) {
         return attributes != null ? attributes.getNamedItem(name) : null;
+    }
+
+
+    private String attributeName(String name) {
+        return Node.NAMESPACE_HTML_ID == namespaceID ? Common.convertToAsciiLowerCase(name) : name;
     }
 
     void setInnerHtml(List<Node> nodes) {
@@ -246,7 +250,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @return
      */
     public String getAttribute(String name) {
-        return attributes != null ? attributes.getNamedItem(Common.convertToAsciiLowerCase(name)) : null;
+        return attributes != null ? attributes.getNamedItem(attributeName(name)) : null;
     }
 
     /**
@@ -256,7 +260,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @return
      */
     public AttributeNode getAttributeNode(String name) {
-        return attributes != null ? attributes.get(Common.convertToAsciiLowerCase(name)) : null;
+        return attributes != null ? attributes.get(attributeName(name)) : null;
     }
 
     /**
@@ -271,20 +275,51 @@ public final class Element extends Node implements SelectableElement<Node> {
         if (attributes == null) {
             attributes = new Attributes();
         }
-        attributes.put(Common.convertToAsciiLowerCase(name), value);
+        attributes.put(attributeName(name), value);
     }
 
     /**
      * Remove the attributed with the given name.
      * 
-     * Case-insensitive.
-     * 
      * @param name
      */
     public void removeAttribute(String name) {
         if (attributes != null) {
-            attributes.remove(Common.convertToAsciiLowerCase(name));
+            attributes.remove(attributeName(name));
         }
+    }
+
+    public String getAttributeNS(String namespaceURI, String localName) {
+        var attribute = getAttributeNodeNS(namespaceURI, localName);
+        return attribute != null ? attribute.getValue() : null;
+    }
+
+    public AttributeNode getAttributeNodeNS(String namespaceURI, String localName) {
+        return attributes != null ? attributes.get(namespaceURI, localName) : null;
+    }
+
+    public boolean hasAttributeNS(String namespaceURI, String localName) {
+        return attributes != null && attributes.containsKey(namespaceURI, localName);
+    }
+
+    public void setAttributeNS(String namespaceURI, String qualifiedName, String value) {
+        if (attributes == null) {
+            attributes = new Attributes();
+        }
+        attributes.set(AttributeNode.createWithNamespace(namespaceURI, qualifiedName, value));
+    }
+
+    public void removeAttributeNS(String namespaceURI, String localName) {
+        if (attributes != null) {
+            attributes.remove(namespaceURI, localName);
+        }
+    }
+
+    public AttributeNode setAttributeNode(AttributeNode attribute) {
+        if (attributes == null) {
+            attributes = new Attributes();
+        }
+        return attributes.set(attribute);
     }
 
     /**
@@ -338,14 +373,13 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     /**
-     * Return true if the Element has an attribute with the name. The comparison
-     * is case-insensitive.
+     * Return true if the Element has an attribute with the name.
      * 
      * @param name
      * @return
      */
     public boolean hasAttribute(String name) {
-        return attributes != null && attributes.containsKey(Common.convertToAsciiLowerCase(name));
+        return attributes != null && attributes.containsKey(attributeName(name));
     }
 
 	@Override

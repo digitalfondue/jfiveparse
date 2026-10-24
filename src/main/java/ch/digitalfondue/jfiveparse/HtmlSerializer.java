@@ -49,24 +49,8 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     private void serializeAttributeName(Appendable appendable, AttributeNode attribute) throws IOException {
-        String lowercaseName = attribute.getName();
-        String name = printOriginalAttributeCase && attribute.originalName != null ? attribute.originalName : lowercaseName;
-        String namespace = attribute.getNamespace();
-
-        if (Node.NAMESPACE_XML.equals(namespace)) {
-            appendable.append("xml:").append(name);
-        } else if (Node.NAMESPACE_XMLNS.equals(namespace)) {
-            appendable.append("xmlns");
-            if ("xmlns".equals(lowercaseName)) {
-                appendable.append(':').append(name);
-            }
-        } else if (Node.NAMESPACE_XLINK.equals(namespace)) {
-            appendable.append("xlink:").append(name);
-        } else if (namespace != null) {
-            appendable.append(namespace).append(':').append(name);// TODO check
-        } else {
-            appendable.append(name);
-        }
+        String name = printOriginalAttributeCase && attribute.originalName != null ? attribute.originalName : attribute.getName();
+        appendable.append(name);
     }
 
     private String quoteCharacters(AttributeNode attribute) {
