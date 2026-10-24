@@ -20,7 +20,6 @@ import java.util.*;
 /**
  * Represent an Element (e.g. "&lt;div&gt;").
  */
-// TODO: need to expose NS variant for attributes, + align more correctly with the dom spec for case sensitivity + namespace handling
 public final class Element extends Node implements SelectableElement<Node> {
 
     final String nodeName;
@@ -67,6 +66,9 @@ public final class Element extends Node implements SelectableElement<Node> {
         this.namespaceURI = nameSpace;
         this.namespaceID = Node.toNamespaceId(nameSpace);
         this.attributes = attributes;
+        if (attributes != null) {
+            attributes.html = Node.NAMESPACE_HTML_ID == namespaceID;
+        }
     }
 
     Element(String name,
@@ -81,6 +83,9 @@ public final class Element extends Node implements SelectableElement<Node> {
         this.namespaceURI = nameSpace;
         this.namespaceID = namespaceID;
         this.attributes = attributes;
+        if (attributes != null) {
+            attributes.html = Node.NAMESPACE_HTML_ID == namespaceID;
+        }
     }
 
     /**
@@ -126,7 +131,8 @@ public final class Element extends Node implements SelectableElement<Node> {
         return namespaceURI;
     }
 
-    // case-sensitive check
+    // Case handling is delegated to Attributes: it lower-cases the name when the
+    // owning element is in the HTML namespace and is exact otherwise.
     public boolean containsAttribute(String name) {
         return attributes != null && attributes.containsKey(name);
     }
@@ -233,6 +239,7 @@ public final class Element extends Node implements SelectableElement<Node> {
     public Attributes getAttributes() {
         if (attributes == null) {
             attributes = new Attributes();
+            attributes.html = Node.NAMESPACE_HTML_ID == namespaceID;
         }
         return attributes;
     }
@@ -240,13 +247,13 @@ public final class Element extends Node implements SelectableElement<Node> {
     /**
      * Get the attribute value. Return null if the attribute is not present.
      * 
-     * Case-insensitive.
+     * Case-insensitive for HTML elements, case-sensitive otherwise.
      * 
      * @param name
      * @return
      */
     public String getAttribute(String name) {
-        return attributes != null ? attributes.getNamedItem(Common.convertToAsciiLowerCase(name)) : null;
+        return getAttributeValue(name);
     }
 
     /**
@@ -256,35 +263,61 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @return
      */
     public AttributeNode getAttributeNode(String name) {
-        return attributes != null ? attributes.get(Common.convertToAsciiLowerCase(name)) : null;
+        return attributes != null ? attributes.get(name) : null;
     }
 
     /**
      * Set the attribute name to the given value.
      * 
-     * The name will be converted to lowercase.
+     * The name is converted to lowercase for HTML elements.
      * 
      * @param name
      * @param value
      */
     public void setAttribute(String name, String value) {
-        if (attributes == null) {
-            attributes = new Attributes();
-        }
-        attributes.put(Common.convertToAsciiLowerCase(name), value);
+        getAttributes().put(name, value);
     }
 
     /**
      * Remove the attributed with the given name.
      * 
-     * Case-insensitive.
-     * 
      * @param name
      */
     public void removeAttribute(String name) {
         if (attributes != null) {
-            attributes.remove(Common.convertToAsciiLowerCase(name));
+            attributes.remove(name);
         }
+    }
+
+    public String getAttributeNS(String namespaceURI, String localName) {
+        return attributes != null ? attributes.getNamedItemNS(namespaceURI, localName) : null;
+    }
+
+    public AttributeNode getAttributeNodeNS(String namespaceURI, String localName) {
+        return attributes != null ? attributes.get(namespaceURI, localName) : null;
+    }
+
+    public boolean hasAttributeNS(String namespaceURI, String localName) {
+        return attributes != null && attributes.containsKey(namespaceURI, localName);
+    }
+
+    public void setAttributeNS(String namespaceURI, String qualifiedName, String value) {
+        getAttributes().put(namespaceURI, qualifiedName, value);
+    }
+
+    public void removeAttributeNS(String namespaceURI, String localName) {
+        if (attributes != null) {
+            attributes.remove(namespaceURI, localName);
+        }
+    }
+
+    public AttributeNode setAttributeNode(AttributeNode attribute) {
+        var old = getAttributes().get(attribute.namespace, attribute.localName);
+        if (old != null) {
+            getAttributes().remove(old.namespace, old.localName);
+        }
+        getAttributes().add(attribute);
+        return old;
     }
 
     /**
@@ -338,14 +371,15 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     /**
-     * Return true if the Element has an attribute with the name. The comparison
-     * is case-insensitive.
+     * Return true if the Element has an attribute with the name.
+     * 
+     * Case-insensitive for HTML elements, case-sensitive otherwise.
      * 
      * @param name
      * @return
      */
     public boolean hasAttribute(String name) {
-        return attributes != null && attributes.containsKey(Common.convertToAsciiLowerCase(name));
+        return containsAttribute(name);
     }
 
 	@Override

@@ -17,10 +17,12 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.Objects;
 
-// TODO: need to align with the html dom api behaviour in term of case sensitive+namespace handling
 public final class AttributeNode {
 
+    // qualified name: "xlink:href"
     String name;
+    // local name: "href"
+    String localName;
     String originalName;
 
     private String value;
@@ -34,11 +36,13 @@ public final class AttributeNode {
 
     public AttributeNode(String name, String value) {
         this.name = name;
+        this.localName = name;
         this.value = value;
     }
 
     AttributeNode(String name, String originalName, String value, int attributeQuoteType) {
         this.name = name;
+        this.localName = name;
         this.value = value;
         this.originalName = originalName;
         this.attributeQuoteType = attributeQuoteType;
@@ -46,6 +50,7 @@ public final class AttributeNode {
 
     AttributeNode(AttributeNode a) {
         this.name = a.name;
+        this.localName = a.localName;
         this.originalName = a.originalName;
         this.value = a.value;
         this.prefix = a.prefix;
@@ -56,7 +61,38 @@ public final class AttributeNode {
     public AttributeNode(String name, String value, String prefix, String namespace) {
         this(name, value);
         this.prefix = prefix;
-        this.namespace = namespace;
+        this.namespace = normalizeNamespace(namespace);
+        if (prefix != null && !prefix.isEmpty()) {
+            if (this.namespace == null) {
+                throw new ParserException("A prefix is not allowed when the namespace is null: " + name);
+            }
+            if (name.startsWith(prefix + ":")) {
+                this.localName = name.substring(prefix.length() + 1);
+            }
+        }
+    }
+
+    static AttributeNode createWithNamespace(String namespace, String qualifiedName, String value) {
+        namespace = normalizeNamespace(namespace);
+        var attribute = new AttributeNode(qualifiedName, value);
+        attribute.namespace = namespace;
+        var separator = qualifiedName.indexOf(':');
+        if (separator > 0) {
+            if (namespace == null) {
+                throw new ParserException("A prefix is not allowed when the namespace is null: " + qualifiedName);
+            }
+            attribute.prefix = qualifiedName.substring(0, separator);
+            attribute.localName = qualifiedName.substring(separator + 1);
+        }
+        return attribute;
+    }
+
+    static String normalizeNamespace(String namespace) {
+        return namespace == null || namespace.isEmpty() ? null : namespace;
+    }
+
+    boolean matches(String namespace, String localName) {
+        return Objects.equals(this.namespace, namespace) && Objects.equals(this.localName, localName);
     }
 
     public String getValue() {
@@ -79,18 +115,22 @@ public final class AttributeNode {
         return name;
     }
 
+    public String getLocalName() {
+        return localName;
+    }
+
+
     @Override
     public int hashCode() {
-        return Objects.hash(name, value, prefix, namespace);
+        return Objects.hash(namespace, localName, value);
     }
 
     @Override
     public boolean equals(Object obj) {
         return this == obj || (obj instanceof AttributeNode other &&
-                Objects.equals(name, other.name) && //
-                Objects.equals(value, other.value) && //
-                Objects.equals(prefix, other.prefix) && //
-                Objects.equals(namespace, other.namespace)
+                Objects.equals(namespace, other.namespace) && //
+                Objects.equals(localName, other.localName) && //
+                Objects.equals(value, other.value)
         );
     }
 }
