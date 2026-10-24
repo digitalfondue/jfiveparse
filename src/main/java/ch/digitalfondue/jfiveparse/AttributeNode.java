@@ -62,16 +62,25 @@ public final class AttributeNode {
         this(name, value);
         this.prefix = prefix;
         this.namespace = normalizeNamespace(namespace);
-        if (prefix != null && !prefix.isEmpty() && name.startsWith(prefix + ":")) {
-            this.localName = name.substring(prefix.length() + 1);
+        if (prefix != null && !prefix.isEmpty()) {
+            if (this.namespace == null) {
+                throw new ParserException("A prefix is not allowed when the namespace is null: " + name);
+            }
+            if (name.startsWith(prefix + ":")) {
+                this.localName = name.substring(prefix.length() + 1);
+            }
         }
     }
 
     static AttributeNode createWithNamespace(String namespace, String qualifiedName, String value) {
+        namespace = normalizeNamespace(namespace);
         var attribute = new AttributeNode(qualifiedName, value);
-        attribute.namespace = normalizeNamespace(namespace);
+        attribute.namespace = namespace;
         var separator = qualifiedName.indexOf(':');
         if (separator > 0) {
+            if (namespace == null) {
+                throw new ParserException("A prefix is not allowed when the namespace is null: " + qualifiedName);
+            }
             attribute.prefix = qualifiedName.substring(0, separator);
             attribute.localName = qualifiedName.substring(separator + 1);
         }
@@ -113,7 +122,7 @@ public final class AttributeNode {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, value, prefix, namespace);
+        return Objects.hash(namespace, localName, value);
     }
 
     @Override

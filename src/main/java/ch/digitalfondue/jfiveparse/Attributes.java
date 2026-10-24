@@ -22,6 +22,10 @@ public final class Attributes implements Iterable<AttributeNode> {
     // either an AttributeNode (single attribute, the common case) or an AttributeNode[]
     Object attributes;
     int count;
+    // true when the owning element is in the HTML namespace: name based
+    // operations are then ASCII case-insensitive, mirroring the NamedNodeMap
+    // behaviour in browsers.
+    boolean html;
 
     public Attributes() {
     }
@@ -80,8 +84,13 @@ public final class Attributes implements Iterable<AttributeNode> {
         return attributes instanceof AttributeNode[] arr ? arr[index] : (AttributeNode) attributes;
     }
 
+    private String nameKey(String key) {
+        return html ? Common.convertToAsciiLowerCase(key) : key;
+    }
+
     public Attributes copy() {
         Attributes a = new Attributes();
+        a.html = html;
         if (attributes instanceof AttributeNode single) {
             a.attributes = new AttributeNode(single);
             a.count = 1;
@@ -97,6 +106,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public AttributeNode get(String key) {
+        key = nameKey(key);
         if (attributes instanceof AttributeNode single) {
             return Objects.equals(single.getName(), key) ? single : null;
         }
@@ -201,7 +211,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void put(String key, String value) {
-        put(new AttributeNode(key, value));
+        put(new AttributeNode(nameKey(key), value));
     }
 
     public void put(String namespace, String name, String value) {
@@ -209,6 +219,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void remove(String key) {
+        key = nameKey(key);
         if (attributes instanceof AttributeNode single) {
             if (Objects.equals(key, single.getName())) {
                 attributes = null;

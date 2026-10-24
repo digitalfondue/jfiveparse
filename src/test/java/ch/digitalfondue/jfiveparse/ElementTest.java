@@ -18,6 +18,8 @@ package ch.digitalfondue.jfiveparse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -233,5 +235,106 @@ class ElementTest {
         assertEquals("DIV", e.getTagName());
         assertEquals("<div></div>", e.getOuterHTML());
         assertTrue(e.matches("div"));
+    }
+
+    @Test
+    void htmlAttributeLookupIsCaseInsensitive() {
+        // browser: getAttribute/hasAttribute and NamedNodeMap lower-case the name for HTML elements
+        Element div = (Element) parser.parseFragment(new Element("div"), "<div CLASS=\"x\" data-Foo=\"b\"></div>").get(0);
+        assertEquals("x", div.getAttribute("CLASS"));
+        assertEquals("x", div.getAttribute("class"));
+        assertEquals("b", div.getAttribute("DATA-FOO"));
+        assertEquals("x", div.getAttributeValue("CLASS"));
+        assertTrue(div.hasAttribute("cLaSs"));
+        assertEquals("class", div.getAttributeNode("CLASS").getName());
+
+        // NamedNodeMap behaviour
+        assertEquals("x", div.getAttributes().getNamedItem("CLASS"));
+        assertTrue(div.getAttributes().containsKey("CLASS"));
+        assertNotNull(div.getAttributes().get("CLASS"));
+        div.getAttributes().remove("CLASS");
+        assertNull(div.getAttribute("class"));
+    }
+
+    @Test
+    void htmlLazilyCreatedAttributesKeepHtmlCaseInsensitivity() {
+        // getAttributes()/setAttribute must mark the collection as belonging to an HTML element
+        Element div = new Element("div");
+        div.setAttribute("CLASS", "x");
+        assertEquals("x", div.getAttributes().getNamedItem("CLASS"));
+    }
+
+    @Test
+    void nonHtmlAttributeLookupIsCaseSensitive() {
+        // browser: SVG/MathML attributes are case sensitive
+        Element svg = (Element) parser.parseFragment(new Element("div"), "<svg viewBox=\"0 0 1 1\" CLASS=\"y\"></svg>").get(0);
+        assertEquals("0 0 1 1", svg.getAttribute("viewBox"));
+        assertNull(svg.getAttribute("viewbox"));
+        // the tokenizer lower-cases parsed attribute names, so CLASS is stored as class
+        assertEquals("y", svg.getAttribute("class"));
+        assertNull(svg.getAttribute("CLASS"));
+        assertNull(svg.getAttributes().getNamedItem("viewbox"));
+        assertEquals("0 0 1 1", svg.getAttributes().getNamedItem("viewBox"));
+        assertNull(svg.getAttributes().get("viewbox"));
+    }
+
+    @Test
+    void nonHtmlCreatedAttributeIsCaseSensitive() {
+        Element svg = new Element("svg", Node.NAMESPACE_SVG);
+        svg.setAttribute("CLASS", "q");
+        assertEquals("q", svg.getAttribute("CLASS"));
+        assertNull(svg.getAttribute("class"));
+    }
+
+    @Test
+    void setAttributeNodeDoesNotLowercase() {
+        // browser: "set an attribute" keeps the attribute node as-is (unlike createAttribute)
+        Element div = new Element("div");
+        div.setAttributeNode(new AttributeNode("CLASS", "x"));
+        assertEquals(Set.of("CLASS"), AttributesUtils.keySet(div.getAttributes()));
+        // the name-based lookup lower-cases, so the upper-cased attribute is not reachable
+        assertNull(div.getAttribute("CLASS"));
+        assertNull(div.getAttribute("class"));
+    }
+
+    @Test
+    void setAttributeNSDoesNotLowercaseForHtml() {
+        // browser: setAttributeNS stores the qualified name as provided, even on HTML elements
+        Element div = new Element("div");
+        div.setAttributeNS(null, "CLASS", "ns");
+        assertNull(div.getAttribute("class"));
+        assertNull(div.getAttribute("CLASS"));
+        assertEquals("ns", div.getAttributeNS(null, "CLASS"));
+        assertEquals("ns", div.getAttributes().getNamedItemNS(null, "CLASS"));
+
+        // the null-namespace attribute can coexist with the one created by setAttribute
+        div.setAttribute("CLASS", "plain");
+        assertEquals(Set.of("CLASS", "class"), AttributesUtils.keySet(div.getAttributes()));
+        assertEquals("plain", div.getAttribute("CLASS"));
+        assertEquals("ns", div.getAttributeNS(null, "CLASS"));
+    }
+
+    @Test
+    void namespacedAttributeLookupIsCaseSensitive() {
+        // browser: getAttributeNS/getNamedItemNS are always case sensitive
+        Element div = new Element("div");
+        div.setAttributeNS("urn:ns", "Foo", "v");
+        assertEquals("v", div.getAttributeNS("urn:ns", "Foo"));
+        assertNull(div.getAttributeNS("urn:ns", "foo"));
+        assertEquals("v", div.getAttributeNodeNS("urn:ns", "Foo").getValue());
+        assertTrue(div.hasAttributeNS("urn:ns", "Foo"));
+        assertFalse(div.hasAttributeNS("urn:ns", "foo"));
+        // getAttribute lower-cases the name, so an upper-cased local name is not reachable
+        assertNull(div.getAttribute("Foo"));
+        assertNull(div.getAttribute("foo"));
+    }
+
+    @Test
+    void setAttributeNSWithPrefixAndNullNamespaceThrows() {
+        // browser: setAttributeNS(null, "P:FOO", ...) throws a NamespaceError
+        Element div = new Element("div");
+        assertThrows(ParserException.class, () -> div.setAttributeNS(null, "P:FOO", "v"));
+        assertThrows(ParserException.class, () -> div.setAttributeNS("", "P:FOO", "v"));
+        assertThrows(ParserException.class, () -> new AttributeNode("P:FOO", "v", "P", null));
     }
 }
