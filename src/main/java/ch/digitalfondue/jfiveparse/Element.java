@@ -60,12 +60,13 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
-        this(Node.NAMESPACE_HTML.equals(nameSpace) ? Common.convertToAsciiLowerCase(name) : name,
-                Common.tagNameToID(Common.convertToAsciiLowerCase(name)),
-                name,
-                nameSpace,
-                Node.toNamespaceId(nameSpace),
-                attributes);
+        var lowerCased = Common.convertToAsciiLowerCase(name);
+        this.nodeName = Node.NAMESPACE_HTML.equals(nameSpace) ? lowerCased : name;
+        this.originalNodeName = name;
+        this.nodeNameID = Common.tagNameToID(lowerCased);
+        this.namespaceURI = nameSpace;
+        this.namespaceID = Node.toNamespaceId(nameSpace);
+        this.attributes = attributes;
     }
 
     Element(String name,
