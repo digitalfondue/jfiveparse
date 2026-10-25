@@ -23,12 +23,9 @@ public final class AttributeNode {
     String name;
     private String value;
 
-    // optional fields, only allocated for namespaced/foreign or case-preserved
-    // attributes
+    // optional fields, only allocated for namespaced/foreign, case-preserved or
+    // non-double-quoted attributes
     private Misc misc;
-
-    // double/single/not quoted
-    int attributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
 
     private static final class Misc {
         // null means: same as name
@@ -37,6 +34,8 @@ public final class AttributeNode {
         String originalName;
         String prefix;
         String namespace;
+        // when misc is null the attribute is implicitly double quoted
+        int attributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
     }
 
     public AttributeNode(String name, String value) {
@@ -47,22 +46,26 @@ public final class AttributeNode {
     AttributeNode(String name, String originalName, String value, int attributeQuoteType) {
         this.name = name;
         this.value = value;
-        this.attributeQuoteType = attributeQuoteType;
-        if (!Objects.equals(name, originalName)) {
-            misc().originalName = originalName;
+        boolean preserveOriginalName = !Objects.equals(name, originalName);
+        if (preserveOriginalName || attributeQuoteType != TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE) {
+            var e = misc();
+            if (preserveOriginalName) {
+                e.originalName = originalName;
+            }
+            e.attributeQuoteType = attributeQuoteType;
         }
     }
 
     AttributeNode(AttributeNode a) {
         this.name = a.name;
         this.value = a.value;
-        this.attributeQuoteType = a.attributeQuoteType;
         if (a.misc != null) {
             var e = new Misc();
             e.localName = a.misc.localName;
             e.originalName = a.misc.originalName;
             e.prefix = a.misc.prefix;
             e.namespace = a.misc.namespace;
+            e.attributeQuoteType = a.misc.attributeQuoteType;
             this.misc = e;
         }
     }
@@ -151,7 +154,7 @@ public final class AttributeNode {
     }
 
     int getAttributeQuoteType() {
-        return attributeQuoteType;
+        return misc == null ? TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE : misc.attributeQuoteType;
     }
 
     void setNameAndLocalName(String name) {
