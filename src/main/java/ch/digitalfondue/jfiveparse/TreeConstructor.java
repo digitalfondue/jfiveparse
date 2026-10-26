@@ -576,14 +576,14 @@ class TreeConstructor {
 
     static void genericRawTextElementParsing(TreeConstructor treeConstructor) {
         treeConstructor.insertHtmlElementToken();
-        treeConstructor.tokenizer.setState(TokenizerState.RAWTEXT_STATE);
+        treeConstructor.tokenizer.setState(Tokenizer.RAWTEXT_STATE);
         treeConstructor.originalInsertionMode = treeConstructor.insertionMode;
         treeConstructor.insertionMode = IM_TEXT;
     }
 
     static void genericRCDataParsing(TreeConstructor treeConstructor) {
         treeConstructor.insertHtmlElementToken();
-        treeConstructor.tokenizer.setState(TokenizerState.RCDATA_STATE);
+        treeConstructor.tokenizer.setState(Tokenizer.RCDATA_STATE);
         treeConstructor.originalInsertionMode = treeConstructor.insertionMode;
         treeConstructor.insertionMode = IM_TEXT;
     }

@@ -464,7 +464,7 @@ final class TreeConstructorHandlers {
 
             // TODO check
             treeConstructor.insertHtmlElementToken();
-            treeConstructor.setTokenizerState(TokenizerState.SCRIPT_DATA_STATE);
+            treeConstructor.setTokenizerState(Tokenizer.SCRIPT_DATA_STATE);
             treeConstructor.saveInsertionMode();
 
             treeConstructor.setInsertionMode(IM_TEXT);
@@ -1491,7 +1491,7 @@ final class TreeConstructorHandlers {
     private static void startTextarea(TreeConstructor treeConstructor) {
         treeConstructor.insertHtmlElementToken();
 
-        treeConstructor.setTokenizerState(TokenizerState.RCDATA_STATE);
+        treeConstructor.setTokenizerState(Tokenizer.RCDATA_STATE);
         treeConstructor.saveInsertionMode();
 
         treeConstructor.framesetOkToFalse();
@@ -1627,7 +1627,7 @@ final class TreeConstructorHandlers {
             treeConstructor.closePElement();
         }
         treeConstructor.insertHtmlElementToken();
-        treeConstructor.setTokenizerState(TokenizerState.PLAINTEXT_STATE);
+        treeConstructor.setTokenizerState(Tokenizer.PLAINTEXT_STATE);
     }
 
     private static void startDdDt(TreeConstructor treeConstructor) {

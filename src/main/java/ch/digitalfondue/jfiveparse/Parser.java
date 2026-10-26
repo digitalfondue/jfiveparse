@@ -134,20 +134,20 @@ public class Parser {
         if (Node.NAMESPACE_HTML_ID == namespaceID) {
 
             if (Common.ELEMENT_TITLE_ID == nameId || Common.ELEMENT_TEXTAREA_ID == nameId) {
-                tokenizer.setState(TokenizerState.RCDATA_STATE);
+                tokenizer.setState(Tokenizer.RCDATA_STATE);
             } else if (Common.ELEMENT_STYLE_ID == nameId || Common.ELEMENT_XMP_ID == nameId || Common.ELEMENT_IFRAME_ID == nameId || Common.ELEMENT_NOEMBED_ID == nameId || Common.ELEMENT_NOFRAMES_ID == nameId) {
-                tokenizer.setState(TokenizerState.RAWTEXT_STATE);
+                tokenizer.setState(Tokenizer.RAWTEXT_STATE);
             } else if (Common.ELEMENT_SCRIPT_ID == nameId) {
-                tokenizer.setState(TokenizerState.SCRIPT_DATA_STATE);
+                tokenizer.setState(Tokenizer.SCRIPT_DATA_STATE);
             } else if (Common.ELEMENT_NOSCRIPT_ID == nameId && scriptingFlag) {
-                tokenizer.setState(TokenizerState.RAWTEXT_STATE);
+                tokenizer.setState(Tokenizer.RAWTEXT_STATE);
             } else if (Common.ELEMENT_PLAINTEXT_ID == nameId) {
-                tokenizer.setState(TokenizerState.PLAINTEXT_STATE);
+                tokenizer.setState(Tokenizer.PLAINTEXT_STATE);
             } else {
-                tokenizer.setState(TokenizerState.DATA_STATE);
+                tokenizer.setState(Tokenizer.DATA_STATE);
             }
         } else {
-            tokenizer.setState(TokenizerState.DATA_STATE);
+            tokenizer.setState(Tokenizer.DATA_STATE);
         }
 
         // 5
