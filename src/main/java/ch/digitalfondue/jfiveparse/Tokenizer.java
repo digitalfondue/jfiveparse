@@ -32,16 +32,16 @@ final class Tokenizer {
     private int state;
 
     //
-    int additionalAllowedCharacter;
+    private int additionalAllowedCharacter;
     private int previousState;
 
     // tag related
     private Attributes attributes;
-    final ResizableCharBuilder currentAttributeName = new ResizableCharBuilder();
-    final ResizableCharBuilder currentAttributeValue = new ResizableCharBuilder();
+    private final ResizableCharBuilder currentAttributeName = new ResizableCharBuilder();
+    private final ResizableCharBuilder currentAttributeValue = new ResizableCharBuilder();
     private int currentAttributeQuoteType;
     private boolean selfClosing;
-    final ResizableCharBuilder tagName = new ResizableCharBuilder();
+    private final ResizableCharBuilder tagName = new ResizableCharBuilder();
     private boolean isEndTagToken;
     final ResizableCharBuilder lastEmittedStartTagName = new ResizableCharBuilder();
     private final Common.InternedRes attributeName = new Common.InternedRes();
@@ -53,17 +53,17 @@ final class Tokenizer {
     private StringBuilder doctypeSystemIdentifier;
 
     // comment related
-    final ResizableCharBuilder commentToken = new ResizableCharBuilder();
+    private final ResizableCharBuilder commentToken = new ResizableCharBuilder();
 
     private String processingInstructionTokenTarget;
-    final ResizableCharBuilder processingInstructionTokenData = new ResizableCharBuilder();
+    private final ResizableCharBuilder processingInstructionTokenData = new ResizableCharBuilder();
 
     //
     private final ResizableCharBuilder temporaryBuffer = new ResizableCharBuilder();
 
-    final ResizableCharBuilder characterReferenceTmpBuffer = new ResizableCharBuilder();
+    private final ResizableCharBuilder characterReferenceTmpBuffer = new ResizableCharBuilder();
 
-    final boolean transformEntities;
+    private final boolean transformEntities;
 
     Tokenizer(TreeConstructor tokenHandler) {
         this(tokenHandler, true);
@@ -76,26 +76,26 @@ final class Tokenizer {
     }
 
     //
-    void appendCurrentAttributeName(int chr) {
+    private void appendCurrentAttributeName(int chr) {
         currentAttributeName.append((char) chr);
     }
 
-    void appendCurrentAttributeValue(int chr) {
+    private void appendCurrentAttributeValue(int chr) {
         currentAttributeValue.append((char) chr);
     }
 
     //
 
     // reset the buffer
-    void createTemporaryBuffer() {
+    private void createTemporaryBuffer() {
         temporaryBuffer.reset();
     }
 
-    void appendToTemporaryBuffer(int chr) {
+    private void appendToTemporaryBuffer(int chr) {
         temporaryBuffer.append((char) chr);
     }
 
-    void emitTemporaryBufferAsCharacters() {
+    private void emitTemporaryBufferAsCharacters() {
         int pos = temporaryBuffer.pos();
         for (int i = 0; i < pos; i++) {
             tokenHandler.emitCharacter(temporaryBuffer.at(i));
@@ -103,30 +103,26 @@ final class Tokenizer {
     }
 
     /* ASCII case-insensitive match */
-    boolean isTemporaryBufferEquals(ResizableCharBuilder s) {
+    private boolean isTemporaryBufferEquals(ResizableCharBuilder s) {
         return temporaryBuffer.equalsASCIICaseInsensitive(s);
     }
 
     //
 
-    int getState() {
-        return state;
-    }
-
     void setState(int state) {
         this.state = state;
     }
 
-    void emitParseError() {
+    private void emitParseError() {
         tokenHandler.emitParseError();
     }
 
-    void setStateAndEmitCharacter(int state, int chr) {
+    private void setStateAndEmitCharacter(int state, int chr) {
         this.state = state;
         tokenHandler.emitCharacter((char) chr);
     }
 
-    void emitCharacter(int chr) {
+    private void emitCharacter(int chr) {
         tokenHandler.emitCharacter((char) chr);
     }
 
@@ -373,7 +369,7 @@ final class Tokenizer {
 
     // ------------
 
-    boolean isAppropriateEndTagToken() {
+    private boolean isAppropriateEndTagToken() {
         return tagName.pos() != 0 && tagName.equalsASCIICaseInsensitive(lastEmittedStartTagName);
     }
 
@@ -384,7 +380,7 @@ final class Tokenizer {
     // error and the new attribute must be removed from the token.
     //
     // TODO: maybe handle it better?
-    void addCurrentAttributeInAttributes() {
+    private void addCurrentAttributeInAttributes() {
         try {
             if (currentAttributeName.pos() != 0) { // not empty
                 Common.withAttributeNameAsLower(currentAttributeName, attributeName);
@@ -407,7 +403,7 @@ final class Tokenizer {
         }
     }
 
-    void startNewAttributeAndAppendToName(int chr) {
+    private void startNewAttributeAndAppendToName(int chr) {
         if (attributes == null) {
             attributes = new Attributes();
         }
@@ -418,11 +414,11 @@ final class Tokenizer {
         appendCurrentAttributeName(chr);
     }
 
-    void setAttributeQuoteType(int currentAttributeQuoteType) {
+    private void setAttributeQuoteType(int currentAttributeQuoteType) {
         this.currentAttributeQuoteType = currentAttributeQuoteType;
     }
 
-    void newEndTokenTag() {
+    private void newEndTokenTag() {
         tagName.reset();
         isEndTagToken = true;
         attributes = null;
@@ -431,11 +427,11 @@ final class Tokenizer {
     }
 
 
-    void appendCurrentTagToken(int chr) {
+    private void appendCurrentTagToken(int chr) {
         tagName.append((char) chr);
     }
 
-    void createNewStartTagToken(int chr) {
+    private void createNewStartTagToken(int chr) {
         tagName.reset();
         appendCurrentTagToken(chr);
         isEndTagToken = false;
@@ -445,7 +441,7 @@ final class Tokenizer {
         selfClosing = false;
     }
 
-    void addCurrentAttributeAndEmitToken() {
+    private void addCurrentAttributeAndEmitToken() {
 
         addCurrentAttributeInAttributes();
 
@@ -462,57 +458,57 @@ final class Tokenizer {
 
     // ------------
 
-    void createNewDoctypeToken() {
+    private void createNewDoctypeToken() {
         doctypeForceQuirksFlag = false;
         doctypeNameToken = new StringBuilder();
     }
 
-    void createDoctypeSystemIdentifier() {
+    private void createDoctypeSystemIdentifier() {
         doctypeSystemIdentifier = new StringBuilder();
     }
 
-    void createDoctypePublicIdentifier() {
+    private void createDoctypePublicIdentifier() {
         doctypePublicIdentifier = new StringBuilder();
     }
 
-    void appendDoctypeNameCharacter(int chr) {
+    private void appendDoctypeNameCharacter(int chr) {
         doctypeNameToken.append((char) chr);
     }
 
-    void appendDoctypePublicIdentifier(int chr) {
+    private void appendDoctypePublicIdentifier(int chr) {
         doctypePublicIdentifier.append((char) chr);
     }
 
-    void appendDoctypeSystemIdentifierCharacter(int chr) {
+    private void appendDoctypeSystemIdentifierCharacter(int chr) {
         doctypeSystemIdentifier.append((char) chr);
     }
 
     // -------
 
-    void createNewCommentToken() {
+    private void createNewCommentToken() {
         commentToken.reset();
     }
 
 
-    public void createProcessingInstructionToken() {
+    private void createProcessingInstructionToken() {
         processingInstructionTokenTarget = temporaryBuffer.toString();
         processingInstructionTokenData.reset();
     }
 
-    void appendCommentCharacter(int chr) {
+    private void appendCommentCharacter(int chr) {
         commentToken.append((char) chr);
     }
 
-    void appendCommentCharacter(int chr, int chr2) {
+    private void appendCommentCharacter(int chr, int chr2) {
         commentToken.append((char) chr);
         commentToken.append((char) chr2);
     }
 
-    void appendTemporaryBufferToComment() {
+    private void appendTemporaryBufferToComment() {
         commentToken.append(temporaryBuffer);
     }
 
-    void convertTemporaryBufferToComment() {
+    private void convertTemporaryBufferToComment() {
         createNewCommentToken();
         appendCommentCharacter('?');
         appendTemporaryBufferToComment();
@@ -544,7 +540,7 @@ final class Tokenizer {
         tokenHandler.emitComment(s);
     }
 
-    void emitTagToken() {
+    private void emitTagToken() {
 
         // Permitted slash but in close tag
         // When an end tag token is emitted with attributes, that is a parse
@@ -567,36 +563,36 @@ final class Tokenizer {
         tokenHandler.emitProcessingInstructionToken(processingInstructionTokenTarget, processingInstructionTokenData.toString());
     }
 
-    int getPreviousState() {
+    private int getPreviousState() {
         return previousState;
     }
 
-    void setPreviousState(int previousState) {
+    private void setPreviousState(int previousState) {
         this.previousState = previousState;
     }
 
-    Element getAdjustedCurrentNode() {
+    private Element getAdjustedCurrentNode() {
         return tokenHandler.getAdjustedCurrentNode();
     }
 
     // optimizations related getters and methods
-    int getTokenHandlerInsertionMode() {
+    private int getTokenHandlerInsertionMode() {
         return tokenHandler.getInsertionMode();
     }
 
-    boolean isTokenHandlerInHtmlContent() {
+    private boolean isTokenHandlerInHtmlContent() {
         return tokenHandler.isInHtmlContent();
     }
 
-    ResizableCharBuilder getTokenHandlerInsertCharacterPreviousTextNode() {
+    private ResizableCharBuilder getTokenHandlerInsertCharacterPreviousTextNode() {
         return tokenHandler.getInsertCharacterPreviousTextNode();
     }
 
-    void resetTokenHandlerInsertCharacterPreviousTextNode() {
+    private void resetTokenHandlerInsertCharacterPreviousTextNode() {
         tokenHandler.resetInsertCharacterPreviousTextNode();
     }
 
-    void emitParseErrorAndSetState(int state) {
+    private void emitParseErrorAndSetState(int state) {
         tokenHandler.emitParseError();
         this.state = state;
     }
@@ -604,23 +600,23 @@ final class Tokenizer {
     //
 
     //
-    void setDoctypeForceQuirksFlag(boolean doctypeForceQuirksFlag) {
+    private void setDoctypeForceQuirksFlag(boolean doctypeForceQuirksFlag) {
         this.doctypeForceQuirksFlag = doctypeForceQuirksFlag;
     }
 
-    StringBuilder getDoctypeNameToken() {
+    private StringBuilder getDoctypeNameToken() {
         return doctypeNameToken;
     }
 
-    StringBuilder getDoctypePublicIdentifier() {
+    private StringBuilder getDoctypePublicIdentifier() {
         return doctypePublicIdentifier;
     }
 
-    StringBuilder getDoctypeSystemIdentifier() {
+    private StringBuilder getDoctypeSystemIdentifier() {
         return doctypeSystemIdentifier;
     }
 
-    void setSelfClosing(boolean selfClosing) {
+    private void setSelfClosing(boolean selfClosing) {
         this.selfClosing = selfClosing;
     }
 
@@ -712,7 +708,7 @@ final class Tokenizer {
 
 
     //region TokenizerTagStates
-    static void handleTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.EXCLAMATION_MARK:
@@ -741,7 +737,7 @@ final class Tokenizer {
     }
 
 
-    static void handleEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
@@ -773,7 +769,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.readUntilTagName(tokenizer.tagName);
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -799,7 +795,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleSelfClosingStartTagState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleSelfClosingStartTagState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
@@ -820,7 +816,7 @@ final class Tokenizer {
     //endregion
 
     //region TokenizerRCDataAndScriptStates
-    static void handleRCDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRCDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.AMPERSAND:
@@ -841,7 +837,7 @@ final class Tokenizer {
                 tokenizer.emitCharacter(chr);
                 int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
-                if (tokenizer.getState() == RCDATA_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
+                if (tokenizer.state == RCDATA_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
                     int internalChr = processedInputStream.readUntil(textNode, true, true);
                     switch (internalChr) {
                         case Characters.AMPERSAND:
@@ -865,7 +861,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleCharacterReferenceInRCDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCharacterReferenceInRCDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         tokenizer.setState(RCDATA_STATE);
         char[] chars = consumeCharacterReference(-1, false, processedInputStream, tokenizer);
         if (chars == null) {
@@ -877,7 +873,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleRCDataLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRCDataLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
@@ -888,7 +884,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleRCDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRCDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
@@ -902,7 +898,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleRCDataEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRCDataEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -950,7 +946,7 @@ final class Tokenizer {
 
     // --------- script states
 
-    static void handleScriptDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.EOF:
@@ -971,7 +967,7 @@ final class Tokenizer {
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
 
                 // optimization: bypass if possible
-                if (tokenizer.getState() == SCRIPT_DATA_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
+                if (tokenizer.state == SCRIPT_DATA_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
                     int internalChr = processedInputStream.readUntil(textNode, false, true);
                     switch (internalChr) {
                         case Characters.EOF:
@@ -993,7 +989,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.SOLIDUS:
@@ -1013,7 +1009,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
         if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
@@ -1030,7 +1026,7 @@ final class Tokenizer {
 
     }
 
-    static void handleScriptDataEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1076,7 +1072,7 @@ final class Tokenizer {
         processedInputStream.reconsume(chr);
     }
 
-    static void handleScriptDataEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.HYPHEN_MINUS) {
             tokenizer.setState(SCRIPT_DATA_ESCAPE_START_DASH_STATE);
@@ -1087,7 +1083,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEscapeStartDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapeStartDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.HYPHEN_MINUS) {
             tokenizer.setState(SCRIPT_DATA_ESCAPED_DASH_DASH_STATE);
@@ -1098,7 +1094,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEscapedDashDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapedDashDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -1126,7 +1122,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEscapedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -1151,7 +1147,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEscapedDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapedDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -1176,7 +1172,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEscapedLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapedLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
         if (chr == Characters.SOLIDUS) {
@@ -1195,7 +1191,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEscapedEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapedEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
 
         if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
@@ -1211,7 +1207,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataEscapedEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataEscapedEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1259,7 +1255,7 @@ final class Tokenizer {
 
     private static final ResizableCharBuilder SCRIPT = new ResizableCharBuilder(new char[] {'s', 'c', 'r', 'i', 'p', 't'});
 
-    static void handleScriptDataDoubleEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataDoubleEscapeStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE, Characters.SOLIDUS, Characters.GREATERTHAN_SIGN:
@@ -1282,7 +1278,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataDoubleEscapedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataDoubleEscapedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -1307,7 +1303,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataDoubleEscapedDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataDoubleEscapedDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -1333,7 +1329,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataDoubleEscapedDashDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataDoubleEscapedDashDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -1362,7 +1358,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataDoubleEscapedLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataDoubleEscapedLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
@@ -1374,7 +1370,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleScriptDataDoubleEscapedEndState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleScriptDataDoubleEscapedEndState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF,
@@ -1399,7 +1395,7 @@ final class Tokenizer {
 
     // ----
 
-    static void handlePlainTextState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handlePlainTextState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.NULL:
@@ -1414,7 +1410,7 @@ final class Tokenizer {
                 tokenizer.emitCharacter(chr);
                 int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
-                if (tokenizer.getState() == PLAINTEXT_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
+                if (tokenizer.state == PLAINTEXT_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
                     int internalChr = processedInputStream.readUntil(textNode, false, false);
                     switch (internalChr) {
                         case Characters.NULL:
@@ -1434,7 +1430,7 @@ final class Tokenizer {
 
     // ----
 
-    static void handleRawtextState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRawtextState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.LESSTHAN_SIGN:
@@ -1453,7 +1449,7 @@ final class Tokenizer {
                 // vvv optimization vvv
                 int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
-                if (tokenizer.getState() == RAWTEXT_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
+                if (tokenizer.state == RAWTEXT_STATE && previousInsertionMode == currentInsertionMode && textNode != null) {
                     int internalChr = processedInputStream.readUntil(textNode, false, true);
                     switch (internalChr) {
                         case Characters.LESSTHAN_SIGN:
@@ -1474,7 +1470,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleRawTextLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRawTextLessThanSignState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.SOLIDUS) {
             tokenizer.createTemporaryBuffer();
@@ -1485,7 +1481,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleRawTextEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRawTextEndTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (Common.isUpperOrLowerCaseASCIILetter(chr)) {
             tokenizer.newEndTokenTag();
@@ -1499,7 +1495,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleRawTextEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleRawTextEndTagNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1548,7 +1544,7 @@ final class Tokenizer {
     //endregion
 
     //region TokenizerMarkupDeclarationState
-    static void handleMarkupDeclarationOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleMarkupDeclarationOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int[] chars = new int[7];
 
         chars[0] = processedInputStream.peekNextInputCharacter(1);
@@ -1588,7 +1584,7 @@ final class Tokenizer {
     //endregion
 
     //region TokenizerDoctypeStates
-    static void handleDoctypeState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleDoctypeState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1608,7 +1604,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleBeforeDoctypeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBeforeDoctypeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1648,7 +1644,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleDoctypeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleDoctypeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1674,7 +1670,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAfterDoctypeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterDoctypeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1714,7 +1710,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAfterDoctypePublicKeywordState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterDoctypePublicKeywordState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1750,7 +1746,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleBeforeDoctypePublicIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBeforeDoctypePublicIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1784,7 +1780,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleDoctypePublicIdentifierDoubleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleDoctypePublicIdentifierDoubleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.QUOTATION_MARK:
@@ -1812,7 +1808,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleDoctypePublicIdentifierSingleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleDoctypePublicIdentifierSingleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.APOSTROPHE:
@@ -1840,7 +1836,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAfterDoctypePublicIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterDoctypePublicIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1874,7 +1870,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleBetweenDoctypePublicAndSystemIdentifiersState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBetweenDoctypePublicAndSystemIdentifiersState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1906,7 +1902,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAfterDoctypeSystemKeywordState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterDoctypeSystemKeywordState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1942,7 +1938,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleBeforeDoctypeSystemIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBeforeDoctypeSystemIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -1977,7 +1973,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleDoctypeSystemIdentifierDoubleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleDoctypeSystemIdentifierDoubleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.QUOTATION_MARK:
@@ -2005,7 +2001,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleDoctypeSystemIdentifierSingleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleDoctypeSystemIdentifierSingleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.APOSTROPHE:
@@ -2033,7 +2029,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAfterDoctypeSystemIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterDoctypeSystemIdentifierState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -2055,7 +2051,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleBogusDoctypeState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBogusDoctypeState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
@@ -2075,7 +2071,7 @@ final class Tokenizer {
     //endregion
 
     //region TokenizerCommentStates
-    static void handleCommentStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCommentStartState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -2102,7 +2098,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleCommentStartDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCommentStartDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -2129,7 +2125,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleCommentState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCommentState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.readUntilComment(tokenizer.commentToken);
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -2149,7 +2145,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleCommentEndDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCommentEndDashState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -2172,7 +2168,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleCommentEndState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCommentEndState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.GREATERTHAN_SIGN:
@@ -2207,7 +2203,7 @@ final class Tokenizer {
 
     }
 
-    static void handleCommentEndBangState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCommentEndBangState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.HYPHEN_MINUS:
@@ -2239,7 +2235,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleBogusCommentState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBogusCommentState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         ResizableCharBuilder sb = tokenizer.commentToken;
         boolean continueProcess = true;
         while (continueProcess) {
@@ -2267,7 +2263,7 @@ final class Tokenizer {
     //endregion
 
     //region TokenizerCharacterReference
-    static char[] consumeCharacterReference(int additionalCharacter, boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler) {
+    private static char[] consumeCharacterReference(int additionalCharacter, boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler) {
         //
         if(!tokenHandler.transformEntities) {
             return null;
@@ -2562,7 +2558,7 @@ final class Tokenizer {
     //endregion
 
     //region TokenizerCDataSectionAndDataState
-    static void handleDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.EOF:
@@ -2584,7 +2580,7 @@ final class Tokenizer {
                 // vvv optimization vvv
                 int currentInsertionMode = tokenizer.getTokenHandlerInsertionMode();
                 ResizableCharBuilder textNode = tokenizer.getTokenHandlerInsertCharacterPreviousTextNode();
-                if (tokenizer.getState() == DATA_STATE && previousInsertionMode == currentInsertionMode
+                if (tokenizer.state == DATA_STATE && previousInsertionMode == currentInsertionMode
                         && (currentInsertionMode == TreeConstructor.IM_IN_BODY || currentInsertionMode == TreeConstructor.IM_IN_CELL)
                         && tokenizer.isTokenHandlerInHtmlContent() && textNode != null) {
 
@@ -2615,7 +2611,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleCharacterReferenceInDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCharacterReferenceInDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         tokenizer.setState(DATA_STATE);
         char[] chars = consumeCharacterReference(-1, false, processedInputStream, tokenizer);
         if (chars == null) {
@@ -2629,7 +2625,7 @@ final class Tokenizer {
 
     // cdata
 
-    static void handleCDataSectionState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCDataSectionState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         tokenizer.setState(DATA_STATE);
 
         while (true) {
@@ -2654,7 +2650,7 @@ final class Tokenizer {
     //endregion
 
     //region TokenizerAttributesState
-    static void handleBeforeAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBeforeAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -2686,7 +2682,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.readUntilAttributeName(tokenizer.currentAttributeName);
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -2719,7 +2715,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAfterAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterAttributeNameState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -2764,7 +2760,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleBeforeAttributeValueState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleBeforeAttributeValueState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -2804,7 +2800,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAttributeValueDoubleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAttributeValueDoubleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         // vvv optimization vvv, we try to append as much as possible
 
         int chr = processedInputStream.readUntilAttributeValue(tokenizer.currentAttributeValue, Characters.QUOTATION_MARK, true);
@@ -2830,7 +2826,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAttributeValueSingleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAttributeValueSingleQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.readUntilAttributeValue(tokenizer.currentAttributeValue, Characters.APOSTROPHE, true);
         switch (chr) {
             case Characters.APOSTROPHE:
@@ -2856,7 +2852,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAttributeValueUnquotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAttributeValueUnquotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.readUntilAttributeValueUnquoted(tokenizer.currentAttributeValue);
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -2889,7 +2885,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleCharacterReferenceInAttributeValueState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleCharacterReferenceInAttributeValueState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         char[] res = consumeCharacterReference(tokenizer.additionalAllowedCharacter, true, processedInputStream, tokenizer);
         if (res == null) {
             tokenizer.appendCurrentAttributeValue(Characters.AMPERSAND);
@@ -2906,7 +2902,7 @@ final class Tokenizer {
         //
     }
 
-    static void handleAfterAttributeValueQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterAttributeValueQuotedState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         switch (chr) {
             case Characters.TAB, Characters.LF, Characters.FF, Characters.SPACE:
@@ -2930,7 +2926,7 @@ final class Tokenizer {
     }
 
     // see https://html.spec.whatwg.org/multipage/parsing.html#processing-instruction-open-state
-    static void handleProcessingInstructionOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleProcessingInstructionOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (Common.isUpperOrLowerCaseASCIILetter(chr) || chr == Characters.LOW_LINE) {
             processedInputStream.reconsume(chr);
@@ -2947,7 +2943,7 @@ final class Tokenizer {
     }
 
     // see https://html.spec.whatwg.org/multipage/parsing.html#processing-instruction-target-state
-    static void handleProcessingInstructionTargetState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleProcessingInstructionTargetState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (Common.isTabLfFfCrOrSpace(chr) || chr == Characters.QUESTION_MARK || chr == Characters.GREATERTHAN_SIGN) {
             if (tokenizer.isTemporaryBufferEquals(Common.XML) || tokenizer.isTemporaryBufferEquals(Common.XML_STYLESHEET)) {
@@ -2973,7 +2969,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleAfterProcessingInstructionTargetState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleAfterProcessingInstructionTargetState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (!Common.isTabLfFfCrOrSpace(chr)) {
             // ignore
@@ -2982,7 +2978,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleProcessingInstructionDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleProcessingInstructionDataState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.QUESTION_MARK) {
             tokenizer.setState(PROCESSING_INSTRUCTION_QUESTIONABLE_STATE);
@@ -2997,7 +2993,7 @@ final class Tokenizer {
         }
     }
 
-    static void handleProcessingInstructionQuestionableState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
+    private static void handleProcessingInstructionQuestionableState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
         int chr = processedInputStream.getNextInputCharacterAndConsume();
         if (chr == Characters.GREATERTHAN_SIGN) {
             tokenizer.setState(DATA_STATE);
