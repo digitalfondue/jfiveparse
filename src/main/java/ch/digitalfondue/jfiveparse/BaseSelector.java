@@ -205,7 +205,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         var res = stateSupplier.get();
         for (var part : selector) {
             if (part instanceof CSS.Combinator c) {
-                switch (c.type()) {
+                switch (c.type) {
                     case CSS.CT_CHILD -> res.withChild();
                     case CSS.CT_SIBLING -> res.subsequentSibling();
                     case CSS.CT_ADJACENT -> res.nextSibling();
@@ -213,15 +213,15 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     default -> throw new ParserException("Combinator " + c + " is not supported");
                 }
             } else if (part instanceof CSS.TagSelector t) {
-                if (t.namespace() == null || "*".equals(t.namespace())) {
-                    res.element(t.name());
+                if (t.namespace == null || "*".equals(t.namespace)) {
+                    res.element(t.name);
                 } else {
-                    res.element(t.name(), t.namespace());
+                    res.element(t.name, t.namespace);
                 }
             } else if (part instanceof CSS.AttributeSelector a) {
-                var action = a.action();
-                var name = a.name();
-                var value = a.value();
+                var action = a.action;
+                var name = a.name;
+                var value = a.value;
                 if (action == CSS.ATTR_ACTION_EQUALS) {
                     res.attrValEq(name, value);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT && "class".equals(name)) {
@@ -239,12 +239,12 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 } else {
                     throw new ParserException("AttributeSelector " + a + " is not supported");
                 }
-            } else if (part instanceof CSS.InternalSelector is && "base".equals(is.name())) {
+            } else if (part instanceof CSS.InternalSelector is && "base".equals(is.name)) {
                 res.matchers.add((node, base) -> base.isSameNode(unwrapper.apply(node)));
             } else if (part instanceof CSS.PseudoSelector ps) {
-                String name = ps.name();
-                if ("contains".equals(name) && ps.data() instanceof CSS.DataString ds) {
-                    res.contains(ds.value());
+                String name = ps.name;
+                if ("contains".equals(name) && ps.data instanceof CSS.DataString ds) {
+                    res.contains(ds.value);
                 } else if ("first-child".equals(name)) {
                     res.matchers.add(this::isFirstElementChild);
                 } else if ("last-child".equals(name)) {
@@ -261,17 +261,17 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     res.matchers.add(andMatchers(List.of(this::isFirstOfType, this::isLastOfType)));
                 } else if ("root".equals(name)) {
                     res.matchers.add(this::isRoot);
-                } else if (("is".equals(name) || "where".equals(name) || "not".equals(name)) && ps.data() instanceof CSS.DataSelectors ds) {
-                    var isMatchers = orMatchers(ds.value().stream().map((l) -> toBaseNodeMatcher(l, stateSupplier)).toList());
+                } else if (("is".equals(name) || "where".equals(name) || "not".equals(name)) && ps.data instanceof CSS.DataSelectors ds) {
+                    var isMatchers = orMatchers(ds.value.stream().map((l) -> toBaseNodeMatcher(l, stateSupplier)).toList());
                     var baseRule = res.collectMatchers();
                     var mustMatch = !"not".equals(name);
                     res.matchers.add((node, base) -> baseRule.test(node, base) && isMatchers.test(node, base) == mustMatch);
-                } else if ("has".equals(name) && ps.data() instanceof CSS.DataSelectors ds) {
+                } else if ("has".equals(name) && ps.data instanceof CSS.DataSelectors ds) {
                     // see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors/Selector_structure#relative_selector
-                    var hasMatchers = orMatchers(ds.value().stream().map(s -> {
+                    var hasMatchers = orMatchers(ds.value.stream().map(s -> {
                         var r = new ArrayList<CSS.CssSelector>(s.size() + 2);
                         r.add(new CSS.InternalSelector("base"));
-                        int comb = !s.isEmpty() && s.get(0) instanceof CSS.Combinator combinator ? combinator.type() : -1;
+                        int comb = !s.isEmpty() && s.get(0) instanceof CSS.Combinator combinator ? combinator.type : -1;
                         if (comb == -1) {
                             comb = CSS.CT_DESCENDANT;
                             r.add(new CSS.Combinator(comb));
@@ -286,19 +286,19 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     }).toList());
                     var baseRule = res.collectMatchers();
                     res.matchers.add((node, base) -> baseRule.test(node, base) && hasMatchers.test(node, node));
-                } else if (("nth-child".equals(name) || "nth-last-child".equals(name)) && ps.data() instanceof CSS.DataString s) {
-                    var idxPredicate = CSS.parseNth(s.value());
+                } else if (("nth-child".equals(name) || "nth-last-child".equals(name)) && ps.data instanceof CSS.DataString s) {
+                    var idxPredicate = CSS.parseNth(s.value);
                     var reversedOrder = "nth-last-child".equals(name);
                     res.matchers.add((node, base) -> isAt(node, idxPredicate, reversedOrder));
-                } else if (("nth-of-type".equals(name) || "nth-last-of-type".equals(name)) && ps.data() instanceof CSS.DataString s) {
-                    var idxPredicate = CSS.parseNth(s.value());
+                } else if (("nth-of-type".equals(name) || "nth-last-of-type".equals(name)) && ps.data instanceof CSS.DataString s) {
+                    var idxPredicate = CSS.parseNth(s.value);
                     var reversedOrder = "nth-last-of-type".equals(name);
                     res.matchers.add((node, base) -> isAtNthOfType(node, idxPredicate, reversedOrder));
                 } else {
                     throw new ParserException("PseudoSelector '" + name + "' is not supported");
                 }
             } else if (part instanceof CSS.UniversalSelector u) {
-                String namespace = u.namespace();
+                String namespace = u.namespace;
                 if (namespace != null && !"*".equals(namespace) && nameSpaceAlias.containsKey(namespace)) {
                     var ns = nameSpaceAlias.get(namespace);
                     res.matchers.add((node, base) ->
