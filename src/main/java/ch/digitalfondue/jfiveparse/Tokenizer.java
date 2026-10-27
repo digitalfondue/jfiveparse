@@ -2297,7 +2297,11 @@ final class Tokenizer {
 
     private static char[] parseEntity(boolean inAttribute, ProcessedInputStream processedInputStream, Tokenizer tokenHandler/*, int chr*/) {
         int matchedCount = 0;
-        var currentPrefix = EntitiesPrefix.ENTITIES;
+        int currentPrefix = EntitiesPrefix.ROOT;
+        // longest complete entity seen while consuming the characters, the walk may continue
+        // further than the longest match (ex: &notin without ';' matches &not)
+        int completePrefix = EntitiesPrefix.NO_NODE;
+        int completePrefixLength = 0;
         tokenHandler.characterReferenceTmpBuffer.reset();
         ResizableCharBuilder tentativelyMatched = tokenHandler.characterReferenceTmpBuffer;
 
@@ -2306,28 +2310,25 @@ final class Tokenizer {
             if (next != Characters.EOF) {
                 tentativelyMatched.append((char) next);
             }
-            var tmpPrefix = currentPrefix.getNode((char) next);
-            if (tmpPrefix != null) {
-                currentPrefix = tmpPrefix;
-                matchedCount++;
-            } else {
+            int tmpPrefix = EntitiesPrefix.getNode(currentPrefix, (char) next);
+            if (tmpPrefix == EntitiesPrefix.NO_NODE) {
                 break;
             }
-        }
-
-        if (!currentPrefix.isComplete()) {
-            var maybeCompleteParent = currentPrefix.getMaybeCompleteParent();
-            if (maybeCompleteParent != null) {
-                currentPrefix = maybeCompleteParent;
+            currentPrefix = tmpPrefix;
+            matchedCount++;
+            if (EntitiesPrefix.isComplete(currentPrefix)) {
+                completePrefix = currentPrefix;
+                completePrefixLength = matchedCount;
             }
         }
 
-        if (currentPrefix.isComplete()) {
-            int entityMatchedLength = currentPrefix.length;
+        if (completePrefix != EntitiesPrefix.NO_NODE) {
+            // completePrefixLength is the number of chars of the entity name: none of them has
+            // been consumed yet
             if (inAttribute) {
-                return handleCompleteEntityInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatchedLength);
+                return handleCompleteEntityInAttribute(processedInputStream, tokenHandler, completePrefix, completePrefixLength);
             } else {
-                return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, currentPrefix, entityMatchedLength);
+                return handleCompleteEntityNotInAttribute(processedInputStream, tokenHandler, completePrefix, completePrefixLength);
             }
         } else {
             // handleUncompleteEntity
@@ -2358,22 +2359,22 @@ final class Tokenizer {
 
     private static char[] handleCompleteEntityNotInAttribute(ProcessedInputStream processedInputStream,
                                                              Tokenizer tokenHandler,
-                                                             EntitiesPrefix currentPrefix,
+                                                             int currentPrefix,
                                                              int entityMatchedLength) {
-        if ((currentPrefix.c) != Characters.SEMICOLON) {
+        if (EntitiesPrefix.lastChar(currentPrefix) != Characters.SEMICOLON) {
             tokenHandler.emitParseError();
         }
 
-        processedInputStream.consume(entityMatchedLength - 1);
-        return currentPrefix.chars;
+        processedInputStream.consume(entityMatchedLength);
+        return EntitiesPrefix.chars(currentPrefix);
     }
 
     private static char[] handleCompleteEntityInAttribute(ProcessedInputStream processedInputStream,
                                                           Tokenizer tokenHandler,
-                                                          EntitiesPrefix currentPrefix,
+                                                          int currentPrefix,
                                                           int entityMatchedLength) {
-        if (currentPrefix.c != Characters.SEMICOLON) {
-            int nextCharacterAfterMatchedEntity = processedInputStream.peekNextInputCharacter(entityMatchedLength);
+        if (EntitiesPrefix.lastChar(currentPrefix) != Characters.SEMICOLON) {
+            int nextCharacterAfterMatchedEntity = processedInputStream.peekNextInputCharacter(entityMatchedLength + 1);
             if (Common.isAlphaNumericASCII(nextCharacterAfterMatchedEntity)) {
                 return null;
             } else if (Characters.EQUALS_SIGN == nextCharacterAfterMatchedEntity) {
@@ -2384,8 +2385,8 @@ final class Tokenizer {
             }
 
         } else {
-            processedInputStream.consume(entityMatchedLength - 1);
-            return currentPrefix.chars;
+            processedInputStream.consume(entityMatchedLength);
+            return EntitiesPrefix.chars(currentPrefix);
         }
     }
 
