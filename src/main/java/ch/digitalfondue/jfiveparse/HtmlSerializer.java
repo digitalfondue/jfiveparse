@@ -55,9 +55,9 @@ public class HtmlSerializer implements NodesVisitor {
 
     private String quoteCharacters(AttributeNode attribute) {
         if (printOriginalAttributeQuote) {
-            if (attribute.getAttributeQuoteType() == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE) {
+            if (attribute.getAttributeQuoteType() == Tokenizer.ATTRIBUTE_VALUE_UNQUOTED_STATE) {
                 return "";
-            } else if (attribute.getAttributeQuoteType() == TokenizerState.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE) {
+            } else if (attribute.getAttributeQuoteType() == Tokenizer.ATTRIBUTE_VALUE_SINGLE_QUOTED_STATE) {
                 return "'";
             }
         }
@@ -115,7 +115,7 @@ public class HtmlSerializer implements NodesVisitor {
                         appendable.append(' ');
                         serializeAttributeName(appendable, attr);//
 
-                        if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.getAttributeQuoteType() == TokenizerState.ATTRIBUTE_VALUE_UNQUOTED_STATE))
+                        if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.getAttributeQuoteType() == Tokenizer.ATTRIBUTE_VALUE_UNQUOTED_STATE))
                                 && (attr.getValue() == null || attr.getValue().isEmpty())) {
                             continue;
                         }

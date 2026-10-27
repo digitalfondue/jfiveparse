@@ -35,7 +35,7 @@ public final class AttributeNode {
         String prefix;
         String namespace;
         // when misc is null the attribute is implicitly double quoted
-        int attributeQuoteType = TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
+        int attributeQuoteType = Tokenizer.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
     }
 
     public AttributeNode(String name, String value) {
@@ -47,7 +47,7 @@ public final class AttributeNode {
         this.name = name;
         this.value = value;
         boolean preserveOriginalName = !Objects.equals(name, originalName);
-        if (preserveOriginalName || attributeQuoteType != TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE) {
+        if (preserveOriginalName || attributeQuoteType != Tokenizer.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE) {
             var e = misc();
             if (preserveOriginalName) {
                 e.originalName = originalName;
@@ -154,7 +154,7 @@ public final class AttributeNode {
     }
 
     int getAttributeQuoteType() {
-        return misc == null ? TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE : misc.attributeQuoteType;
+        return misc == null ? Tokenizer.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE : misc.attributeQuoteType;
     }
 
     void setNameAndLocalName(String name) {

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ch.digitalfondue.jfiveparse.CssTestAssert.assertEquals;
 
 // see data based from https://github.com/fb55/css-what/blob/master/src/__fixtures__/tests.ts
 class CSSTest {

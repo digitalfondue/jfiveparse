@@ -1,7 +1,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import com.google.gson.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -23,7 +22,7 @@ class CSSImportedTest {
     @ParameterizedTest(name = "selector: \"{0}\"")
     public void check(String selector, List<List<CSS.CssSelector>> expected) {
         var parsed = CSS.parseSelector(selector);
-        Assertions.assertEquals(expected, parsed);
+        CssTestAssert.assertEquals(expected, parsed);
     }
 
     public static List<Object[]> data() throws IOException {

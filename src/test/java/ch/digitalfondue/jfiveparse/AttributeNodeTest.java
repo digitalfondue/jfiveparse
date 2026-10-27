@@ -42,7 +42,7 @@ class AttributeNodeTest {
 
     @Test
     void originalCaseAndNamespaceExtras() {
-        AttributeNode originalCase = new AttributeNode("class", "CLASS", "value", TokenizerState.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
+        AttributeNode originalCase = new AttributeNode("class", "CLASS", "value", Tokenizer.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE);
         assertEquals("class", originalCase.getName());
         assertEquals("class", originalCase.getLocalName());
         assertEquals("CLASS", originalCase.getOriginalName());

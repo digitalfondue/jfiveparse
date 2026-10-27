@@ -60,9 +60,23 @@ final class CSS {
     sealed interface CssSelector {}
 
     // child '>', parent '<', sibling '~', adjacent '+', column '||', descendant 'a b'
-    record Combinator(int type) implements CssSelector {}
+    static final class Combinator implements CssSelector {
+        final int type;
 
-    record TagSelector(String name, String namespace) implements CssSelector {}
+        Combinator(int type) {
+            this.type = type;
+        }
+    }
+
+    static final class TagSelector implements CssSelector {
+        final String name;
+        final String namespace;
+
+        TagSelector(String name, String namespace) {
+            this.name = name;
+            this.namespace = namespace;
+        }
+    }
 
 
     static final int IGNORE_CASE_UNKNOWN = -1;
@@ -70,17 +84,75 @@ final class CSS {
     static final int IGNORE_CASE_FALSE = 1;
     static final int IGNORE_CASE_QUIRKS = 2;
 
-    record AttributeSelector(String name, int action, String value, int ignoreCase, String namespace) implements CssSelector {}
+    static final class AttributeSelector implements CssSelector {
+        final String name;
+        final int action;
+        final String value;
+        final int ignoreCase;
+        final String namespace;
 
-    record PseudoElement(String name, String data) implements CssSelector {}
+        AttributeSelector(String name, int action, String value, int ignoreCase, String namespace) {
+            this.name = name;
+            this.action = action;
+            this.value = value;
+            this.ignoreCase = ignoreCase;
+            this.namespace = namespace;
+        }
+    }
+
+    static final class PseudoElement implements CssSelector {
+        final String name;
+        final String data;
+
+        PseudoElement(String name, String data) {
+            this.name = name;
+            this.data = data;
+        }
+    }
 
     sealed interface DataPseudo {}
-    record DataString(String value) implements DataPseudo {}
-    record DataSelectors(List<List<CssSelector>> value) implements DataPseudo {}
-    record PseudoSelector(String name, DataPseudo data) implements CssSelector {}
-    record InternalSelector(String name) implements CssSelector {}
 
-    record UniversalSelector(String namespace) implements CssSelector {}
+    static final class DataString implements DataPseudo {
+        final String value;
+
+        DataString(String value) {
+            this.value = value;
+        }
+    }
+
+    static final class DataSelectors implements DataPseudo {
+        final List<List<CssSelector>> value;
+
+        DataSelectors(List<List<CssSelector>> value) {
+            this.value = value;
+        }
+    }
+
+    static final class PseudoSelector implements CssSelector {
+        final String name;
+        final DataPseudo data;
+
+        PseudoSelector(String name, DataPseudo data) {
+            this.name = name;
+            this.data = data;
+        }
+    }
+
+    static final class InternalSelector implements CssSelector {
+        final String name;
+
+        InternalSelector(String name) {
+            this.name = name;
+        }
+    }
+
+    static final class UniversalSelector implements CssSelector {
+        final String namespace;
+
+        UniversalSelector(String namespace) {
+            this.namespace = namespace;
+        }
+    }
 
 
     static final int CT_CHILD = 0;
@@ -223,7 +295,7 @@ final class CSS {
         }
 
         void addTraversal(int type) {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CT_DESCENDANT
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type == CT_DESCENDANT
             ) {
                 tokens.set(tokens.size() - 1, new Combinator(type));
                 return;
@@ -245,7 +317,7 @@ final class CSS {
         }
 
         void finalizeSubselector() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type() == CT_DESCENDANT) {
+            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type == CT_DESCENDANT) {
                 tokens.remove(tokens.size()-1);
             }
 
@@ -275,7 +347,7 @@ final class CSS {
                     case 32: // space
                     {
                         // check the first token is not DESCENDANT
-                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Combinator ct) || ct.type() != CT_DESCENDANT)) {
+                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Combinator ct) || ct.type != CT_DESCENDANT)) {
                             ensureNotCombinator();
                             tokens.add(new Combinator(CT_DESCENDANT));
                         }
