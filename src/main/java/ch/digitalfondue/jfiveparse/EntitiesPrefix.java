@@ -20,12 +20,10 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 /**
- * Trie of the html5 named character references, used by
- * {@link Tokenizer#parseEntity(boolean, ProcessedInputStream, Tokenizer)}.
+ * Trie of the html5 named character references.
  *
  * The data is stored in the classpath as a sorted and prefix compressed list of entity names (see
- * {@code GenerateEntities} in the test sources) and is loaded, at class initialization, directly
- * into flat arrays.
+ * GenerateEntities).
  *
  * A position in the trie is an {@code int} (the node id), {@link #ROOT} is the starting point and
  * {@link #NO_NODE} means "no match". The encoding of the resource is big endian:
@@ -68,10 +66,13 @@ final class EntitiesPrefix {
     private static final char[] VALUES;
 
     static {
-        byte[] data = readResource();
+        byte[] data;
+        try (InputStream raw = EntitiesPrefix.class.getResourceAsStream(RESOURCE)) {
+            data = raw.readAllBytes();
+        } catch (IOException ioe) {
+            throw new IllegalStateException("jfiveparse: unable to read resource " + RESOURCE, ioe);
+        }
         int count = readUnsignedShort(data, 0);
-        // nodeCount and valuesLength are pre-calculated by GenerateEntities, the flat arrays can
-        // be allocated at their exact size in a single pass
         int nodeCount = readUnsignedShort(data, 2);
         int valuesLength = readUnsignedShort(data, 4);
 
@@ -184,7 +185,7 @@ final class EntitiesPrefix {
         return (char) (NODE_CHAR[node] & 0xff);
     }
 
-    /** @return the chars of the entity represented by {@code node}, a fresh array */
+    /** @return the chars of the entity represented by {@code node} */
     static char[] chars(int node) {
         int value = VALUE[node];
         int start = value >>> 3;
@@ -193,13 +194,5 @@ final class EntitiesPrefix {
 
     private static int readUnsignedShort(byte[] data, int offset) {
         return ((data[offset] & 0xff) << 8) | (data[offset + 1] & 0xff);
-    }
-
-    private static byte[] readResource() {
-        try (InputStream raw = EntitiesPrefix.class.getResourceAsStream(RESOURCE)) {
-            return raw.readAllBytes();
-        } catch (IOException ioe) {
-            throw new IllegalStateException("jfiveparse: unable to read resource " + RESOURCE, ioe);
-        }
     }
 }

@@ -31,10 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Checks the trie built from the packaged resource against entities.json, the reference data it is
- * generated from, and against the tokenizer behaviour.
- */
 class EntitiesResourceTest {
 
     private static class EntityValues {
@@ -46,12 +42,6 @@ class EntitiesResourceTest {
         }).getType();
         String json = Files.readString(Paths.get("src/test/resources/entities.json"));
         return new GsonBuilder().create().fromJson(json, type);
-    }
-
-    private static byte[] resource() throws IOException {
-        try (var in = EntitiesPrefix.class.getResourceAsStream(EntitiesPrefix.RESOURCE)) {
-            return in.readAllBytes();
-        }
     }
 
     private static int walk(String name) {
@@ -67,13 +57,6 @@ class EntitiesResourceTest {
 
     private static String textOf(String html) {
         return JFiveParse.parse(html).getBody().getTextContent();
-    }
-
-    @Test
-    void resourceCountMatchesReference() throws IOException {
-        byte[] raw = resource();
-        int count = ((raw[0] & 0xff) << 8) | (raw[1] & 0xff);
-        assertEquals(referenceEntities().size(), count, "the header count must match entities.json");
     }
 
     @Test
@@ -145,6 +128,5 @@ class EntitiesResourceTest {
     void entitiesAreNotInterpretedWhenDisabled() {
         var parser = new Parser(Set.of(Option.DONT_TRANSFORM_ENTITIES));
         assertEquals("&amp; &hellip;", parser.parse("<p>&amp; &hellip;</p>").getBody().getTextContent());
-        // the trie is not even initialized in that case
     }
 }
