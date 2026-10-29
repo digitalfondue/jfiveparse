@@ -33,7 +33,8 @@ import java.util.Map;
 
 /**
  * Generates the resource {@code entities-with-1-2-codepoint}, the trie of the named character
- * references used by {@link EntitiesPrefix}.
+ * references used by {@link EntitiesPrefix}. At runtime the names are expanded into a
+ * left-child/right-sibling trie (see {@link EntitiesPrefix} for its representation).
  *
  * entities.json is from https://html.spec.whatwg.org/entities.json
  *

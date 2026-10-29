@@ -26,7 +26,14 @@ import java.util.Arrays;
  * GenerateEntities).
  *
  * A position in the trie is an {@code int} (the node id), {@link #ROOT} is the starting point and
- * {@link #NO_NODE} means "no match". The encoding of the resource is big endian:
+ * {@link #NO_NODE} means "no match".
+ *
+ * The trie is stored as a left-child/right-sibling tree: every node has a pointer to its left
+ * child ({@link #LEFT_CHILD}) and to its right sibling ({@link #RIGHT_SIBLING}), while
+ * {@link #NODE_CHAR} holds the character carried by the edge from the parent. Looking up a child is
+ * a linear scan of the right-sibling chain.
+ *
+ * The encoding of the resource is big endian:
  *
  * <pre>
  * count        u16            number of entities
@@ -55,9 +62,12 @@ final class EntitiesPrefix {
     /** id of the root of the trie, the cursor a lookup must start with */
     static final int ROOT = 0;
 
+    /** char of the edge leading to the node (left-child/right-sibling tree) */
     private static final byte[] NODE_CHAR;
-    private static final int[] FIRST_CHILD;
-    private static final int[] NEXT_SIBLING;
+    /** id of the left child, or {@link #NO_NODE} */
+    private static final int[] LEFT_CHILD;
+    /** id of the right sibling, or {@link #NO_NODE} */
+    private static final int[] RIGHT_SIBLING;
     /**
      * {@code (start << 3) | length} of the replacement chars in {@link #VALUES}, or
      * {@link #NO_VALUE} if the node does not represent a complete entity
@@ -77,9 +87,9 @@ final class EntitiesPrefix {
         int valuesLength = readUnsignedShort(data, 4);
 
         byte[] nodeChar = new byte[nodeCount]; // ascii
-        int[] firstChild = new int[nodeCount];
-        Arrays.fill(firstChild, NO_NODE); // 0 is the root, "nothing" must be explicit
-        int[] nextSibling = new int[nodeCount];
+        int[] leftChild = new int[nodeCount];
+        Arrays.fill(leftChild, NO_NODE); // 0 is the root, "nothing" must be explicit
+        int[] rightSibling = new int[nodeCount];
         int[] value = new int[nodeCount];
         Arrays.fill(value, NO_VALUE);
         char[] values = new char[valuesLength];
@@ -127,22 +137,22 @@ final class EntitiesPrefix {
             int node = prefix == 0 ? ROOT : stack[prefix - 1];
             for (int j = prefix; j < nameLength; j++) {
                 char c = name[j];
-                int child = firstChild[node];
+                int child = leftChild[node];
                 int last = NO_NODE;
                 while (child != NO_NODE && nodeChar[child] != (byte) c) {
                     last = child;
-                    child = nextSibling[child];
+                    child = rightSibling[child];
                 }
                 if (child == NO_NODE) {
                     child = nextNode++;
                     nodeChar[child] = (byte) c;
-                    firstChild[child] = NO_NODE;
-                    nextSibling[child] = NO_NODE;
+                    leftChild[child] = NO_NODE;
+                    rightSibling[child] = NO_NODE;
                     value[child] = NO_VALUE;
                     if (last == NO_NODE) {
-                        firstChild[node] = child;
+                        leftChild[node] = child;
                     } else {
-                        nextSibling[last] = child;
+                        rightSibling[last] = child;
                     }
                 }
                 node = child;
@@ -152,8 +162,8 @@ final class EntitiesPrefix {
         }
 
         NODE_CHAR = nodeChar;
-        FIRST_CHILD = firstChild;
-        NEXT_SIBLING = nextSibling;
+        LEFT_CHILD = leftChild;
+        RIGHT_SIBLING = rightSibling;
         VALUE = value;
         VALUES = values;
     }
@@ -165,12 +175,12 @@ final class EntitiesPrefix {
      * @return the child of {@code node} matching {@code c}, or {@link #NO_NODE}
      */
     static int getNode(int node, char c) {
-        int child = FIRST_CHILD[node];
+        int child = LEFT_CHILD[node];
         while (child != NO_NODE) {
             if (NODE_CHAR[child] == (byte) c) {
                 return child;
             }
-            child = NEXT_SIBLING[child];
+            child = RIGHT_SIBLING[child];
         }
         return NO_NODE;
     }
