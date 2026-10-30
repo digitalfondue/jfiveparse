@@ -2502,43 +2502,49 @@ final class Tokenizer {
      * Return -1 if it's not in the table, else the new value
      */
     private static int isCharacterReferenceSubstitutionTable(int chr) {
-        return chr >= 0 && chr < charRefSubTable.length ? charRefSubTable[chr] : -1;
+        if (chr == 0x00) {
+            return Characters.REPLACEMENT_CHARACTER;
+        }
+        return chr >= 0x80 && chr <= 0x9F ? charRefSubTable[chr - 0x80] : -1;
     }
 
-    private static final int[] charRefSubTable = new int [0xA0];
-    static {
-        Arrays.fill(charRefSubTable, -1);
-        charRefSubTable[0x00] = Characters.REPLACEMENT_CHARACTER;
-        //
-        charRefSubTable[0x80] = Characters.EURO_SIGN;
-        charRefSubTable[0x82] = Characters.SINGLE_LOW_9_QUOTATION_MARK;
-        charRefSubTable[0x83] = Characters.LATIN_SMALL_LETTER_F_WITH_HOOK;
-        charRefSubTable[0x84] = Characters.DOUBLE_LOW_9_QUOTATION_MARK;
-        charRefSubTable[0x85] = Characters.HORIZONTAL_ELLIPSIS;
-        charRefSubTable[0x86] = Characters.DAGGER;
-        charRefSubTable[0x87] = Characters.DOUBLE_DAGGER;
-        charRefSubTable[0x88] = Characters.MODIFIER_LETTER_CIRCUMFLEX_ACCENT;
-        charRefSubTable[0x89] = Characters.PER_MILLE_SIGN;
-        charRefSubTable[0x8A] = Characters.LATIN_CAPITAL_LETTER_S_WITH_CARON;
-        charRefSubTable[0x8B] = Characters.SINGLE_LEFT_POINTING_ANGLE_QUOTATION_MARK;
-        charRefSubTable[0x8C] = Characters.LATIN_CAPITAL_LIGATURE_OE;
-        charRefSubTable[0x8E] = Characters.LATIN_CAPITAL_LETTER_Z_WITH_CARON;
-        //
-        charRefSubTable[0x91] = Characters.LEFT_SINGLE_QUOTATION_MARK;
-        charRefSubTable[0x92] = Characters.RIGHT_SINGLE_QUOTATION_MARK;
-        charRefSubTable[0x93] = Characters.LEFT_DOUBLE_QUOTATION_MARK;
-        charRefSubTable[0x94] = Characters.RIGHT_DOUBLE_QUOTATION_MARK;
-        charRefSubTable[0x95] = Characters.BULLET;
-        charRefSubTable[0x96] = Characters.EN_DASH;
-        charRefSubTable[0x97] = Characters.EM_DASH;
-        charRefSubTable[0x98] = Characters.SMALL_TILDE;
-        charRefSubTable[0x99] = Characters.TRADE_MARK_SIGN;
-        charRefSubTable[0x9A] = Characters.LATIN_SMALL_LETTER_S_WITH_CARON;
-        charRefSubTable[0x9B] = Characters.SINGLE_RIGHT_POINTING_ANGLE_QUOTATION_MARK;
-        charRefSubTable[0x9C] = Characters.LATIN_SMALL_LIGATURE_OE;
-        charRefSubTable[0x9E] = Characters.LATIN_SMALL_LETTER_Z_WITH_CARON;
-        charRefSubTable[0x9F] = Characters.LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS;
-    }
+    /*
+     * Substitution values for the 0x80-0x9F range, the only one with substitutions
+     * (0x00 is handled separately). -1 means no substitution.
+     */
+    private static final int[] charRefSubTable = { //
+            /* 0x80 */ Characters.EURO_SIGN, //
+            /* 0x81 */ -1, //
+            /* 0x82 */ Characters.SINGLE_LOW_9_QUOTATION_MARK, //
+            /* 0x83 */ Characters.LATIN_SMALL_LETTER_F_WITH_HOOK, //
+            /* 0x84 */ Characters.DOUBLE_LOW_9_QUOTATION_MARK, //
+            /* 0x85 */ Characters.HORIZONTAL_ELLIPSIS, //
+            /* 0x86 */ Characters.DAGGER, //
+            /* 0x87 */ Characters.DOUBLE_DAGGER, //
+            /* 0x88 */ Characters.MODIFIER_LETTER_CIRCUMFLEX_ACCENT, //
+            /* 0x89 */ Characters.PER_MILLE_SIGN, //
+            /* 0x8A */ Characters.LATIN_CAPITAL_LETTER_S_WITH_CARON, //
+            /* 0x8B */ Characters.SINGLE_LEFT_POINTING_ANGLE_QUOTATION_MARK, //
+            /* 0x8C */ Characters.LATIN_CAPITAL_LIGATURE_OE, //
+            /* 0x8D */ -1, //
+            /* 0x8E */ Characters.LATIN_CAPITAL_LETTER_Z_WITH_CARON, //
+            /* 0x8F */ -1, //
+            /* 0x90 */ -1, //
+            /* 0x91 */ Characters.LEFT_SINGLE_QUOTATION_MARK, //
+            /* 0x92 */ Characters.RIGHT_SINGLE_QUOTATION_MARK, //
+            /* 0x93 */ Characters.LEFT_DOUBLE_QUOTATION_MARK, //
+            /* 0x94 */ Characters.RIGHT_DOUBLE_QUOTATION_MARK, //
+            /* 0x95 */ Characters.BULLET, //
+            /* 0x96 */ Characters.EN_DASH, //
+            /* 0x97 */ Characters.EM_DASH, //
+            /* 0x98 */ Characters.SMALL_TILDE, //
+            /* 0x99 */ Characters.TRADE_MARK_SIGN, //
+            /* 0x9A */ Characters.LATIN_SMALL_LETTER_S_WITH_CARON, //
+            /* 0x9B */ Characters.SINGLE_RIGHT_POINTING_ANGLE_QUOTATION_MARK, //
+            /* 0x9C */ Characters.LATIN_SMALL_LIGATURE_OE, //
+            /* 0x9D */ -1, //
+            /* 0x9E */ Characters.LATIN_SMALL_LETTER_Z_WITH_CARON, //
+            /* 0x9F */ Characters.LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS };
     //endregion
 
     //region TokenizerCDataSectionAndDataState
