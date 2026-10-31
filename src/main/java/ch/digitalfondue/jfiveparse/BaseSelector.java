@@ -131,12 +131,13 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return inst();
     }
 
-    private void nextSibling() {
+    public R nextSibling() {
         var rules = collectMatchers();
         matchers.add((node, base) -> {
             var previousElementSibling = wrapper.apply(node.getPreviousElementSibling());
             return previousElementSibling != null && rules.test(previousElementSibling, base);
         });
+        return inst();
     }
 
     private BiPredicate<SelectableNode<T>, SelectableNode<T>> collectMatchers() {
@@ -187,7 +188,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return inst();
     }
 
-    private void subsequentSibling() {
+    public R subsequentSibling() {
         var rules = collectMatchers();
         matchers.add((node, base) -> {
             var previousElementSibling = wrapper.apply(node.getPreviousElementSibling());
@@ -199,6 +200,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             }
             return false;
         });
+        return inst();
     }
 
     BiPredicate<SelectableNode<T>, SelectableNode<T>> toBaseNodeMatcher(List<CSS.CssSelector> selector, Supplier<BaseSelector<T, R>> stateSupplier) {
