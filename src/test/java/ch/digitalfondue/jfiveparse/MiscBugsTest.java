@@ -58,4 +58,19 @@ class MiscBugsTest {
         Assertions.assertEquals("p3", ((Element) subsequentSiblingMatches.get(2)).getAttribute("id"));
     }
 
+    // case 2
+    @Test
+    void testItemOutOfBoundsShouldReturnNull() {
+        Element el = new Element("div");
+        el.setAttribute("class", "plop coin");
+        DOMTokenList list = el.getClassList();
+
+
+        Assertions.assertNull(list.item(-1));
+        Assertions.assertEquals("plop", list.item(0));
+        Assertions.assertEquals("coin", list.item(1));
+        Assertions.assertNull(list.item(2));
+        Assertions.assertNull(list.item(3));
+    }
+
 }

@@ -32,16 +32,18 @@ public final class DOMTokenList extends AbstractList<String> {
 
     static List<String> extractValues(SelectableElement<?> element, String attrName) {
         // TODO: rewrite -> return an iterator and work from there...
-        List<String> vals = new ArrayList<>();
         String value = element.getAttributeValue(attrName);
         if (value != null) {
-            for (String s : SPACES.split(value)) {
+            var splitted = SPACES.split(value);
+            List<String> vals = new ArrayList<>(splitted.length);
+            for (String s : splitted) {
                 if (!s.trim().isEmpty()) {
                     vals.add(s);
                 }
             }
+            return vals;
         }
-        return vals;
+        return new ArrayList<>(0);
     }
 
     private List<String> attributeValues() {
@@ -115,8 +117,20 @@ public final class DOMTokenList extends AbstractList<String> {
         }
     }
 
+    /**
+     * Get value at given index.
+     *
+     * It differs from {@link #get(int)} as it will not launch an {@link IndexOutOfBoundsException}, but instead return null.
+     *
+     * @param index
+     * @return value at index _or_ null in all the other cases
+     */
     public String item(int index) {
-        return get(index);
+        List<String> all;
+        if (index < 0 || index >= (all = attributeValues()).size()) {
+            return null;
+        }
+        return all.get(index);
     }
 
     @Override
