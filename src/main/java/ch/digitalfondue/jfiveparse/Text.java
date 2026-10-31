@@ -34,7 +34,7 @@ public final class Text extends Node {
     }
 
     public Text(String data) {
-        this.data = data;
+        this.data = data == null ? "null" : data;
     }
 
     @Override
@@ -52,7 +52,7 @@ public final class Text extends Node {
 
     public void setData(String data) {
         this.dataBuilder = null;
-        this.data = data;
+        this.data = data == null ? "" : data;
     }
 
     /**
