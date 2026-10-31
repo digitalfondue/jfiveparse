@@ -3,6 +3,8 @@ package ch.digitalfondue.jfiveparse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 class MiscBugsTest {
 
     // case 11
@@ -89,6 +91,15 @@ class MiscBugsTest {
 
         Assertions.assertFalse(list.contains("d"));
         Assertions.assertEquals("e f", el.getAttribute("class"));
+    }
+
+
+    @Test
+    void testGetElementsByTagNameWildcard() {
+        Document doc = JFiveParse.parse("<div><p><span></span></p></div>");
+
+        var all = doc.getElementsByTagName("*");
+        Assertions.assertEquals(List.of("html", "head", "body", "div", "p", "span"), all.stream().map(Node::getNodeName).toList());
     }
 
 }

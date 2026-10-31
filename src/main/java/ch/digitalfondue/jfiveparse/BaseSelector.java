@@ -34,13 +34,13 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R element(String name) {
-        matchers.add((node, base) -> isElement(node) && name.equals(node.getNodeName()));
+        matchers.add((node, base) -> isElement(node) && "*".equals(name) || name.equals(node.getNodeName()));
         return inst();
     }
 
     public R element(String name, String namespace) {
         String namespaceToMatch = nameSpaceAlias.getOrDefault(namespace, namespace);
-        matchers.add((node, base) -> node instanceof SelectableElement<?> ce && name.equals(ce.getNodeName())
+        matchers.add((node, base) -> node instanceof SelectableElement<?> ce && ("*".equals(name) || name.equals(ce.getNodeName()))
                 && Objects.equals(namespaceToMatch, ce.getNamespaceURI()));
         return inst();
     }
@@ -164,8 +164,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     abstract R newInst();
 
     public R universal() {
-        matchers.add(BaseSelector::isElement);
-        return inst();
+        return element("*");
     }
 
     public R isFirstChild() {
