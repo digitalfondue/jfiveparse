@@ -94,12 +94,33 @@ class MiscBugsTest {
     }
 
 
+    // case 8
     @Test
     void testGetElementsByTagNameWildcard() {
         Document doc = JFiveParse.parse("<div><p><span></span></p></div>");
 
         var all = doc.getElementsByTagName("*");
         Assertions.assertEquals(List.of("html", "head", "body", "div", "p", "span"), all.stream().map(Node::getNodeName).toList());
+    }
+
+    // case 14
+    @Test
+    void testToW3CDocumentPrefixedAttributeThrowsNamespaceErr() {
+        Document doc = JFiveParse.parse("<div id=test xml:lang=\"en\" plop:coin=\"yoo\"><svg id=yolo xml:lang=\"en\" plop:coin=\"yoo\"></svg></div>");
+
+        // behaviour checked against chrome...
+        var w3cDoc = W3CDom.toW3CDocument(doc);
+        var div = w3cDoc.getElementsByTagName("div").item(0);
+        // like in a browser, no namespace in html context
+        Assertions.assertNull(div.getAttributes().getNamedItem("id").getNamespaceURI());
+        Assertions.assertNull(div.getAttributes().getNamedItem("xml:lang").getNamespaceURI());
+        Assertions.assertNull(div.getAttributes().getNamedItem("plop:coin").getNamespaceURI());
+        //
+
+        var svg = w3cDoc.getElementsByTagName("svg").item(0);
+        Assertions.assertNull(svg.getAttributes().getNamedItem("id").getNamespaceURI());
+        Assertions.assertEquals(Node.NAMESPACE_XML, svg.getAttributes().getNamedItem("xml:lang").getNamespaceURI()); // in svg & co, we assign the namespace
+        Assertions.assertNull(svg.getAttributes().getNamedItem("plop:coin").getNamespaceURI());
     }
 
 }

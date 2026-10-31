@@ -159,7 +159,11 @@ public final class W3CDom {
                     } else {
                         String prefix = extractXmlnsPrefixFromAttrOrElem(attr.getName());
                         String attrNs = prefix.isEmpty() ? attr.getNamespace() : xmlNamespaces.peek().getOrDefault(prefix, attr.getNamespace());
-                        e.setAttributeNS(attrNs, attr.getName(), attr.getValue());
+                        if (attrNs == null) {
+                            e.setAttribute(attr.getName(), attr.getValue());
+                        } else {
+                            e.setAttributeNS(attrNs, attr.getName(), attr.getValue());
+                        }
                     }
                 }
             }
