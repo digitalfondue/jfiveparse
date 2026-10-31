@@ -35,13 +35,13 @@ public final class DOMTokenList extends AbstractList<String> {
         String value = element.getAttributeValue(attrName);
         if (value != null) {
             var splitted = SPACES.split(value);
-            List<String> vals = new ArrayList<>(splitted.length);
+            LinkedHashSet<String> vals = new LinkedHashSet<>(splitted.length);
             for (String s : splitted) {
                 if (!s.trim().isEmpty()) {
                     vals.add(s);
                 }
             }
-            return vals;
+            return new ArrayList<>(vals);
         }
         return new ArrayList<>(0);
     }

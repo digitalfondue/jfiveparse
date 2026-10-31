@@ -73,4 +73,22 @@ class MiscBugsTest {
         Assertions.assertNull(list.item(3));
     }
 
+
+    // case 3
+    // https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList#trimming_of_whitespace_and_removal_of_duplicates
+    @Test
+    void testRemoveDuplicateTokens() {
+        Element el = new Element("div");
+        el.setAttribute("class", "    d   d e f");
+        DOMTokenList list = el.getClassList();
+
+        // it's already deduplicated
+        Assertions.assertEquals(3, list.size());
+
+        list.remove("d");
+
+        Assertions.assertFalse(list.contains("d"));
+        Assertions.assertEquals("e f", el.getAttribute("class"));
+    }
+
 }
