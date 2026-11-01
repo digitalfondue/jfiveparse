@@ -552,7 +552,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 
     public void setTextContent(String text) {
         empty();
-        if (text != null && !text.isEmpty()) {
+        if (Common.notEmpty(text)) {
             appendChild(new Text(text));
         }
     }

@@ -116,7 +116,7 @@ public class HtmlSerializer implements NodesVisitor {
                         serializeAttributeName(appendable, attr);//
 
                         if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.getAttributeQuoteType() == Tokenizer.ATTRIBUTE_VALUE_UNQUOTED_STATE))
-                                && (attr.getValue() == null || attr.getValue().isEmpty())) {
+                                && (!Common.notEmpty(attr.getValue()))) {
                             continue;
                         }
                         appendable.append('=').append(quoteCharacters(attr));
@@ -156,8 +156,14 @@ public class HtmlSerializer implements NodesVisitor {
                 }
                 appendable.append("?>");
             } else if (node instanceof DocumentType dt) {
-                // TODO: should append the rest of the attributes if present
-                appendable.append("<!DOCTYPE ").append(dt.getName()).append('>');
+                appendable.append("<!DOCTYPE ").append(dt.getName());
+                if (Common.notEmpty(dt.getPublicId())) {
+                    appendable.append(" PUBLIC \"").append(dt.getPublicId()).append("\"");
+                }
+                if (Common.notEmpty(dt.getSystemId())) {
+                    appendable.append(" \"").append(dt.getSystemId()).append("\"");
+                }
+                appendable.append('>');
             }
         } catch (IOException ioe) {
             throw new SerializationException(ioe);

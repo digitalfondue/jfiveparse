@@ -73,7 +73,7 @@ public final class AttributeNode {
     public AttributeNode(String name, String value, String prefix, String namespace) {
         this(name, value);
         String normalizedNamespace = normalizeNamespace(namespace);
-        if (prefix != null && !prefix.isEmpty()) {
+        if (Common.notEmpty(prefix)) {
             if (normalizedNamespace == null) {
                 throw new ParserException("A prefix is not allowed when the namespace is null: " + name);
             }
@@ -112,7 +112,7 @@ public final class AttributeNode {
     }
 
     static String normalizeNamespace(String namespace) {
-        return namespace == null || namespace.isEmpty() ? null : namespace;
+        return Common.notEmpty(namespace) ? namespace : null;
     }
 
     boolean matches(String namespace, String localName) {
