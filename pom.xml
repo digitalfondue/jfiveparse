@@ -42,7 +42,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <surefire.useModulePath>false</surefire.useModulePath>
-        <jfiveparse.oldVersion>3.0.0-M0</jfiveparse.oldVersion>
+        <jfiveparse.apiToCompare>3.0.0-M1</jfiveparse.apiToCompare>
     </properties>
 
     <dependencyManagement>
@@ -153,7 +153,7 @@
                         <dependency>
                             <groupId>${project.groupId}</groupId>
                             <artifactId>${project.artifactId}</artifactId>
-                            <version>${jfiveparse.oldVersion}</version>
+                            <version>${jfiveparse.apiToCompare}</version>
                             <type>jar</type>
                         </dependency>
                     </oldVersion>
@@ -172,7 +172,7 @@
                         <id>api-compatibility-check</id>
                         <phase>verify</phase>
                         <goals>
-                            <!--<goal>cmp</goal>-->
+                            <goal>cmp</goal>
                         </goals>
                     </execution>
                 </executions>
