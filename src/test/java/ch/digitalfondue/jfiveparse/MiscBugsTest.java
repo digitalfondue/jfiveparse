@@ -140,13 +140,9 @@ class MiscBugsTest {
     void testHtmlSerializerDropsDoctypeIdentifiers() {
         String html = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><body></body></html>";
         Document doc = JFiveParse.parse(html);
-
         Assertions.assertEquals("-//W3C//DTD HTML 4.01//EN", doc.getDoctype().getPublicId());
         Assertions.assertEquals("http://www.w3.org/TR/html4/strict.dtd", doc.getDoctype().getSystemId());
-
         String serialized = HtmlSerializer.serialize(doc);
-
-        // Identifiers are completely lost during serialization:
         Assertions.assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head></head><body></body></html>", serialized);
     }
 
