@@ -91,13 +91,13 @@ public final class W3CDom {
         }
     }
 
-    public static class W3CDNodeVisitor implements NodesVisitor {
+    static class W3CDNodeVisitor implements NodesVisitor {
 
         protected final Document document;
         protected org.w3c.dom.Node currentNode;
         protected final Deque<Map<String, String>> xmlNamespaces = new ArrayDeque<>();
 
-        public W3CDNodeVisitor(Document document) {
+        W3CDNodeVisitor(Document document) {
             this.document = document;
             this.currentNode = document;
             this.xmlNamespaces.push(new HashMap<>());
@@ -130,7 +130,7 @@ public final class W3CDom {
             return idx == -1 ? "" : elemOrAttr.substring(0, idx);
         }
 
-        protected org.w3c.dom.Element buildNamespacedElement(Element element) {
+        org.w3c.dom.Element buildNamespacedElement(Element element) {
             String elemPrefix = extractXmlnsPrefixFromAttrOrElem(element.getNodeName());
             String ns = element.getNamespaceURI();
             if (!elemPrefix.isEmpty() && xmlNamespaces.peek().containsKey(elemPrefix)) {
@@ -139,8 +139,7 @@ public final class W3CDom {
             return document.createElementNS(ns, element.getNodeName());
         }
 
-        protected org.w3c.dom.Element toElement(Element elem) {
-
+        org.w3c.dom.Element toElement(Element elem) {
             if (elem.hasAttributes()) {
                 for (AttributeNode attr : elem.getAttributes()) {
                     if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
@@ -148,10 +147,7 @@ public final class W3CDom {
                     }
                 }
             }
-
-
             org.w3c.dom.Element e = buildNamespacedElement(elem);
-
             if (elem.hasAttributes()) {
                 for (AttributeNode attr : elem.getAttributes()) {
                     if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {

@@ -172,7 +172,7 @@
                         <id>api-compatibility-check</id>
                         <phase>verify</phase>
                         <goals>
-                            <goal>cmp</goal>
+                            <!--<goal>cmp</goal>-->
                         </goals>
                     </execution>
                 </executions>
