@@ -34,7 +34,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R element(String name) {
-        matchers.add((node, base) -> isElement(node) && "*".equals(name) || name.equals(node.getNodeName()));
+        matchers.add((node, base) -> isElement(node) && ("*".equals(name) || name.equals(node.getNodeName())));
         return inst();
     }
 

@@ -123,4 +123,16 @@ class MiscBugsTest {
         Assertions.assertNull(svg.getAttributes().getNamedItem("plop:coin").getNamespaceURI());
     }
 
+
+    // case p-1
+    @Test
+    void checkProcessingInstructionsMatcher() {
+        Document doc = JFiveParse.parse(
+                "<!DOCTYPE html><html><head></head><body></body></html><?div hello?>");
+
+        Assertions.assertTrue(doc.getAllNodesMatching(Selector.select().element("div").toMatcher()).isEmpty());
+
+        Assertions.assertTrue(doc.getElementsByTagName("div").isEmpty());
+    }
+
 }
