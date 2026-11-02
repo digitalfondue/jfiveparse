@@ -140,10 +140,30 @@ class MiscBugsTest {
     void testHtmlSerializerDropsDoctypeIdentifiers() {
         String html = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><body></body></html>";
         Document doc = JFiveParse.parse(html);
+        Assertions.assertEquals("html", doc.getDoctype().getName());
         Assertions.assertEquals("-//W3C//DTD HTML 4.01//EN", doc.getDoctype().getPublicId());
         Assertions.assertEquals("http://www.w3.org/TR/html4/strict.dtd", doc.getDoctype().getSystemId());
         String serialized = HtmlSerializer.serialize(doc);
         Assertions.assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head></head><body></body></html>", serialized);
     }
 
+
+    // case p-2
+    @Test
+    void w3cDomDocumentMissingDoctype() {
+        var doc = JFiveParse.parse(
+                "<!DOCTYPE html><html><head></head><body></body></html>");
+        var w3c = W3CDom.toW3CDocument(doc);
+        Assertions.assertNotNull(w3c.getDoctype());
+        Assertions.assertEquals("html", w3c.getDoctype().getName());
+        Assertions.assertEquals("", w3c.getDoctype().getPublicId());
+        Assertions.assertEquals("", w3c.getDoctype().getSystemId());
+
+        String html = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><body></body></html>";
+        doc = JFiveParse.parse(html);
+        w3c = W3CDom.toW3CDocument(doc);
+        Assertions.assertEquals("html", w3c.getDoctype().getName());
+        Assertions.assertEquals("-//W3C//DTD HTML 4.01//EN", w3c.getDoctype().getPublicId());
+        Assertions.assertEquals("http://www.w3.org/TR/html4/strict.dtd", w3c.getDoctype().getSystemId());
+    }
 }

@@ -16,6 +16,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,7 +33,6 @@ public final class W3CDom {
         private W3CDomSelector(Map<String, String> namespaceAlias) {
             super(W3CDom::wrap, (toUnwrap) -> toUnwrap == null ? null : ((SelectableNodeWrapper) toUnwrap).node, namespaceAlias);
         }
-
 
        /**
         * Parse a CSS selector string.
@@ -75,8 +75,13 @@ public final class W3CDom {
             factory.setXIncludeAware(false);
             factory.setExpandEntityReferences(false);
             //
-            Document d = factory.newDocumentBuilder().newDocument();
-            doc.traverse(new W3CDNodeVisitor(d));
+            var domImpl = factory.newDocumentBuilder().getDOMImplementation();
+            DocumentType docType = null;
+            if (doc.getDoctype() != null) {
+                docType = domImpl.createDocumentType(doc.getDoctype().getName(), doc.getDoctype().getPublicId(), doc.getDoctype().getSystemId());
+            }
+            Document d = domImpl.createDocument(null, "html", docType);
+            doc.getDocumentElement().traverse(new W3CDNodeVisitor(d, doc.getDocumentElement()));
             return d;
         } catch (ParserConfigurationException e) {
             throw new ParserException(e);
@@ -91,16 +96,18 @@ public final class W3CDom {
         }
     }
 
-    static class W3CDNodeVisitor implements NodesVisitor {
+    static final class W3CDNodeVisitor implements NodesVisitor {
 
-        protected final Document document;
-        protected org.w3c.dom.Node currentNode;
-        protected final Deque<Map<String, String>> xmlNamespaces = new ArrayDeque<>();
+        final Document document;
+        org.w3c.dom.Node currentNode;
+        final ArrayDeque<Map<String, String>> xmlNamespaces = new ArrayDeque<>();
 
-        W3CDNodeVisitor(Document document) {
+        W3CDNodeVisitor(Document document, Element documentElement) {
             this.document = document;
-            this.currentNode = document;
+            this.currentNode = document.getDocumentElement();
             this.xmlNamespaces.push(new HashMap<>());
+            extractAttributes(documentElement);
+            copyAttributes(documentElement, document.getDocumentElement());
         }
 
         @Override
@@ -139,7 +146,7 @@ public final class W3CDom {
             return document.createElementNS(ns, element.getNodeName());
         }
 
-        org.w3c.dom.Element toElement(Element elem) {
+        void extractAttributes(Element elem) {
             if (elem.hasAttributes()) {
                 for (AttributeNode attr : elem.getAttributes()) {
                     if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
@@ -147,7 +154,9 @@ public final class W3CDom {
                     }
                 }
             }
-            org.w3c.dom.Element e = buildNamespacedElement(elem);
+        }
+
+        void copyAttributes(Element elem, org.w3c.dom.Element e) {
             if (elem.hasAttributes()) {
                 for (AttributeNode attr : elem.getAttributes()) {
                     if ("xmlns".equals(attr.getName()) || attr.getName().startsWith("xmlns:")) {
@@ -163,6 +172,12 @@ public final class W3CDom {
                     }
                 }
             }
+        }
+
+        org.w3c.dom.Element toElement(Element elem) {
+            extractAttributes(elem);
+            org.w3c.dom.Element e = buildNamespacedElement(elem);
+            copyAttributes(elem, e);
             return e;
         }
 
