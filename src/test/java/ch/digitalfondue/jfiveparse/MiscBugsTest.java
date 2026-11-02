@@ -166,4 +166,22 @@ class MiscBugsTest {
         Assertions.assertEquals("-//W3C//DTD HTML 4.01//EN", w3c.getDoctype().getPublicId());
         Assertions.assertEquals("http://www.w3.org/TR/html4/strict.dtd", w3c.getDoctype().getSystemId());
     }
+
+    // case 5 + p 3 (part)
+    @Test
+    void testClonedDoctypeHandling() {
+        Document doc = JFiveParse.parse("<!DOCTYPE html><html><body></body></html>");
+        Document clonedShallow = (Document) doc.cloneNode(false);
+        Assertions.assertNull(clonedShallow.getDoctype());
+        Assertions.assertTrue(clonedShallow.getChildNodes().isEmpty());
+
+        Document cloned = (Document) doc.cloneNode(true);
+
+        DocumentType dt = cloned.getDoctype();
+        Assertions.assertNotNull(dt);
+
+        Assertions.assertSame(dt, cloned.getChildNodes().get(0));
+
+        Assertions.assertNull(dt.getPreviousSibling());
+    }
 }

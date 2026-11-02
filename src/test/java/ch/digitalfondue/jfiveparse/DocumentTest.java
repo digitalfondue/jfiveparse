@@ -46,13 +46,11 @@ class DocumentTest {
     }
 
     @Test
-    void cloneNodeShallowDoctypeParentIsClone() {
+    void cloneNodeShallowDoctypeNull() {
         Document original = new Parser().parse("<!DOCTYPE html><div>Hello</div>");
         Document cloned = (Document) original.cloneNode(false);
 
-        assertNotNull(cloned.getDoctype());
-        assertSame(cloned, cloned.getDoctype().getParentNode());
-        assertNotSame(original, cloned.getDoctype().getParentNode());
+        assertNull(cloned.getDoctype());
     }
 
     @Test

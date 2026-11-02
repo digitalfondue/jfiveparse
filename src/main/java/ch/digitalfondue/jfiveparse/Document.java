@@ -116,10 +116,6 @@ public final class Document extends Node {
 	@Override
 	public Node cloneNode(boolean deep) {
         Document cloned = new Document();
-        if (doctype != null) {
-            cloned.doctype = (DocumentType) doctype.cloneNode(true);
-            cloned.doctype.parentNode = cloned;
-        }
         if (!deep) {
             return cloned;
         }
@@ -127,6 +123,9 @@ public final class Document extends Node {
             Node clonedChild = child.cloneNode(true);
             clonedChild.parentNode = cloned;
             cloned.childNodes.add(clonedChild);
+            if (clonedChild instanceof DocumentType cdt && cloned.doctype == null) {
+                cloned.doctype = cdt;
+            }
         }
         return cloned;
 	}
