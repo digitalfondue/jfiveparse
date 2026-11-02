@@ -24,7 +24,6 @@ import java.util.List;
  */
 public final class Document extends Node {
     private final List<Node> childNodes = new ArrayList<>(2);
-    private DocumentType doctype;
 
     @Override
     public int getNodeType() {
@@ -46,48 +45,22 @@ public final class Document extends Node {
         return childNodes;
     }
 
-    private void ensureDoctype() {
-        for (Node child : childNodes) {
-            if (child instanceof DocumentType dt) { doctype = dt; return; }
-        }
-        doctype = null;
-    }
-
-    @Override
-    public void insertChildren(int position, Node node) {
-        super.insertChildren(position, node);
-        ensureDoctype();
-    }
-
-    @Override
-    public void replaceChild(Node node, Node oldChild) {
-        super.replaceChild(node, oldChild);
-        ensureDoctype();
-    }
-
-    @Override
-    public void removeChild(Node node) {
-        super.removeChild(node);
-        ensureDoctype();
-    }
-
-    @Override
-    public void empty() {
-        super.empty();
-        ensureDoctype();
-    }
-
     public void setDoctype(DocumentType doctype) {
-        if (this.doctype != null) {
-            replaceChild(doctype, this.doctype);
+        var currentDoctype = getDoctype();
+        if (currentDoctype != null) {
+            replaceChild(doctype, currentDoctype);
         } else {
             insertChildren(0, doctype);
         }
-        ensureDoctype();
     }
 
     public DocumentType getDoctype() {
-        return doctype;
+        for (var n : childNodes) {
+            if (n instanceof DocumentType dt) {
+                return dt;
+            }
+        }
+        return null;
     }
 
     public Element getDocumentElement() {
@@ -159,9 +132,6 @@ public final class Document extends Node {
             Node clonedChild = child.cloneNode(true);
             clonedChild.parentNode = cloned;
             cloned.childNodes.add(clonedChild);
-            if (clonedChild instanceof DocumentType cdt && cloned.doctype == null) {
-                cloned.doctype = cdt;
-            }
         }
         return cloned;
 	}
