@@ -46,8 +46,44 @@ public final class Document extends Node {
         return childNodes;
     }
 
+    private void ensureDoctype() {
+        for (Node child : childNodes) {
+            if (child instanceof DocumentType dt) { doctype = dt; return; }
+        }
+        doctype = null;
+    }
+
+    @Override
+    public void insertChildren(int position, Node node) {
+        super.insertChildren(position, node);
+        ensureDoctype();
+    }
+
+    @Override
+    public void replaceChild(Node node, Node oldChild) {
+        super.replaceChild(node, oldChild);
+        ensureDoctype();
+    }
+
+    @Override
+    public void removeChild(Node node) {
+        super.removeChild(node);
+        ensureDoctype();
+    }
+
+    @Override
+    public void empty() {
+        super.empty();
+        ensureDoctype();
+    }
+
     public void setDoctype(DocumentType doctype) {
-        this.doctype = doctype;
+        if (this.doctype != null) {
+            replaceChild(doctype, this.doctype);
+        } else {
+            insertChildren(0, doctype);
+        }
+        ensureDoctype();
     }
 
     public DocumentType getDoctype() {
@@ -136,9 +172,6 @@ public final class Document extends Node {
             return true;
         }
         if (other instanceof Document otherDocument) {
-            if (!Node.nodesEquals(doctype, otherDocument.doctype)) {
-                return false;
-            }
             int count = getChildCount();
             if (count != otherDocument.getChildCount()) {
                 return false;
