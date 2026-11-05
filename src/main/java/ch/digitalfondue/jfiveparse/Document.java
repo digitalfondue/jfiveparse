@@ -24,7 +24,6 @@ import java.util.List;
  */
 public final class Document extends Node {
     private final List<Node> childNodes = new ArrayList<>(2);
-    private DocumentType doctype;
 
     @Override
     public int getNodeType() {
@@ -47,11 +46,21 @@ public final class Document extends Node {
     }
 
     public void setDoctype(DocumentType doctype) {
-        this.doctype = doctype;
+        var currentDoctype = getDoctype();
+        if (currentDoctype != null) {
+            replaceChild(doctype, currentDoctype);
+        } else {
+            insertChildren(0, doctype);
+        }
     }
 
     public DocumentType getDoctype() {
-        return doctype;
+        for (var n : childNodes) {
+            if (n instanceof DocumentType dt) {
+                return dt;
+            }
+        }
+        return null;
     }
 
     public Element getDocumentElement() {
@@ -123,9 +132,6 @@ public final class Document extends Node {
             Node clonedChild = child.cloneNode(true);
             clonedChild.parentNode = cloned;
             cloned.childNodes.add(clonedChild);
-            if (clonedChild instanceof DocumentType cdt && cloned.doctype == null) {
-                cloned.doctype = cdt;
-            }
         }
         return cloned;
 	}
@@ -136,9 +142,6 @@ public final class Document extends Node {
             return true;
         }
         if (other instanceof Document otherDocument) {
-            if (!Node.nodesEquals(doctype, otherDocument.doctype)) {
-                return false;
-            }
             int count = getChildCount();
             if (count != otherDocument.getChildCount()) {
                 return false;
