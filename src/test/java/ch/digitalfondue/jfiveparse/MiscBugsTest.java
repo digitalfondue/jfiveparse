@@ -184,4 +184,21 @@ class MiscBugsTest {
 
         Assertions.assertNull(dt.getPreviousSibling());
     }
+
+
+    @Test
+    void testHtmlSerializerSystemDoctype() {
+        String html = "<!DOCTYPE html SYSTEM \"about:legacy-compat\"><html><head></head><body></body></html>";
+        Document doc = JFiveParse.parse(html);
+        Assertions.assertEquals("about:legacy-compat", doc.getDoctype().getSystemId());
+        String serialized = HtmlSerializer.serialize(doc);
+        Assertions.assertEquals("<!DOCTYPE html SYSTEM \"about:legacy-compat\"><html><head></head><body></body></html>", serialized);
+    }
+
+    @Test
+    void testW3CDomToDocumentWithNullDocumentElement() {
+        Document doc = new Document();
+        var d = Assertions.assertDoesNotThrow(() -> W3CDom.toW3CDocument(doc));
+        Assertions.assertNull(d.getDocumentElement());
+    }
 }

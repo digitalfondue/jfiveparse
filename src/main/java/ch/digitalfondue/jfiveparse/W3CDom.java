@@ -80,8 +80,13 @@ public final class W3CDom {
             if (doc.getDoctype() != null) {
                 docType = domImpl.createDocumentType(doc.getDoctype().getName(), doc.getDoctype().getPublicId(), doc.getDoctype().getSystemId());
             }
-            Document d = domImpl.createDocument(null, "html", docType);
-            doc.getDocumentElement().traverse(new W3CDNodeVisitor(d, doc.getDocumentElement()));
+            Element docElement = doc.getDocumentElement();
+            Document d = domImpl.createDocument(null, docElement != null ? docElement.getNodeName() : "html", docType);
+            if (docElement != null) {
+                docElement.traverse(new W3CDNodeVisitor(d, docElement));
+            } else {
+                d.removeChild(d.getDocumentElement());
+            }
             return d;
         } catch (ParserConfigurationException e) {
             throw new ParserException(e);

@@ -157,11 +157,14 @@ public class HtmlSerializer implements NodesVisitor {
                 appendable.append("?>");
             } else if (node instanceof DocumentType dt) {
                 appendable.append("<!DOCTYPE ").append(dt.getName());
-                if (Common.notEmpty(dt.getPublicId())) {
+                boolean hasPublicId = Common.notEmpty(dt.getPublicId());
+                boolean hasSystemId = Common.notEmpty(dt.getSystemId());
+                if (hasPublicId && hasSystemId) {
+                    appendable.append(" PUBLIC \"").append(dt.getPublicId()).append("\" \"").append(dt.getSystemId()).append("\"");
+                } else if (hasPublicId) {
                     appendable.append(" PUBLIC \"").append(dt.getPublicId()).append("\"");
-                }
-                if (Common.notEmpty(dt.getSystemId())) {
-                    appendable.append(" \"").append(dt.getSystemId()).append("\"");
+                } else if (hasSystemId) {
+                    appendable.append(" SYSTEM \"").append(dt.getSystemId()).append("\"");
                 }
                 appendable.append('>');
             }
