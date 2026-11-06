@@ -59,4 +59,18 @@ class DOMTokenListTest {
         assertFalse(list.contains("foo"));
         assertTrue(list.contains("bar"));
     }
+
+    @Test
+    void testDomTokenListCollectionContracts() {
+        Element el = new Element("div");
+        DOMTokenList list = el.getClassList();
+        assertTrue(list.add("foo"));
+
+        assertFalse(list.add("foo"));
+
+        String prev = list.set(0, "foo");
+        assertEquals("foo", prev);
+
+        assertThrows(IndexOutOfBoundsException.class, () -> list.add(-1, "foo"));
+    }
 }

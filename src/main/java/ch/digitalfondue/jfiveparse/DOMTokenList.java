@@ -52,6 +52,10 @@ public final class DOMTokenList extends AbstractList<String> {
 
     @Override
     public void add(int index, String value) {
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bound");
+        }
+
         if (contains(value)) {
             return;
         }
@@ -65,6 +69,14 @@ public final class DOMTokenList extends AbstractList<String> {
         if (values != null) {
             addAll(Arrays.asList(values));
         }
+    }
+
+    @Override
+    public boolean add(String s) {
+        if (contains(s)) {
+            return false;
+        }
+        return super.add(s);
     }
 
     @Override
@@ -88,7 +100,7 @@ public final class DOMTokenList extends AbstractList<String> {
     @Override
     public String set(int index, String value) {
         if (contains(value)) {
-            return null;
+            return value;
         }
 
         List<String> vals = attributeValues();
