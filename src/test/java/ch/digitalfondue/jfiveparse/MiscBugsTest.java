@@ -242,4 +242,14 @@ class MiscBugsTest {
         Assertions.assertEquals(1, p1.getChildCount());
         Assertions.assertEquals(0, p2.getChildCount());
     }
+
+    @Test
+    void testInsertBeforeNull() {
+        Element div = new Element("div");
+        Element b   = new Element("b");
+        Element a = new Element("a");
+        div.insertBefore(b, null);
+        div.insertBefore(a, null);
+        Assertions.assertEquals("<div><b></b><a></a></div>", JFiveParse.serialize(div));
+    }
 }

@@ -216,14 +216,17 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      *
      * @param toInsert
      *            the node to be inserted
-     * @param before
+     * @param referenceNode
      *            if the node is not a child of this node, the insertion will
-     *            fail silently.
+     *            fail silently. If null, it will append at the end.
      */
-    public void insertBefore(Node toInsert, Node before) {
+    public void insertBefore(Node toInsert, Node referenceNode) {
         Objects.requireNonNull(toInsert);
-        Objects.requireNonNull(before);
-        int idx = getRawChildNodes().indexOf(before);
+        if (referenceNode == null) {
+            appendChild(toInsert);
+            return;
+        }
+        int idx = getRawChildNodes().indexOf(referenceNode);
         if (idx >= 0) {
             insertChildren(idx, toInsert);
         }
