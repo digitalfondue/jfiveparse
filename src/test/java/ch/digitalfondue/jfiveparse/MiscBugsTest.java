@@ -2,6 +2,7 @@ package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.List;
 
@@ -208,5 +209,23 @@ class MiscBugsTest {
         Element div = new Element("div");
         Assertions.assertFalse(div.matches(":has(+ p)"));
         Assertions.assertFalse(div.matches(":has(~ p)"));
+    }
+
+    @Test
+    @Timeout(value = 2, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+    void testCycle() {
+        // self cycle
+        var div = new Element("div");
+        Assertions.assertThrows(IllegalStateException.class, () -> div.appendChild(div));
+        Assertions.assertEquals("<div></div>", JFiveParse.serialize(div));
+
+        // root -> span -> root
+        var root = new Element("div");
+        var span = new Element("span");
+        var b = new Element("b");
+        root.appendChild(span);
+        span.appendChild(b);
+        Assertions.assertThrows(IllegalStateException.class, () -> span.replaceChild(root, b)); // cycle: root -> span -> root
+        Assertions.assertEquals("<div><span><b></b></span></div>", JFiveParse.serialize(root));
     }
 }

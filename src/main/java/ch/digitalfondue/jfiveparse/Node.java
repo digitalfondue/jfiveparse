@@ -153,6 +153,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void appendChild(Node node) {
         Objects.requireNonNull(node);
+        ensureNoCycle(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
@@ -177,6 +178,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void insertChildren(int position, Node node) {
         Objects.requireNonNull(node);
+        ensureNoCycle(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
             return;
@@ -235,6 +237,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     public void replaceChild(Node node, Node oldChild) {
         Objects.requireNonNull(node);
         Objects.requireNonNull(oldChild);
+        ensureNoCycle(node);
         if (node == oldChild) {
             return;
         }
@@ -657,4 +660,12 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
             replaceChild(new Text(concatenatedText.toString()), text);
         }
 	}
+
+    private void ensureNoCycle(Node node) {
+        for (Node p = this; p != null; p = p.parentNode) {
+            if (p == node) {
+                throw new IllegalStateException("The new child element contains the parent");
+            }
+        }
+    }
 }
