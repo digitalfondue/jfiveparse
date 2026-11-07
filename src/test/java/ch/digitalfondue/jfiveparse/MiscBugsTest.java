@@ -228,4 +228,18 @@ class MiscBugsTest {
         Assertions.assertThrows(IllegalStateException.class, () -> span.replaceChild(root, b)); // cycle: root -> span -> root
         Assertions.assertEquals("<div><span><b></b></span></div>", JFiveParse.serialize(root));
     }
+
+    @Test
+    void testInsertChildrenAtIndexFailure() {
+        Element p1 = new Element("div");
+        Element p2 = new Element("div");
+        Element c  = new Element("span");
+        p1.appendChild(c);
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> p2.insertChildren(5, c));
+
+        // when failing the insert, c should not have a parent node set
+        Assertions.assertEquals(p1, c.getParentNode());
+        Assertions.assertEquals(1, p1.getChildCount());
+        Assertions.assertEquals(0, p2.getChildCount());
+    }
 }

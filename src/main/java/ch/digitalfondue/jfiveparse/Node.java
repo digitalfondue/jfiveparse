@@ -183,6 +183,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         if (childs == EMPTY_LIST) {
             return;
         }
+        if (position < 0 || position > childs.size()) {
+            throw new IndexOutOfBoundsException("Index " + position + " is out of bound");
+        }
 
         Node previousParent = node.parentNode;
 
