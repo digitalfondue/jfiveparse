@@ -102,7 +102,6 @@ final class Common {
 
     private static final class Interned {
         final char firstChar;
-        final char[] raw;
         final String interned;
         final int id;
 
@@ -112,8 +111,7 @@ final class Common {
 
         Interned(String interned, int id) {
             this.interned = interned;
-            this.raw = interned.toCharArray();
-            this.firstChar = raw[0];
+            this.firstChar = interned.charAt(0);
             this.id = id;
         }
     }
@@ -146,12 +144,12 @@ final class Common {
     }
 
     private static boolean matchCaseASCIIInsensitive(Interned interned, ResizableCharBuilder builder, InternedRes res) {
-        var length = interned.raw.length;
+        var length = interned.interned.length();
         boolean match = true, containsUpperCase = false;
         for (int i = 0; i < length; i++) {
             var c = builder.at(i);
             containsUpperCase |= isUpperCaseASCIILetter(c);
-            match &= toLowerCase(c) == interned.raw[i];
+            match &= toLowerCase(c) == interned.interned.charAt(i);
         }
         res.containsUpperCase = containsUpperCase;
         builder.containsUpperCase = containsUpperCase;
