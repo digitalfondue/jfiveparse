@@ -201,4 +201,12 @@ class MiscBugsTest {
         var d = Assertions.assertDoesNotThrow(() -> W3CDom.toW3CDocument(doc));
         Assertions.assertNull(d.getDocumentElement());
     }
+
+
+    @Test
+    void testMatchesHasSiblingOnDetachedElement() {
+        Element div = new Element("div");
+        Assertions.assertFalse(div.matches(":has(+ p)"));
+        Assertions.assertFalse(div.matches(":has(~ p)"));
+    }
 }

@@ -281,7 +281,13 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                         var nm = toBaseNodeMatcher(r, stateSupplier);
                         return switch (comb) {
                             case CSS.CT_CHILD, CSS.CT_DESCENDANT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> node.getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
-                            case CSS.CT_SIBLING, CSS.CT_ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> wrapper.apply(node.getParentNode()).getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
+                            case CSS.CT_SIBLING, CSS.CT_ADJACENT -> (BiPredicate<SelectableNode<T>, SelectableNode<T>>) (node, base) -> {
+                                var parent = node.getParentNode();
+                                if (parent == null) {
+                                    return false;
+                                }
+                                return wrapper.apply(parent).getAllNodesMatchingAsStream(new NodeMatcher<>(nm), true, unwrapper.apply(base)).count() == 1;
+                            };
                             default -> throw new ParserException("Combinator " + comb + " is not supported in :has");
                         };
                     }).toList());
