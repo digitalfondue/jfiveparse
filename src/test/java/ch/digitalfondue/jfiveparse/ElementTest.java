@@ -288,14 +288,39 @@ class ElementTest {
     }
 
     @Test
-    void setAttributeNodeDoesNotLowercase() {
-        // browser: "set an attribute" keeps the attribute node as-is (unlike createAttribute)
+    void setAttributeNodeLowercasesForHtml() {
+        // browser: an attribute node without a namespace set on an HTML element
+        // behaves like document.createAttribute("CLASS"), i.e. it is lower-cased
         Element div = new Element("div");
         div.setAttributeNode(new AttributeNode("CLASS", "x"));
+        assertEquals(Set.of("class"), AttributesUtils.keySet(div.getAttributes()));
+        assertEquals("x", div.getAttribute("CLASS"));
+        assertEquals("x", div.getAttribute("class"));
+    }
+
+    @Test
+    void setAttributeNodeDoesNotLowercaseNamespacedAttributes() {
+        // browser: setAttributeNode keeps the case of namespaced attributes
+        Element div = new Element("div");
+        div.setAttributeNode(AttributeNode.createWithNamespace("urn:ns", "CLASS", "x"));
         assertEquals(Set.of("CLASS"), AttributesUtils.keySet(div.getAttributes()));
-        // the name-based lookup lower-cases, so the upper-cased attribute is not reachable
-        assertNull(div.getAttribute("CLASS"));
+        assertEquals("x", div.getAttributeNS("urn:ns", "CLASS"));
+        assertNull(div.getAttributeNS("urn:ns", "class"));
         assertNull(div.getAttribute("class"));
+    }
+
+    @Test
+    void setAttributeNodeReplacesExistingCaseInsensitivelyForHtml() {
+        // browser: the lower-cased name matches an existing attribute, so it is replaced
+        Element div = new Element("div");
+        div.setAttribute("class", "foo");
+
+        var old = div.setAttributeNode(new AttributeNode("CLASS", "bar"));
+
+        assertNotNull(old);
+        assertEquals("foo", old.getValue());
+        assertEquals("bar", div.getAttribute("class"));
+        assertEquals(1, AttributesUtils.size(div.getAttributes()));
     }
 
     @Test

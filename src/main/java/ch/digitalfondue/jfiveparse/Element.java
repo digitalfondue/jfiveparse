@@ -312,6 +312,9 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     public AttributeNode setAttributeNode(AttributeNode attribute) {
+        if (Node.NAMESPACE_HTML_ID == namespaceID && attribute.getNamespace() == null) {
+            attribute.setNameAndLocalName(Common.convertToAsciiLowerCase(attribute.getName()));
+        }
         return getAttributes().set(attribute);
     }
 
