@@ -18,6 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -336,5 +337,120 @@ class ElementTest {
         assertThrows(ParserException.class, () -> div.setAttributeNS(null, "P:FOO", "v"));
         assertThrows(ParserException.class, () -> div.setAttributeNS("", "P:FOO", "v"));
         assertThrows(ParserException.class, () -> new AttributeNode("P:FOO", "v", "P", null));
+    }
+
+    @Test
+    void setAttributeMatchesByQualifiedNameIgnoringNamespace() {
+        // browser: setAttribute looks the attribute up by qualified name only,
+        // even when the attribute belongs to a namespace, and changes only its
+        // value (the namespace/prefix are preserved).
+        Element div = new Element("div");
+        div.setAttributeNS("urn:ns", "bar", "ns");
+        div.setAttribute("bar", "plain");
+
+        assertEquals(1, AttributesUtils.size(div.getAttributes()));
+        AttributeNode attr = div.getAttributeNode("bar");
+        assertEquals("plain", attr.getValue());
+        assertEquals("urn:ns", attr.getNamespace());
+        assertEquals("bar", attr.getLocalName());
+        assertEquals("plain", div.getAttribute("bar"));
+        assertEquals("plain", div.getAttributeNS("urn:ns", "bar"));
+        assertNull(div.getAttributeNS(null, "bar"));
+    }
+
+    @Test
+    void setAttributeDoesNotMatchOnLocalNameOnly() {
+        // browser: the prefixed attribute has a different qualified name, so
+        // setAttribute adds a second (namespace-less) attribute.
+        Element div = new Element("div");
+        div.setAttributeNS("urn:ns", "xlink:bar", "ns");
+        div.setAttribute("bar", "plain");
+
+        assertEquals(2, AttributesUtils.size(div.getAttributes()));
+        assertEquals("ns", div.getAttributeNS("urn:ns", "bar"));
+        assertEquals("plain", div.getAttributeNS(null, "bar"));
+    }
+
+    @Test
+    void setAttributeNSMatchesByNamespaceAndLocalNamePreservingQualifiedName() {
+        // browser: setAttributeNS looks the attribute up by namespace + local
+        // name and changes only its value, keeping the existing qualified
+        // name/prefix.
+        Element div = new Element("div");
+        div.setAttributeNS("urn:ns", "xlink:href", "a");
+        div.setAttributeNS("urn:ns", "other:href", "b");
+
+        assertEquals(1, AttributesUtils.size(div.getAttributes()));
+        AttributeNode attr = div.getAttributeNodeNS("urn:ns", "href");
+        assertEquals("b", attr.getValue());
+        assertEquals("xlink:href", attr.getName());
+        assertEquals("xlink", attr.getPrefix());
+        assertEquals("b", div.getAttribute("xlink:href"));
+        assertNull(div.getAttribute("other:href"));
+    }
+
+    @Test
+    void setAttributeNSDoesNotMatchNamespaceLessAttribute() {
+        // browser: setAttributeNS matches on namespace too, so the namespace-less
+        // attribute is not touched.
+        Element div = new Element("div");
+        div.setAttribute("foo", "plain");
+        div.setAttributeNS("urn:ns", "foo", "ns");
+
+        assertEquals(2, AttributesUtils.size(div.getAttributes()));
+        assertEquals("plain", div.getAttributeNS(null, "foo"));
+        assertEquals("ns", div.getAttributeNS("urn:ns", "foo"));
+    }
+
+    @Test
+    void setAttributeNodeReplacesByNamespaceAndLocalNameInPlace() {
+        // browser: setAttributeNode matches by namespace + local name, replaces
+        // the attribute without changing its position and returns the previous
+        // node.
+        Element div = new Element("div");
+        div.setAttribute("a", "1");
+        div.setAttributeNS("urn:ns", "xlink:href", "old");
+        div.setAttribute("b", "2");
+
+        var replacement = AttributeNode.createWithNamespace("urn:ns", "other:href", "new");
+        var old = div.setAttributeNode(replacement);
+
+        assertEquals("old", old.getValue());
+        assertSame(replacement, div.getAttributeNodeNS("urn:ns", "href"));
+        assertEquals(3, AttributesUtils.size(div.getAttributes()));
+
+        var names = new java.util.ArrayList<String>();
+        div.getAttributes().forEach(attr -> names.add(attr.getName()));
+        assertEquals(List.of("a", "other:href", "b"), names);
+    }
+
+    @Test
+    void setAttributeNodeDoesNotReplaceOnLocalNameOnly() {
+        // browser: setAttributeNode needs the namespace to match, so the
+        // namespace-less attribute is appended.
+        Element div = new Element("div");
+        div.setAttributeNS("urn:ns", "bar", "ns");
+
+        var old = div.setAttributeNode(new AttributeNode("bar", "plain"));
+
+        assertNull(old);
+        assertEquals(2, AttributesUtils.size(div.getAttributes()));
+        assertEquals("ns", div.getAttributeNS("urn:ns", "bar"));
+        assertEquals("plain", div.getAttributeNS(null, "bar"));
+    }
+
+    @Test
+    void removeAttributeMatchesByQualifiedNameIgnoringNamespace() {
+        // browser: removeAttribute removes the first attribute matching the
+        // qualified name, regardless of its namespace.
+        Element div = new Element("div");
+        div.setAttributeNS("urn:ns", "bar", "ns");
+        div.setAttributeNode(new AttributeNode("bar", "plain"));
+
+        div.removeAttribute("bar");
+
+        assertEquals(1, AttributesUtils.size(div.getAttributes()));
+        assertNull(div.getAttributeNS("urn:ns", "bar"));
+        assertEquals("plain", div.getAttributeNS(null, "bar"));
     }
 }

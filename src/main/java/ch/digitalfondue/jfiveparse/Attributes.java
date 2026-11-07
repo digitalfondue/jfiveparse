@@ -136,31 +136,39 @@ public final class Attributes implements Iterable<AttributeNode> {
         return null;
     }
 
-    public void put(AttributeNode attribute) {
+    AttributeNode set(AttributeNode attribute) {
+        String namespace = AttributeNode.normalizeNamespace(attribute.getNamespace());
+        String localName = attribute.getLocalName();
         if (attributes == null) {
             attributes = attribute;
             count = 1;
-            return;
+            return null;
         }
         if (attributes instanceof AttributeNode single) {
-            if (Objects.equals(attribute.getName(), single.getName())) {
+            if (single.matches(namespace, localName)) {
                 attributes = attribute; // replace
-            } else {
-                attributes = new AttributeNode[] { single, attribute };
-                count = 2;
+                return single;
             }
-            return;
+            attributes = new AttributeNode[] { single, attribute };
+            count = 2;
+            return null;
         }
         var arr = (AttributeNode[]) attributes;
-        // replace
+        // replace in place
         for (var i = 0; i < count; i++) {
-            if (Objects.equals(attribute.getName(), arr[i].getName())) {
-                arr[i] = attribute; // replace
-                return;
+            if (arr[i].matches(namespace, localName)) {
+                var old = arr[i];
+                arr[i] = attribute;
+                return old;
             }
         }
         // add if not present
         add(attribute);
+        return null;
+    }
+
+    public void put(AttributeNode attribute) {
+        set(attribute);
     }
 
     // add without checking if the attribute name is already present
@@ -183,11 +191,23 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void put(String key, String value) {
-        put(new AttributeNode(nameKey(key), value));
+        key = nameKey(key);
+        var existing = get(key);
+        if (existing != null) {
+            existing.setValue(value);
+        } else {
+            add(new AttributeNode(key, value));
+        }
     }
 
     public void put(String namespace, String name, String value) {
-        put(AttributeNode.createWithNamespace(namespace, name, value));
+        var attribute = AttributeNode.createWithNamespace(namespace, name, value);
+        var existing = get(attribute.getNamespace(), attribute.getLocalName());
+        if (existing != null) {
+            existing.setValue(attribute.getValue());
+        } else {
+            add(attribute);
+        }
     }
 
     public void remove(String key) {

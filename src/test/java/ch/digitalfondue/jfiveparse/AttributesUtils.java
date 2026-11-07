@@ -12,4 +12,12 @@ class AttributesUtils {
         });
         return res;
     }
+
+    public static int size(Attributes attributes) {
+        var size = 0;
+        for (var ignored : attributes) {
+            size++;
+        }
+        return size;
+    }
 }
