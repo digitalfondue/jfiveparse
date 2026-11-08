@@ -3,6 +3,7 @@ package ch.digitalfondue.jfiveparse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.w3c.dom.Comment;
 
 import java.util.List;
 
@@ -246,10 +247,21 @@ class MiscBugsTest {
     @Test
     void testInsertBeforeNull() {
         Element div = new Element("div");
-        Element b   = new Element("b");
+        Element b = new Element("b");
         Element a = new Element("a");
         div.insertBefore(b, null);
         div.insertBefore(a, null);
         Assertions.assertEquals("<div><b></b><a></a></div>", JFiveParse.serialize(div));
+    }
+
+    @Test
+    void testW3CDocumentWithTopLevelComments() {
+        var doc = JFiveParse.parse("<!--before--><html></html><!--after-->");
+
+        var w3c = W3CDom.toW3CDocument(doc);
+        Assertions.assertEquals(3, w3c.getChildNodes().getLength());
+        Assertions.assertInstanceOf(Comment.class, w3c.getChildNodes().item(0));
+        Assertions.assertInstanceOf(org.w3c.dom.Element.class, w3c.getChildNodes().item(1));
+        Assertions.assertInstanceOf(Comment.class, w3c.getChildNodes().item(2));
     }
 }

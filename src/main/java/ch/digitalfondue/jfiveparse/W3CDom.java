@@ -82,10 +82,23 @@ public final class W3CDom {
             }
             Element docElement = doc.getDocumentElement();
             Document d = domImpl.createDocument(null, docElement != null ? docElement.getNodeName() : "html", docType);
+
+            // populate the root element + remove it from the document
+            // so we can iterate on _all_ the document child nodes
             if (docElement != null) {
                 docElement.traverse(new W3CDNodeVisitor(d, docElement));
-            } else {
-                d.removeChild(d.getDocumentElement());
+            }
+            var w3cDocElement = d.removeChild(d.getDocumentElement());
+            //
+
+            var size = doc.getRawChildNodes().size();
+            for (var i = 0; i < size; i++) {
+                var n = doc.getRawChildNodes().get(i);
+                if (n != docElement) {
+                    W3CDNodeVisitor.appendNonElement(n, d, d);
+                } else {
+                    d.appendChild(w3cDocElement);
+                }
             }
             return d;
         } catch (ParserConfigurationException e) {
@@ -122,7 +135,13 @@ public final class W3CDom {
                 org.w3c.dom.Element e = toElement(elem);
                 currentNode.appendChild(e);
                 currentNode = e;
-            } else if (node instanceof Text text) {
+            } else {
+                appendNonElement(node, document, currentNode);
+            }
+        }
+
+        static void appendNonElement(Node node, Document document, org.w3c.dom.Node currentNode) {
+            if (node instanceof Text text) {
                 currentNode.appendChild(document.createTextNode(text.getData()));
             } else if (node instanceof Comment comment) {
                 currentNode.appendChild(document.createComment(comment.getData()));
