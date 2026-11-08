@@ -468,8 +468,13 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public void traverseWithCurrentNode(NodesVisitor visitor) {
         visitor.start(this);
+        if (visitor.complete()) {
+            return;
+        }
         traverse(visitor);
-        visitor.end(this);
+        if (!visitor.complete()) {
+            visitor.end(this);
+        }
     }
 
     /**

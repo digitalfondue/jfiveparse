@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.w3c.dom.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -279,5 +280,22 @@ class MiscBugsTest {
                 "svg|rect",
                 Map.of("svg", Node.NAMESPACE_SVG));
         Assertions.assertEquals(1, W3CDom.getAllNodesMatching(w3c, m2).count());
+    }
+
+    @Test
+    void testCompleteVisitor() {
+        // we expect our visitor to end asap
+        var root = new Element("div");
+        root.appendChild(new Element("span"));
+
+        List<String> events = new ArrayList<>();
+        root.traverseWithCurrentNode(new NodesVisitor() {
+            public void start(Node n) { events.add("start:" + n.getNodeName()); }
+            public void end(Node n)   { events.add("end:" + n.getNodeName()); }
+            public boolean complete() { return !events.isEmpty(); }
+        });
+
+        Assertions.assertEquals(List.of("start:div"), events);
+
     }
 }
