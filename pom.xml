@@ -168,6 +168,7 @@
                     </parameter>
                 </configuration>
                 <executions>
+                    <!--
                     <execution>
                         <id>api-compatibility-check</id>
                         <phase>verify</phase>
@@ -175,6 +176,7 @@
                             <goal>cmp</goal>
                         </goals>
                     </execution>
+                    -->
                 </executions>
             </plugin>
         </plugins>

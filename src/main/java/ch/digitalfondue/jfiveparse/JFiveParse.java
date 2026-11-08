@@ -26,6 +26,10 @@ import java.util.Set;
  */
 public final class JFiveParse {
 
+
+    private JFiveParse() {
+    }
+
     /**
      * Parse a full html document with the default options.
      *
