@@ -427,7 +427,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     private boolean isEmpty(SelectableNode<T> node, SelectableNode<T> base) {
         return node.getChildNodes().stream().noneMatch(s -> {
             var ws = wrapper.apply(s);
-            return isElement(ws) || ws.getNodeType() == Node.TEXT_NODE;
+            return isElement(ws) || (ws.getNodeType() == Node.TEXT_NODE && Common.notEmpty(ws.getTextContent()));
         });
     }
 

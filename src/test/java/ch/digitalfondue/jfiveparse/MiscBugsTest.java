@@ -287,15 +287,19 @@ class MiscBugsTest {
         // we expect our visitor to end asap
         var root = new Element("div");
         root.appendChild(new Element("span"));
-
         List<String> events = new ArrayList<>();
         root.traverseWithCurrentNode(new NodesVisitor() {
             public void start(Node n) { events.add("start:" + n.getNodeName()); }
             public void end(Node n)   { events.add("end:" + n.getNodeName()); }
             public boolean complete() { return !events.isEmpty(); }
         });
-
         Assertions.assertEquals(List.of("start:div"), events);
+    }
 
+    @Test
+    void checkEmptySelector() {
+        Element e = new Element("div");
+        e.appendChild(new Text(""));
+        Assertions.assertTrue(e.matches(":empty"));
     }
 }
