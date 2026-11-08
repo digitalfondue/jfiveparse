@@ -579,12 +579,12 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 		List<Node> childs = new ArrayList<>(getRawChildNodes());
 
 		// iterator helpers
-		Node text = null;
+		Text text = null;
 		StringBuilder concatenatedText = null;
 		for (Node n : childs) {
 			// start accumulating texts node
 			if (text == null && n instanceof Text textNode) {
-				text = n;
+				text = textNode;
 				concatenatedText = new StringBuilder();
 				concatenatedText.append(textNode.getData());
 			}
@@ -595,7 +595,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 			}
 			// stop accumulating node and add current
 			else if (text != null) {
-				replaceTextNodeWith(text, concatenatedText);
+				updateOrRemoveTextNodeWith(text, concatenatedText);
 				concatenatedText = null;
 				text = null;
 				n.normalize();
@@ -605,7 +605,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 		}
 
 		if (concatenatedText != null) {
-			replaceTextNodeWith(text, concatenatedText);
+			updateOrRemoveTextNodeWith(text, concatenatedText);
 		}
     }
 
@@ -664,11 +664,11 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         }
     }
 
-	private void replaceTextNodeWith(Node text, StringBuilder concatenatedText) {
+	private void updateOrRemoveTextNodeWith(Text text, StringBuilder concatenatedText) {
         if (concatenatedText.isEmpty()) {
             removeChild(text);
         } else {
-            replaceChild(new Text(concatenatedText.toString()), text);
+            text.setData(concatenatedText.toString());
         }
 	}
 

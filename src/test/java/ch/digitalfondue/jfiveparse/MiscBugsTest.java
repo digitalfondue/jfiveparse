@@ -315,4 +315,20 @@ class MiscBugsTest {
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> d.setBody(new Element("div")));
     }
+
+    @Test
+    void normalizeKeepFirstTextNodeInstance() {
+        // current bug: we always replace the text node instance instead of updating the content of the first one...
+        Element e = new Element("div");
+        Text t = new Text("a");
+        e.appendChild(t);
+        e.normalize();
+        Assertions.assertSame(t, e.getFirstChild());
+
+        e.appendChild(new Text("b"));
+
+        e.normalize();
+        Assertions.assertSame(t, e.getFirstChild());
+        Assertions.assertEquals("ab", t.getData());
+    }
 }
