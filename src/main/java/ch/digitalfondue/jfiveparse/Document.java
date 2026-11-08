@@ -94,14 +94,27 @@ public final class Document extends Node {
     }
 
     /**
-     * Replace the current body. TODO: need to check if it's a body|frameset element in html namespace, handle the case when there is no body too
+     * Set the body. Accept a body or frameset element.
      *
-     * @param element
+     * @param element the new body element
      */
     public void setBody(Element element) {
+        if (element == null) {
+            return;
+        }
+        if (!Common.isHtmlNS(element, Common.ELEMENT_BODY_ID)
+                && !Common.isHtmlNS(element, Common.ELEMENT_FRAMESET_ID)) {
+            throw new IllegalArgumentException("Body must be a 'body' or 'frameset' element");
+        }
+
         Element e = getBody();
-        if (element != null && e != null && e.parentNode != null) {
+        if (e != null && e.parentNode != null) {
             e.parentNode.replaceChild(element, e);
+        } else {
+            Element html = getDocumentElement();
+            if (html != null) {
+                html.appendChild(element);
+            }
         }
     }
 

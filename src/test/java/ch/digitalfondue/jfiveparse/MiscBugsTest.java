@@ -302,4 +302,17 @@ class MiscBugsTest {
         e.appendChild(new Text(""));
         Assertions.assertTrue(e.matches(":empty"));
     }
+
+
+    @Test
+    void checkSetBody() {
+        Document d = new Document();
+        d.appendChild(new Element("html"));
+
+        var b = new Element("body");
+        d.setBody(b);
+        Assertions.assertEquals(b, d.getBody());
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> d.setBody(new Element("div")));
+    }
 }
