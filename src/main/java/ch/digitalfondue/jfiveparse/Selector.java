@@ -147,6 +147,10 @@ public final class Selector extends BaseSelector<Node, Selector> {
         return new Selector(Map.of());
     }
 
+    public static Selector select(Map<String, String> namespaceAlias) {
+        return new Selector(namespaceAlias);
+    }
+
     /**
      * Parse a CSS selector string.
      *
@@ -168,6 +172,6 @@ public final class Selector extends BaseSelector<Node, Selector> {
 
     @Override
     Selector newInst() {
-        return select();
+        return select(this.nameSpaceAlias);
     }
 }

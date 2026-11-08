@@ -55,12 +55,16 @@ public final class W3CDom {
 
         @Override
         W3CDomSelector newInst() {
-            return select();
+            return select(this.nameSpaceAlias);
         }
     }
 
     public static W3CDomSelector select() {
         return new W3CDomSelector(Map.of());
+    }
+
+    public static W3CDomSelector select(Map<String, String> nameSpaceAlias) {
+        return new W3CDomSelector(nameSpaceAlias);
     }
 
     public static Document toW3CDocument(ch.digitalfondue.jfiveparse.Document doc) {

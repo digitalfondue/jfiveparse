@@ -15,7 +15,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     private List<BiPredicate<SelectableNode<T>, SelectableNode<T>>> matchers = new ArrayList<>();
     private final Function<T, SelectableNode<T>> wrapper;
     private final Function<SelectableNode<T>, T> unwrapper;
-    private final Map<String, String> nameSpaceAlias;
+    protected final Map<String, String> nameSpaceAlias;
 
     BaseSelector(Function<T, SelectableNode<T>> wrapper, Function<SelectableNode<T>, T> unwrapper, Map<String, String> nameSpaceAlias) {
         this.wrapper = wrapper;

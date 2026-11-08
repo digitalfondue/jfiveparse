@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Timeout;
 import org.w3c.dom.Comment;
 
 import java.util.List;
+import java.util.Map;
 
 class MiscBugsTest {
 
@@ -263,5 +264,20 @@ class MiscBugsTest {
         Assertions.assertInstanceOf(Comment.class, w3c.getChildNodes().item(0));
         Assertions.assertInstanceOf(org.w3c.dom.Element.class, w3c.getChildNodes().item(1));
         Assertions.assertInstanceOf(Comment.class, w3c.getChildNodes().item(2));
+    }
+
+    @Test
+    void testNamespacedSelector() {
+        var doc = JFiveParse.parse("<div><svg><rect id=rect></rect></svg></div>");
+        var m = Selector.parseSelector(
+                "svg|rect",
+                Map.of("svg", Node.NAMESPACE_SVG));
+        Assertions.assertEquals(1, doc.getAllNodesMatching(m).size());
+
+        org.w3c.dom.Document w3c = W3CDom.toW3CDocument(doc);
+        var m2 = W3CDom.W3CDomSelector.parseSelector(
+                "svg|rect",
+                Map.of("svg", Node.NAMESPACE_SVG));
+        Assertions.assertEquals(1, W3CDom.getAllNodesMatching(w3c, m2).count());
     }
 }
