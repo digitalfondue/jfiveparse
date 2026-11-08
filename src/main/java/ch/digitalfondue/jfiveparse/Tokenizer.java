@@ -706,6 +706,9 @@ final class Tokenizer {
     static final int PROCESSING_INSTRUCTION_DATA_STATE = 71;
     static final int PROCESSING_INSTRUCTION_QUESTIONABLE_STATE = 72;
 
+    private static final char[] REPLACEMENT_CHARACTERS_CHARS = Character.toChars(Characters.REPLACEMENT_CHARACTER);
+
+
 
     //region TokenizerTagStates
     private static void handleTagOpenState(Tokenizer tokenizer, ProcessedInputStream processedInputStream) {
@@ -2424,7 +2427,7 @@ final class Tokenizer {
             } catch (NumberFormatException nfe) {
                 // greater than Int
                 tokenHandler.emitParseError();
-                return Character.toChars(Characters.REPLACEMENT_CHARACTER);
+                return REPLACEMENT_CHARACTERS_CHARS;
             }
         }
     }
@@ -2465,7 +2468,7 @@ final class Tokenizer {
             } catch (NumberFormatException nfe) {
                 // greater than Int
                 tokenHandler.emitParseError();
-                return Character.toChars(Characters.REPLACEMENT_CHARACTER);
+                return REPLACEMENT_CHARACTERS_CHARS;
             }
         }
     }
@@ -2480,7 +2483,7 @@ final class Tokenizer {
             return Character.toChars(characterReferenceInSubstitutionTable);
         } else if ((parsedInt >= 0xD800 && parsedInt <= 0xDFFF) || parsedInt > 0x10FFFF) {
             tokenHandler.emitParseError();
-            return Character.toChars(Characters.REPLACEMENT_CHARACTER);
+            return REPLACEMENT_CHARACTERS_CHARS;
         } else {
             if (isCharacterReferenceInvalid(parsedInt)) {
                 tokenHandler.emitParseError();
