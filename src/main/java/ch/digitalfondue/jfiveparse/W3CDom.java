@@ -333,7 +333,7 @@ public final class W3CDom {
         }
 
         @Override
-        public String getAttributeValue(String name) {
+        public String getAttribute(String name) {
             var namedItem = node.getAttributes().getNamedItem(name);
             return namedItem != null ? namedItem.getNodeValue() : null;
         }

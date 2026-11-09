@@ -137,7 +137,7 @@ public final class Element extends Node implements SelectableElement<Node> {
         return attributes != null && attributes.containsKey(name);
     }
 
-    @Override
+
     public String getAttributeValue(String name) {
         return attributes != null ? attributes.getNamedItem(name) : null;
     }
@@ -252,6 +252,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @param name
      * @return
      */
+    @Override
     public String getAttribute(String name) {
         return getAttributeValue(name);
     }
