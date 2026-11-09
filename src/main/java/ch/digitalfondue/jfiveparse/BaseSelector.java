@@ -66,16 +66,28 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R attr(String name) {
-        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> true));
+        return attr(name, null);
+    }
+
+    private R attr(String name, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> true));
         return inst();
     }
 
     public R attrValEq(String name, String value) {
-        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> Objects.equals(attrValue, value)));
+        return attrValEq(name, value, null);
+    }
+
+    private R attrValEq(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> Objects.equals(attrValue, value)));
         return inst();
     }
 
     public R attrValInList(String name, String value) {
+        return attrValInList(name, value, null);
+    }
+
+    private R attrValInList(String name, String value, String namespace) {
         matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> {
             if (!Common.notEmpty(attrValue)) {
                 return false;
@@ -104,18 +116,31 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return inst();
     }
 
+
     public R attrValStartWith(String name, String value) {
-        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
+        return attrValStartWith(name, value, null);
+    }
+
+    private R attrValStartWith(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
         return inst();
     }
 
     public R attrValEndWith(String name, String value) {
-        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
+        return attrValEndWith(name, value, null);
+    }
+
+    private R attrValEndWith(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
         return inst();
     }
 
     public R attrValContains(String name, String value) {
-        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
+        return attrValContains(name, value, null);
+    }
+
+    private R attrValContains(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
         return inst();
     }
 
@@ -223,20 +248,21 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 var action = a.action;
                 var name = a.name;
                 var value = a.value;
+                var namespace = a.namespace;
                 if (action == CSS.ATTR_ACTION_EQUALS) {
-                    res.attrValEq(name, value);
+                    res.attrValEq(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT && "class".equals(name)) {
                     res.hasClass(value);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT) {
-                    res.attrValInList(name, value);
+                    res.attrValInList(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_EXISTS) {
-                    res.attr(name);
+                    res.attr(name, namespace);
                 } else if (action == CSS.ATTR_ACTION_START) {
-                    res.attrValStartWith(name, value);
+                    res.attrValStartWith(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_ANY) {
-                    res.attrValContains(name, value);
+                    res.attrValContains(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_END) {
-                    res.attrValEndWith(name, value);
+                    res.attrValEndWith(name, value, namespace);
                 } else {
                     throw new ParserException("AttributeSelector " + a + " is not supported");
                 }
