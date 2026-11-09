@@ -340,4 +340,21 @@ class MiscBugsTest {
         Assertions.assertNotNull(w3doc.getElementById("a"));
         Assertions.assertNotNull(w3doc.getElementById("b"));
     }
+
+    @Test
+    void checkNamespaceSelector() {
+        Document doc = JFiveParse.parse(
+                "<div><svg><a id=a xlink:href=a></a><b id=b href=b></b></svg></div>");
+
+        var a = doc.getElementById("a");
+        var b = doc.getElementById("b");
+
+        var m1 = Selector.parseSelector("[*|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
+        var m2 = Selector.parseSelector("[xlink|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
+        var m3 = Selector.parseSelector("[|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
+
+        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(m1));
+        Assertions.assertEquals(List.of(a), doc.getAllNodesMatching(m2));
+        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(m3));
+    }
 }

@@ -66,17 +66,17 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R attr(String name) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> true));
+        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> true));
         return inst();
     }
 
     public R attrValEq(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> Objects.equals(attrValue, value)));
+        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> Objects.equals(attrValue, value)));
         return inst();
     }
 
     public R attrValInList(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> {
+        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> {
             if (!Common.notEmpty(attrValue)) {
                 return false;
             }
@@ -105,17 +105,17 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R attrValStartWith(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
+        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
         return inst();
     }
 
     public R attrValEndWith(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
+        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
         return inst();
     }
 
     public R attrValContains(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
+        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
         return inst();
     }
 
@@ -483,7 +483,11 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         };
     }
 
-    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name, BiPredicate<String, SelectableElement<?>> attributeValueMatcher) {
+    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name,
+                                                                                   String namespace,
+                                                                                   Map<String, String> aliases,
+                                                                                   BiPredicate<String, SelectableElement<?>> attributeValueMatcher
+    ) {
         return (node, base) -> {
             if (node instanceof SelectableElement<?> elem) {
                 var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());

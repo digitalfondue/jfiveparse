@@ -333,8 +333,14 @@ public final class W3CDom {
 
         @Override
         public String getAttributeValue(String name) {
-            var namedIdem = node.getAttributes().getNamedItem(name);
-            return namedIdem != null ? namedIdem.getNodeValue() : null;
+            var namedItem = node.getAttributes().getNamedItem(name);
+            return namedItem != null ? namedItem.getNodeValue() : null;
+        }
+
+        @Override
+        public String getAttributeNS(String namespace, String localName) {
+            var namedItem = node.getAttributes().getNamedItemNS(namespace, localName);
+            return namedItem != null ? namedItem.getNodeValue() : null;
         }
     }
 

@@ -289,6 +289,7 @@ public final class Element extends Node implements SelectableElement<Node> {
         }
     }
 
+    @Override
     public String getAttributeNS(String namespaceURI, String localName) {
         return attributes != null ? attributes.getNamedItemNS(namespaceURI, localName) : null;
     }
