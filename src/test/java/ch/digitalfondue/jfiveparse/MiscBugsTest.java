@@ -356,5 +356,20 @@ class MiscBugsTest {
         Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(m1));
         Assertions.assertEquals(List.of(a), doc.getAllNodesMatching(m2));
         Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(m3));
+
+        // TODO: check if a and b namespace is correct, we have svg namespace, should it be html?
+        // TODO: fix setIdAttribute in the w3c conversion, so we can getById..
+        var w3doc = W3CDom.toW3CDocument(doc);
+        var w3a = w3doc.getElementsByTagName("a").item(0);
+        var w3b = w3doc.getElementsByTagName("b").item(0);
+
+        var w3m1 = W3CDom.W3CDomSelector.parseSelector("[*|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
+        var w3m2 = W3CDom.W3CDomSelector.parseSelector("[xlink|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
+        var w3m3 = W3CDom.W3CDomSelector.parseSelector("[|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
+
+        Assertions.assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc, w3m1).toList());
+        Assertions.assertEquals(List.of(w3a), W3CDom.getAllNodesMatching(w3doc, w3m2).toList());
+        Assertions.assertEquals(List.of(w3b), W3CDom.getAllNodesMatching(w3doc, w3m3).toList());
+
     }
 }

@@ -515,13 +515,13 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                                                                                    BiPredicate<String, SelectableElement<?>> attributeValueMatcher
     ) {
         return (node, base) -> {
-            if (node instanceof SelectableElement<?> elem) {
-                var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
-                var toCompareAttr = isHtml ? Common.convertToAsciiLowerCase(name) : name;
-                var attrVal = elem.getAttributeValue(toCompareAttr);
-                return attrVal != null && attributeValueMatcher.test(attrVal, elem);
+            if (!(node instanceof SelectableElement<?> elem)) {
+                return false;
             }
-            return false;
+            var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
+            var localName = isHtml ? Common.convertToAsciiLowerCase(name) : name;
+            String attrValue = elem.getAttributeNS(namespace == null ? null : aliases.getOrDefault(namespace, namespace), localName);
+            return attrValue != null && attributeValueMatcher.test(attrValue, elem);
         };
     }
 
