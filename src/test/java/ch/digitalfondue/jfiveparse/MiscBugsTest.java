@@ -372,4 +372,13 @@ class MiscBugsTest {
         Assertions.assertEquals(List.of(w3b), W3CDom.getAllNodesMatching(w3doc, w3m3).toList());
 
     }
+
+    @Test
+    void cssUniversalSelectorUnknownNamespace() {
+        Document doc = JFiveParse.parse("<div></div>");
+        Assertions.assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("svg|*")).size());
+        Assertions.assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("|*")).size());
+
+    }
+
 }
