@@ -17,7 +17,6 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.AbstractList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.function.IntFunction;
 
 /**
@@ -216,13 +215,11 @@ final class Common {
         }
     }
     
+    // https://html.spec.whatwg.org/multipage/parsing.html#adjust-svg-attributes
     private static final HashMap<String, String> SVG_ATTRIBUTES = new HashMap<>();
     static {
-        // TODO: could encode in an even more compact way, for example, prefixing each Uppercase location with a dot. so we
-        //       don't need to repeat the attributename=attributeName but instead attribute.name ?
-        for (var attr : "attributename=attributeName;attributetype=attributeType;basefrequency=baseFrequency;baseprofile=baseProfile;calcmode=calcMode;clippathunits=clipPathUnits;diffuseconstant=diffuseConstant;edgemode=edgeMode;filterunits=filterUnits;glyphref=glyphRef;gradienttransform=gradientTransform;gradientunits=gradientUnits;kernelmatrix=kernelMatrix;kernelunitlength=kernelUnitLength;keypoints=keyPoints;keysplines=keySplines;keytimes=keyTimes;lengthadjust=lengthAdjust;limitingconeangle=limitingConeAngle;markerheight=markerHeight;markerunits=markerUnits;markerwidth=markerWidth;maskcontentunits=maskContentUnits;maskunits=maskUnits;numoctaves=numOctaves;pathlength=pathLength;patterncontentunits=patternContentUnits;patterntransform=patternTransform;patternunits=patternUnits;pointsatx=pointsAtX;pointsaty=pointsAtY;pointsatz=pointsAtZ;preservealpha=preserveAlpha;preserveaspectratio=preserveAspectRatio;primitiveunits=primitiveUnits;refx=refX;refy=refY;repeatcount=repeatCount;repeatdur=repeatDur;requiredextensions=requiredExtensions;requiredfeatures=requiredFeatures;specularconstant=specularConstant;specularexponent=specularExponent;spreadmethod=spreadMethod;startoffset=startOffset;stddeviation=stdDeviation;stitchtiles=stitchTiles;surfacescale=surfaceScale;systemlanguage=systemLanguage;tablevalues=tableValues;targetx=targetX;targety=targetY;textlength=textLength;viewbox=viewBox;viewtarget=viewTarget;xchannelselector=xChannelSelector;ychannelselector=yChannelSelector;zoomandpan=zoomAndPan;".split(";")) {
-            int eq = attr.indexOf('=');
-            SVG_ATTRIBUTES.put(attr.substring(0, eq), attr.substring(eq + 1));
+        for (var attr : "attributeName;attributeType;baseFrequency;baseProfile;calcMode;clipPathUnits;diffuseConstant;edgeMode;filterUnits;glyphRef;gradientTransform;gradientUnits;kernelMatrix;kernelUnitLength;keyPoints;keySplines;keyTimes;lengthAdjust;limitingConeAngle;markerHeight;markerUnits;markerWidth;maskContentUnits;maskUnits;numOctaves;pathLength;patternContentUnits;patternTransform;patternUnits;pointsAtX;pointsAtY;pointsAtZ;preserveAlpha;preserveAspectRatio;primitiveUnits;refX;refY;repeatCount;repeatDur;requiredExtensions;requiredFeatures;specularConstant;specularExponent;spreadMethod;startOffset;stdDeviation;stitchTiles;surfaceScale;systemLanguage;tableValues;targetX;targetY;textLength;viewBox;viewTarget;xChannelSelector;yChannelSelector;zoomAndPan;".split(";")) {
+            SVG_ATTRIBUTES.put(convertToAsciiLowerCase(attr), attr);
         }
     }
 
