@@ -194,6 +194,9 @@ public final class W3CDom {
                         String attrNs = prefix.isEmpty() ? attr.getNamespace() : xmlNamespaces.peek().getOrDefault(prefix, attr.getNamespace());
                         if (attrNs == null) {
                             e.setAttribute(attr.getName(), attr.getValue());
+                            if ("id".equals(attr.getName())) {
+                                e.setIdAttribute("id", true);
+                            }
                         } else {
                             e.setAttributeNS(attrNs, attr.getName(), attr.getValue());
                         }

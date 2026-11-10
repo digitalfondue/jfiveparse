@@ -331,4 +331,13 @@ class MiscBugsTest {
         Assertions.assertSame(t, e.getFirstChild());
         Assertions.assertEquals("ab", t.getData());
     }
+
+    @Test
+    void createIdAttributeW3CDom() {
+        Document doc = JFiveParse.parse(
+                "<div><svg><a id=a xlink:href=a></a><b id=b href=b></b></svg></div>");
+        var w3doc = W3CDom.toW3CDocument(doc);
+        Assertions.assertNotNull(w3doc.getElementById("a"));
+        Assertions.assertNotNull(w3doc.getElementById("b"));
+    }
 }
