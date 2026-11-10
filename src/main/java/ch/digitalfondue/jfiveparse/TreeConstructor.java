@@ -15,10 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static ch.digitalfondue.jfiveparse.Common.*;
 
@@ -3341,48 +3338,13 @@ class TreeConstructor {
             treeConstructor.popCurrentNode();
         }
     }
-
-
+    
     private static final HashMap<String, String> SVG_ELEMENT_CASE_CORRECTION = new HashMap<>();
 
     static {
-        SVG_ELEMENT_CASE_CORRECTION.put("altglyph", "altGlyph");
-        SVG_ELEMENT_CASE_CORRECTION.put("altglyphdef", "altGlyphDef");
-        SVG_ELEMENT_CASE_CORRECTION.put("altglyphitem", "altGlyphItem");
-        SVG_ELEMENT_CASE_CORRECTION.put("animatecolor", "animateColor");
-        SVG_ELEMENT_CASE_CORRECTION.put("animatemotion", "animateMotion");
-        SVG_ELEMENT_CASE_CORRECTION.put("animatetransform", "animateTransform");
-        SVG_ELEMENT_CASE_CORRECTION.put("clippath", "clipPath");
-        SVG_ELEMENT_CASE_CORRECTION.put("feblend", "feBlend");
-        SVG_ELEMENT_CASE_CORRECTION.put("fecolormatrix", "feColorMatrix");
-        SVG_ELEMENT_CASE_CORRECTION.put("fecomponenttransfer", "feComponentTransfer");
-        SVG_ELEMENT_CASE_CORRECTION.put("fecomposite", "feComposite");
-        SVG_ELEMENT_CASE_CORRECTION.put("feconvolvematrix", "feConvolveMatrix");
-        SVG_ELEMENT_CASE_CORRECTION.put("fediffuselighting", "feDiffuseLighting");
-        SVG_ELEMENT_CASE_CORRECTION.put("fedisplacementmap", "feDisplacementMap");
-        SVG_ELEMENT_CASE_CORRECTION.put("fedistantlight", "feDistantLight");
-        SVG_ELEMENT_CASE_CORRECTION.put("fedropshadow", "feDropShadow");
-        SVG_ELEMENT_CASE_CORRECTION.put("feflood", "feFlood");
-        SVG_ELEMENT_CASE_CORRECTION.put("fefunca", "feFuncA");
-        SVG_ELEMENT_CASE_CORRECTION.put("fefuncb", "feFuncB");
-        SVG_ELEMENT_CASE_CORRECTION.put("fefuncg", "feFuncG");
-        SVG_ELEMENT_CASE_CORRECTION.put("fefuncr", "feFuncR");
-        SVG_ELEMENT_CASE_CORRECTION.put("fegaussianblur", "feGaussianBlur");
-        SVG_ELEMENT_CASE_CORRECTION.put("feimage", "feImage");
-        SVG_ELEMENT_CASE_CORRECTION.put("femerge", "feMerge");
-        SVG_ELEMENT_CASE_CORRECTION.put("femergenode", "feMergeNode");
-        SVG_ELEMENT_CASE_CORRECTION.put("femorphology", "feMorphology");
-        SVG_ELEMENT_CASE_CORRECTION.put("feoffset", "feOffset");
-        SVG_ELEMENT_CASE_CORRECTION.put("fepointlight", "fePointLight");
-        SVG_ELEMENT_CASE_CORRECTION.put("fespecularlighting", "feSpecularLighting");
-        SVG_ELEMENT_CASE_CORRECTION.put("fespotlight", "feSpotLight");
-        SVG_ELEMENT_CASE_CORRECTION.put("fetile", "feTile");
-        SVG_ELEMENT_CASE_CORRECTION.put("feturbulence", "feTurbulence");
-        SVG_ELEMENT_CASE_CORRECTION.put("foreignobject", "foreignObject");
-        SVG_ELEMENT_CASE_CORRECTION.put("glyphref", "glyphRef");
-        SVG_ELEMENT_CASE_CORRECTION.put("lineargradient", "linearGradient");
-        SVG_ELEMENT_CASE_CORRECTION.put("radialgradient", "radialGradient");
-        SVG_ELEMENT_CASE_CORRECTION.put("textpath", "textPath");
+        for (var v : "altGlyph;altGlyphDef;altGlyphItem;animateColor;animateMotion;animateTransform;clipPath;feBlend;feColorMatrix;feComponentTransfer;feComposite;feConvolveMatrix;feDiffuseLighting;feDisplacementMap;feDistantLight;feDropShadow;feFlood;feFuncA;feFuncB;feFuncG;feFuncR;feGaussianBlur;feImage;feMerge;feMergeNode;feMorphology;feOffset;fePointLight;feSpecularLighting;feSpotLight;feTile;feTurbulence;foreignObject;glyphRef;linearGradient;radialGradient;textPath".split(";")) {
+            SVG_ELEMENT_CASE_CORRECTION.put(Common.convertToAsciiLowerCase(v), v);
+        }
     }
 
     // ----------- text
