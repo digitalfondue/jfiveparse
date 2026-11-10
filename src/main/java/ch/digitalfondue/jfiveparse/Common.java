@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.AbstractList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.function.IntFunction;
 
 /**
@@ -214,67 +215,15 @@ final class Common {
             attr.setNameAndLocalName("definitionURL");
         }
     }
-
+    
     private static final HashMap<String, String> SVG_ATTRIBUTES = new HashMap<>();
     static {
-        SVG_ATTRIBUTES.put("attributename", "attributeName");
-        SVG_ATTRIBUTES.put("attributetype", "attributeType");
-        SVG_ATTRIBUTES.put("basefrequency", "baseFrequency");
-        SVG_ATTRIBUTES.put("baseprofile", "baseProfile");
-        SVG_ATTRIBUTES.put("calcmode", "calcMode");
-        SVG_ATTRIBUTES.put("clippathunits", "clipPathUnits");
-        SVG_ATTRIBUTES.put("diffuseconstant", "diffuseConstant");
-        SVG_ATTRIBUTES.put("edgemode", "edgeMode");
-        SVG_ATTRIBUTES.put("filterunits", "filterUnits");
-        SVG_ATTRIBUTES.put("glyphref", "glyphRef");
-        SVG_ATTRIBUTES.put("gradienttransform", "gradientTransform");
-        SVG_ATTRIBUTES.put("gradientunits", "gradientUnits");
-        SVG_ATTRIBUTES.put("kernelmatrix", "kernelMatrix");
-        SVG_ATTRIBUTES.put("kernelunitlength", "kernelUnitLength");
-        SVG_ATTRIBUTES.put("keypoints", "keyPoints");
-        SVG_ATTRIBUTES.put("keysplines", "keySplines");
-        SVG_ATTRIBUTES.put("keytimes", "keyTimes");
-        SVG_ATTRIBUTES.put("lengthadjust", "lengthAdjust");
-        SVG_ATTRIBUTES.put("limitingconeangle", "limitingConeAngle");
-        SVG_ATTRIBUTES.put("markerheight", "markerHeight");
-        SVG_ATTRIBUTES.put("markerunits", "markerUnits");
-        SVG_ATTRIBUTES.put("markerwidth", "markerWidth");
-        SVG_ATTRIBUTES.put("maskcontentunits", "maskContentUnits");
-        SVG_ATTRIBUTES.put("maskunits", "maskUnits");
-        SVG_ATTRIBUTES.put("numoctaves", "numOctaves");
-        SVG_ATTRIBUTES.put("pathlength", "pathLength");
-        SVG_ATTRIBUTES.put("patterncontentunits", "patternContentUnits");
-        SVG_ATTRIBUTES.put("patterntransform", "patternTransform");
-        SVG_ATTRIBUTES.put("patternunits", "patternUnits");
-        SVG_ATTRIBUTES.put("pointsatx", "pointsAtX");
-        SVG_ATTRIBUTES.put("pointsaty", "pointsAtY");
-        SVG_ATTRIBUTES.put("pointsatz", "pointsAtZ");
-        SVG_ATTRIBUTES.put("preservealpha", "preserveAlpha");
-        SVG_ATTRIBUTES.put("preserveaspectratio", "preserveAspectRatio");
-        SVG_ATTRIBUTES.put("primitiveunits", "primitiveUnits");
-        SVG_ATTRIBUTES.put("refx", "refX");
-        SVG_ATTRIBUTES.put("refy", "refY");
-        SVG_ATTRIBUTES.put("repeatcount", "repeatCount");
-        SVG_ATTRIBUTES.put("repeatdur", "repeatDur");
-        SVG_ATTRIBUTES.put("requiredextensions", "requiredExtensions");
-        SVG_ATTRIBUTES.put("requiredfeatures", "requiredFeatures");
-        SVG_ATTRIBUTES.put("specularconstant", "specularConstant");
-        SVG_ATTRIBUTES.put("specularexponent", "specularExponent");
-        SVG_ATTRIBUTES.put("spreadmethod", "spreadMethod");
-        SVG_ATTRIBUTES.put("startoffset", "startOffset");
-        SVG_ATTRIBUTES.put("stddeviation", "stdDeviation");
-        SVG_ATTRIBUTES.put("stitchtiles", "stitchTiles");
-        SVG_ATTRIBUTES.put("surfacescale", "surfaceScale");
-        SVG_ATTRIBUTES.put("systemlanguage", "systemLanguage");
-        SVG_ATTRIBUTES.put("tablevalues", "tableValues");
-        SVG_ATTRIBUTES.put("targetx", "targetX");
-        SVG_ATTRIBUTES.put("targety", "targetY");
-        SVG_ATTRIBUTES.put("textlength", "textLength");
-        SVG_ATTRIBUTES.put("viewbox", "viewBox");
-        SVG_ATTRIBUTES.put("viewtarget", "viewTarget");
-        SVG_ATTRIBUTES.put("xchannelselector", "xChannelSelector");
-        SVG_ATTRIBUTES.put("ychannelselector", "yChannelSelector");
-        SVG_ATTRIBUTES.put("zoomandpan", "zoomAndPan");
+        // TODO: could encode in an even more compact way, for example, prefixing each Uppercase location with a dot. so we
+        //       don't need to repeat the attributename=attributeName but instead attribute.name ?
+        for (var attr : "attributename=attributeName;attributetype=attributeType;basefrequency=baseFrequency;baseprofile=baseProfile;calcmode=calcMode;clippathunits=clipPathUnits;diffuseconstant=diffuseConstant;edgemode=edgeMode;filterunits=filterUnits;glyphref=glyphRef;gradienttransform=gradientTransform;gradientunits=gradientUnits;kernelmatrix=kernelMatrix;kernelunitlength=kernelUnitLength;keypoints=keyPoints;keysplines=keySplines;keytimes=keyTimes;lengthadjust=lengthAdjust;limitingconeangle=limitingConeAngle;markerheight=markerHeight;markerunits=markerUnits;markerwidth=markerWidth;maskcontentunits=maskContentUnits;maskunits=maskUnits;numoctaves=numOctaves;pathlength=pathLength;patterncontentunits=patternContentUnits;patterntransform=patternTransform;patternunits=patternUnits;pointsatx=pointsAtX;pointsaty=pointsAtY;pointsatz=pointsAtZ;preservealpha=preserveAlpha;preserveaspectratio=preserveAspectRatio;primitiveunits=primitiveUnits;refx=refX;refy=refY;repeatcount=repeatCount;repeatdur=repeatDur;requiredextensions=requiredExtensions;requiredfeatures=requiredFeatures;specularconstant=specularConstant;specularexponent=specularExponent;spreadmethod=spreadMethod;startoffset=startOffset;stddeviation=stdDeviation;stitchtiles=stitchTiles;surfacescale=surfaceScale;systemlanguage=systemLanguage;tablevalues=tableValues;targetx=targetX;targety=targetY;textlength=textLength;viewbox=viewBox;viewtarget=viewTarget;xchannelselector=xChannelSelector;ychannelselector=yChannelSelector;zoomandpan=zoomAndPan;".split(";")) {
+            int eq = attr.indexOf('=');
+            SVG_ATTRIBUTES.put(attr.substring(0, eq), attr.substring(eq + 1));
+        }
     }
 
     static void adjustSVGAttributes(Attributes attrs) {
