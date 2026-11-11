@@ -42,7 +42,11 @@ import java.util.Map;
  *
  * <pre>
  * count u16 | nodeCount u16 | valuesLength u16 |
- * count x { prefixLen u8 | suffixLen u8 | suffix | cpCount u8 | cpCount x uleb128 }
+ * control stream, count x 2 bytes (entries sorted by name):
+ *   ctrl0 u8 = prefixLen (bits 0-4) | hasSemicolon (bit 5) | (unitCount - 1) &lt;&lt; 6
+ *   ctrl1 u8 = suffixLen
+ * suffix stream: the concatenated suffixes (ascii, without the trailing ';')
+ * values stream: valuesLength x u16, the replacement chars as UTF-16 code units
  * </pre>
  *
  * {@code nodeCount} is the number of trie nodes (the root included) and {@code valuesLength} is
@@ -51,7 +55,8 @@ import java.util.Map;
  *
  * The names are sorted so the suffixes can be front coded (prefixLen = number of chars shared with
  * the previous name); the trailing ';' is part of the name, as the tokenizer distinguishes
- * {@code &amp} and {@code &amp;}.
+ * {@code &amp} and {@code &amp;}, but it is stored as a flag instead of a suffix byte. The streams
+ * are stored separately so the resource compresses better.
  *
  */
 public class GenerateEntities {
@@ -98,6 +103,15 @@ public class GenerateEntities {
         out.writeShort(nodeCount);
         out.writeShort(valuesLength);
 
+        // the control, suffix and values streams are written separately so the resource
+        // compresses better
+        ByteArrayOutputStream ctrlStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream suffixStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream valuesStream = new ByteArrayOutputStream();
+        var ctrl = new DataOutputStream(ctrlStream);
+        var suffixOut = new DataOutputStream(suffixStream);
+        var valuesOut = new DataOutputStream(valuesStream);
+
         previous = "";
         for (var entry : sorted) {
             String name = entry.getKey().substring(1);
@@ -107,20 +121,36 @@ public class GenerateEntities {
             }
 
             int prefix = commonPrefixLength(previous, name);
-            String suffix = name.substring(prefix);
-            if (prefix > 0xff || suffix.length() > 0xff) {
+            boolean endsWithSemicolon = name.endsWith(";");
+            String suffix = name.substring(prefix, endsWithSemicolon ? name.length() - 1 : name.length());
+            if (prefix > 0x1f || suffix.length() > 0xff) {
                 throw new IllegalStateException("entity name too long: " + entry.getKey());
             }
 
-            out.writeByte(prefix);
-            out.writeByte(suffix.length());
-            out.write(suffix.getBytes(StandardCharsets.US_ASCII));
-            out.writeByte(codepoints.length);
+            int unitCount = 0;
             for (int codePoint : codepoints) {
-                writeUnsignedVarInt(out, codePoint);
+                unitCount += codePoint < 0x10000 ? 1 : 2;
+            }
+            if (unitCount > 4) {
+                throw new IllegalStateException("too many code units for " + entry.getKey());
+            }
+
+            ctrl.writeByte(prefix | (endsWithSemicolon ? 0x20 : 0) | ((unitCount - 1) << 6));
+            ctrl.writeByte(suffix.length());
+            suffixOut.write(suffix.getBytes(StandardCharsets.US_ASCII));
+            for (int codePoint : codepoints) {
+                for (char c : Character.toChars(codePoint)) {
+                    valuesOut.writeChar(c);
+                }
             }
             previous = name;
         }
+        ctrl.flush();
+        suffixOut.flush();
+        valuesOut.flush();
+        ctrlStream.writeTo(out);
+        suffixStream.writeTo(out);
+        valuesStream.writeTo(out);
         out.flush();
 
         Path parent = targetPath.getParent();
@@ -139,13 +169,5 @@ public class GenerateEntities {
             prefix++;
         }
         return prefix;
-    }
-
-    private static void writeUnsignedVarInt(DataOutputStream out, int value) throws IOException {
-        while ((value & ~0x7f) != 0) {
-            out.writeByte((value & 0x7f) | 0x80);
-            value >>>= 7;
-        }
-        out.writeByte(value);
     }
 }

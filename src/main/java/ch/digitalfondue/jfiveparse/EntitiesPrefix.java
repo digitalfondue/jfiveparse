@@ -33,22 +33,25 @@ import java.util.Arrays;
  * {@link #NODE_CHAR} holds the character carried by the edge from the parent. Looking up a child is
  * a linear scan of the right-sibling chain.
  *
- * The encoding of the resource is big endian:
+ * The encoding of the resource is big endian, split in streams so it compresses well:
  *
  * <pre>
  * count        u16            number of entities
  * nodeCount    u16            number of trie nodes, root included
- * valuesLength u16            number of replacement chars
- * count times, sorted by name (name = entity name without the leading '&amp;'):
- *     prefixLen  u8           number of chars shared with the previous name
- *     suffixLen  u8
- *     suffix     suffixLen ascii bytes
- *     cpCount    u8           number of codepoints (1 or 2)
- *     codepoints cpCount x uleb128
+ * valuesLength u16            number of replacement chars (UTF-16 code units)
+ * count x 2 bytes, control stream, entries sorted by name (name = entity name without the leading '&amp;'):
+ *     ctrl0      u8           bits 0-4: prefixLen, chars shared with the previous name
+ *                             bit 5:    the name ends with ';'
+ *                             bits 6-7: unitCount - 1 (number of replacement code units, 1 to 4)
+ *     ctrl1      u8           suffixLen
+ * then the suffix stream: the concatenated suffixes (the name after the shared prefix, without
+ * the trailing ';'), ascii bytes
+ * then the values stream: valuesLength x u16, the replacement chars as UTF-16 code units
  * </pre>
  *
  * As the names are sorted, the trie is built in a single pass: the nodes of a name are only
- * created from the longest prefix it shares with the previous name.
+ * created from the longest prefix it shares with the previous name. The trailing ';' is not
+ * stored as a suffix byte but as a flag in ctrl0.
  */
 final class EntitiesPrefix {
 
@@ -95,7 +98,9 @@ final class EntitiesPrefix {
         char[] values = new char[valuesLength];
         int nextNode = 1; // node 0 is the root
         int valuesPos = 0;
-        int pos = HEADER_SIZE;
+        int ctrlPos = HEADER_SIZE;
+        int suffixPos = HEADER_SIZE + 2 * count;
+        int valuesBytePos = data.length - 2 * valuesLength;
 
         // the names are sorted: the nodes of a name share a prefix with the previous one,
         // stack[d] is the node reached after d chars of the current name
@@ -103,35 +108,27 @@ final class EntitiesPrefix {
         var name = new char[64];
 
         for (int i = 0; i < count; i++) {
-            int prefix = data[pos++] & 0xff;
-            int suffix = data[pos++] & 0xff;
-            if (prefix + suffix >= name.length) {
-                name = new char[prefix + suffix];
-                stack = new int[prefix + suffix];
+            int ctrl0 = data[ctrlPos++] & 0xff;
+            int prefix = ctrl0 & 0x1f;
+            boolean endsWithSemicolon = (ctrl0 & 0x20) != 0;
+            int unitCount = ((ctrl0 >> 6) & 0x3) + 1;
+            int suffix = data[ctrlPos++] & 0xff;
+            int nameLength = prefix + suffix + (endsWithSemicolon ? 1 : 0);
+            if (nameLength >= name.length) {
+                name = new char[nameLength + 1];
+                stack = new int[nameLength + 1];
             }
             for (int j = 0; j < suffix; j++) {
-                name[prefix + j] = (char) (data[pos++] & 0xff);
+                name[prefix + j] = (char) (data[suffixPos++] & 0xff);
             }
-            int nameLength = prefix + suffix;
+            if (endsWithSemicolon) {
+                name[nameLength - 1] = ';';
+            }
 
             int valueStart = valuesPos;
-            int codePointCount = data[pos++] & 0xff;
-            for (int j = 0; j < codePointCount; j++) {
-                int codePoint = 0;
-                for (int shift = 0; ; shift += 7) {
-                    int b = data[pos++] & 0xff;
-                    codePoint |= (b & 0x7f) << shift;
-                    if ((b & 0x80) == 0) {
-                        break;
-                    }
-                }
-                if (codePoint < 0x10000) {
-                    values[valuesPos++] = (char) codePoint;
-                } else {
-                    for (char c : Character.toChars(codePoint)) {
-                        values[valuesPos++] = c;
-                    }
-                }
+            for (int j = 0; j < unitCount; j++) {
+                values[valuesPos++] = (char) (((data[valuesBytePos] & 0xff) << 8) | (data[valuesBytePos + 1] & 0xff));
+                valuesBytePos += 2;
             }
 
             int node = prefix == 0 ? ROOT : stack[prefix - 1];
