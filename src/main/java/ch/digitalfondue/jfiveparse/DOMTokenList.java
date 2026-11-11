@@ -32,7 +32,7 @@ public final class DOMTokenList extends AbstractList<String> {
 
     static List<String> extractValues(SelectableElement<?> element, String attrName) {
         // TODO: rewrite -> return an iterator and work from there...
-        String value = element.getAttributeValue(attrName);
+        String value = element.getAttribute(attrName);
         if (value != null) {
             var splitted = SPACES.split(value);
             LinkedHashSet<String> vals = new LinkedHashSet<>(splitted.length);

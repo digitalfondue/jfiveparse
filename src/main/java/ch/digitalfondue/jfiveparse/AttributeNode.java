@@ -116,7 +116,7 @@ public final class AttributeNode {
     }
 
     boolean matches(String namespace, String localName) {
-        return Objects.equals(getNamespace(), namespace) && Objects.equals(getLocalName(), localName);
+        return ("*".equals(namespace) || Objects.equals(getNamespace(), namespace)) && Objects.equals(getLocalName(), localName);
     }
 
     public String getValue() {

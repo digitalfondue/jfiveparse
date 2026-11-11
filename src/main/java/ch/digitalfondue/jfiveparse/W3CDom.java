@@ -193,6 +193,7 @@ public final class W3CDom {
                         String prefix = extractXmlnsPrefixFromAttrOrElem(attr.getName());
                         String attrNs = prefix.isEmpty() ? attr.getNamespace() : xmlNamespaces.peek().getOrDefault(prefix, attr.getNamespace());
                         if (attrNs == null) {
+                            // TODO: handle attribute id (check also namespace)
                             e.setAttribute(attr.getName(), attr.getValue());
                             if ("id".equals(attr.getName())) {
                                 e.setIdAttribute("id", true);
@@ -332,9 +333,28 @@ public final class W3CDom {
         }
 
         @Override
-        public String getAttributeValue(String name) {
-            var namedIdem = node.getAttributes().getNamedItem(name);
-            return namedIdem != null ? namedIdem.getNodeValue() : null;
+        public String getAttribute(String name) {
+            var namedItem = node.getAttributes().getNamedItem(name);
+            return namedItem != null ? namedItem.getNodeValue() : null;
+        }
+
+        @Override
+        public String getAttributeNS(String namespace, String localName) {
+            var attrs = node.getAttributes();
+            if ("*".equals(namespace)) {
+                var l = attrs.getLength();
+                for (var i = 0; i < l; i++) {
+                    var item = attrs.item(i);
+                    var name = item.getLocalName() != null ? item.getLocalName() : item.getNodeName();
+                    if (Objects.equals(localName, name)) {
+                        return attrs.item(i).getNodeValue();
+                    }
+                }
+                return null;
+            } else {
+                var namedItem = attrs.getNamedItemNS(namespace, localName);
+                return namedItem != null ? namedItem.getNodeValue() : null;
+            }
         }
     }
 

@@ -66,17 +66,29 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R attr(String name) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> true));
+        return attr(name, null);
+    }
+
+    private R attr(String name, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> true));
         return inst();
     }
 
     public R attrValEq(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> Objects.equals(attrValue, value)));
+        return attrValEq(name, value, null);
+    }
+
+    private R attrValEq(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> Objects.equals(attrValue, value)));
         return inst();
     }
 
     public R attrValInList(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> {
+        return attrValInList(name, value, null);
+    }
+
+    private R attrValInList(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> {
             if (!Common.notEmpty(attrValue)) {
                 return false;
             }
@@ -104,18 +116,31 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return inst();
     }
 
+
     public R attrValStartWith(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
+        return attrValStartWith(name, value, null);
+    }
+
+    private R attrValStartWith(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
         return inst();
     }
 
     public R attrValEndWith(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
+        return attrValEndWith(name, value, null);
+    }
+
+    private R attrValEndWith(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
         return inst();
     }
 
     public R attrValContains(String name, String value) {
-        matchers.add(matchAttr(name, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
+        return attrValContains(name, value, null);
+    }
+
+    private R attrValContains(String name, String value, String namespace) {
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
         return inst();
     }
 
@@ -223,20 +248,21 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 var action = a.action;
                 var name = a.name;
                 var value = a.value;
+                var namespace = a.namespace;
                 if (action == CSS.ATTR_ACTION_EQUALS) {
-                    res.attrValEq(name, value);
+                    res.attrValEq(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT && "class".equals(name)) {
                     res.hasClass(value);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT) {
-                    res.attrValInList(name, value);
+                    res.attrValInList(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_EXISTS) {
-                    res.attr(name);
+                    res.attr(name, namespace);
                 } else if (action == CSS.ATTR_ACTION_START) {
-                    res.attrValStartWith(name, value);
+                    res.attrValStartWith(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_ANY) {
-                    res.attrValContains(name, value);
+                    res.attrValContains(name, value, namespace);
                 } else if (action == CSS.ATTR_ACTION_END) {
-                    res.attrValEndWith(name, value);
+                    res.attrValEndWith(name, value, namespace);
                 } else {
                     throw new ParserException("AttributeSelector " + a + " is not supported");
                 }
@@ -305,13 +331,10 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     throw new ParserException("PseudoSelector '" + name + "' is not supported");
                 }
             } else if (part instanceof CSS.UniversalSelector u) {
-                String namespace = u.namespace;
-                if (namespace != null && !"*".equals(namespace) && nameSpaceAlias.containsKey(namespace)) {
-                    var ns = nameSpaceAlias.get(namespace);
-                    res.matchers.add((node, base) ->
-                            node instanceof SelectableElement<?> elem && Objects.equals(ns, elem.getNamespaceURI()));
+                if (u.namespace == null || "*".equals(u.namespace)) {
+                    res.element("*");
                 } else {
-                    res.matchers.add(BaseSelector::isElement);
+                    res.element("*", u.namespace);
                 }
             } else {
                 throw new ParserException(part + " is not supported");
@@ -483,15 +506,19 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         };
     }
 
-    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name, BiPredicate<String, SelectableElement<?>> attributeValueMatcher) {
+    private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name,
+                                                                                   String namespace,
+                                                                                   Map<String, String> aliases,
+                                                                                   BiPredicate<String, SelectableElement<?>> attributeValueMatcher
+    ) {
         return (node, base) -> {
-            if (node instanceof SelectableElement<?> elem) {
-                var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
-                var toCompareAttr = isHtml ? Common.convertToAsciiLowerCase(name) : name;
-                var attrVal = elem.getAttributeValue(toCompareAttr);
-                return attrVal != null && attributeValueMatcher.test(attrVal, elem);
+            if (!(node instanceof SelectableElement<?> elem)) {
+                return false;
             }
-            return false;
+            var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
+            var localName = isHtml ? Common.convertToAsciiLowerCase(name) : name;
+            String attrValue = elem.getAttributeNS(namespace == null ? null : aliases.getOrDefault(namespace, namespace), localName);
+            return attrValue != null && attributeValueMatcher.test(attrValue, elem);
         };
     }
 
