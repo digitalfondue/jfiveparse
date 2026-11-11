@@ -368,7 +368,6 @@ class MiscBugsTest {
         Assertions.assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc, w3m1).toList());
         Assertions.assertEquals(List.of(w3a), W3CDom.getAllNodesMatching(w3doc, w3m2).toList());
         Assertions.assertEquals(List.of(w3b), W3CDom.getAllNodesMatching(w3doc, w3m3).toList());
-
     }
 
     @Test
@@ -376,7 +375,21 @@ class MiscBugsTest {
         Document doc = JFiveParse.parse("<div></div>");
         Assertions.assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("svg|*")).size());
         Assertions.assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("|*")).size());
+    }
 
+
+    // https://www.w3.org/TR/selectors-4/#attribute-representation
+    // If "val" contains whitespace, it will never represent anything (since the words are separated by spaces).
+    // Also if "val" is the empty string, it will never represent anything.
+    @Test
+    void selectorEmptyStringInList() {
+        Document doc = JFiveParse.parse(
+                "<div><span id=a class='x'></span><span id=b class=''></span><span id=c></span></div>");
+        Assertions.assertTrue(doc.getAllNodesMatching(Selector.parseSelector("[class~='']")).isEmpty());
+
+        Element e = new Element("div");
+        e.setAttribute("class", "x");
+        Assertions.assertFalse(e.matches("[class~='']"));
     }
 
 }
