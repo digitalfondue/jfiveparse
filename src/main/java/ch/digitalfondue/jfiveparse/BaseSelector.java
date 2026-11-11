@@ -331,13 +331,10 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     throw new ParserException("PseudoSelector '" + name + "' is not supported");
                 }
             } else if (part instanceof CSS.UniversalSelector u) {
-                String namespace = u.namespace;
-                if (namespace != null && !"*".equals(namespace) && nameSpaceAlias.containsKey(namespace)) {
-                    var ns = nameSpaceAlias.get(namespace);
-                    res.matchers.add((node, base) ->
-                            node instanceof SelectableElement<?> elem && Objects.equals(ns, elem.getNamespaceURI()));
+                if (u.namespace == null || "*".equals(u.namespace)) {
+                    res.element("*");
                 } else {
-                    res.matchers.add(BaseSelector::isElement);
+                    res.element("*", u.namespace);
                 }
             } else {
                 throw new ParserException(part + " is not supported");
