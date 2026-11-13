@@ -28,6 +28,10 @@ final class Common {
         return s != null && !s.isEmpty();
     }
 
+    static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
+
     static int toLowerCase(int chr) {
         if (isUpperCaseASCIILetter(chr)) {
             return chr + 0x20;

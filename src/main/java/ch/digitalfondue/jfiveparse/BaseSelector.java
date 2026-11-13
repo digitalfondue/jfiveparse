@@ -89,7 +89,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
     private R attrValInList(String name, String value, String namespace) {
         matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> {
-            if (!Common.notEmpty(attrValue)) {
+            // if we search (value = ''), by spec https://www.w3.org/TR/selectors-4/#attribute-representation we
+            // consider it never match
+            if (Common.isEmpty(attrValue) || Common.isEmpty(value)) {
                 return false;
             }
             int attrValueLength = attrValue.length();
