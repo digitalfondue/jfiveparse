@@ -392,4 +392,21 @@ class MiscBugsTest {
         Assertions.assertFalse(e.matches("[class~='']"));
     }
 
+    @Test
+    void checkCaseFlagSelector() {
+        var doc = JFiveParse.parse(
+                "<div><span id=a data-x='VALUE'></span><span id=b data-x='value'></span></div>");
+
+        var defaultSelector = Selector.parseSelector("[data-x=value]");
+        var insensitiveLower = Selector.parseSelector("[data-x=value i]");
+        var insensitiveUpper = Selector.parseSelector("[data-x=VALUE i]");
+
+        var a = doc.getElementById("a");
+        var b = doc.getElementById("b");
+
+        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(defaultSelector));
+        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(insensitiveLower));
+        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(insensitiveUpper));
+    }
+
 }
