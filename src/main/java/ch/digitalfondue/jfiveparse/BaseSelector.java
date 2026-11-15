@@ -46,7 +46,11 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R hasClass(String value) {
-        attrValInList("class", value);
+        return hasClass(value, false);
+    }
+
+    private R hasClass(String value, boolean ignoreCase) {
+        attrValInList("class", value, null, ignoreCase);
         return inst();
     }
 
@@ -79,7 +83,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private R attrValEq(String name, String value, String namespace, boolean ignoreCase) {
-        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> Objects.equals(attrValue, value)));
+        var valueToMatch = asciiLowerCase(value, ignoreCase);
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> Objects.equals(asciiLowerCase(attrValue, ignoreCase), valueToMatch)));
         return inst();
     }
 
@@ -88,14 +93,16 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private R attrValInList(String name, String value, String namespace, boolean ignoreCase) {
+        var valueToMatch = asciiLowerCase(value, ignoreCase);
         matchers.add(matchAttr(name, null, nameSpaceAlias, (attrValue, elem) -> {
             // if we search (value = ''), by spec https://www.w3.org/TR/selectors-4/#attribute-representation we
             // consider it never match
-            if (Common.isEmpty(attrValue) || Common.isEmpty(value)) {
+            if (Common.isEmpty(attrValue) || Common.isEmpty(valueToMatch)) {
                 return false;
             }
+            attrValue = asciiLowerCase(attrValue, ignoreCase);
             int attrValueLength = attrValue.length();
-            int valueLength = value.length();
+            int valueLength = valueToMatch.length();
             // scan the whole attribute, skipping the whitespace -> register the start
             // scan until the end of the attribute -> register the end
             // check if the attribute{start,end} has same length of value and match value
@@ -109,7 +116,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     i++;
                 }
                 int endCheck = i;
-                if (endCheck - startCheck == valueLength && attrValue.regionMatches(startCheck, value, 0, valueLength)) {
+                if (endCheck - startCheck == valueLength && attrValue.regionMatches(startCheck, valueToMatch, 0, valueLength)) {
                     return true;
                 }
             }
@@ -124,7 +131,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private R attrValStartWith(String name, String value, String namespace, boolean ignoreCase) {
-        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.startsWith(value)));
+        var valueToMatch = asciiLowerCase(value, ignoreCase);
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && valueToMatch != null && asciiLowerCase(attrValue, ignoreCase).startsWith(valueToMatch)));
         return inst();
     }
 
@@ -133,7 +141,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private R attrValEndWith(String name, String value, String namespace, boolean ignoreCase) {
-        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.endsWith(value)));
+        var valueToMatch = asciiLowerCase(value, ignoreCase);
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && valueToMatch != null && asciiLowerCase(attrValue, ignoreCase).endsWith(valueToMatch)));
         return inst();
     }
 
@@ -142,7 +151,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private R attrValContains(String name, String value, String namespace, boolean ignoreCase) {
-        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && value != null && attrValue.contains(value)));
+        var valueToMatch = asciiLowerCase(value, ignoreCase);
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && valueToMatch != null && asciiLowerCase(attrValue, ignoreCase).contains(valueToMatch)));
         return inst();
     }
 
@@ -255,7 +265,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 if (action == CSS.ATTR_ACTION_EQUALS) {
                     res.attrValEq(name, value, namespace, ignoreCase);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT && "class".equals(name)) {
-                    res.hasClass(value);
+                    res.hasClass(value, ignoreCase);
                 } else if (action == CSS.ATTR_ACTION_ELEMENT) {
                     res.attrValInList(name, value, namespace, ignoreCase);
                 } else if (action == CSS.ATTR_ACTION_EXISTS) {
@@ -507,6 +517,10 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             }
             return true;
         };
+    }
+
+    private static String asciiLowerCase(String value, boolean ignoreCase) {
+        return ignoreCase && value != null ? Common.convertToAsciiLowerCase(value) : value;
     }
 
     private static <T> BiPredicate<SelectableNode<T>, SelectableNode<T>> matchAttr(String name,
