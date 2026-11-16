@@ -461,4 +461,33 @@ class MiscBugsTest {
                 W3CDom.W3CDomSelector.parseSelector("[data-x*=alu i]")).toList());
     }
 
+    @Test
+    void cssElementSelectorIsCaseInsensitiveForHtmlDocument() {
+        // in a html document, chrome also is case insensitive for non html namespace
+        // svg part taken from https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/textPath
+        var doc = JFiveParse.parse("""
+        <div id=x></div>
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    id="MyPath"
+                    fill="none"
+                    stroke="red"
+                    d="M10,90 Q90,90 90,45 Q90,10 50,10 Q10,10 10,40 Q10,70 45,70 Q70,70 75,50" />
+                  <text>
+                    <textPath id="tp" href="#MyPath">Quick brown fox jumps over the lazy dog.</textPath>
+                  </text>
+                </svg>
+        """);
+        var targetDiv = doc.getElementById("x");
+        var targetTextPath = doc.getElementById("tp");
+        var found = doc.getAllNodesMatching(Selector.parseSelector("DIV"));
+        var textPath = doc.getAllNodesMatching(Selector.parseSelector("TEXTPATH"));
+        Assertions.assertEquals(1, found.size());
+        Assertions.assertSame(targetDiv, found.get(0));
+
+        Assertions.assertEquals(1, textPath.size());
+        Assertions.assertSame(targetTextPath, textPath.get(0));
+
+    }
+
 }

@@ -39,7 +39,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
     public R element(String name, String namespace) {
         String namespaceToMatch = namespace == null ? null : nameSpaceAlias.getOrDefault(namespace, namespace);
-        matchers.add((node, base) -> node instanceof SelectableElement<?> ce && ("*".equals(name) || name.equals(ce.getNodeName()))
+        var toLowerCasedName = Common.convertToAsciiLowerCase(name);
+        matchers.add((node, base) -> node instanceof SelectableElement<?> ce &&
+                ("*".equals(name) || toLowerCasedName.equals(Common.convertToAsciiLowerCase(ce.getNodeName())))
                 && (namespaceToMatch == null || Objects.equals(namespaceToMatch, ce.getNamespaceURI())));
         return inst();
     }
