@@ -24,7 +24,7 @@ public final class ProcessingInstruction extends Node {
 
     public ProcessingInstruction(String target, String data) {
         this.target = target;
-        this.data = data;
+        this.data = data == null ? "null" : data;
     }
 
     public String getTarget() {
@@ -36,7 +36,7 @@ public final class ProcessingInstruction extends Node {
     }
 
     public void setData(String data) {
-        this.data = data;
+        this.data = data == null ? "" : data;
     }
 
     @Override

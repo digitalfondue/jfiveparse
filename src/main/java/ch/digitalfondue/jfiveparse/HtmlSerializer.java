@@ -151,7 +151,7 @@ public class HtmlSerializer implements NodesVisitor {
                 appendable.append("<!--").append(comment.getData()).append("-->");
             } else if (node instanceof ProcessingInstruction processingInstruction) {
                 appendable.append("<?").append(processingInstruction.getTarget());
-                if (processingInstruction.getData() != null) {
+                if (Common.notEmpty(processingInstruction.getData())) {
                     appendable.append(' ').append(processingInstruction.getData());
                 }
                 appendable.append("?>");

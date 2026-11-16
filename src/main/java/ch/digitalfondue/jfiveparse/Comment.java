@@ -25,7 +25,7 @@ public final class Comment extends Node {
     private String data;
 
     public Comment(String data) {
-        this.data = data;
+        this.data = data == null ? "null" : data;
     }
 
     @Override
@@ -38,7 +38,7 @@ public final class Comment extends Node {
     }
 
     public void setData(String data) {
-        this.data = data;
+        this.data = data == null ? "" : data;
     }
 
     /**

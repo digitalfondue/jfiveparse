@@ -490,4 +490,29 @@ class MiscBugsTest {
 
     }
 
+
+    @Test
+    void testNullTextContentCommentProcessingInstruction() {
+        // follow browser behaviour.
+
+        // document.createComment(null) -> <!--null--> -> null is converted in the string 'null'
+        // instead a.textContent = null -> a.textContent is '' (empty string)
+
+        var c = new ch.digitalfondue.jfiveparse.Comment(null);
+        Assertions.assertEquals("null", c.getTextContent());
+        Assertions.assertEquals("<!--null-->", JFiveParse.serialize(c));
+
+        c.setTextContent(null);
+        Assertions.assertEquals("", c.getTextContent());
+        Assertions.assertEquals("<!---->", JFiveParse.serialize(c));
+        //
+        var pi = new ProcessingInstruction("target", null);
+        Assertions.assertEquals("<?target null?>", JFiveParse.serialize(pi));
+
+        Assertions.assertEquals("null", pi.getTextContent());
+        pi.setTextContent(null);
+        Assertions.assertEquals("", pi.getTextContent());
+        Assertions.assertEquals("<?target?>", JFiveParse.serialize(pi));
+
+    }
 }
