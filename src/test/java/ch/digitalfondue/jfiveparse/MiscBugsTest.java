@@ -513,6 +513,11 @@ class MiscBugsTest {
         pi.setTextContent(null);
         Assertions.assertEquals("", pi.getTextContent());
         Assertions.assertEquals("<?target?>", JFiveParse.serialize(pi));
+    }
 
+    @Test
+    void nthchildError() {
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child()"));
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child(2n + )"));
     }
 }

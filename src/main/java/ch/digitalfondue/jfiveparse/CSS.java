@@ -636,9 +636,13 @@ final class CSS {
                 skipWhitespace();
 
                 if (idx < exprLength) {
+                    number = null;
                     readSign();
                     skipWhitespace();
                     readNumber();
+                    if (number == null) {
+                        throw new ParserException("n-th rule couldn't be parsed (" + expression + ")");
+                    }
                 } else {
                     sign = number = 0;
                 }
@@ -663,6 +667,9 @@ final class CSS {
         }
 
         private void readSign() {
+            if (idx >= exprLength) {
+                throw new ParserException("n-th rule couldn't be parsed (" + expression + ")");
+            }
             switch (expression.charAt(idx)) {
                 case '-': {
                     idx++;
