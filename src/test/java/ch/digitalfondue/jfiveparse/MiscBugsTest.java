@@ -520,4 +520,20 @@ class MiscBugsTest {
         Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child()"));
         Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child(2n + )"));
     }
+
+    @Test
+    void attributesPutAttributeNodeCaseNormalization() {
+        // for html namespace, we need more coherent handling of attributes and the
+        // lowercasing
+        // we may need to
+        //  - remove public Attributes constructor
+        //  - remove Element constructor with attribute
+        //  - ???
+        Document d = JFiveParse.parse("<div id='x'></div>");
+        Element div = d.getElementById("x");
+        div.getAttributes().put(new AttributeNode("DATA-X", "1"));
+        Assertions.assertTrue(div.hasAttribute("data-x"));
+        Assertions.assertEquals("1", div.getAttribute("data-x"));
+        Assertions.assertEquals("1", div.getAttribute("DATA-X"));
+    }
 }

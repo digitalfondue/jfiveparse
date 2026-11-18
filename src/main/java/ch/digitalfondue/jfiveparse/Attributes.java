@@ -39,10 +39,6 @@ public final class Attributes implements Iterable<AttributeNode> {
         }
     }
 
-    public Attributes(Map<String, AttributeNode> attributes) {
-        this(attributes.values());
-    }
-
     public boolean containsKey(String key) {
         return get(key) != null;
     }
