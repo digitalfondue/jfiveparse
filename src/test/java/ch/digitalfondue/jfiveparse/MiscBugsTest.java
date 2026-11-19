@@ -520,4 +520,42 @@ class MiscBugsTest {
         Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child()"));
         Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child(2n + )"));
     }
+
+    @Test
+    void attributesGetHasAttributeCaseInsesitiveForHtml() {
+        Document d = JFiveParse.parse("<div id='x'></div>");
+        Element div = d.getElementById("x");
+        div.getAttributes().put(new AttributeNode("DATA-X", "1"));
+        Assertions.assertTrue(div.hasAttribute("data-x"));
+        Assertions.assertEquals("1", div.getAttribute("data-x"));
+        Assertions.assertEquals("1", div.getAttribute("DATA-X"));
+    }
+
+    @Test
+    void attributeCase() {
+        var elem = new Element("div");
+        elem.setAttributeNS(null, "class", "a");
+        elem.setAttributeNS(null, "CLASS", "b");
+        elem.setAttributeNS(null, "cLaSs", "c");
+
+        // same behaviour as chrome
+        Assertions.assertEquals("<div class=\"a\" CLASS=\"b\" cLaSs=\"c\"></div>", JFiveParse.serialize(elem));
+        Assertions.assertEquals("a", elem.getAttribute("CLASS")); // <- lowercase
+        Assertions.assertEquals("a", elem.getAttribute("class")); //
+        Assertions.assertEquals("a", elem.getAttribute("cLaSs")); //
+
+        Assertions.assertEquals("a", elem.getAttributeNS(null, "class"));
+        Assertions.assertEquals("b", elem.getAttributeNS(null, "CLASS"));
+        Assertions.assertEquals("c", elem.getAttributeNS(null, "cLaSs"));
+
+        //
+        var div = new Element("div");
+        div.setAttributeNS(null, "class", "a");
+        Assertions.assertEquals("<div class=\"a\"></div>", JFiveParse.serialize(div));
+        div.setAttribute("CLASS", "b");
+        Assertions.assertEquals("<div class=\"b\"></div>", JFiveParse.serialize(div));
+
+        // TODO: add more comprehensive test suite as our attribute handling may have some holes
+        //       most likely we need to add some additional work when creating directly AttributeNode
+    }
 }
