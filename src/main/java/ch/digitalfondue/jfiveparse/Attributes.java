@@ -101,15 +101,21 @@ public final class Attributes implements Iterable<AttributeNode> {
         return a;
     }
 
+    // lowercase the attribute name only if we are in a html node and the namespace is not set
+    // should cover all the cases (?)
+    private String adjustedAttributeName(AttributeNode node) {
+        return html && node.getNamespace() == null && !node.hasNamespace() ? Common.convertToAsciiLowerCase(node.getName()) : node.getName();
+    }
+
     public AttributeNode get(String key) {
         key = nameKey(key);
         if (attributes instanceof AttributeNode single) {
-            return Objects.equals(single.getName(), key) ? single : null;
+            return Objects.equals(adjustedAttributeName(single), key) ? single : null;
         }
         if (attributes instanceof AttributeNode[] arr) {
             for (int i = 0; i < count; i++) {
                 var attr = arr[i];
-                if (Objects.equals(attr.getName(), key)) {
+                if (Objects.equals(adjustedAttributeName(attr), key)) {
                     return attr;
                 }
             }

@@ -27,12 +27,17 @@ public final class AttributeNode {
     // non-double-quoted attributes
     private Misc misc;
 
+    public boolean hasNamespace() {
+        return misc != null && misc.hasNamespace;
+    }
+
     private static final class Misc {
         // null means: same as name
         String localName;
         // null means: no original case to preserve
         String originalName;
         String prefix;
+        boolean hasNamespace;
         String namespace;
         // when misc is null the attribute is implicitly double quoted
         int attributeQuoteType = Tokenizer.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
@@ -64,6 +69,7 @@ public final class AttributeNode {
             e.localName = a.misc.localName;
             e.originalName = a.misc.originalName;
             e.prefix = a.misc.prefix;
+            e.hasNamespace = a.misc.hasNamespace;
             e.namespace = a.misc.namespace;
             e.attributeQuoteType = a.misc.attributeQuoteType;
             this.misc = e;
@@ -82,17 +88,16 @@ public final class AttributeNode {
                 misc().localName = name.substring(prefix.length() + 1);
             }
         }
-        if (normalizedNamespace != null) {
-            misc().namespace = normalizedNamespace;
-        }
+
+        misc().namespace = normalizedNamespace;
+        misc().hasNamespace = true;
     }
 
     static AttributeNode createWithNamespace(String namespace, String qualifiedName, String value) {
         namespace = normalizeNamespace(namespace);
         var attribute = new AttributeNode(qualifiedName, value);
-        if (namespace != null) {
-            attribute.misc().namespace = namespace;
-        }
+        attribute.misc().namespace = namespace;
+        attribute.misc().hasNamespace = true;
         var separator = qualifiedName.indexOf(':');
         if (separator > 0) {
             if (namespace == null) {
