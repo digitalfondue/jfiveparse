@@ -6,6 +6,7 @@ import com.google.common.io.MoreFiles;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -37,7 +38,8 @@ public class update_external_resources {
             ExternalRepo wpt = new ExternalRepo(
                     "https://github.com/web-platform-tests/wpt.git",
                     "wpt",
-                    "/html/syntax/parsing/resources/**");
+                    "/html/syntax/parsing/resources/**",
+                    "!/html/syntax/parsing/resources/**/*.py");
 
             for (ExternalRepo repo : List.of(html5libTests, wpt)) {
                 cloneRepo(tempDir, repo);
@@ -55,10 +57,11 @@ public class update_external_resources {
                     tempDir.resolve("html5lib-tests").resolve("tokenizer"),
                     externalResourcesDir.resolve("html5lib-tests").resolve("tokenizer"));
 
-            // 4. Copy wpt/html/syntax/parsing/resources
+            // 4. Copy wpt/html/syntax/parsing/resources (without the python helper files)
             copyDirectoryIfExists(
                     tempDir.resolve("wpt").resolve("html").resolve("syntax").resolve("parsing").resolve("resources"),
-                    externalResourcesDir.resolve("wpt").resolve("html").resolve("syntax").resolve("parsing").resolve("resources"));
+                    externalResourcesDir.resolve("wpt").resolve("html").resolve("syntax").resolve("parsing").resolve("resources"),
+                    f -> !f.getName().toLowerCase().endsWith(".py"));
 
             // 5. Write external-resources/commit.md
             Files.createDirectories(externalResourcesDir);
@@ -118,9 +121,13 @@ public class update_external_resources {
     }
 
     private static void copyDirectoryIfExists(Path source, Path target) throws IOException {
+        copyDirectoryIfExists(source, target, null);
+    }
+
+    private static void copyDirectoryIfExists(Path source, Path target, FileFilter filter) throws IOException {
         System.out.println("\nCopying directory: " + source + " -> " + target.toAbsolutePath() + " ...");
         if (Files.exists(source)) {
-            FileUtils.copyDirectory(source.toFile(), target.toFile());
+            FileUtils.copyDirectory(source.toFile(), target.toFile(), filter);
             System.out.println("Successfully copied.");
         } else {
             System.err.println("Source path does not exist: " + source);
