@@ -548,6 +548,8 @@ class MiscBugsTest {
         Assertions.assertEquals("b", elem.getAttributeNS(null, "CLASS"));
         Assertions.assertEquals("c", elem.getAttributeNS(null, "cLaSs"));
 
-
+        // TODO: add more comprehensive test suite as our attribute handling is iffy at best
+        //       we may need to hide the constructor for the attribute and expose a way to build them so we can
+        //       normalize (lowercase) the name -> document.createAttributeNode() vs document.craeteAttributeNodeNS()
     }
 }
