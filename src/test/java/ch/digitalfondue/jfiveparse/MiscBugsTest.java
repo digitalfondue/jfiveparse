@@ -558,4 +558,12 @@ class MiscBugsTest {
         // TODO: add more comprehensive test suite as our attribute handling may have some holes
         //       most likely we need to add some additional work when creating directly AttributeNode
     }
+
+    @Test
+    void cssAttrInListNamespace() {
+        Document doc = JFiveParse.parse(
+                "<div><svg><a id=a xlink:href='foo bar'></a><b id=b href='foo bar'></b></svg></div>");
+        var matcher = Selector.parseSelector("[xlink|href~=foo]", Map.of("xlink", Node.NAMESPACE_XLINK));
+        Assertions.assertEquals(List.of(doc.getElementById("a")), doc.getAllNodesMatching(matcher));
+    }
 }
