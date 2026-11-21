@@ -149,15 +149,23 @@ public final class Element extends Node implements SelectableElement<Node> {
         }
     }
 
+    private static Element checkParentNoteInsertAdjacent(Node parentNode, String position) {
+        if (parentNode == null) {
+            throw new IllegalArgumentException("The element has no parent. Cannot use " + position + ".");
+        }
+        if (!(parentNode instanceof Element parentNodeElement)) {
+            throw new IllegalArgumentException("The parent node is not an element. Cannot use " + position + ".");
+        }
+        return parentNodeElement;
+    }
+
     private Node insertAdjacentNode(String position, Node node) {
         Objects.requireNonNull(position, "position must be not null");
         position = position.toLowerCase(Locale.ROOT);
         Node parentNode = getParentNode();
         switch (position) {
             case "beforebegin":
-                if (parentNode == null) {
-                    throw new IllegalArgumentException("The element has no parent. Cannot use beforebegin.");
-                }
+                checkParentNoteInsertAdjacent(parentNode, "beforebegin");
                 parentNode.insertBefore(node, this);
                 break;
             case "afterbegin":
@@ -167,9 +175,7 @@ public final class Element extends Node implements SelectableElement<Node> {
                 appendChild(node);
                 break;
             case "afterend":
-                if (parentNode == null) {
-                    throw new IllegalArgumentException("The element has no parent. Cannot use afterend.");
-                }
+                checkParentNoteInsertAdjacent(parentNode, "afterend");
                 parentNode.insertChildren(parentNode.getRawChildNodes().indexOf(this) + 1, node);
                 break;
             default:
@@ -194,12 +200,7 @@ public final class Element extends Node implements SelectableElement<Node> {
 
         switch (position) {
             case "beforebegin":
-                if (parentNode == null) {
-                    throw new IllegalArgumentException("The element has no parent. Cannot use beforebegin.");
-                }
-                if (!(parentNode instanceof Element beforeBeginContext)) {
-                    throw new IllegalArgumentException("The parent node is not an element. Cannot use beforebegin.");
-                }
+                Element beforeBeginContext = checkParentNoteInsertAdjacent(parentNode, "beforebegin");
                 for (Node node : parser.parseFragment(beforeBeginContext, text)) {
                     parentNode.insertBefore(node, this);
                 }
@@ -216,12 +217,7 @@ public final class Element extends Node implements SelectableElement<Node> {
                 }
                 break;
             case "afterend":
-                if (parentNode == null) {
-                    throw new IllegalArgumentException("The element has no parent. Cannot use afterend.");
-                }
-                if (!(parentNode instanceof Element afterEndContext)) {
-                    throw new IllegalArgumentException("The parent node is not an element. Cannot use afterend.");
-                }
+                Element afterEndContext = checkParentNoteInsertAdjacent(parentNode, "afterend");
                 int afterEndIndex = parentNode.getRawChildNodes().indexOf(this) + 1;
                 for (Node node : parser.parseFragment(afterEndContext, text)) {
                     parentNode.insertChildren(afterEndIndex++, node);

@@ -621,7 +621,6 @@ class MiscBugsTest {
 
 
     @Test
-    @Disabled
     void insertAdjacentToRootElementShouldFail() {
         var doc = JFiveParse.parse("<html><body></body></html>");
         var html = doc.getDocumentElement();
