@@ -518,7 +518,8 @@ class MiscBugsTest {
     @Test
     void nthchildError() {
         Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child()"));
-        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child(2n + )"));
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child(2n+)"));
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(":nth-child(2n-)"));
     }
 
     @Test
