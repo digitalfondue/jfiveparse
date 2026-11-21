@@ -81,7 +81,7 @@ public final class AttributeNode {
         String normalizedNamespace = normalizeNamespace(namespace);
         if (Common.notEmpty(prefix)) {
             if (normalizedNamespace == null) {
-                throw new ParserException("A prefix is not allowed when the namespace is null: " + name);
+                throw new IllegalArgumentException("A prefix is not allowed when the namespace is null: " + name);
             }
             misc().prefix = prefix;
             if (name.startsWith(prefix + ":")) {
@@ -101,7 +101,7 @@ public final class AttributeNode {
         var separator = qualifiedName.indexOf(':');
         if (separator > 0) {
             if (namespace == null) {
-                throw new ParserException("A prefix is not allowed when the namespace is null: " + qualifiedName);
+                throw new IllegalArgumentException("A prefix is not allowed when the namespace is null: " + qualifiedName);
             }
             attribute.misc().prefix = qualifiedName.substring(0, separator);
             attribute.misc().localName = qualifiedName.substring(separator + 1);

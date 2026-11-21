@@ -1,6 +1,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.w3c.dom.Comment;
@@ -618,4 +619,15 @@ class MiscBugsTest {
         Assertions.assertEquals(Node.NAMESPACE_SVG, w3c.getDocumentElement().getNamespaceURI());
     }
 
+
+    @Test
+    @Disabled
+    void insertAdjacentToRootElementShouldFail() {
+        var doc = JFiveParse.parse("<html><body></body></html>");
+        var html = doc.getDocumentElement();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentElement("beforebegin", new Element("div")));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentText("beforebegin", "text"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentElement("afterend", new Element("div")));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentText("afterend", "text"));
+    }
 }

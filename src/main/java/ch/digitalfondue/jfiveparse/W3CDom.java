@@ -109,7 +109,7 @@ public final class W3CDom {
             }
             return d;
         } catch (ParserConfigurationException e) {
-            throw new ParserException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 

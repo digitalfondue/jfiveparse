@@ -50,7 +50,7 @@ class ElementTest {
     void beforeBeginWithoutParent() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         startNode.parentNode = null;
-        assertThrows(ParserException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
             startNode.insertAdjacentHTML("beforebegin", "<!-- beforebegin -->"));
     }
 
@@ -90,14 +90,14 @@ class ElementTest {
     void afterEndWithoutParent() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
         startNode.parentNode = null;
-        assertThrows(ParserException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
             startNode.insertAdjacentHTML("afterend", "<!-- beforebegin -->"));
     }
 
     @Test()
     void wrongPosition() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
-        assertThrows(ParserException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
             startNode.insertAdjacentHTML("plop", "<!-- plop -->"));
     }
 
@@ -126,14 +126,14 @@ class ElementTest {
     @Test
     void wrongElementPosition() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
-        assertThrows(ParserException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
             startNode.insertAdjacentElement("plop", new Element("plop")));
     }
 
     @Test
     void wrongTextPosition() {
         Element startNode = (Element) parser.parseFragment(new Element("div"), "<div><p id=myid>foo</p></div>").get(0);
-        assertThrows(ParserException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
             startNode.insertAdjacentText("plop", "plop"));
     }
 
@@ -198,8 +198,8 @@ class ElementTest {
     void insertAdjacentHTMLNonElementParent() {
         Document doc = parser.parse("<html><body></body></html>");
         Element html = doc.getDocumentElement();
-        assertThrows(ParserException.class, () -> html.insertAdjacentHTML("beforebegin", "<div></div>"));
-        assertThrows(ParserException.class, () -> html.insertAdjacentHTML("afterend", "<div></div>"));
+        assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentHTML("beforebegin", "<div></div>"));
+        assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentHTML("afterend", "<div></div>"));
     }
 
     @Test
@@ -359,9 +359,9 @@ class ElementTest {
     void setAttributeNSWithPrefixAndNullNamespaceThrows() {
         // browser: setAttributeNS(null, "P:FOO", ...) throws a NamespaceError
         Element div = new Element("div");
-        assertThrows(ParserException.class, () -> div.setAttributeNS(null, "P:FOO", "v"));
-        assertThrows(ParserException.class, () -> div.setAttributeNS("", "P:FOO", "v"));
-        assertThrows(ParserException.class, () -> new AttributeNode("P:FOO", "v", "P", null));
+        assertThrows(IllegalArgumentException.class, () -> div.setAttributeNS(null, "P:FOO", "v"));
+        assertThrows(IllegalArgumentException.class, () -> div.setAttributeNS("", "P:FOO", "v"));
+        assertThrows(IllegalArgumentException.class, () -> new AttributeNode("P:FOO", "v", "P", null));
     }
 
     @Test
