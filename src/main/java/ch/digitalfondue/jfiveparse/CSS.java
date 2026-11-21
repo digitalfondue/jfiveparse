@@ -247,6 +247,10 @@ final class CSS {
             this.selectorIndex = selectorIndex;
         }
 
+        CssSelector lastToken() {
+            return tokens.isEmpty() ? null : tokens.get(tokens.size() - 1);
+        }
+
 
         String getName(int offset) {
             Matcher matcher = RE_NAME.matcher(selector.substring(selectorIndex + offset));
@@ -294,13 +298,13 @@ final class CSS {
         }
 
         void ensureNotCombinator() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator) {
+            if (lastToken() instanceof Combinator) {
                 throw new ParserException("Did not expect successive combinators.");
             }
         }
 
         void addTraversal(int type) {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type == CT_DESCENDANT
+            if (lastToken() instanceof Combinator ct && ct.type == CT_DESCENDANT
             ) {
                 tokens.set(tokens.size() - 1, new Combinator(type));
                 return;
@@ -322,12 +326,11 @@ final class CSS {
         }
 
         void finalizeSubselector() {
-            if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type == CT_DESCENDANT) {
+            if (lastToken() instanceof Combinator ct && ct.type == CT_DESCENDANT) {
                 tokens.remove(tokens.size()-1);
             }
 
-            if (!tokens.isEmpty()
-                    && tokens.get(tokens.size() - 1) instanceof Combinator) {
+            if (lastToken() instanceof Combinator) {
                 throw new ParserException(selector + " is not a valid selector");
             }
 
@@ -356,8 +359,7 @@ final class CSS {
                     case 13: // carriage return
                     case 32: // space
                     {
-                        // check the first token is not DESCENDANT
-                        if (tokens.isEmpty() || (!(tokens.get(0) instanceof Combinator ct) || ct.type != CT_DESCENDANT)) {
+                        if (tokens.isEmpty() || !((lastToken() instanceof Combinator ct) && ct.type == CT_DESCENDANT)) {
                             ensureNotCombinator();
                             tokens.add(new Combinator(CT_DESCENDANT));
                         }
@@ -582,6 +584,12 @@ final class CSS {
                             } else {
                                 name = getName(1);
                             }
+                        }
+                        // handle case tagName/*comment*/anotherTagName -> 2 consecutive TagSelector/UniversalSelector should
+                        // not be possible
+                        var ltoken = lastToken();
+                        if (ltoken instanceof UniversalSelector || ltoken instanceof TagSelector) {
+                            throw new ParserException(selector + " is not a valid selector");
                         }
                         tokens.add("*".equals(name)  ? new UniversalSelector(namespace) : new TagSelector(name, namespace));
                     }

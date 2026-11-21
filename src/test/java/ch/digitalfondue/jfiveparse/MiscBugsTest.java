@@ -588,4 +588,14 @@ class MiscBugsTest {
     void cssRelativeTopLevelShouldFail() {
         Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector("> div"));
     }
+
+    @Test
+    void cssComment() {
+        Document doc = JFiveParse.parse("<div><span id=s></span></div>");
+        Assertions.assertTrue(doc.getElementById("s").matches("div /* comment */ span"));
+        Assertions.assertTrue(doc.getElementById("s").matches("div/**/ span"));
+        Assertions.assertTrue(doc.getElementById("s").matches("div /**/span"));
+        Assertions.assertThrows(ParserException.class,
+                () -> Assertions.assertTrue(doc.getElementById("s").matches("div/**/span")));
+    }
 }
