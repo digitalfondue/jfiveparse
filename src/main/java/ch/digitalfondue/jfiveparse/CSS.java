@@ -51,6 +51,11 @@ final class CSS {
             if (endIndex < selector.length()) {
                 throw new ParserException("Unmatched selector: " + selector.substring(endIndex));
             }
+            for (var sub : subselects) {
+                if (!sub.isEmpty() && sub.get(0) instanceof CSS.Combinator) {
+                    throw new ParserException(selector + " is not a valid selector");
+                }
+            }
             return subselects;
         } catch (IndexOutOfBoundsException e) {
             throw new ParserException("Parse selector for selector " + selector, e);
@@ -319,6 +324,11 @@ final class CSS {
         void finalizeSubselector() {
             if (!tokens.isEmpty() && tokens.get(tokens.size() - 1) instanceof Combinator ct && ct.type == CT_DESCENDANT) {
                 tokens.remove(tokens.size()-1);
+            }
+
+            if (!tokens.isEmpty()
+                    && tokens.get(tokens.size() - 1) instanceof Combinator) {
+                throw new ParserException(selector + " is not a valid selector");
             }
 
             if (tokens.isEmpty()) {

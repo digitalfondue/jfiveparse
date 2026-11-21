@@ -21,6 +21,10 @@ class CSSImportedTest {
     @MethodSource("data")
     @ParameterizedTest(name = "selector: \"{0}\"")
     public void check(String selector, List<List<CSS.CssSelector>> expected) {
+        // we ignore this test, as we reject a relative combinator not inside a :has
+        if (selector.equals(">.a>#booshTest")) {
+            return;
+        }
         var parsed = CSS.parseSelector(selector);
         CssTestAssert.assertEquals(expected, parsed);
     }

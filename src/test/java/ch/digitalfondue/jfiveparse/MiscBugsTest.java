@@ -576,4 +576,16 @@ class MiscBugsTest {
         Assertions.assertEquals(doc.getAllNodesMatching(Selector.parseSelector("*")) , doc.getElementsByTagNameNS("*", "*"));
         Assertions.assertEquals(List.of(), doc.getElementsByTagNameNS("div", null));
     }
+
+    @Test
+    void cssTrailingCombinatorShouldFail() {
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector("div >"));
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector("div +"));
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector("div ~"));
+    }
+
+    @Test
+    void cssRelativeTopLevelShouldFail() {
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector("> div"));
+    }
 }
