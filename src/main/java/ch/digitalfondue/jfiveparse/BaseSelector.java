@@ -34,15 +34,19 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     public R element(String name) {
-        return element(name, null);
+        return element(name, "*");
     }
 
     public R element(String name, String namespace) {
-        String namespaceToMatch = namespace == null ? null : nameSpaceAlias.getOrDefault(namespace, namespace);
+        String namespaceToMatch = (namespace == null || namespace.isEmpty())
+                ? null
+                : nameSpaceAlias.getOrDefault(namespace, namespace);
+        boolean anyNamespace = "*".equals(namespaceToMatch);
+        boolean anyName = "*".equals(name);
         var toLowerCasedName = Common.convertToAsciiLowerCase(name);
         matchers.add((node, base) -> node instanceof SelectableElement<?> ce &&
-                ("*".equals(name) || toLowerCasedName.equals(Common.convertToAsciiLowerCase(ce.getNodeName())))
-                && (namespaceToMatch == null || Objects.equals(namespaceToMatch, ce.getNamespaceURI())));
+                (anyName || toLowerCasedName.equals(Common.convertToAsciiLowerCase(ce.getNodeName())))
+                && (anyNamespace || Objects.equals(namespaceToMatch, ce.getNamespaceURI())));
         return inst();
     }
 

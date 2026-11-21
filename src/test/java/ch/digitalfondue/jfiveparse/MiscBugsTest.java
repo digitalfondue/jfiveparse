@@ -566,4 +566,13 @@ class MiscBugsTest {
         var matcher = Selector.parseSelector("[xlink|href~=foo]", Map.of("xlink", Node.NAMESPACE_XLINK));
         Assertions.assertEquals(List.of(doc.getElementById("a")), doc.getAllNodesMatching(matcher));
     }
+
+    @Test
+    void elementByTagNameAndNS() {
+        Document doc = JFiveParse.parse("<div id=div><svg><rect id=r></rect></svg></div>");
+
+        Assertions.assertEquals(List.of(doc.getElementById("r")), doc.getElementsByTagNameNS("rect", "*"));
+        Assertions.assertEquals(doc.getAllNodesMatching(Selector.parseSelector("*")) , doc.getElementsByTagNameNS("*", "*"));
+        Assertions.assertEquals(List.of(), doc.getElementsByTagNameNS("div", null));
+    }
 }
