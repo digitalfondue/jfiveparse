@@ -85,7 +85,10 @@ public final class W3CDom {
                 docType = domImpl.createDocumentType(doc.getDoctype().getName(), doc.getDoctype().getPublicId(), doc.getDoctype().getSystemId());
             }
             Element docElement = doc.getDocumentElement();
-            Document d = domImpl.createDocument(null, docElement != null ? docElement.getNodeName() : "html", docType);
+            Document d = domImpl.createDocument(
+                    docElement != null ? docElement.getNamespaceURI() : null,
+                    docElement != null ? docElement.getNodeName() : "html",
+                    docType);
 
             // populate the root element + remove it from the document
             // so we can iterate on _all_ the document child nodes

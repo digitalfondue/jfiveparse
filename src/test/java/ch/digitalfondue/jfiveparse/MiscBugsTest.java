@@ -609,4 +609,13 @@ class MiscBugsTest {
         Assertions.assertEquals("<div title='a&#39;b'></div>", html);
     }
 
+    @Test
+    void w3cDomRootNamespace() {
+        Document doc = new Document();
+        Element svg = new Element("svg", Node.NAMESPACE_SVG);
+        doc.appendChild(svg);
+        var w3c = W3CDom.toW3CDocument(doc);
+        Assertions.assertEquals(Node.NAMESPACE_SVG, w3c.getDocumentElement().getNamespaceURI());
+    }
+
 }
