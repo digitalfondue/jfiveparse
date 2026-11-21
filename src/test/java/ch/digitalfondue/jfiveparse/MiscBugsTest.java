@@ -629,4 +629,11 @@ class MiscBugsTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentElement("afterend", new Element("div")));
         Assertions.assertThrows(IllegalArgumentException.class, () -> html.insertAdjacentText("afterend", "text"));
     }
+
+    @Test
+    void checkInsertOnNonInsertableNodes() {
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> new Text("a").appendChild(new Element("div")));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> new Text("a").insertChildren(0, new Element("div")));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> new Text("a").replaceChild(new Element("div"), new Element("div")));
+    }
 }

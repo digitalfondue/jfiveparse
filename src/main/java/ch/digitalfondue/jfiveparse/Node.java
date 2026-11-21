@@ -156,7 +156,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         ensureNoCycle(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
-            return;
+            throw new UnsupportedOperationException("This node type does not support this method.");
         }
 
         if (node.parentNode == this) {
@@ -181,7 +181,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         ensureNoCycle(node);
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
-            return;
+            throw new UnsupportedOperationException("This node type does not support this method.");
         }
         if (position < 0 || position > childs.size()) {
             throw new IndexOutOfBoundsException("Index " + position + " is out of bound");
@@ -249,7 +249,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
         }
         List<Node> childs = getMutableChildNodes();
         if (childs == EMPTY_LIST) {
-            return;
+            throw new UnsupportedOperationException("This node type does not support this method.");
         }
         int idx = childs.indexOf(oldChild);
         if (idx < 0) {
