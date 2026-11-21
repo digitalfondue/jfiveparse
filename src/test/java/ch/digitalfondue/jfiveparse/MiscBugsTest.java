@@ -8,6 +8,7 @@ import org.w3c.dom.Comment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 class MiscBugsTest {
 
@@ -598,4 +599,14 @@ class MiscBugsTest {
         Assertions.assertThrows(ParserException.class,
                 () -> Assertions.assertTrue(doc.getElementById("s").matches("div/**/span")));
     }
+
+
+    @Test
+    void serializationPrintOriginalAttributeQuote() {
+        Document doc = JFiveParse.parse("<div title='a&apos;b'></div>");
+        Element div = doc.getElementsByTagName("div").get(0);
+        String html = div.getOuterHTML(Set.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE));
+        Assertions.assertEquals("<div title='a&#39;b'></div>", html);
+    }
+
 }

@@ -65,10 +65,10 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     // escape handling for both text data and attribute value
-    private static void escapeTextDataAttributeValue(Appendable appendable,
-                                                     String data,
-                                                     boolean isAttr,
-                                                     boolean transformEntities) throws IOException {
+    private void escapeTextDataAttributeValue(Appendable appendable,
+                                              String data,
+                                              boolean isAttr,
+                                              String attrQuoteValue) throws IOException {
         if (data == null) {
             if (isAttr) {
                 appendable.append("null");
@@ -84,6 +84,7 @@ public class HtmlSerializer implements NodesVisitor {
                 case Characters.LESSTHAN_SIGN -> !isAttr && transformEntities ? "&lt;" : null;
                 case Characters.GREATERTHAN_SIGN -> !isAttr && transformEntities ? "&gt;" : null;
                 case '"' -> isAttr && transformEntities ? "&quot;" : null;
+                case '\'' -> isAttr && printOriginalAttributeQuote &&  "'".equals(attrQuoteValue) ? "&#39;" : null;
                 case Characters.NO_BREAK_SPACE -> "&nbsp;";
                 default -> null;
             };
@@ -119,9 +120,10 @@ public class HtmlSerializer implements NodesVisitor {
                                 && (!Common.notEmpty(attr.getValue()))) {
                             continue;
                         }
-                        appendable.append('=').append(quoteCharacters(attr));
-                        escapeTextDataAttributeValue(appendable, attr.getValue(), true, transformEntities);
-                        appendable.append(quoteCharacters(attr));
+                        String quoteChars = quoteCharacters(attr);
+                        appendable.append('=').append(quoteChars);
+                        escapeTextDataAttributeValue(appendable, attr.getValue(), true, quoteChars);
+                        appendable.append(quoteChars);
                     }
                 }
                 appendable.append('>');
@@ -145,7 +147,7 @@ public class HtmlSerializer implements NodesVisitor {
                 if (literalAppend) {
                     appendable.append(t.getData());
                 } else {
-                    escapeTextDataAttributeValue(appendable, t.getData(), false, transformEntities);
+                    escapeTextDataAttributeValue(appendable, t.getData(), false, null);
                 }
             } else if (node instanceof Comment comment) {
                 appendable.append("<!--").append(comment.getData()).append("-->");
