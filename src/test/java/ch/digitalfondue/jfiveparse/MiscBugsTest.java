@@ -636,4 +636,9 @@ class MiscBugsTest {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> new Text("a").insertChildren(0, new Element("div")));
         Assertions.assertThrows(UnsupportedOperationException.class, () -> new Text("a").replaceChild(new Element("div"), new Element("div")));
     }
+
+    @Test
+    void checkEmptyStringElement() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new Element(""));
+    }
 }

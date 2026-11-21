@@ -59,6 +59,9 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @param attributes
      */
     public Element(String name, String nameSpace, Attributes attributes) {
+        if (Common.isEmpty(name)) {
+            throw new IllegalArgumentException("Tag name ('" + name + "') is not valid.");
+        }
         var lowerCased = Common.convertToAsciiLowerCase(name);
         this.nodeName = Node.NAMESPACE_HTML.equals(nameSpace) ? lowerCased : name;
         this.originalNodeName = name;
