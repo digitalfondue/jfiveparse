@@ -508,21 +508,35 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
 
     /**
      * Get all the {@link Element} that match the given name. The elements will
-     * be returned in "tree order". The name is case-sensitive.
+     * be returned in "tree order".
      */
     public List<Element> getElementsByTagName(String name) {
-        return getAllNodesMatchingAsStream(Selector.select().element(name).toMatcher())
-                .map(Element.class::cast)
-                .toList();
+        boolean all = "*".equals(name);
+        String asciiLowerName = Common.convertToAsciiLowerCase(name);
+        return getAllNodesMatchingAsStream(new NodeMatcher<>((n, base) -> {
+            if (!(n instanceof Element e)) {
+                return false;
+            }
+            if (all) {
+                return true;
+            }
+            return e.namespaceID == NAMESPACE_HTML_ID
+                    ? asciiLowerName.equals(e.nodeName)
+                    : name.equals(e.nodeName);
+        }), false, this).map(Element.class::cast).toList();
     }
 
     /**
      * Get all the {@link Element} that match the given name and namespace. The
-     * elements will be returned in "tree order". The name and namespace are
-     * case-sensitive.
+     * elements will be returned in "tree order".
      */
     public List<Element> getElementsByTagNameNS(String name, String namespace) {
-        return getAllNodesMatchingAsStream(Selector.select().element(name, namespace).toMatcher())
+        String normalizedNamespace = Common.isEmpty(namespace) ? null : namespace;
+        boolean allName = "*".equals(name);
+        boolean allNS = "*".equals(normalizedNamespace);
+        return getAllNodesMatchingAsStream(new NodeMatcher<>((n, base) -> n instanceof Element e
+                        && (allName || Objects.equals(name, e.nodeName))
+                        && (allNS || Objects.equals(normalizedNamespace, e.namespaceURI))), false, this)
                 .map(Element.class::cast)
                 .toList();
     }

@@ -166,7 +166,7 @@ public class Parser {
         }
 
         // 9
-        tokenizer.setStartToken(node.getNodeName(), node.getAttributes().copy());
+        tokenizer.setStartToken(node.nodeName, node.getAttributes().copy());
 
         // 10
         tokenHandler.resetInsertionModeAppropriately();

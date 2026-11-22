@@ -77,6 +77,9 @@ public final class AttributeNode {
     }
 
     public AttributeNode(String name, String value, String prefix, String namespace) {
+        // TODO: handle name + prefix coherence, can be name="foo:name" and then pass prefix="plop"
+        //       change constructor to, String name, String value, String namespace
+        //       this is the document.createAttributeNS()
         this(name, value);
         String normalizedNamespace = normalizeNamespace(namespace);
         if (Common.notEmpty(prefix)) {

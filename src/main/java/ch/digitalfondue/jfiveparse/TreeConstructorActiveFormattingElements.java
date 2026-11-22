@@ -69,8 +69,8 @@ final class TreeConstructorActiveFormattingElements {
         final int size = activeFormattingElements.size();
         int sameElementPosition = -1;
 
-        String elementName = element.getNodeName();
-        String elementNS = element.getNamespaceURI();
+        String elementName = element.nodeName;
+        String elementNS = element.namespaceURI;
         Attributes elementAttrs = element.hasAttributes() ? element.getAttributes() : null;
 
         // TODO: not optimal at all :D
@@ -78,8 +78,8 @@ final class TreeConstructorActiveFormattingElements {
         for (int i = lastMarkerPositionOrStart; i < size; i++) {
             Element current = activeFormattingElements.get(i);
             if (!(MARKER_ELEMENT == current) && //
-                    elementName.equals(current.getNodeName()) && //
-                    elementNS.equals(current.getNamespaceURI()) && //
+                    elementName.equals(current.nodeName) && //
+                    elementNS.equals(current.namespaceURI) && //
                     Objects.equals(elementAttrs, current.hasAttributes() ? current.getAttributes() : null)) {
                 sameElementCount++;
                 if (sameElementPosition == -1) {

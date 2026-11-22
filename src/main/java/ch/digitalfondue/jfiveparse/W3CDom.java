@@ -86,8 +86,8 @@ public final class W3CDom {
             }
             Element docElement = doc.getDocumentElement();
             Document d = domImpl.createDocument(
-                    docElement != null ? docElement.getNamespaceURI() : null,
-                    docElement != null ? docElement.getNodeName() : "html",
+                    docElement != null ? docElement.namespaceURI : null,
+                    docElement != null ? docElement.nodeName : "html",
                     docType);
 
             // populate the root element + remove it from the document

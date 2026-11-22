@@ -183,7 +183,7 @@ class TreeConstructor {
     private boolean checkIsInHtmlContentSVGMathML(Element adjustedCurrentNode) {
         return (Common.isMathMLIntegrationPoint(adjustedCurrentNode) && ((tokenType == TT_START_TAG && (!"mglyph".equals(tagName) && !"malignmark".equals(tagName))) || tokenType == TT_CHARACTER))
                 || //
-                (("annotation-xml".equals(adjustedCurrentNode.getNodeName()) && Node.NAMESPACE_MATHML_ID == adjustedCurrentNode.namespaceID) && tokenType == TT_START_TAG && "svg"
+                (("annotation-xml".equals(adjustedCurrentNode.nodeName) && Node.NAMESPACE_MATHML_ID == adjustedCurrentNode.namespaceID) && tokenType == TT_START_TAG && "svg"
                         .equals(tagName)) || //
                 (Common.isHtmlIntegrationPoint(adjustedCurrentNode) && (tokenType == TT_START_TAG || tokenType == TT_CHARACTER));
     }
@@ -306,7 +306,7 @@ class TreeConstructor {
             Element currentNode = getCurrentNode();
             final boolean check = Common.isImpliedTag(currentNode) && //
                     ((excludeTagName == null) || //
-                    (!(currentNode.getNodeName().equals(excludeTagName) && currentNode.getNamespaceURI().equals(excludeNamespace))));
+                    (!(currentNode.nodeName.equals(excludeTagName) && currentNode.namespaceURI.equals(excludeNamespace))));
             if (check) {
                 popCurrentNode();
             } else {
@@ -523,10 +523,10 @@ class TreeConstructor {
 
             // 15
             Element elem = buildElement(
-                    formattingElement.getNodeName(),
+                    formattingElement.nodeName,
                     formattingElement.nodeNameID,
                     formattingElement.originalNodeName,
-                    formattingElement.getNamespaceURI(),
+                    formattingElement.namespaceURI,
                     formattingElement.namespaceID,
                     formattingElement.hasAttributes() ? formattingElement.getAttributes().copy() : null
             );
@@ -3289,7 +3289,7 @@ class TreeConstructor {
         } else if (tokenType == TT_END_TAG) {
 
             Element node = treeConstructor.getCurrentNode();
-            if (!tagName.equals(Common.convertToAsciiLowerCase(node.getNodeName()))) {
+            if (!tagName.equals(Common.convertToAsciiLowerCase(node.nodeName))) {
                 treeConstructor.emitParseError();
             }
 
@@ -3300,7 +3300,7 @@ class TreeConstructor {
                     return;
                 }
 
-                if (tagName.equals(Common.convertToAsciiLowerCase(node.getNodeName()))) {
+                if (tagName.equals(Common.convertToAsciiLowerCase(node.nodeName))) {
                     while (node != treeConstructor.popCurrentNode()) {
                     }
                     return;

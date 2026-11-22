@@ -722,4 +722,28 @@ class MiscBugsTest {
         Assertions.assertEquals(Node.NAMESPACE_XML, lang.getNamespace());
         Assertions.assertTrue(lang.hasNamespace());
     }
+
+    @Test
+    void checkByTagName() {
+        Document doc = JFiveParse.parse(
+                "<div id=h></div><svg><linearGradient id=g></linearGradient><textPath id=t></textPath></svg>");
+
+        // getElementsByTagName case insensitive for html
+        Assertions.assertEquals(1, doc.getElementsByTagName("DIV").size());
+        Assertions.assertEquals(1, doc.getElementsByTagName("linearGradient").size());
+        Assertions.assertEquals(1, doc.getElementsByTagName("textPath").size());
+        // case sensitive for non-html
+        Assertions.assertTrue(doc.getElementsByTagName("lineargradient").isEmpty());
+        Assertions.assertTrue(doc.getElementsByTagName("TEXTPATH").isEmpty());
+
+
+        Assertions.assertEquals(1, doc.getElementsByTagNameNS("div", Node.NAMESPACE_HTML).size());
+        Assertions.assertTrue(doc.getElementsByTagNameNS("DIV", Node.NAMESPACE_HTML).isEmpty());
+
+        Assertions.assertEquals(1, doc.getElementsByTagNameNS("linearGradient", Node.NAMESPACE_SVG).size());
+        Assertions.assertTrue(doc.getElementsByTagNameNS("lineargradient", Node.NAMESPACE_SVG).isEmpty());
+        Assertions.assertTrue(doc.getElementsByTagNameNS("TEXTPATH", Node.NAMESPACE_SVG).isEmpty());
+    }
+
+
 }
