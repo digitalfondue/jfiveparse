@@ -379,7 +379,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private boolean isRoot(SelectableNode<T> n, SelectableNode<T> base) {
-        return (n.getParentNode() == null || wrapper.apply(n.getParentNode()).getNodeType() == Node.DOCUMENT_NODE) && isElement(n);
+        return n.getParentNode() != null && isElement(n) && wrapper.apply(n.getParentNode()).getNodeType() == Node.DOCUMENT_NODE;
     }
 
     private boolean isAt(SelectableNode<T> n, IntPredicate idxPredicate, boolean reversedOrder) {

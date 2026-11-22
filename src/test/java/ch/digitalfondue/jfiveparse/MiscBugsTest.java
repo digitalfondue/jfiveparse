@@ -677,4 +677,14 @@ class MiscBugsTest {
         Assertions.assertTrue(doc.getAllNodesMatching(Selector.parseSelector("[bla$='']")).isEmpty());
         Assertions.assertTrue(doc.getAllNodesMatching(Selector.parseSelector("[bla*='']")).isEmpty());
     }
+
+    @Test
+    void cssRootDetached() {
+        var detached = new Element("div");
+        Assertions.assertFalse(detached.matches(":root"));
+
+        var doc = JFiveParse.parse("<html><body><div id=d></div></body></html>");
+        Assertions.assertTrue(doc.getDocumentElement().matches(":root"));
+        Assertions.assertFalse(doc.getElementById("d").matches(":root"));
+    }
 }
