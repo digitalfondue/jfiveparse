@@ -151,13 +151,12 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return inst();
     }
 
-    private R attrValHyphen(String name, String value, String namespace, boolean ignoreCase) {
+    private void attrValHyphen(String name, String value, String namespace, boolean ignoreCase) {
         var valueToMatch = asciiLowerCase(value, ignoreCase);
         matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> {
             String v = asciiLowerCase(attrValue, ignoreCase);
             return v.equals(valueToMatch) || v.startsWith(valueToMatch + "-");
         }));
-        return inst();
     }
 
     public R attrValContains(String name, String value) {
