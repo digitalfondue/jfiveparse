@@ -174,6 +174,7 @@ public final class AttributeNode {
         e.prefix = prefix;
         e.localName = localName;
         e.namespace = namespace;
+        e.hasNamespace = true;
     }
 
     @Override

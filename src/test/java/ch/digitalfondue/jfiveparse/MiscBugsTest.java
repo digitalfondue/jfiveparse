@@ -713,4 +713,13 @@ class MiscBugsTest {
         Assertions.assertEquals("AéA", new Element("aéa").getTagName());
         Assertions.assertEquals("viewBox", new Element("viewBox", Node.NAMESPACE_SVG).getTagName());
     }
+
+    @Test
+    void foreignAttrMustHaveNamespace() {
+        var doc = JFiveParse.parse("<div><svg xml:lang='en' xlink:href='x'></svg></div>");
+        var svg = doc.getElementsByTagName("svg").get(0);
+        var lang = svg.getAttributeNodeNS(Node.NAMESPACE_XML, "lang");
+        Assertions.assertEquals(Node.NAMESPACE_XML, lang.getNamespace());
+        Assertions.assertTrue(lang.hasNamespace());
+    }
 }
