@@ -153,11 +153,31 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean toggle(String token) {
-        return false; // FIXME
+        var v = attrValues();
+        boolean res;
+        if (v.contains(token)) {
+            v.remove(token);
+            res = false;
+        } else {
+            v.add(token);
+            res = true;
+        }
+        updateAttribute(v);
+        return res;
     }
 
     public boolean toggle(String token, boolean force) {
-        return false; // FIXME
+        var v = attrValues();
+        boolean res;
+        if (force) {
+            v.add(token);
+            res = true;
+        } else {
+            v.remove(token);
+            res = false;
+        }
+        updateAttribute(v);
+        return res;
     }
 
     public int size() {

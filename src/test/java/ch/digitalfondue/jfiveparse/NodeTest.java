@@ -177,7 +177,7 @@ class NodeTest {
         Element e2 = doc2.getElementById("myid");
         assertEquals("my class abc", e2.getClassName());
         assertFalse(e2.getClassList().isEmpty());
-        assertEquals(Arrays.asList("my", "class", "abc"), e2.getClassList());
+        assertEquals(Arrays.asList("my", "class", "abc"), asList(e2.getClassList()));
     }
 
     @Test
