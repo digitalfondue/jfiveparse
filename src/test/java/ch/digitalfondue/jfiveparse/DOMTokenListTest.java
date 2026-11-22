@@ -99,4 +99,10 @@ class DOMTokenListTest {
         list.add(null);
         assertEquals("null", div.getAttribute("class"));
     }
+
+    @Test
+    void notSetClassListReturnEmptyString() {
+        Element div = new Element("div");
+        assertEquals("", div.getClassList().toString());
+    }
 }

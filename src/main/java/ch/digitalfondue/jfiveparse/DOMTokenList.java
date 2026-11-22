@@ -230,6 +230,7 @@ public final class DOMTokenList implements Iterable<String> {
 
     @Override
     public String toString() {
-        return element.getAttributeValue(attrName);
+        var v = element.getAttributeValue(attrName);
+        return v == null ? "" : v;
     }
 }
