@@ -38,7 +38,12 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean contains(String value) {
-        return false; // FIXME
+        for (var v : this) {
+            if (Objects.equals(v, value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void remove(String value) {
@@ -58,7 +63,11 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public int size() {
-        return 0; // FIXME
+        int count = 0;
+        for (var v : this) {
+            count++;
+        }
+        return count;
     }
 
     public boolean add(String token) {
@@ -70,6 +79,6 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean isEmpty() {
-        return false; // FIXME
+        return size() == 0;
     }
 }
