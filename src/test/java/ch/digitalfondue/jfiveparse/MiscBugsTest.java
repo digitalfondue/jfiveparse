@@ -695,4 +695,16 @@ class MiscBugsTest {
         doc.setBody(body);
         Assertions.assertSame(body, doc.getBody());
     }
+
+    @Test
+    void cssBuilderBehaviour() {
+        Document doc = JFiveParse.parse("<div id=d class=a></div><span id=s class=a></span>");
+        Selector builder = Selector.select().element("div").hasClass("a").attr("id");
+        NodeMatcher<Node> matcher = builder.toMatcher();
+
+        Assertions.assertEquals(List.of(doc.getElementById("d")), doc.getAllNodesMatching(matcher));
+
+        builder.hasClass("b"); // calling builder.toMatcher(); should "detach" the matcher
+        Assertions.assertEquals(List.of(doc.getElementById("d")), doc.getAllNodesMatching(matcher));
+    }
 }

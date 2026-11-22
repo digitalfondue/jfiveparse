@@ -184,7 +184,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private BiPredicate<SelectableNode<T>, SelectableNode<T>> internalToMatcher() {
-        return matchers.size() == 1 ? matchers.get(0) : andMatchers(matchers);
+        return matchers.size() == 1 ? matchers.get(0) : andMatchers(new ArrayList<>(matchers));
     }
 
     public NodeMatcher<T> toMatcher() {
