@@ -106,22 +106,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                 return false;
             }
             attrValue = asciiLowerCase(attrValue, ignoreCase);
-            int attrValueLength = attrValue.length();
-            int valueLength = valueToMatch.length();
-            // scan the whole attribute, skipping the whitespace -> register the start
-            // scan until the end of the attribute -> register the end
-            // check if the attribute{start,end} has same length of value and match value
-            // continue until we don't have space
-            for (int i = 0; i <= attrValueLength - valueLength; ) {
-                while (i < attrValueLength && Common.isTabLfFfCrOrSpace(attrValue.charAt(i))) {
-                    i++;
-                }
-                int startCheck = i;
-                while (i < attrValueLength && !Common.isTabLfFfCrOrSpace(attrValue.charAt(i))) {
-                    i++;
-                }
-                int endCheck = i;
-                if (endCheck - startCheck == valueLength && attrValue.regionMatches(startCheck, valueToMatch, 0, valueLength)) {
+            var it = DOMTokenList.fromValue(attrValue);
+            while (it.hasNext()) {
+                if (Objects.equals(valueToMatch, it.next())) {
                     return true;
                 }
             }

@@ -28,9 +28,10 @@ public final class DOMTokenList implements Iterable<String> {
         this.attrName = attrName;
     }
 
-    @Override
-    public Iterator<String> iterator() {
-        String value = element.getAttributeValue(attrName);
+    static Iterator<String> fromValue(String value) {
+        if (value == null) {
+            return Collections.emptyIterator();
+        }
         int size = value.length();
         return new Iterator<>() {
 
@@ -88,6 +89,11 @@ public final class DOMTokenList implements Iterable<String> {
                 }
             }
         };
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return fromValue(element.getAttributeValue(attrName));
     }
 
     public String item(int index) {
