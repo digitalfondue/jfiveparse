@@ -18,7 +18,7 @@ package ch.digitalfondue.jfiveparse;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public final class DOMTokenList extends AbstractList<String> {
+public final class DOMTokenList implements Iterable<String> {
 
     private final String attrName;
     private final Element element;
@@ -28,145 +28,48 @@ public final class DOMTokenList extends AbstractList<String> {
         this.attrName = attrName;
     }
 
-    private static final Pattern SPACES = Pattern.compile("\\s+");
-
-    static List<String> extractValues(SelectableElement<?> element, String attrName) {
-        // TODO: rewrite -> return an iterator and work from there...
-        String value = element.getAttribute(attrName);
-        if (value != null) {
-            var splitted = SPACES.split(value);
-            LinkedHashSet<String> vals = new LinkedHashSet<>(splitted.length);
-            for (String s : splitted) {
-                if (!s.trim().isEmpty()) {
-                    vals.add(s);
-                }
-            }
-            return new ArrayList<>(vals);
-        }
-        return new ArrayList<>(0);
-    }
-
-    private List<String> attributeValues() {
-        return extractValues(element, attrName);
-    }
-
-    @Override
-    public void add(int index, String value) {
-        if (index < 0 || index > size()) {
-            throw new IndexOutOfBoundsException("Index " + index + " is out of bound");
-        }
-
-        if (contains(value)) {
-            return;
-        }
-        List<String> vals = attributeValues();
-        vals.add(index, value);
-        element.getAttributes().put(attrName, String.join(" ", vals));
-    }
-
-    public void add(String val, String... values) {
-        add(val);
-        if (values != null) {
-            addAll(Arrays.asList(values));
-        }
-    }
-
-    @Override
-    public boolean add(String s) {
-        if (contains(s)) {
-            return false;
-        }
-        return super.add(s);
-    }
-
-    @Override
-    public String remove(int index) {
-        List<String> vals = attributeValues();
-        String val = vals.remove(index);
-        element.getAttributes().put(attrName, String.join(" ", vals));
-        return val;
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        List<String> vals = attributeValues();
-        boolean removed = vals.remove(o);
-        if (removed) {
-            element.getAttributes().put(attrName, String.join(" ", vals));
-        }
-        return removed;
-    }
-
-    @Override
-    public String set(int index, String value) {
-        if (contains(value)) {
-            return value;
-        }
-
-        List<String> vals = attributeValues();
-        String replaced = vals.set(index, value);
-        element.getAttributes().put(attrName, String.join(" ", vals));
-        return replaced;
-    }
-
-    public boolean toggle(String name) {
-        if (contains(name)) {
-            remove(name);
-            return false;
-        } else {
-            add(name);
-            return true;
-        }
-    }
-
-    public boolean toggle(String name, boolean condition) {
-        if (condition) {
-            add(name);
-            return true;
-        } else {
-            remove(name);
-            return false;
-        }
-    }
-
-    /**
-     * Get value at given index.
-     *
-     * It differs from {@link #get(int)} as it will not launch an {@link IndexOutOfBoundsException}, but instead return null.
-     *
-     * @param index
-     * @return value at index _or_ null in all the other cases
-     */
-    public String item(int index) {
-        List<String> all;
-        if (index < 0 || index >= (all = attributeValues()).size()) {
-            return null;
-        }
-        return all.get(index);
-    }
-
-    @Override
-    public ListIterator<String> listIterator(int idx) {
-        return Collections.unmodifiableList(attributeValues()).listIterator(idx);
-    }
-
-    @Override
-    public ListIterator<String> listIterator() {
-        return Collections.unmodifiableList(attributeValues()).listIterator();
-    }
-
     @Override
     public Iterator<String> iterator() {
-        return Collections.unmodifiableList(attributeValues()).iterator();
+        return null; // FIXME
     }
 
-    @Override
-    public String get(int index) {
-        return attributeValues().get(index);
+    public String item(int index) {
+        return null; // FIXME
     }
 
-    @Override
+    public boolean contains(String value) {
+        return false; // FIXME
+    }
+
+    public void remove(String value) {
+        // FIXME
+    }
+
+    public void replace(String oldToken, String newToken) {
+        // FIXME
+    }
+
+    public boolean toggle(String token) {
+        return false; // FIXME
+    }
+
+    public boolean toggle(String token, boolean force) {
+        return false; // FIXME
+    }
+
     public int size() {
-        return attributeValues().size();
+        return 0; // FIXME
+    }
+
+    public boolean add(String token) {
+        return false; // FIXME
+    }
+
+    public boolean add(String token, String... others) {
+        return false; // FIXME
+    }
+
+    public boolean isEmpty() {
+        return false; // FIXME
     }
 }

@@ -67,10 +67,5 @@ class DOMTokenListTest {
         assertTrue(list.add("foo"));
 
         assertFalse(list.add("foo"));
-
-        String prev = list.set(0, "foo");
-        assertEquals("foo", prev);
-
-        assertThrows(IndexOutOfBoundsException.class, () -> list.add(-1, "foo"));
     }
 }
