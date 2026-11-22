@@ -59,8 +59,30 @@ final class Common {
         return s;
     }
 
+    static String convertToAsciiUpperCase(String s) {
+        int len = s.length();
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (isLowerCaseASCIILetter(c)) {
+                char[] chars = s.toCharArray();
+                chars[i] = (char) (c - 0x20);
+                for (int j = i + 1; j < len; j++) {
+                    if (isLowerCaseASCIILetter(chars[j])) {
+                        chars[j] = (char) (chars[j] - 0x20);
+                    }
+                }
+                return new String(chars);
+            }
+        }
+        return s;
+    }
+
     static boolean isUpperOrLowerCaseASCIILetter(int chr) {
-        return (chr >= Characters.LATIN_SMALL_LETTER_A && chr <= Characters.LATIN_SMALL_LETTER_Z) || isUpperCaseASCIILetter(chr);
+        return isLowerCaseASCIILetter(chr) || isUpperCaseASCIILetter(chr);
+    }
+
+    private static boolean isLowerCaseASCIILetter(int chr) {
+        return chr >= Characters.LATIN_SMALL_LETTER_A && chr <= Characters.LATIN_SMALL_LETTER_Z;
     }
 
     static boolean isUpperCaseASCIILetter(int chr) {

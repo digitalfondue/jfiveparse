@@ -475,7 +475,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      */
     public String getTagName() {
         if (Node.NAMESPACE_HTML_ID == namespaceID) {
-            return nodeName.toUpperCase(Locale.ENGLISH);
+            return Common.convertToAsciiUpperCase(nodeName);
         } else {
             return originalNodeName;
         }

@@ -707,4 +707,10 @@ class MiscBugsTest {
         builder.hasClass("b"); // calling builder.toMatcher(); should "detach" the matcher
         Assertions.assertEquals(List.of(doc.getElementById("d")), doc.getAllNodesMatching(matcher));
     }
+
+    @Test
+    void tagNameUpperCaseOnlyASCII() {
+        Assertions.assertEquals("AéA", new Element("aéa").getTagName());
+        Assertions.assertEquals("viewBox", new Element("viewBox", Node.NAMESPACE_SVG).getTagName());
+    }
 }
