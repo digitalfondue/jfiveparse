@@ -16,7 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 public final class DOMTokenList implements Iterable<String> {
 
@@ -28,72 +27,86 @@ public final class DOMTokenList implements Iterable<String> {
         this.attrName = attrName;
     }
 
-    static Iterator<String> fromValue(String value) {
-        if (value == null) {
-            return Collections.emptyIterator();
+    static class ValuesIterator implements Iterator<String> {
+        final String value;
+        final int size;
+        LinkedHashSet<String> current;
+        int currentIndex = 0;
+
+        ValuesIterator(String value) {
+            this.value = value;
+            this.size = value.length();
         }
-        int size = value.length();
-        return new Iterator<>() {
 
-            LinkedHashSet<String> current;
-            int currentIndex = 0;
-
-            private String nextToken() {
-                int i = currentIndex;
-                while (i < size && Common.isTabLfFfCrOrSpace(value.charAt(i))) {
-                    i++;
-                }
-                int startToken = i;
-                currentIndex = startToken;
-                while (i < size && !Common.isTabLfFfCrOrSpace(value.charAt(i))) {
-                    i++;
-                }
-                int endToken = i;
-                return startToken >= endToken ? null : value.substring(startToken, endToken);
+        private String nextToken() {
+            int i = currentIndex;
+            while (i < size && Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                i++;
             }
-
-            @Override
-            public boolean hasNext() {
-                var res = nextToken();
-                while(true) {
-                    if (res == null) {
-                        return false;
-                    }
-                    if (current == null) {
-                        current = new LinkedHashSet<>();
-                    }
-                    if (!current.contains(res)) {
-                        return true;
-                    }
-                    currentIndex = currentIndex + res.length();
-                    res = nextToken();
-                }
+            int startToken = i;
+            currentIndex = startToken;
+            while (i < size && !Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                i++;
             }
+            int endToken = i;
+            return startToken >= endToken ? null : value.substring(startToken, endToken);
+        }
 
-            @Override
-            public String next() {
-                var next = nextToken();
-                while (true) {
-                    if (next == null) {
-                        throw new NoSuchElementException("No more element in " + value);
-                    }
-                    if (current == null) {
-                        current = new LinkedHashSet<>();
-                    }
-                    if (!current.contains(next)) {
-                        current.add(next);
-                        currentIndex = currentIndex + next.length();
-                        return next;
-                    }
-                    next = nextToken();
+        @Override
+        public boolean hasNext() {
+            var res = nextToken();
+            while(true) {
+                if (res == null) {
+                    return false;
                 }
+                if (current == null) {
+                    current = new LinkedHashSet<>();
+                }
+                if (!current.contains(res)) {
+                    return true;
+                }
+                currentIndex = currentIndex + res.length();
+                res = nextToken();
             }
-        };
+        }
+
+        @Override
+        public String next() {
+            var next = nextToken();
+            while (true) {
+                if (next == null) {
+                    throw new NoSuchElementException("No more element in " + value);
+                }
+                if (current == null) {
+                    current = new LinkedHashSet<>();
+                }
+                if (!current.contains(next)) {
+                    current.add(next);
+                    currentIndex = currentIndex + next.length();
+                    return next;
+                }
+                next = nextToken();
+            }
+        }
     }
 
     @Override
     public Iterator<String> iterator() {
-        return fromValue(element.getAttributeValue(attrName));
+        String value = element.getAttributeValue(attrName);
+        if (Common.isEmpty(value) || isAllWhiteSpace(value)) {
+            return Collections.emptyIterator();
+        }
+        return new ValuesIterator(value);
+    }
+
+    private static boolean isAllWhiteSpace(String value) {
+        int size = value.length();
+        for (int i = 0; i < size; i++) {
+            if (!Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public String item(int index) {
@@ -116,8 +129,27 @@ public final class DOMTokenList implements Iterable<String> {
         return false;
     }
 
+    private LinkedHashSet<String> attrValues() {
+        String value = element.getAttributeValue(attrName);
+        var r = new LinkedHashSet<String>();
+        if (Common.isEmpty(value) || isAllWhiteSpace(value)) {
+            return r;
+        }
+        var it = new ValuesIterator(value);
+        while (it.hasNext()) {
+            it.next();
+        }
+        return it.current;
+    }
+
     public void remove(String value) {
-        // FIXME
+        var v = attrValues();
+        v.remove(value);
+        updateAttribute(v);
+    }
+
+    private void updateAttribute(LinkedHashSet<String> updated) {
+        element.setAttribute(attrName, String.join(" ", updated));
     }
 
     public void replace(String oldToken, String newToken) {
@@ -141,14 +173,27 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean add(String token) {
-        return false; // FIXME
+        return add(token, null);
     }
 
     public boolean add(String token, String... others) {
-        return false; // FIXME
+        var values = attrValues();
+        var res = values.add(token);
+        if (others != null) {
+            for (var o : others) {
+                res = res && values.add(o);
+            }
+        }
+        updateAttribute(values);
+        return res;
     }
 
     public boolean isEmpty() {
         return size() == 0;
+    }
+
+    @Override
+    public String toString() {
+        return element.getAttributeValue(attrName);
     }
 }

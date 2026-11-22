@@ -105,8 +105,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             if (Common.isEmpty(attrValue) || Common.isEmpty(valueToMatch)) {
                 return false;
             }
-            attrValue = asciiLowerCase(attrValue, ignoreCase);
-            var it = DOMTokenList.fromValue(attrValue);
+            var it = new DOMTokenList.ValuesIterator(asciiLowerCase(attrValue, ignoreCase));
             while (it.hasNext()) {
                 if (Objects.equals(valueToMatch, it.next())) {
                     return true;
