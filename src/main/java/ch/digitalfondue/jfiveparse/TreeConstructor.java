@@ -3331,7 +3331,7 @@ class TreeConstructor {
 
         adjustForeignAttributes(treeConstructor.getAttributes());
 
-        treeConstructor.insertElementToken(tagName, Common.tagNameToID(tagName), currentNode.getNamespaceURI(), currentNode.namespaceID, treeConstructor.getAttributes());
+        treeConstructor.insertElementToken(tagName, Common.tagNameToID(tagName), currentNode.namespaceURI, currentNode.namespaceID, treeConstructor.getAttributes());
 
         if (treeConstructor.isSelfClosing()) {
             // we don't execute scripts

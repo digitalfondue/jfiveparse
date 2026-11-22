@@ -176,12 +176,12 @@ public final class W3CDom {
         }
 
         org.w3c.dom.Element buildNamespacedElement(Element element) {
-            String elemPrefix = extractXmlnsPrefixFromAttrOrElem(element.getNodeName());
-            String ns = element.getNamespaceURI();
+            String elemPrefix = extractXmlnsPrefixFromAttrOrElem(element.nodeName);
+            String ns = element.namespaceURI;
             if (!elemPrefix.isEmpty() && xmlNamespaces.peek().containsKey(elemPrefix)) {
                 ns = xmlNamespaces.peek().get(elemPrefix);
             }
-            return document.createElementNS(ns, element.getNodeName());
+            return document.createElementNS(ns, element.nodeName);
         }
 
         void extractAttributes(Element elem) {
