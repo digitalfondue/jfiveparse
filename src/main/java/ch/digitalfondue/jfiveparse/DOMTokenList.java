@@ -152,10 +152,6 @@ public final class DOMTokenList implements Iterable<String> {
         element.setAttribute(attrName, String.join(" ", updated));
     }
 
-    public void replace(String oldToken, String newToken) {
-        // FIXME
-    }
-
     public boolean toggle(String token) {
         return false; // FIXME
     }
