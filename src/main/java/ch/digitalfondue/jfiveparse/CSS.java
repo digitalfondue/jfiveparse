@@ -273,24 +273,31 @@ final class CSS {
         String readValueWithParenthesis() {
             selectorIndex += 1;
             int start = selectorIndex;
+            boolean isInSingleQuote = false;
+            boolean isInDoubleQuote = false;
             for (int counter = 1; selectorIndex < selectorLength; selectorIndex++) {
-                switch (charAt(selectorIndex)) {
-                    case '\\': {
-                        // Skip next character
-                        selectorIndex += 1;
-                        break;
-                    }
-                    case '(': {
-                        counter += 1;
-                        break;
-                    }
-                    case ')': {
-                        counter -= 1;
-
-                        if (counter == 0) {
-                            return unescapeCSS(selector.substring(start, selectorIndex++));
-                        }
-                        break;
+                char c = charAt(selectorIndex);
+                if (c == '\\') {
+                    selectorIndex++;
+                    continue;
+                }
+                if (c == '\'' && !isInDoubleQuote) {
+                    isInSingleQuote = !isInSingleQuote;
+                    continue;
+                }
+                if (c == '"' && !isInSingleQuote) {
+                    isInDoubleQuote = !isInDoubleQuote;
+                    continue;
+                }
+                if (isInSingleQuote || isInDoubleQuote) {
+                    continue;
+                }
+                if (c == '(') {
+                    counter++;
+                } else if (c == ')') {
+                    counter--;
+                    if (counter == 0) {
+                        return unescapeCSS(selector.substring(start, selectorIndex++));
                     }
                 }
             }

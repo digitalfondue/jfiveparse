@@ -641,4 +641,11 @@ class MiscBugsTest {
     void checkEmptyStringElement() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> new Element(""));
     }
+
+    @Test
+    void cssContainsParenthesis() {
+        var doc = JFiveParse.parse("<div id=d>)</div>");
+        Assertions.assertTrue(doc.getElementById("d").matches(":contains(')')"));
+        Assertions.assertTrue(doc.getElementById("d").matches(":contains(\")\")"));
+    }
 }
