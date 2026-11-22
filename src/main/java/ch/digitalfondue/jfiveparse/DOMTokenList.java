@@ -16,9 +16,8 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
-public final class DOMTokenList extends AbstractList<String> {
+public final class DOMTokenList implements Iterable<String> {
 
     private final String attrName;
     private final Element element;
@@ -28,145 +27,189 @@ public final class DOMTokenList extends AbstractList<String> {
         this.attrName = attrName;
     }
 
-    private static final Pattern SPACES = Pattern.compile("\\s+");
+    static class ValuesIterator implements Iterator<String> {
+        final String value;
+        final int size;
+        LinkedHashSet<String> current;
+        int currentIndex = 0;
 
-    static List<String> extractValues(SelectableElement<?> element, String attrName) {
-        // TODO: rewrite -> return an iterator and work from there...
-        String value = element.getAttribute(attrName);
-        if (value != null) {
-            var splitted = SPACES.split(value);
-            LinkedHashSet<String> vals = new LinkedHashSet<>(splitted.length);
-            for (String s : splitted) {
-                if (!s.trim().isEmpty()) {
-                    vals.add(s);
-                }
+        ValuesIterator(String value) {
+            this.value = value;
+            this.size = value.length();
+        }
+
+        private String nextToken() {
+            int i = currentIndex;
+            while (i < size && Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                i++;
             }
-            return new ArrayList<>(vals);
-        }
-        return new ArrayList<>(0);
-    }
-
-    private List<String> attributeValues() {
-        return extractValues(element, attrName);
-    }
-
-    @Override
-    public void add(int index, String value) {
-        if (index < 0 || index > size()) {
-            throw new IndexOutOfBoundsException("Index " + index + " is out of bound");
+            int startToken = i;
+            currentIndex = startToken;
+            while (i < size && !Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                i++;
+            }
+            int endToken = i;
+            return startToken >= endToken ? null : value.substring(startToken, endToken);
         }
 
-        if (contains(value)) {
-            return;
-        }
-        List<String> vals = attributeValues();
-        vals.add(index, value);
-        element.getAttributes().put(attrName, String.join(" ", vals));
-    }
-
-    public void add(String val, String... values) {
-        add(val);
-        if (values != null) {
-            addAll(Arrays.asList(values));
-        }
-    }
-
-    @Override
-    public boolean add(String s) {
-        if (contains(s)) {
-            return false;
-        }
-        return super.add(s);
-    }
-
-    @Override
-    public String remove(int index) {
-        List<String> vals = attributeValues();
-        String val = vals.remove(index);
-        element.getAttributes().put(attrName, String.join(" ", vals));
-        return val;
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        List<String> vals = attributeValues();
-        boolean removed = vals.remove(o);
-        if (removed) {
-            element.getAttributes().put(attrName, String.join(" ", vals));
-        }
-        return removed;
-    }
-
-    @Override
-    public String set(int index, String value) {
-        if (contains(value)) {
-            return value;
+        @Override
+        public boolean hasNext() {
+            var res = nextToken();
+            while(true) {
+                if (res == null) {
+                    return false;
+                }
+                if (current == null) {
+                    current = new LinkedHashSet<>();
+                }
+                if (!current.contains(res)) {
+                    return true;
+                }
+                currentIndex = currentIndex + res.length();
+                res = nextToken();
+            }
         }
 
-        List<String> vals = attributeValues();
-        String replaced = vals.set(index, value);
-        element.getAttributes().put(attrName, String.join(" ", vals));
-        return replaced;
-    }
-
-    public boolean toggle(String name) {
-        if (contains(name)) {
-            remove(name);
-            return false;
-        } else {
-            add(name);
-            return true;
+        @Override
+        public String next() {
+            var next = nextToken();
+            while (true) {
+                if (next == null) {
+                    throw new NoSuchElementException("No more element in " + value);
+                }
+                if (current == null) {
+                    current = new LinkedHashSet<>();
+                }
+                if (!current.contains(next)) {
+                    current.add(next);
+                    currentIndex = currentIndex + next.length();
+                    return next;
+                }
+                next = nextToken();
+            }
         }
-    }
-
-    public boolean toggle(String name, boolean condition) {
-        if (condition) {
-            add(name);
-            return true;
-        } else {
-            remove(name);
-            return false;
-        }
-    }
-
-    /**
-     * Get value at given index.
-     *
-     * It differs from {@link #get(int)} as it will not launch an {@link IndexOutOfBoundsException}, but instead return null.
-     *
-     * @param index
-     * @return value at index _or_ null in all the other cases
-     */
-    public String item(int index) {
-        List<String> all;
-        if (index < 0 || index >= (all = attributeValues()).size()) {
-            return null;
-        }
-        return all.get(index);
-    }
-
-    @Override
-    public ListIterator<String> listIterator(int idx) {
-        return Collections.unmodifiableList(attributeValues()).listIterator(idx);
-    }
-
-    @Override
-    public ListIterator<String> listIterator() {
-        return Collections.unmodifiableList(attributeValues()).listIterator();
     }
 
     @Override
     public Iterator<String> iterator() {
-        return Collections.unmodifiableList(attributeValues()).iterator();
+        String value = element.getAttributeValue(attrName);
+        if (Common.isEmpty(value) || isAllWhiteSpace(value)) {
+            return Collections.emptyIterator();
+        }
+        return new ValuesIterator(value);
     }
 
-    @Override
-    public String get(int index) {
-        return attributeValues().get(index);
+    private static boolean isAllWhiteSpace(String value) {
+        int size = value.length();
+        for (int i = 0; i < size; i++) {
+            if (!Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    @Override
+    public String item(int index) {
+        int i = 0;
+        for (var v : this) {
+            if (i == index) {
+                return v;
+            }
+            i++;
+        }
+        return null;
+    }
+
+    public boolean contains(String value) {
+        for (var v : this) {
+            if (Objects.equals(v, value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private LinkedHashSet<String> attrValues() {
+        String value = element.getAttributeValue(attrName);
+        var r = new LinkedHashSet<String>();
+        if (Common.isEmpty(value) || isAllWhiteSpace(value)) {
+            return r;
+        }
+        var it = new ValuesIterator(value);
+        while (it.hasNext()) {
+            it.next();
+        }
+        return it.current;
+    }
+
+    public void remove(String value) {
+        var v = attrValues();
+        v.remove(value);
+        updateAttribute(v);
+    }
+
+    private void updateAttribute(LinkedHashSet<String> updated) {
+        element.setAttribute(attrName, String.join(" ", updated));
+    }
+
+    public boolean toggle(String token) {
+        var v = attrValues();
+        boolean res;
+        if (v.contains(token)) {
+            v.remove(token);
+            res = false;
+        } else {
+            v.add(token);
+            res = true;
+        }
+        updateAttribute(v);
+        return res;
+    }
+
+    public boolean toggle(String token, boolean force) {
+        var v = attrValues();
+        boolean res;
+        if (force) {
+            v.add(token);
+            res = true;
+        } else {
+            v.remove(token);
+            res = false;
+        }
+        updateAttribute(v);
+        return res;
+    }
+
     public int size() {
-        return attributeValues().size();
+        int count = 0;
+        for (var v : this) {
+            count++;
+        }
+        return count;
+    }
+
+    public boolean add(String token) {
+        return add(token, null);
+    }
+
+    public boolean add(String token, String... others) {
+        var values = attrValues();
+        var res = values.add(token);
+        if (others != null) {
+            for (var o : others) {
+                res = res && values.add(o);
+            }
+        }
+        updateAttribute(values);
+        return res;
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    @Override
+    public String toString() {
+        return element.getAttributeValue(attrName);
     }
 }

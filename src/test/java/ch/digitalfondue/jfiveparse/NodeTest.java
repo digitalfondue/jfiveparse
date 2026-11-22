@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -131,6 +132,12 @@ class NodeTest {
         assertSame(e, newNode.getParentNode());
     }
 
+    private static List<String> asList(DOMTokenList t) {
+        var r = new ArrayList<String>();
+        t.forEach(r::add);
+        return r;
+    }
+
     @Test
     void testClass() {
         Document doc = parser.parse("<div id=myid class=></div>");
@@ -141,7 +148,7 @@ class NodeTest {
         e.getClassList().add("plop");
 
         assertEquals("plop", e.getClassName());
-        assertEquals(List.of("plop"), e.getClassList());
+        assertEquals(List.of("plop"), asList(e.getClassList()));
 
         e.getClassList().remove("plop");
         assertEquals("", e.getClassName());
@@ -149,28 +156,28 @@ class NodeTest {
 
         e.getClassList().add("plop", "hurr");
         assertEquals("plop hurr", e.getClassName());
-        assertEquals(Arrays.asList("plop", "hurr"), e.getClassList());
+        assertEquals(Arrays.asList("plop", "hurr"), asList(e.getClassList()));
 
         assertFalse(e.getClassList().toggle("plop"));
-        assertEquals(List.of("hurr"), e.getClassList());
+        assertEquals(List.of("hurr"), asList(e.getClassList()));
         assertTrue(e.getClassList().toggle("plop"));
-        assertEquals(Arrays.asList("hurr", "plop"), e.getClassList());
+        assertEquals(Arrays.asList("hurr", "plop"), asList(e.getClassList()));
 
         assertFalse(e.getClassList().toggle("plop", false));
-        assertEquals(Arrays.asList("hurr"), e.getClassList());
+        assertEquals(Arrays.asList("hurr"), asList(e.getClassList()));
         assertFalse(e.getClassList().toggle("plop", false));
-        assertEquals(Arrays.asList("hurr"), e.getClassList());
+        assertEquals(Arrays.asList("hurr"), asList(e.getClassList()));
 
         assertTrue(e.getClassList().toggle("plop", true));
-        assertEquals(List.of("hurr", "plop"), e.getClassList());
+        assertEquals(List.of("hurr", "plop"), asList(e.getClassList()));
         assertTrue(e.getClassList().toggle("plop", true));
-        assertEquals(List.of("hurr", "plop"), e.getClassList());
+        assertEquals(List.of("hurr", "plop"), asList(e.getClassList()));
 
         Document doc2 = parser.parse("<div id=myid class=' my class    \n abc '></div>");
         Element e2 = doc2.getElementById("myid");
         assertEquals("my class abc", e2.getClassName());
         assertFalse(e2.getClassList().isEmpty());
-        assertEquals(Arrays.asList("my", "class", "abc"), e2.getClassList());
+        assertEquals(Arrays.asList("my", "class", "abc"), asList(e2.getClassList()));
     }
 
     @Test

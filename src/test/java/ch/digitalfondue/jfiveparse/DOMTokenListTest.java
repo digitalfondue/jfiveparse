@@ -15,7 +15,10 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,12 +68,21 @@ class DOMTokenListTest {
         Element el = new Element("div");
         DOMTokenList list = el.getClassList();
         assertTrue(list.add("foo"));
-
         assertFalse(list.add("foo"));
+    }
 
-        String prev = list.set(0, "foo");
-        assertEquals("foo", prev);
 
-        assertThrows(IndexOutOfBoundsException.class, () -> list.add(-1, "foo"));
+    @Test
+    void testIterator() {
+        var tokenList = classListFor("  foo       bar    baz     ");
+        var it = tokenList.iterator();
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertEquals("foo", it.next());
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertEquals("bar", it.next());
+        Assertions.assertTrue(it.hasNext());
+        Assertions.assertEquals("baz", it.next());
+        Assertions.assertFalse(it.hasNext());
+        Assertions.assertThrows(NoSuchElementException.class, it::next);
     }
 }
