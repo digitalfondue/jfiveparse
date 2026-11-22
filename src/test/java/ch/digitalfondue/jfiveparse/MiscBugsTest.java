@@ -655,4 +655,17 @@ class MiscBugsTest {
         var matches = doc.getAllNodesMatching(Selector.parseSelector("[lang|=en]"));
         Assertions.assertEquals(List.of(doc.getElementById("en"), doc.getElementById("enus")), matches);
     }
+
+
+    @Test
+    void checkUpperCaseRemoveAttribute() {
+        Element div = new Element("div");
+        div.getAttributes().put(new AttributeNode("DATA-X", "1"));
+
+        Assertions.assertEquals("1", div.getAttribute("data-x"));
+        div.removeAttribute("data-x");
+
+        Assertions.assertFalse(div.hasAttribute("data-x"));
+        Assertions.assertFalse(div.hasAttributes());
+    }
 }

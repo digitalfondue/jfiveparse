@@ -215,7 +215,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     public void remove(String key) {
         key = nameKey(key);
         if (attributes instanceof AttributeNode single) {
-            if (Objects.equals(key, single.getName())) {
+            if (Objects.equals(key, adjustedAttributeName(single))) {
                 attributes = null;
                 count = 0;
             }
@@ -223,7 +223,7 @@ public final class Attributes implements Iterable<AttributeNode> {
         }
         if (attributes instanceof AttributeNode[] arr) {
             for (var i = 0; i < count; i++) {
-                if (Objects.equals(key, arr[i].getName())) {
+                if (Objects.equals(key, adjustedAttributeName(arr[i]))) {
                     removeAt(arr, i);
                     return;
                 }
