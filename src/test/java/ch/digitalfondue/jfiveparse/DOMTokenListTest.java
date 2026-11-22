@@ -85,4 +85,18 @@ class DOMTokenListTest {
         Assertions.assertFalse(it.hasNext());
         Assertions.assertThrows(NoSuchElementException.class, it::next);
     }
+
+    @Test
+    void checkInvalidAndNull() {
+        Element div = new Element("div");
+        DOMTokenList list = div.getClassList();
+
+        assertThrows(IllegalArgumentException.class, () -> list.add(""));
+        assertThrows(IllegalArgumentException.class, () -> list.add(" a "));
+        assertThrows(IllegalArgumentException.class, () -> list.add("foo bar"));
+
+        // browser do a null -> "null"
+        list.add(null);
+        assertEquals("null", div.getAttribute("class"));
+    }
 }

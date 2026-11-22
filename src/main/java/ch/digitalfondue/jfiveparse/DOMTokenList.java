@@ -27,6 +27,21 @@ public final class DOMTokenList implements Iterable<String> {
         this.attrName = attrName;
     }
 
+    private static String validateToken(String token) {
+        if (token == null) {
+            return "null"; // like browser...
+        }
+        if (token.isEmpty()) {
+            throw new IllegalArgumentException("Token cannot be empty string.");
+        }
+        for (int i = 0; i < token.length(); i++) {
+            if (Common.isTabLfFfCrOrSpace(token.charAt(i))) {
+                throw new IllegalArgumentException("Token must not contain HTML whitespace: " + token);
+            }
+        }
+        return token;
+    }
+
     static class ValuesIterator implements Iterator<String> {
         final String value;
         final int size;
@@ -143,6 +158,7 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public void remove(String value) {
+        value = validateToken(value);
         var v = attrValues();
         v.remove(value);
         updateAttribute(v);
@@ -153,6 +169,7 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean toggle(String token) {
+        token = validateToken(token);
         var v = attrValues();
         boolean res;
         if (v.contains(token)) {
@@ -167,6 +184,7 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean toggle(String token, boolean force) {
+        token = validateToken(token);
         var v = attrValues();
         boolean res;
         if (force) {
@@ -193,11 +211,12 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean add(String token, String... others) {
+        token = validateToken(token);
         var values = attrValues();
         var res = values.add(token);
         if (others != null) {
             for (var o : others) {
-                var added = values.add(o);
+                var added = values.add(validateToken(o));
                 res = res && added;
             }
         }
