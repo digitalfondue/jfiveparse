@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.IntPredicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
@@ -116,15 +113,18 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return inst();
     }
 
+    private R attrValFun(String name, String value, String namespace, boolean ignoreCase, BiPredicate<String, String> predicate) {
+        var valueToMatch = asciiLowerCase(value, ignoreCase);
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && !Common.isEmpty(valueToMatch) && predicate.test(asciiLowerCase(attrValue, ignoreCase), valueToMatch)));
+        return inst();
+    }
 
     public R attrValStartWith(String name, String value) {
         return attrValStartWith(name, value, null, false);
     }
 
     private R attrValStartWith(String name, String value, String namespace, boolean ignoreCase) {
-        var valueToMatch = asciiLowerCase(value, ignoreCase);
-        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && valueToMatch != null && asciiLowerCase(attrValue, ignoreCase).startsWith(valueToMatch)));
-        return inst();
+        return attrValFun(name, value, namespace, ignoreCase, String::startsWith);
     }
 
     public R attrValEndWith(String name, String value) {
@@ -132,9 +132,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private R attrValEndWith(String name, String value, String namespace, boolean ignoreCase) {
-        var valueToMatch = asciiLowerCase(value, ignoreCase);
-        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && valueToMatch != null && asciiLowerCase(attrValue, ignoreCase).endsWith(valueToMatch)));
-        return inst();
+        return attrValFun(name, value, namespace, ignoreCase, String::endsWith);
     }
 
     private void attrValHyphen(String name, String value, String namespace, boolean ignoreCase) {
@@ -150,9 +148,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
     }
 
     private R attrValContains(String name, String value, String namespace, boolean ignoreCase) {
-        var valueToMatch = asciiLowerCase(value, ignoreCase);
-        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> attrValue != null && valueToMatch != null && asciiLowerCase(attrValue, ignoreCase).contains(valueToMatch)));
-        return inst();
+        return attrValFun(name, value, namespace, ignoreCase, String::contains);
     }
 
     public R withDescendant() {

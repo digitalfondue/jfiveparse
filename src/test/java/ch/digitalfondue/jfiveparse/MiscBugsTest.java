@@ -668,4 +668,13 @@ class MiscBugsTest {
         Assertions.assertFalse(div.hasAttribute("data-x"));
         Assertions.assertFalse(div.hasAttributes());
     }
+
+    @Test
+    void checkCssSelectorAttributeEmptyString() {
+        var doc = JFiveParse.parse("<div bla=value></div>");
+
+        Assertions.assertTrue(doc.getAllNodesMatching(Selector.parseSelector("[bla^='']")).isEmpty());
+        Assertions.assertTrue(doc.getAllNodesMatching(Selector.parseSelector("[bla$='']")).isEmpty());
+        Assertions.assertTrue(doc.getAllNodesMatching(Selector.parseSelector("[bla*='']")).isEmpty());
+    }
 }
