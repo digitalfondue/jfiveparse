@@ -139,6 +139,18 @@ class NodeTest {
     }
 
     @Test
+    void testClassAddAll() {
+        Element div = new Element("div");
+        div.setAttribute("class", "foo");
+
+        boolean allAdded = div.getClassList().add("foo", "bar", "baz");
+
+        assertFalse(allAdded);
+        assertEquals(List.of("foo", "bar", "baz"), asList(div.getClassList()));
+        assertEquals("foo bar baz", div.getAttribute("class"));
+    }
+
+    @Test
     void testClass() {
         Document doc = parser.parse("<div id=myid class=></div>");
         Element e = doc.getElementById("myid");
