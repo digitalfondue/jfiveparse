@@ -687,4 +687,12 @@ class MiscBugsTest {
         Assertions.assertTrue(doc.getDocumentElement().matches(":root"));
         Assertions.assertFalse(doc.getElementById("d").matches(":root"));
     }
+
+    @Test
+    void setBodyInNewEmptyDocument() {
+        Document doc = new Document();
+        Element body = new Element("body");
+        doc.setBody(body);
+        Assertions.assertSame(body, doc.getBody());
+    }
 }

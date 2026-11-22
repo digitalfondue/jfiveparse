@@ -112,9 +112,11 @@ public final class Document extends Node {
             e.parentNode.replaceChild(element, e);
         } else {
             Element html = getDocumentElement();
-            if (html != null) {
-                html.appendChild(element);
+            if (html == null) {
+                html = new Element("html", NAMESPACE_HTML);
+                appendChild(html);
             }
+            html.appendChild(element);
         }
     }
 
