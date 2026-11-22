@@ -30,11 +30,75 @@ public final class DOMTokenList implements Iterable<String> {
 
     @Override
     public Iterator<String> iterator() {
-        return null; // FIXME
+        String value = element.getAttributeValue(attrName);
+        int size = value.length();
+        return new Iterator<>() {
+
+            LinkedHashSet<String> current;
+            int currentIndex = 0;
+
+            private String nextToken() {
+                int i = currentIndex;
+                while (i < size && Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                    i++;
+                }
+                int startToken = i;
+                currentIndex = startToken;
+                while (i < size && !Common.isTabLfFfCrOrSpace(value.charAt(i))) {
+                    i++;
+                }
+                int endToken = i;
+                return startToken >= endToken ? null : value.substring(startToken, endToken);
+            }
+
+            @Override
+            public boolean hasNext() {
+                var res = nextToken();
+                while(true) {
+                    if (res == null) {
+                        return false;
+                    }
+                    if (current == null) {
+                        current = new LinkedHashSet<>();
+                    }
+                    if (!current.contains(res)) {
+                        return true;
+                    }
+                    currentIndex = currentIndex + res.length();
+                    res = nextToken();
+                }
+            }
+
+            @Override
+            public String next() {
+                var next = nextToken();
+                while (true) {
+                    if (next == null) {
+                        throw new NoSuchElementException("No more element in " + value);
+                    }
+                    if (current == null) {
+                        current = new LinkedHashSet<>();
+                    }
+                    if (!current.contains(next)) {
+                        current.add(next);
+                        currentIndex = currentIndex + next.length();
+                        return next;
+                    }
+                    next = nextToken();
+                }
+            }
+        };
     }
 
     public String item(int index) {
-        return null; // FIXME
+        int i = 0;
+        for (var v : this) {
+            if (i == index) {
+                return v;
+            }
+            i++;
+        }
+        return null;
     }
 
     public boolean contains(String value) {
