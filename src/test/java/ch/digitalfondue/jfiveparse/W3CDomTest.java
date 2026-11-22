@@ -120,4 +120,21 @@ class W3CDomTest {
         assertEquals("svg", oBla.getChildNodes().item(1).getNodeName());
         assertEquals("http://www.w3.org/2000/svg", oBla.getChildNodes().item(1).getNamespaceURI());
     }
+
+    @Test
+    void checkDocBeforeAfter() {
+        var doc = JFiveParse.parse(
+                "<!--before--><!DOCTYPE html><html><body></body></html><!--after-->");
+        var w3c = W3CDom.toW3CDocument(doc);
+
+        var children = w3c.getChildNodes();
+        assertEquals(4, children.getLength());
+        assertEquals(org.w3c.dom.Node.COMMENT_NODE, children.item(0).getNodeType());
+        assertEquals("before", children.item(0).getNodeValue());
+        assertEquals(org.w3c.dom.Node.DOCUMENT_TYPE_NODE, children.item(1).getNodeType());
+        assertEquals(org.w3c.dom.Node.ELEMENT_NODE, children.item(2).getNodeType());
+        assertEquals(org.w3c.dom.Node.COMMENT_NODE, children.item(3).getNodeType());
+        assertEquals("after", children.item(3).getNodeValue());
+
+    }
 }

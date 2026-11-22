@@ -98,13 +98,20 @@ public final class W3CDom {
             var w3cDocElement = d.removeChild(d.getDocumentElement());
             //
 
-            var size = doc.getRawChildNodes().size();
-            for (var i = 0; i < size; i++) {
-                var n = doc.getRawChildNodes().get(i);
-                if (n != docElement) {
-                    W3CDNodeVisitor.appendNonElement(n, d, d);
-                } else {
+            var w3cDocType = d.getDoctype();
+            if (w3cDocType != null) {
+                d.removeChild(w3cDocType);
+            }
+
+            for (var n : doc.getRawChildNodes()) {
+                if (n == docElement) {
                     d.appendChild(w3cDocElement);
+                } else if (n instanceof ch.digitalfondue.jfiveparse.DocumentType) {
+                    if (w3cDocType != null) {
+                        d.appendChild(w3cDocType);
+                    }
+                } else {
+                    W3CDNodeVisitor.appendNonElement(n, d, d);
                 }
             }
             return d;
