@@ -648,4 +648,11 @@ class MiscBugsTest {
         Assertions.assertTrue(doc.getElementById("d").matches(":contains(')')"));
         Assertions.assertTrue(doc.getElementById("d").matches(":contains(\")\")"));
     }
+
+    @Test
+    void cssSelectAttrHypen() {
+        var doc = JFiveParse.parse("<html><body><p id=en lang='en'>a</p><p id=enus lang='en-US'>b</p><p lang='fr-en'>c</p></body></html>");
+        var matches = doc.getAllNodesMatching(Selector.parseSelector("[lang|=en]"));
+        Assertions.assertEquals(List.of(doc.getElementById("en"), doc.getElementById("enus")), matches);
+    }
 }

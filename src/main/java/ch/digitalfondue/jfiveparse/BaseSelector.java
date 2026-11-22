@@ -151,6 +151,15 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return inst();
     }
 
+    private R attrValHyphen(String name, String value, String namespace, boolean ignoreCase) {
+        var valueToMatch = asciiLowerCase(value, ignoreCase);
+        matchers.add(matchAttr(name, namespace, nameSpaceAlias, (attrValue, elem) -> {
+            String v = asciiLowerCase(attrValue, ignoreCase);
+            return v.equals(valueToMatch) || v.startsWith(valueToMatch + "-");
+        }));
+        return inst();
+    }
+
     public R attrValContains(String name, String value) {
         return attrValContains(name, value, null, false);
     }
@@ -281,6 +290,8 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     res.attrValContains(name, value, namespace, ignoreCase);
                 } else if (action == CSS.ATTR_ACTION_END) {
                     res.attrValEndWith(name, value, namespace, ignoreCase);
+                } else if (action == CSS.ATTR_ACTION_HYPHEN) {
+                    res.attrValHyphen(name, value, namespace, ignoreCase);
                 } else {
                     throw new ParserException("AttributeSelector " + a + " is not supported");
                 }
