@@ -128,6 +128,7 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     public AttributeNode get(String namespace, String localName) {
         namespace = AttributeNode.normalizeNamespace(namespace);
+        localName = Common.nullToString(localName);
         if (attributes instanceof AttributeNode single) {
             return single.matches(namespace, localName) ? single : null;
         }

@@ -550,6 +550,9 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      */
     public Element getElementById(String idValue) {
         idValue = Common.nullToString(idValue);
+        if (idValue.isEmpty()) {
+            return null;
+        }
         return getAllNodesMatchingAsStream(Selector.select().id(idValue).toMatcher(), true, this)
                 .findFirst().map(Element.class::cast).orElse(null);
     }

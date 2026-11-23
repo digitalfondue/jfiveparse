@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 class MiscBugsTest {
 
     // case 11
@@ -20,12 +22,12 @@ class MiscBugsTest {
         pre.appendChild(new Text((String) null));
 
         // chrome generate like that
-        Assertions.assertEquals("<pre>null</pre>", HtmlSerializer.serialize(pre));
+        assertEquals("<pre>null</pre>", HtmlSerializer.serialize(pre));
 
 
         Element pre2 = new Element("pre");
         pre2.appendChild(new Text(""));
-        Assertions.assertEquals("<pre></pre>", HtmlSerializer.serialize(pre2));
+        assertEquals("<pre></pre>", HtmlSerializer.serialize(pre2));
     }
 
     // case 1
@@ -55,15 +57,15 @@ class MiscBugsTest {
                 """);
 
         var nextSiblingMatches = doc.getAllNodesMatching(matcher);
-        Assertions.assertEquals(2, nextSiblingMatches.size());
-        Assertions.assertEquals("p1", ((Element) nextSiblingMatches.get(0)).getAttribute("id"));
-        Assertions.assertEquals("p3", ((Element) nextSiblingMatches.get(1)).getAttribute("id"));
+        assertEquals(2, nextSiblingMatches.size());
+        assertEquals("p1", ((Element) nextSiblingMatches.get(0)).getAttribute("id"));
+        assertEquals("p3", ((Element) nextSiblingMatches.get(1)).getAttribute("id"));
 
         var subsequentSiblingMatches = doc.getAllNodesMatching(matcher2);
-        Assertions.assertEquals(3, subsequentSiblingMatches.size());
-        Assertions.assertEquals("p1", ((Element) subsequentSiblingMatches.get(0)).getAttribute("id"));
-        Assertions.assertEquals("p2", ((Element) subsequentSiblingMatches.get(1)).getAttribute("id"));
-        Assertions.assertEquals("p3", ((Element) subsequentSiblingMatches.get(2)).getAttribute("id"));
+        assertEquals(3, subsequentSiblingMatches.size());
+        assertEquals("p1", ((Element) subsequentSiblingMatches.get(0)).getAttribute("id"));
+        assertEquals("p2", ((Element) subsequentSiblingMatches.get(1)).getAttribute("id"));
+        assertEquals("p3", ((Element) subsequentSiblingMatches.get(2)).getAttribute("id"));
     }
 
     // case 2
@@ -74,11 +76,11 @@ class MiscBugsTest {
         DOMTokenList list = el.getClassList();
 
 
-        Assertions.assertNull(list.item(-1));
-        Assertions.assertEquals("plop", list.item(0));
-        Assertions.assertEquals("coin", list.item(1));
-        Assertions.assertNull(list.item(2));
-        Assertions.assertNull(list.item(3));
+        assertNull(list.item(-1));
+        assertEquals("plop", list.item(0));
+        assertEquals("coin", list.item(1));
+        assertNull(list.item(2));
+        assertNull(list.item(3));
     }
 
 
@@ -91,12 +93,12 @@ class MiscBugsTest {
         DOMTokenList list = el.getClassList();
 
         // it's already deduplicated
-        Assertions.assertEquals(3, list.size());
+        assertEquals(3, list.size());
 
         list.remove("d");
 
         Assertions.assertFalse(list.contains("d"));
-        Assertions.assertEquals("e f", el.getAttribute("class"));
+        assertEquals("e f", el.getAttribute("class"));
     }
 
 
@@ -106,7 +108,7 @@ class MiscBugsTest {
         Document doc = JFiveParse.parse("<div><p><span></span></p></div>");
 
         var all = doc.getElementsByTagName("*");
-        Assertions.assertEquals(List.of("html", "head", "body", "div", "p", "span"), all.stream().map(Node::getNodeName).toList());
+        assertEquals(List.of("html", "head", "body", "div", "p", "span"), all.stream().map(Node::getNodeName).toList());
     }
 
     // case 14
@@ -118,15 +120,15 @@ class MiscBugsTest {
         var w3cDoc = W3CDom.toW3CDocument(doc);
         var div = w3cDoc.getElementsByTagName("div").item(0);
         // like in a browser, no namespace in html context
-        Assertions.assertNull(div.getAttributes().getNamedItem("id").getNamespaceURI());
-        Assertions.assertNull(div.getAttributes().getNamedItem("xml:lang").getNamespaceURI());
-        Assertions.assertNull(div.getAttributes().getNamedItem("plop:coin").getNamespaceURI());
+        assertNull(div.getAttributes().getNamedItem("id").getNamespaceURI());
+        assertNull(div.getAttributes().getNamedItem("xml:lang").getNamespaceURI());
+        assertNull(div.getAttributes().getNamedItem("plop:coin").getNamespaceURI());
         //
 
         var svg = w3cDoc.getElementsByTagName("svg").item(0);
-        Assertions.assertNull(svg.getAttributes().getNamedItem("id").getNamespaceURI());
-        Assertions.assertEquals(Node.NAMESPACE_XML, svg.getAttributes().getNamedItem("xml:lang").getNamespaceURI()); // in svg & co, we assign the namespace
-        Assertions.assertNull(svg.getAttributes().getNamedItem("plop:coin").getNamespaceURI());
+        assertNull(svg.getAttributes().getNamedItem("id").getNamespaceURI());
+        assertEquals(Node.NAMESPACE_XML, svg.getAttributes().getNamedItem("xml:lang").getNamespaceURI()); // in svg & co, we assign the namespace
+        assertNull(svg.getAttributes().getNamedItem("plop:coin").getNamespaceURI());
     }
 
 
@@ -146,11 +148,11 @@ class MiscBugsTest {
     void testHtmlSerializerDropsDoctypeIdentifiers() {
         String html = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><body></body></html>";
         Document doc = JFiveParse.parse(html);
-        Assertions.assertEquals("html", doc.getDoctype().getName());
-        Assertions.assertEquals("-//W3C//DTD HTML 4.01//EN", doc.getDoctype().getPublicId());
-        Assertions.assertEquals("http://www.w3.org/TR/html4/strict.dtd", doc.getDoctype().getSystemId());
+        assertEquals("html", doc.getDoctype().getName());
+        assertEquals("-//W3C//DTD HTML 4.01//EN", doc.getDoctype().getPublicId());
+        assertEquals("http://www.w3.org/TR/html4/strict.dtd", doc.getDoctype().getSystemId());
         String serialized = HtmlSerializer.serialize(doc);
-        Assertions.assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head></head><body></body></html>", serialized);
+        assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head></head><body></body></html>", serialized);
     }
 
 
@@ -160,17 +162,17 @@ class MiscBugsTest {
         var doc = JFiveParse.parse(
                 "<!DOCTYPE html><html><head></head><body></body></html>");
         var w3c = W3CDom.toW3CDocument(doc);
-        Assertions.assertNotNull(w3c.getDoctype());
-        Assertions.assertEquals("html", w3c.getDoctype().getName());
-        Assertions.assertEquals("", w3c.getDoctype().getPublicId());
-        Assertions.assertEquals("", w3c.getDoctype().getSystemId());
+        assertNotNull(w3c.getDoctype());
+        assertEquals("html", w3c.getDoctype().getName());
+        assertEquals("", w3c.getDoctype().getPublicId());
+        assertEquals("", w3c.getDoctype().getSystemId());
 
         String html = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><body></body></html>";
         doc = JFiveParse.parse(html);
         w3c = W3CDom.toW3CDocument(doc);
-        Assertions.assertEquals("html", w3c.getDoctype().getName());
-        Assertions.assertEquals("-//W3C//DTD HTML 4.01//EN", w3c.getDoctype().getPublicId());
-        Assertions.assertEquals("http://www.w3.org/TR/html4/strict.dtd", w3c.getDoctype().getSystemId());
+        assertEquals("html", w3c.getDoctype().getName());
+        assertEquals("-//W3C//DTD HTML 4.01//EN", w3c.getDoctype().getPublicId());
+        assertEquals("http://www.w3.org/TR/html4/strict.dtd", w3c.getDoctype().getSystemId());
     }
 
     // case 5 + p 3 (part)
@@ -178,17 +180,17 @@ class MiscBugsTest {
     void testClonedDoctypeHandling() {
         Document doc = JFiveParse.parse("<!DOCTYPE html><html><body></body></html>");
         Document clonedShallow = (Document) doc.cloneNode(false);
-        Assertions.assertNull(clonedShallow.getDoctype());
+        assertNull(clonedShallow.getDoctype());
         Assertions.assertTrue(clonedShallow.getChildNodes().isEmpty());
 
         Document cloned = (Document) doc.cloneNode(true);
 
         DocumentType dt = cloned.getDoctype();
-        Assertions.assertNotNull(dt);
+        assertNotNull(dt);
 
         Assertions.assertSame(dt, cloned.getChildNodes().get(0));
 
-        Assertions.assertNull(dt.getPreviousSibling());
+        assertNull(dt.getPreviousSibling());
     }
 
 
@@ -196,16 +198,16 @@ class MiscBugsTest {
     void testHtmlSerializerSystemDoctype() {
         String html = "<!DOCTYPE html SYSTEM \"about:legacy-compat\"><html><head></head><body></body></html>";
         Document doc = JFiveParse.parse(html);
-        Assertions.assertEquals("about:legacy-compat", doc.getDoctype().getSystemId());
+        assertEquals("about:legacy-compat", doc.getDoctype().getSystemId());
         String serialized = HtmlSerializer.serialize(doc);
-        Assertions.assertEquals("<!DOCTYPE html SYSTEM \"about:legacy-compat\"><html><head></head><body></body></html>", serialized);
+        assertEquals("<!DOCTYPE html SYSTEM \"about:legacy-compat\"><html><head></head><body></body></html>", serialized);
     }
 
     @Test
     void testW3CDomToDocumentWithNullDocumentElement() {
         Document doc = new Document();
         var d = Assertions.assertDoesNotThrow(() -> W3CDom.toW3CDocument(doc));
-        Assertions.assertNull(d.getDocumentElement());
+        assertNull(d.getDocumentElement());
     }
 
 
@@ -222,7 +224,7 @@ class MiscBugsTest {
         // self cycle
         var div = new Element("div");
         Assertions.assertThrows(IllegalStateException.class, () -> div.appendChild(div));
-        Assertions.assertEquals("<div></div>", JFiveParse.serialize(div));
+        assertEquals("<div></div>", JFiveParse.serialize(div));
 
         // root -> span -> root
         var root = new Element("div");
@@ -231,7 +233,7 @@ class MiscBugsTest {
         root.appendChild(span);
         span.appendChild(b);
         Assertions.assertThrows(IllegalStateException.class, () -> span.replaceChild(root, b)); // cycle: root -> span -> root
-        Assertions.assertEquals("<div><span><b></b></span></div>", JFiveParse.serialize(root));
+        assertEquals("<div><span><b></b></span></div>", JFiveParse.serialize(root));
     }
 
     @Test
@@ -243,9 +245,9 @@ class MiscBugsTest {
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> p2.insertChildren(5, c));
 
         // when failing the insert, c should not have a parent node set
-        Assertions.assertEquals(p1, c.getParentNode());
-        Assertions.assertEquals(1, p1.getChildCount());
-        Assertions.assertEquals(0, p2.getChildCount());
+        assertEquals(p1, c.getParentNode());
+        assertEquals(1, p1.getChildCount());
+        assertEquals(0, p2.getChildCount());
     }
 
     @Test
@@ -255,7 +257,7 @@ class MiscBugsTest {
         Element a = new Element("a");
         div.insertBefore(b, null);
         div.insertBefore(a, null);
-        Assertions.assertEquals("<div><b></b><a></a></div>", JFiveParse.serialize(div));
+        assertEquals("<div><b></b><a></a></div>", JFiveParse.serialize(div));
     }
 
     @Test
@@ -263,7 +265,7 @@ class MiscBugsTest {
         var doc = JFiveParse.parse("<!--before--><html></html><!--after-->");
 
         var w3c = W3CDom.toW3CDocument(doc);
-        Assertions.assertEquals(3, w3c.getChildNodes().getLength());
+        assertEquals(3, w3c.getChildNodes().getLength());
         Assertions.assertInstanceOf(Comment.class, w3c.getChildNodes().item(0));
         Assertions.assertInstanceOf(org.w3c.dom.Element.class, w3c.getChildNodes().item(1));
         Assertions.assertInstanceOf(Comment.class, w3c.getChildNodes().item(2));
@@ -275,13 +277,13 @@ class MiscBugsTest {
         var m = Selector.parseSelector(
                 "svg|rect",
                 Map.of("svg", Node.NAMESPACE_SVG));
-        Assertions.assertEquals(1, doc.getAllNodesMatching(m).size());
+        assertEquals(1, doc.getAllNodesMatching(m).size());
 
         org.w3c.dom.Document w3c = W3CDom.toW3CDocument(doc);
         var m2 = W3CDom.W3CDomSelector.parseSelector(
                 "svg|rect",
                 Map.of("svg", Node.NAMESPACE_SVG));
-        Assertions.assertEquals(1, W3CDom.getAllNodesMatching(w3c, m2).count());
+        assertEquals(1, W3CDom.getAllNodesMatching(w3c, m2).count());
     }
 
     @Test
@@ -295,7 +297,7 @@ class MiscBugsTest {
             public void end(Node n)   { events.add("end:" + n.getNodeName()); }
             public boolean complete() { return !events.isEmpty(); }
         });
-        Assertions.assertEquals(List.of("start:div"), events);
+        assertEquals(List.of("start:div"), events);
     }
 
     @Test
@@ -313,7 +315,7 @@ class MiscBugsTest {
 
         var b = new Element("body");
         d.setBody(b);
-        Assertions.assertEquals(b, d.getBody());
+        assertEquals(b, d.getBody());
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> d.setBody(new Element("div")));
     }
@@ -331,7 +333,7 @@ class MiscBugsTest {
 
         e.normalize();
         Assertions.assertSame(t, e.getFirstChild());
-        Assertions.assertEquals("ab", t.getData());
+        assertEquals("ab", t.getData());
     }
 
     @Test
@@ -339,8 +341,8 @@ class MiscBugsTest {
         Document doc = JFiveParse.parse(
                 "<div><svg><a id=a xlink:href=a></a><b id=b href=b></b></svg></div>");
         var w3doc = W3CDom.toW3CDocument(doc);
-        Assertions.assertNotNull(w3doc.getElementById("a"));
-        Assertions.assertNotNull(w3doc.getElementById("b"));
+        assertNotNull(w3doc.getElementById("a"));
+        assertNotNull(w3doc.getElementById("b"));
     }
 
     @Test
@@ -355,9 +357,9 @@ class MiscBugsTest {
         var m2 = Selector.parseSelector("[xlink|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
         var m3 = Selector.parseSelector("[|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
 
-        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(m1));
-        Assertions.assertEquals(List.of(a), doc.getAllNodesMatching(m2));
-        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(m3));
+        assertEquals(List.of(a, b), doc.getAllNodesMatching(m1));
+        assertEquals(List.of(a), doc.getAllNodesMatching(m2));
+        assertEquals(List.of(b), doc.getAllNodesMatching(m3));
         
         var w3doc = W3CDom.toW3CDocument(doc);
         var w3a = w3doc.getElementById("a");
@@ -367,16 +369,16 @@ class MiscBugsTest {
         var w3m2 = W3CDom.W3CDomSelector.parseSelector("[xlink|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
         var w3m3 = W3CDom.W3CDomSelector.parseSelector("[|href]", Map.of("xlink", Node.NAMESPACE_XLINK));
 
-        Assertions.assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc, w3m1).toList());
-        Assertions.assertEquals(List.of(w3a), W3CDom.getAllNodesMatching(w3doc, w3m2).toList());
-        Assertions.assertEquals(List.of(w3b), W3CDom.getAllNodesMatching(w3doc, w3m3).toList());
+        assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc, w3m1).toList());
+        assertEquals(List.of(w3a), W3CDom.getAllNodesMatching(w3doc, w3m2).toList());
+        assertEquals(List.of(w3b), W3CDom.getAllNodesMatching(w3doc, w3m3).toList());
     }
 
     @Test
     void cssUniversalSelectorUnknownNamespace() {
         Document doc = JFiveParse.parse("<div></div>");
-        Assertions.assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("svg|*")).size());
-        Assertions.assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("|*")).size());
+        assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("svg|*")).size());
+        assertEquals(0, doc.getAllNodesMatching(Selector.parseSelector("|*")).size());
     }
 
 
@@ -406,9 +408,9 @@ class MiscBugsTest {
         var a = doc.getElementById("a");
         var b = doc.getElementById("b");
 
-        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(defaultSelector));
-        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(insensitiveLower));
-        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(insensitiveUpper));
+        assertEquals(List.of(b), doc.getAllNodesMatching(defaultSelector));
+        assertEquals(List.of(a, b), doc.getAllNodesMatching(insensitiveLower));
+        assertEquals(List.of(a, b), doc.getAllNodesMatching(insensitiveUpper));
     }
 
     @Test
@@ -425,25 +427,25 @@ class MiscBugsTest {
         var c = doc.getElementById("c");
 
         // class selector (~= on class)
-        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[class~=foo]")));
-        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[class~=foo i]")));
-        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[class~=FOO i]")));
+        assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[class~=foo]")));
+        assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[class~=foo i]")));
+        assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[class~=FOO i]")));
 
         // ~=
-        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[data-x~=value]")));
-        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[data-x~=value i]")));
+        assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[data-x~=value]")));
+        assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[data-x~=value i]")));
 
         // ^=
-        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[data-x^=val]")));
-        Assertions.assertEquals(List.of(a, b, c), doc.getAllNodesMatching(Selector.parseSelector("[data-x^=val i]")));
+        assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[data-x^=val]")));
+        assertEquals(List.of(a, b, c), doc.getAllNodesMatching(Selector.parseSelector("[data-x^=val i]")));
 
         // $=
-        Assertions.assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[data-x$=ue]")));
-        Assertions.assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[data-x$=ue i]")));
+        assertEquals(List.of(b), doc.getAllNodesMatching(Selector.parseSelector("[data-x$=ue]")));
+        assertEquals(List.of(a, b), doc.getAllNodesMatching(Selector.parseSelector("[data-x$=ue i]")));
 
         // *=
-        Assertions.assertEquals(List.of(b, c), doc.getAllNodesMatching(Selector.parseSelector("[data-x*=alu]")));
-        Assertions.assertEquals(List.of(a, b, c), doc.getAllNodesMatching(Selector.parseSelector("[data-x*=alu i]")));
+        assertEquals(List.of(b, c), doc.getAllNodesMatching(Selector.parseSelector("[data-x*=alu]")));
+        assertEquals(List.of(a, b, c), doc.getAllNodesMatching(Selector.parseSelector("[data-x*=alu i]")));
 
         // W3CDom implementation
         var w3doc = W3CDom.toW3CDocument(doc);
@@ -451,15 +453,15 @@ class MiscBugsTest {
         var w3b = w3doc.getElementById("b");
         var w3c = w3doc.getElementById("c");
 
-        Assertions.assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc,
+        assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc,
                 W3CDom.W3CDomSelector.parseSelector("[class~=foo i]")).toList());
-        Assertions.assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc,
+        assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc,
                 W3CDom.W3CDomSelector.parseSelector("[data-x~=value i]")).toList());
-        Assertions.assertEquals(List.of(w3a, w3b, w3c), W3CDom.getAllNodesMatching(w3doc,
+        assertEquals(List.of(w3a, w3b, w3c), W3CDom.getAllNodesMatching(w3doc,
                 W3CDom.W3CDomSelector.parseSelector("[data-x^=val i]")).toList());
-        Assertions.assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc,
+        assertEquals(List.of(w3a, w3b), W3CDom.getAllNodesMatching(w3doc,
                 W3CDom.W3CDomSelector.parseSelector("[data-x$=ue i]")).toList());
-        Assertions.assertEquals(List.of(w3a, w3b, w3c), W3CDom.getAllNodesMatching(w3doc,
+        assertEquals(List.of(w3a, w3b, w3c), W3CDom.getAllNodesMatching(w3doc,
                 W3CDom.W3CDomSelector.parseSelector("[data-x*=alu i]")).toList());
     }
 
@@ -484,10 +486,10 @@ class MiscBugsTest {
         var targetTextPath = doc.getElementById("tp");
         var found = doc.getAllNodesMatching(Selector.parseSelector("DIV"));
         var textPath = doc.getAllNodesMatching(Selector.parseSelector("TEXTPATH"));
-        Assertions.assertEquals(1, found.size());
+        assertEquals(1, found.size());
         Assertions.assertSame(targetDiv, found.get(0));
 
-        Assertions.assertEquals(1, textPath.size());
+        assertEquals(1, textPath.size());
         Assertions.assertSame(targetTextPath, textPath.get(0));
 
     }
@@ -501,20 +503,20 @@ class MiscBugsTest {
         // instead a.textContent = null -> a.textContent is '' (empty string)
 
         var c = new ch.digitalfondue.jfiveparse.Comment(null);
-        Assertions.assertEquals("null", c.getTextContent());
-        Assertions.assertEquals("<!--null-->", JFiveParse.serialize(c));
+        assertEquals("null", c.getTextContent());
+        assertEquals("<!--null-->", JFiveParse.serialize(c));
 
         c.setTextContent(null);
-        Assertions.assertEquals("", c.getTextContent());
-        Assertions.assertEquals("<!---->", JFiveParse.serialize(c));
+        assertEquals("", c.getTextContent());
+        assertEquals("<!---->", JFiveParse.serialize(c));
         //
         var pi = new ProcessingInstruction("target", null);
-        Assertions.assertEquals("<?target null?>", JFiveParse.serialize(pi));
+        assertEquals("<?target null?>", JFiveParse.serialize(pi));
 
-        Assertions.assertEquals("null", pi.getTextContent());
+        assertEquals("null", pi.getTextContent());
         pi.setTextContent(null);
-        Assertions.assertEquals("", pi.getTextContent());
-        Assertions.assertEquals("<?target?>", JFiveParse.serialize(pi));
+        assertEquals("", pi.getTextContent());
+        assertEquals("<?target?>", JFiveParse.serialize(pi));
     }
 
     @Test
@@ -530,8 +532,8 @@ class MiscBugsTest {
         Element div = d.getElementById("x");
         div.getAttributes().put(new AttributeNode("DATA-X", "1"));
         Assertions.assertTrue(div.hasAttribute("data-x"));
-        Assertions.assertEquals("1", div.getAttribute("data-x"));
-        Assertions.assertEquals("1", div.getAttribute("DATA-X"));
+        assertEquals("1", div.getAttribute("data-x"));
+        assertEquals("1", div.getAttribute("DATA-X"));
     }
 
     @Test
@@ -542,21 +544,21 @@ class MiscBugsTest {
         elem.setAttributeNS(null, "cLaSs", "c");
 
         // same behaviour as chrome
-        Assertions.assertEquals("<div class=\"a\" CLASS=\"b\" cLaSs=\"c\"></div>", JFiveParse.serialize(elem));
-        Assertions.assertEquals("a", elem.getAttribute("CLASS")); // <- lowercase
-        Assertions.assertEquals("a", elem.getAttribute("class")); //
-        Assertions.assertEquals("a", elem.getAttribute("cLaSs")); //
+        assertEquals("<div class=\"a\" CLASS=\"b\" cLaSs=\"c\"></div>", JFiveParse.serialize(elem));
+        assertEquals("a", elem.getAttribute("CLASS")); // <- lowercase
+        assertEquals("a", elem.getAttribute("class")); //
+        assertEquals("a", elem.getAttribute("cLaSs")); //
 
-        Assertions.assertEquals("a", elem.getAttributeNS(null, "class"));
-        Assertions.assertEquals("b", elem.getAttributeNS(null, "CLASS"));
-        Assertions.assertEquals("c", elem.getAttributeNS(null, "cLaSs"));
+        assertEquals("a", elem.getAttributeNS(null, "class"));
+        assertEquals("b", elem.getAttributeNS(null, "CLASS"));
+        assertEquals("c", elem.getAttributeNS(null, "cLaSs"));
 
         //
         var div = new Element("div");
         div.setAttributeNS(null, "class", "a");
-        Assertions.assertEquals("<div class=\"a\"></div>", JFiveParse.serialize(div));
+        assertEquals("<div class=\"a\"></div>", JFiveParse.serialize(div));
         div.setAttribute("CLASS", "b");
-        Assertions.assertEquals("<div class=\"b\"></div>", JFiveParse.serialize(div));
+        assertEquals("<div class=\"b\"></div>", JFiveParse.serialize(div));
 
         // TODO: add more comprehensive test suite as our attribute handling may have some holes
         //       most likely we need to add some additional work when creating directly AttributeNode
@@ -567,16 +569,16 @@ class MiscBugsTest {
         Document doc = JFiveParse.parse(
                 "<div><svg><a id=a xlink:href='foo bar'></a><b id=b href='foo bar'></b></svg></div>");
         var matcher = Selector.parseSelector("[xlink|href~=foo]", Map.of("xlink", Node.NAMESPACE_XLINK));
-        Assertions.assertEquals(List.of(doc.getElementById("a")), doc.getAllNodesMatching(matcher));
+        assertEquals(List.of(doc.getElementById("a")), doc.getAllNodesMatching(matcher));
     }
 
     @Test
     void elementByTagNameAndNS() {
         Document doc = JFiveParse.parse("<div id=div><svg><rect id=r></rect></svg></div>");
 
-        Assertions.assertEquals(List.of(doc.getElementById("r")), doc.getElementsByTagNameNS("rect", "*"));
-        Assertions.assertEquals(doc.getAllNodesMatching(Selector.parseSelector("*")) , doc.getElementsByTagNameNS("*", "*"));
-        Assertions.assertEquals(List.of(), doc.getElementsByTagNameNS("div", null));
+        assertEquals(List.of(doc.getElementById("r")), doc.getElementsByTagNameNS("rect", "*"));
+        assertEquals(doc.getAllNodesMatching(Selector.parseSelector("*")) , doc.getElementsByTagNameNS("*", "*"));
+        assertEquals(List.of(), doc.getElementsByTagNameNS("div", null));
     }
 
     @Test
@@ -607,7 +609,7 @@ class MiscBugsTest {
         Document doc = JFiveParse.parse("<div title='a&apos;b'></div>");
         Element div = doc.getElementsByTagName("div").get(0);
         String html = div.getOuterHTML(Set.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE));
-        Assertions.assertEquals("<div title='a&#39;b'></div>", html);
+        assertEquals("<div title='a&#39;b'></div>", html);
     }
 
     @Test
@@ -616,7 +618,7 @@ class MiscBugsTest {
         Element svg = new Element("svg", Node.NAMESPACE_SVG);
         doc.appendChild(svg);
         var w3c = W3CDom.toW3CDocument(doc);
-        Assertions.assertEquals(Node.NAMESPACE_SVG, w3c.getDocumentElement().getNamespaceURI());
+        assertEquals(Node.NAMESPACE_SVG, w3c.getDocumentElement().getNamespaceURI());
     }
 
 
@@ -653,7 +655,7 @@ class MiscBugsTest {
     void cssSelectAttrHypen() {
         var doc = JFiveParse.parse("<html><body><p id=en lang='en'>a</p><p id=enus lang='en-US'>b</p><p lang='fr-en'>c</p></body></html>");
         var matches = doc.getAllNodesMatching(Selector.parseSelector("[lang|=en]"));
-        Assertions.assertEquals(List.of(doc.getElementById("en"), doc.getElementById("enus")), matches);
+        assertEquals(List.of(doc.getElementById("en"), doc.getElementById("enus")), matches);
     }
 
 
@@ -662,7 +664,7 @@ class MiscBugsTest {
         Element div = new Element("div");
         div.getAttributes().put(new AttributeNode("DATA-X", "1"));
 
-        Assertions.assertEquals("1", div.getAttribute("data-x"));
+        assertEquals("1", div.getAttribute("data-x"));
         div.removeAttribute("data-x");
 
         Assertions.assertFalse(div.hasAttribute("data-x"));
@@ -702,16 +704,16 @@ class MiscBugsTest {
         Selector builder = Selector.select().element("div").hasClass("a").attr("id");
         NodeMatcher<Node> matcher = builder.toMatcher();
 
-        Assertions.assertEquals(List.of(doc.getElementById("d")), doc.getAllNodesMatching(matcher));
+        assertEquals(List.of(doc.getElementById("d")), doc.getAllNodesMatching(matcher));
 
         builder.hasClass("b"); // calling builder.toMatcher(); should "detach" the matcher
-        Assertions.assertEquals(List.of(doc.getElementById("d")), doc.getAllNodesMatching(matcher));
+        assertEquals(List.of(doc.getElementById("d")), doc.getAllNodesMatching(matcher));
     }
 
     @Test
     void tagNameUpperCaseOnlyASCII() {
-        Assertions.assertEquals("AéA", new Element("aéa").getTagName());
-        Assertions.assertEquals("viewBox", new Element("viewBox", Node.NAMESPACE_SVG).getTagName());
+        assertEquals("AéA", new Element("aéa").getTagName());
+        assertEquals("viewBox", new Element("viewBox", Node.NAMESPACE_SVG).getTagName());
     }
 
     @Test
@@ -719,7 +721,7 @@ class MiscBugsTest {
         var doc = JFiveParse.parse("<div><svg xml:lang='en' xlink:href='x'></svg></div>");
         var svg = doc.getElementsByTagName("svg").get(0);
         var lang = svg.getAttributeNodeNS(Node.NAMESPACE_XML, "lang");
-        Assertions.assertEquals(Node.NAMESPACE_XML, lang.getNamespace());
+        assertEquals(Node.NAMESPACE_XML, lang.getNamespace());
     }
 
     @Test
@@ -728,18 +730,18 @@ class MiscBugsTest {
                 "<div id=h></div><svg><linearGradient id=g></linearGradient><textPath id=t></textPath></svg>");
 
         // getElementsByTagName case insensitive for html
-        Assertions.assertEquals(1, doc.getElementsByTagName("DIV").size());
-        Assertions.assertEquals(1, doc.getElementsByTagName("linearGradient").size());
-        Assertions.assertEquals(1, doc.getElementsByTagName("textPath").size());
+        assertEquals(1, doc.getElementsByTagName("DIV").size());
+        assertEquals(1, doc.getElementsByTagName("linearGradient").size());
+        assertEquals(1, doc.getElementsByTagName("textPath").size());
         // case sensitive for non-html
         Assertions.assertTrue(doc.getElementsByTagName("lineargradient").isEmpty());
         Assertions.assertTrue(doc.getElementsByTagName("TEXTPATH").isEmpty());
 
 
-        Assertions.assertEquals(1, doc.getElementsByTagNameNS("div", Node.NAMESPACE_HTML).size());
+        assertEquals(1, doc.getElementsByTagNameNS("div", Node.NAMESPACE_HTML).size());
         Assertions.assertTrue(doc.getElementsByTagNameNS("DIV", Node.NAMESPACE_HTML).isEmpty());
 
-        Assertions.assertEquals(1, doc.getElementsByTagNameNS("linearGradient", Node.NAMESPACE_SVG).size());
+        assertEquals(1, doc.getElementsByTagNameNS("linearGradient", Node.NAMESPACE_SVG).size());
         Assertions.assertTrue(doc.getElementsByTagNameNS("lineargradient", Node.NAMESPACE_SVG).isEmpty());
         Assertions.assertTrue(doc.getElementsByTagNameNS("TEXTPATH", Node.NAMESPACE_SVG).isEmpty());
     }
@@ -749,27 +751,27 @@ class MiscBugsTest {
         var source = new Element("div");
         source.setAttributeNS(null, "CLASS", "x");
         var attribute = source.getAttributeNodeNS(null, "CLASS");
-        Assertions.assertEquals("CLASS", attribute.getName());
+        assertEquals("CLASS", attribute.getName());
 
         source.removeAttributeNS(null, "CLASS");
         var target = new Element("div");
         target.setAttributeNode(attribute);
 
-        Assertions.assertEquals("CLASS", attribute.getName());
-        Assertions.assertEquals("CLASS", attribute.getLocalName());
-        Assertions.assertEquals("<div CLASS=\"x\"></div>", target.getOuterHTML());
+        assertEquals("CLASS", attribute.getName());
+        assertEquals("CLASS", attribute.getLocalName());
+        assertEquals("<div CLASS=\"x\"></div>", target.getOuterHTML());
         //
         var div = new Element("div");
         div.setAttribute("class", "a");
         div.getAttributes().put(new AttributeNode("CLASS", "b"));
 
-        Assertions.assertEquals(1, attributeCount(div.getAttributes()));
-        Assertions.assertEquals("b", div.getAttribute("class"));
-        Assertions.assertEquals("<div class=\"b\"></div>", div.getOuterHTML());
+        assertEquals(1, attributeCount(div.getAttributes()));
+        assertEquals("b", div.getAttribute("class"));
+        assertEquals("<div class=\"b\"></div>", div.getOuterHTML());
 
         var other = new Element("div");
         other.getAttributes().put(new AttributeNode("DATA-X", "1"));
-        Assertions.assertEquals("<div data-x=\"1\"></div>", other.getOuterHTML());
+        assertEquals("<div data-x=\"1\"></div>", other.getOuterHTML());
     }
 
     private static int attributeCount(Attributes attributes) {
@@ -783,8 +785,8 @@ class MiscBugsTest {
     @Test
     void emptyNameSpaceNormalization() {
         var el = new Element("div", "");
-        Assertions.assertNull(el.getNamespaceURI());
-        Assertions.assertEquals(new Element("div", null).getNamespaceURI(), el.getNamespaceURI());
+        assertNull(el.getNamespaceURI());
+        assertEquals(new Element("div", null).getNamespaceURI(), el.getNamespaceURI());
     }
 
     @Test
@@ -793,22 +795,22 @@ class MiscBugsTest {
         var div = doc.getElementById("x");
 
         Assertions.assertTrue(doc.getElementsByTagName(null).isEmpty());
-        Assertions.assertNull(div.getAttribute(null));
+        assertNull(div.getAttribute(null));
         Assertions.assertFalse(div.hasAttribute(null));
-        Assertions.assertNull(div.getAttributeNode(null));
+        assertNull(div.getAttributeNode(null));
         Assertions.assertDoesNotThrow(() -> div.removeAttribute(null));
     }
 
     @Test
     void checkNamespaceCoherence() {
         AttributeNode empty = new AttributeNode("foo", "v", "");
-        Assertions.assertNull(empty.getNamespace());
+        assertNull(empty.getNamespace());
 
         AttributeNode plain = new AttributeNode("foo", "v");
-        Assertions.assertNull(plain.getNamespace());
+        assertNull(plain.getNamespace());
 
         AttributeNode foreign = new AttributeNode("xlink:href", "v", Node.NAMESPACE_XLINK);
-        Assertions.assertEquals(Node.NAMESPACE_XLINK, foreign.getNamespace());
+        assertEquals(Node.NAMESPACE_XLINK, foreign.getNamespace());
     }
 
     @Test
@@ -816,23 +818,23 @@ class MiscBugsTest {
         var el = new Element("div");
         el.setAttribute("title", "foo \"bar\"");
         String out = JFiveParse.serialize(el, Set.of(Option.DONT_TRANSFORM_ENTITIES));
-        Assertions.assertEquals("<div title=\"foo &quot;bar&quot;\"></div>", out);
+        assertEquals("<div title=\"foo &quot;bar&quot;\"></div>", out);
         var back = JFiveParse.parse(out).getElementsByTagName("div").get(0);
-        Assertions.assertEquals("foo \"bar\"", back.getAttribute("title"));
+        assertEquals("foo \"bar\"", back.getAttribute("title"));
 
 
         var d = JFiveParse.parse("<div test='\" &#39; &quot;' test2=\"' &#39; &quot;\"></div>");
         out = JFiveParse.serialize(d);
-        Assertions.assertEquals("<html><head></head><body><div test=\"&quot; ' &quot;\" test2=\"' ' &quot;\"></div></body></html>", out);
+        assertEquals("<html><head></head><body><div test=\"&quot; ' &quot;\" test2=\"' ' &quot;\"></div></body></html>", out);
 
         out = JFiveParse.serialize(d, Set.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE));
-        Assertions.assertEquals("<html><head></head><body><div test='&quot; &#39; &quot;' test2=\"' ' &quot;\"></div></body></html>", out);
+        assertEquals("<html><head></head><body><div test='&quot; &#39; &quot;' test2=\"' ' &quot;\"></div></body></html>", out);
 
         out = JFiveParse.serialize(d, Set.of(Option.DONT_TRANSFORM_ENTITIES));
-        Assertions.assertEquals("<html><head></head><body><div test=\"&quot; ' &quot;\" test2=\"' ' &quot;\"></div></body></html>", out);
+        assertEquals("<html><head></head><body><div test=\"&quot; ' &quot;\" test2=\"' ' &quot;\"></div></body></html>", out);
 
         out = JFiveParse.serialize(d, Set.of(Option.DONT_TRANSFORM_ENTITIES, Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE));
-        Assertions.assertEquals("<html><head></head><body><div test='\" &#39; \"' test2=\"' ' &quot;\"></div></body></html>", out);
+        assertEquals("<html><head></head><body><div test='\" &#39; \"' test2=\"' ' &quot;\"></div></body></html>", out);
     }
 
 
@@ -846,19 +848,19 @@ class MiscBugsTest {
     @Test
     void nullIdTagName() {
         var doc = JFiveParse.parse("<div id=null></div><null></null>");
-        Assertions.assertNotNull(doc.getElementById(null));
-        Assertions.assertEquals(1, doc.getElementsByTagNameNS(null, "*").size());
+        assertNotNull(doc.getElementById(null));
+        assertEquals(1, doc.getElementsByTagNameNS(null, "*").size());
     }
 
     @Test
     void attributeNameNull() {
         var div = new Element("div");
         Assertions.assertDoesNotThrow(() -> div.setAttributeNode(new AttributeNode(null, "v")));
-        Assertions.assertEquals("<div null=\"v\"></div>", div.getOuterHTML());
+        assertEquals("<div null=\"v\"></div>", div.getOuterHTML());
 
         var div2 = new Element("div");
         Assertions.assertDoesNotThrow(() -> div2.setAttributeNode(new AttributeNode(null, "v", "urn:ns")));
-        Assertions.assertEquals("<div null=\"v\"></div>", div2.getOuterHTML());
+        assertEquals("<div null=\"v\"></div>", div2.getOuterHTML());
     }
 
 
@@ -869,11 +871,34 @@ class MiscBugsTest {
                 .get(0);
         var a = svg.getFirstElementChild();
 
-        Assertions.assertNull(a.getAttributeNS("*", "href"));
+        assertNull(a.getAttributeNS("*", "href"));
         Assertions.assertFalse(a.hasAttributeNS("*", "href"));
 
         var copy = (Element) a.cloneNode(true);
         copy.removeAttributeNS("*", "href");
-        Assertions.assertEquals("<a xlink:href=\"v\"></a>", copy.getOuterHTML());
+        assertEquals("<a xlink:href=\"v\"></a>", copy.getOuterHTML());
+    }
+
+
+    @Test
+    void domStringSemantics() {
+        var doc = JFiveParse.parse("<div id=null></div><span id=''></span>");
+        assertNotNull(doc.getElementById(null));
+        assertNull(doc.getElementById(""));
+    }
+
+    @Test
+    void nullAsParamGetElemAttr() {
+        Document doc = JFiveParse.parse(
+                "<null id=x></null><div id=y null='v'></div>");
+
+        assertEquals(1, doc.getElementsByTagNameNS(
+                "null", Node.NAMESPACE_HTML).size());
+        assertEquals(1, doc.getElementsByTagNameNS(
+                null, Node.NAMESPACE_HTML).size());
+
+        Element y = doc.getElementById("y");
+        assertEquals("v", y.getAttributeNS(null, null));
+        assertTrue(y.hasAttributeNS(null, null));
     }
 }
