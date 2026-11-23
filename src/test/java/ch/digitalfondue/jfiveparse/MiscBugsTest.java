@@ -720,7 +720,6 @@ class MiscBugsTest {
         var svg = doc.getElementsByTagName("svg").get(0);
         var lang = svg.getAttributeNodeNS(Node.NAMESPACE_XML, "lang");
         Assertions.assertEquals(Node.NAMESPACE_XML, lang.getNamespace());
-        Assertions.assertTrue(lang.hasNamespace());
     }
 
     @Test
@@ -750,6 +749,7 @@ class MiscBugsTest {
         var source = new Element("div");
         source.setAttributeNS(null, "CLASS", "x");
         var attribute = source.getAttributeNodeNS(null, "CLASS");
+        Assertions.assertEquals("CLASS", attribute.getName());
 
         source.removeAttributeNS(null, "CLASS");
         var target = new Element("div");
@@ -797,6 +797,18 @@ class MiscBugsTest {
         Assertions.assertFalse(div.hasAttribute(null));
         Assertions.assertNull(div.getAttributeNode(null));
         Assertions.assertDoesNotThrow(() -> div.removeAttribute(null));
+    }
+
+    @Test
+    void checkNamespaceCoherence() {
+        AttributeNode empty = new AttributeNode("foo", "v", "");
+        Assertions.assertNull(empty.getNamespace());
+
+        AttributeNode plain = new AttributeNode("foo", "v");
+        Assertions.assertNull(plain.getNamespace());
+
+        AttributeNode foreign = new AttributeNode("xlink:href", "v", Node.NAMESPACE_XLINK);
+        Assertions.assertEquals(Node.NAMESPACE_XLINK, foreign.getNamespace());
     }
 
 }

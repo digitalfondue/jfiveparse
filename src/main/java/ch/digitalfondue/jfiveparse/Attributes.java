@@ -105,7 +105,9 @@ public final class Attributes implements Iterable<AttributeNode> {
     // lowercase the attribute name only if we are in a html node and the namespace is not set
     // should cover all the cases (?)
     private String adjustedAttributeName(AttributeNode node) {
-        return html && node.getNamespace() == null && !node.hasNamespace() ? Common.convertToAsciiLowerCase(node.getName()) : node.getName();
+        return html && node.getNamespace() == null && !node.isNamespaceAware()
+                ? Common.convertToAsciiLowerCase(node.getName())
+                : node.getName();
     }
 
     public AttributeNode get(String key) {
@@ -140,7 +142,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     AttributeNode set(AttributeNode attribute) {
-        if (html && attribute.getNamespace() == null && !attribute.hasNamespace()) {
+        if (html && attribute.getNamespace() == null && !attribute.isNamespaceAware()) {
             attribute.setNameAndLocalName(Common.convertToAsciiLowerCase(attribute.getName()));
         }
         String namespace = AttributeNode.normalizeNamespace(attribute.getNamespace());

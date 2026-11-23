@@ -27,10 +27,6 @@ public final class AttributeNode {
     // non-double-quoted attributes
     private Misc misc;
 
-    public boolean hasNamespace() {
-        return misc != null && misc.hasNamespace;
-    }
-
     private static final class Misc {
         // null means: same as name
         String localName;
@@ -38,6 +34,7 @@ public final class AttributeNode {
         String originalName;
         String prefix;
         boolean hasNamespace;
+        boolean namespaceAware;
         String namespace;
         // when misc is null the attribute is implicitly double quoted
         int attributeQuoteType = Tokenizer.ATTRIBUTE_VALUE_DOUBLE_QUOTED_STATE;
@@ -69,6 +66,7 @@ public final class AttributeNode {
             e.localName = a.misc.localName;
             e.originalName = a.misc.originalName;
             e.prefix = a.misc.prefix;
+            e.namespaceAware = a.misc.namespaceAware;
             e.hasNamespace = a.misc.hasNamespace;
             e.namespace = a.misc.namespace;
             e.attributeQuoteType = a.misc.attributeQuoteType;
@@ -81,6 +79,7 @@ public final class AttributeNode {
         namespace = normalizeNamespace(namespace);
         misc().namespace = namespace;
         misc().hasNamespace = true;
+        misc().namespaceAware  = true;
         var separator = qualifiedName.indexOf(':');
         if (separator > 0) {
             if (namespace == null) {
@@ -117,6 +116,10 @@ public final class AttributeNode {
 
     public String getNamespace() {
         return misc == null ? null : misc.namespace;
+    }
+
+    boolean isNamespaceAware() {
+        return misc != null && misc.namespaceAware;
     }
 
     public String getPrefix() {
@@ -158,6 +161,7 @@ public final class AttributeNode {
         e.localName = localName;
         e.namespace = namespace;
         e.hasNamespace = true;
+        e.namespaceAware = true;
     }
 
     @Override
