@@ -83,8 +83,8 @@ public class HtmlSerializer implements NodesVisitor {
                 case Characters.AMPERSAND -> transformEntities ? "&amp;" : null;
                 case Characters.LESSTHAN_SIGN -> !isAttr && transformEntities ? "&lt;" : null;
                 case Characters.GREATERTHAN_SIGN -> !isAttr && transformEntities ? "&gt;" : null;
-                case '"' -> isAttr && transformEntities ? "&quot;" : null;
-                case '\'' -> isAttr && printOriginalAttributeQuote &&  "'".equals(attrQuoteValue) ? "&#39;" : null;
+                case '"' -> isAttr && "\"".equals(attrQuoteValue) ? "&quot;" : (isAttr && transformEntities ? "&quot;" : null);
+                case '\'' -> isAttr && "'".equals(attrQuoteValue) ? "&#39;" : null;
                 case Characters.NO_BREAK_SPACE -> "&nbsp;";
                 default -> null;
             };

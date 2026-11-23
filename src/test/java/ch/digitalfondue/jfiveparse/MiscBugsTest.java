@@ -811,4 +811,27 @@ class MiscBugsTest {
         Assertions.assertEquals(Node.NAMESPACE_XLINK, foreign.getNamespace());
     }
 
+    @Test
+    void checkAttributeQuotingDontTransformEntities() {
+        var el = new Element("div");
+        el.setAttribute("title", "foo \"bar\"");
+        String out = JFiveParse.serialize(el, Set.of(Option.DONT_TRANSFORM_ENTITIES));
+        Assertions.assertEquals("<div title=\"foo &quot;bar&quot;\"></div>", out);
+        var back = JFiveParse.parse(out).getElementsByTagName("div").get(0);
+        Assertions.assertEquals("foo \"bar\"", back.getAttribute("title"));
+
+
+        var d = JFiveParse.parse("<div test='\" &#39; &quot;' test2=\"' &#39; &quot;\"></div>");
+        out = JFiveParse.serialize(d);
+        Assertions.assertEquals("<html><head></head><body><div test=\"&quot; ' &quot;\" test2=\"' ' &quot;\"></div></body></html>", out);
+
+        out = JFiveParse.serialize(d, Set.of(Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE));
+        Assertions.assertEquals("<html><head></head><body><div test='&quot; &#39; &quot;' test2=\"' ' &quot;\"></div></body></html>", out);
+
+        out = JFiveParse.serialize(d, Set.of(Option.DONT_TRANSFORM_ENTITIES));
+        Assertions.assertEquals("<html><head></head><body><div test=\"&quot; ' &quot;\" test2=\"' ' &quot;\"></div></body></html>", out);
+
+        out = JFiveParse.serialize(d, Set.of(Option.DONT_TRANSFORM_ENTITIES, Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE));
+        Assertions.assertEquals("<html><head></head><body><div test='\" &#39; \"' test2=\"' ' &quot;\"></div></body></html>", out);
+    }
 }
