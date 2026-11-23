@@ -943,4 +943,20 @@ class MiscBugsTest {
         assertTrue(svgA.matches(":last-of-type"));
         assertTrue(htmlA2.matches(":last-of-type"));
     }
+
+    @Test
+    void voidElementsMustNotSerializeChildren() {
+        Element img = new Element("img");
+        img.appendChild(new Text("x"));
+
+        assertEquals("", img.getInnerHTML());
+        assertEquals("<img>", img.getOuterHTML());
+        assertEquals("<img>", JFiveParse.serialize(img));
+
+        Element br = new Element("br");
+        br.appendChild(new Element("span"));
+
+        assertEquals("", br.getInnerHTML());
+        assertEquals("<br>", br.getOuterHTML());
+    }
 }

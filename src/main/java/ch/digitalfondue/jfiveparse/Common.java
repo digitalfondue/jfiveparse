@@ -748,4 +748,15 @@ final class Common {
             return size;
         }
     }
+
+    static boolean isVoidTag(int nodeName) {
+        return switch (nodeName) {
+            case ELEMENT_AREA_ID, ELEMENT_BASE_ID, ELEMENT_BASEFONT_ID, ELEMENT_BGSOUND_ID,
+                 ELEMENT_BR_ID, ELEMENT_COL_ID, ELEMENT_EMBED_ID, ELEMENT_FRAME_ID, ELEMENT_HR_ID,
+                 ELEMENT_IMG_ID, ELEMENT_INPUT_ID, ELEMENT_KEYGEN_ID,
+                 ELEMENT_LINK_ID, ELEMENT_META_ID, ELEMENT_PARAM_ID, ELEMENT_SOURCE_ID, ELEMENT_TRACK_ID,
+                 ELEMENT_WBR_ID -> true;
+            default -> false;
+        };
+    }
 }

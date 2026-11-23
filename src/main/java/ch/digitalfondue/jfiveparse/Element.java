@@ -428,7 +428,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      * Get the html content of the child of this node.
      */
     public String getInnerHTML() {
-        return getInnerHTML(Option.EMPTY_OPTIONS);
+        return Common.isVoidTag(nodeNameID) && NAMESPACE_HTML_ID == namespaceID ? "" : getInnerHTML(Option.EMPTY_OPTIONS);
     }
 
     /**

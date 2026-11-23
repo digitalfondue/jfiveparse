@@ -37,6 +37,7 @@ public class HtmlSerializer implements NodesVisitor {
     private final boolean printOriginalAttributeQuote;
     private final boolean printOriginalAttributeCase;
     private final boolean printOriginalTagName;
+    private int skipDepth = 0;
 
     public HtmlSerializer(Appendable appendable, Set<Option> options) {
         this.appendable = appendable;
@@ -102,11 +103,17 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     private static boolean skipEndTag(Element e) {
-        return Node.NAMESPACE_HTML_ID == e.namespaceID && isNoEndTag(e.nodeNameID);
+        return Node.NAMESPACE_HTML_ID == e.namespaceID && isVoidTag(e.nodeNameID);
     }
 
     @Override
     public void start(Node node) {
+        if (skipDepth > 0) {
+            if (node instanceof Element) {
+                skipDepth++;
+            }
+            return;
+        }
         try {
             if (node instanceof Element e) {
                 // TODO: for tag outside of html,mathml,svg namespace : use qualified name!
@@ -128,6 +135,9 @@ public class HtmlSerializer implements NodesVisitor {
                     }
                 }
                 appendable.append('>');
+                if (skipEndTag(e)) {
+                    skipDepth = 1; // skip child of a void element
+                }
                 if ((Common.isHtmlNS(e, Common.ELEMENT_PRE_ID) || Common.isHtmlNS(e, Common.ELEMENT_TEXTAREA_ID) || Common.isHtmlNS(e, Common.ELEMENT_LISTING_ID)) && //
                         e.hasChildNodes() && //
                         e.getFirstChild() instanceof Text textNode) {
@@ -182,6 +192,12 @@ public class HtmlSerializer implements NodesVisitor {
 
     @Override
     public void end(Node node) {
+        if (skipDepth > 0) {
+            if (node instanceof Element) {
+                skipDepth--;
+            }
+            return;
+        }
         try {
             if (node instanceof Element e) {
                 if (!skipEndTag(e)) {
@@ -221,17 +237,6 @@ public class HtmlSerializer implements NodesVisitor {
         StringBuilder sb = new StringBuilder();
         node.traverseWithCurrentNode(new HtmlSerializer(sb, options));
         return sb.toString();
-    }
-
-    private static boolean isNoEndTag(int nodeName) {
-        return switch (nodeName) {
-            case ELEMENT_AREA_ID, ELEMENT_BASE_ID, ELEMENT_BASEFONT_ID, ELEMENT_BGSOUND_ID,
-                 ELEMENT_BR_ID, ELEMENT_COL_ID, ELEMENT_EMBED_ID, ELEMENT_FRAME_ID, ELEMENT_HR_ID,
-                 ELEMENT_IMG_ID, ELEMENT_INPUT_ID, ELEMENT_KEYGEN_ID,
-                 ELEMENT_LINK_ID, ELEMENT_META_ID, ELEMENT_PARAM_ID, ELEMENT_SOURCE_ID, ELEMENT_TRACK_ID,
-                 ELEMENT_WBR_ID -> true;
-            default -> false;
-        };
     }
 
     private static boolean isTextNodeParent(int nodeNameId) {
