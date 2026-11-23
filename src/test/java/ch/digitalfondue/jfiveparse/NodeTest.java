@@ -143,9 +143,9 @@ class NodeTest {
         Element div = new Element("div");
         div.setAttribute("class", "foo");
 
-        boolean allAdded = div.getClassList().add("foo", "bar", "baz");
+        boolean someAdded = div.getClassList().add("foo", "bar", "baz");
 
-        assertFalse(allAdded);
+        assertTrue(someAdded);
         assertEquals(List.of("foo", "bar", "baz"), asList(div.getClassList()));
         assertEquals("foo bar baz", div.getAttribute("class"));
     }
