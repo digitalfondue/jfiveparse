@@ -105,4 +105,12 @@ class DOMTokenListTest {
         Element div = new Element("div");
         assertEquals("", div.getClassList().toString());
     }
+
+    @Test
+    void checkNullContains() {
+        Element el = new Element("div");
+        el.setAttribute("class", "null foo");
+
+        assertTrue(el.getClassList().contains(null));
+    }
 }

@@ -136,6 +136,7 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     public boolean contains(String value) {
+        value = value == null ? "null" : value;
         for (var v : this) {
             if (Objects.equals(v, value)) {
                 return true;
