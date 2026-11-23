@@ -139,6 +139,9 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     AttributeNode set(AttributeNode attribute) {
+        if (html && attribute.getNamespace() == null && !attribute.hasNamespace()) {
+            attribute.setNameAndLocalName(Common.convertToAsciiLowerCase(attribute.getName()));
+        }
         String namespace = AttributeNode.normalizeNamespace(attribute.getNamespace());
         String localName = attribute.getLocalName();
         if (attributes == null) {

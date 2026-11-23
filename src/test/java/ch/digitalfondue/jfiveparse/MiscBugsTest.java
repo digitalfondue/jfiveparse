@@ -745,4 +745,38 @@ class MiscBugsTest {
         Assertions.assertTrue(doc.getElementsByTagNameNS("TEXTPATH", Node.NAMESPACE_SVG).isEmpty());
     }
 
+    @Test
+    void checkAttributeApiCase() {
+        var source = new Element("div");
+        source.setAttributeNS(null, "CLASS", "x");
+        var attribute = source.getAttributeNodeNS(null, "CLASS");
+
+        source.removeAttributeNS(null, "CLASS");
+        var target = new Element("div");
+        target.setAttributeNode(attribute);
+
+        Assertions.assertEquals("CLASS", attribute.getName());
+        Assertions.assertEquals("CLASS", attribute.getLocalName());
+        Assertions.assertEquals("<div CLASS=\"x\"></div>", target.getOuterHTML());
+        //
+        var div = new Element("div");
+        div.setAttribute("class", "a");
+        div.getAttributes().put(new AttributeNode("CLASS", "b"));
+
+        Assertions.assertEquals(1, attributeCount(div.getAttributes()));
+        Assertions.assertEquals("b", div.getAttribute("class"));
+        Assertions.assertEquals("<div class=\"b\"></div>", div.getOuterHTML());
+
+        var other = new Element("div");
+        other.getAttributes().put(new AttributeNode("DATA-X", "1"));
+        Assertions.assertEquals("<div data-x=\"1\"></div>", other.getOuterHTML());
+    }
+
+    private static int attributeCount(Attributes attributes) {
+        int count = 0;
+        for (AttributeNode ignored : attributes) {
+            count++;
+        }
+        return count;
+    }
 }
