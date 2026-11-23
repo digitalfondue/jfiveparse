@@ -4,4 +4,11 @@ sealed interface SelectableElement<T> extends SelectableNode<T> permits Element,
     String getNamespaceURI();
     String getAttribute(String name);
     String getAttributeNS(String namespace, String localName);
+
+    Iterable<? extends SelectableAttribute> getAttributes();
+
+    interface SelectableAttribute {
+        String getLocalName();
+        String getValue();
+    }
 }

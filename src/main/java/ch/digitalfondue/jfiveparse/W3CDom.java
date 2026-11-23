@@ -15,6 +15,7 @@
  */
 package ch.digitalfondue.jfiveparse;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 
@@ -331,6 +332,24 @@ public final class W3CDom {
         }
     }
 
+    private static final class SelectableAttributeWrapper implements SelectableElement.SelectableAttribute {
+        private final Attr attr;
+
+        private SelectableAttributeWrapper(Attr attr) {
+            this.attr = attr;
+        }
+
+        @Override
+        public String getLocalName() {
+            return attr.getLocalName() != null ? attr.getLocalName() : attr.getNodeName();
+        }
+
+        @Override
+        public String getValue() {
+            return attr.getNodeValue();
+        }
+    }
+
     static final class SelectableElementWrapper extends SelectableNodeWrapper implements SelectableElement<org.w3c.dom.Node> {
 
         SelectableElementWrapper(org.w3c.dom.Element node) {
@@ -349,22 +368,22 @@ public final class W3CDom {
         }
 
         @Override
+        public List<? extends SelectableAttribute> getAttributes() {
+            var attrs = node.getAttributes();
+            var length = attrs.getLength();
+            var result = new ArrayList<SelectableAttribute>(length);
+            for (var i = 0; i < length; i++) {
+                var attr = attrs.item(i);
+                result.add(new SelectableAttributeWrapper((Attr) attr));
+            }
+            return result;
+        }
+
+        @Override
         public String getAttributeNS(String namespace, String localName) {
             var attrs = node.getAttributes();
-            if ("*".equals(namespace)) {
-                var l = attrs.getLength();
-                for (var i = 0; i < l; i++) {
-                    var item = attrs.item(i);
-                    var name = item.getLocalName() != null ? item.getLocalName() : item.getNodeName();
-                    if (Objects.equals(localName, name)) {
-                        return attrs.item(i).getNodeValue();
-                    }
-                }
-                return null;
-            } else {
-                var namedItem = attrs.getNamedItemNS(namespace, localName);
-                return namedItem != null ? namedItem.getNodeValue() : null;
-            }
+            var namedItem = attrs.getNamedItemNS(namespace, localName);
+            return namedItem != null ? namedItem.getNodeValue() : null;
         }
     }
 

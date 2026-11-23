@@ -536,22 +536,18 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
             var isHtml = Node.NAMESPACE_HTML.equals(elem.getNamespaceURI());
             var localName = isHtml ? Common.convertToAsciiLowerCase(name) : name;
             var resolvedNamespace = namespace == null ? null : aliases.getOrDefault(namespace, namespace);
-            String attrValue;
             if ("*".equals(resolvedNamespace)) {
-                attrValue = null;
-                if (elem instanceof Element e) {
-                    for (AttributeNode attr : e.getAttributes()) {
-                        if (Objects.equals(localName, attr.getLocalName())) {
-                            attrValue = attr.getValue();
-                            break;
+                for (var attr : elem.getAttributes()) {
+                    if (Objects.equals(localName, attr.getLocalName())) {
+                        String value = attr.getValue();
+                        if (value != null && attributeValueMatcher.test(value, elem)) {
+                            return true;
                         }
                     }
-                } else {
-                    attrValue = elem.getAttributeNS("*", localName);
                 }
-            } else {
-                attrValue = elem.getAttributeNS(resolvedNamespace, localName);
+                return false;
             }
+            var attrValue = elem.getAttributeNS(resolvedNamespace, localName);
             return attrValue != null && attributeValueMatcher.test(attrValue, elem);
         };
     }

@@ -17,7 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import java.util.Objects;
 
-public final class AttributeNode {
+public final class AttributeNode implements SelectableElement.SelectableAttribute {
 
     // qualified name: "xlink:href"
     String name;
@@ -106,6 +106,7 @@ public final class AttributeNode {
         return Objects.equals(getNamespace(), namespace) && Objects.equals(getLocalName(), localName);
     }
 
+    @Override
     public String getValue() {
         return value;
     }
@@ -130,6 +131,7 @@ public final class AttributeNode {
         return name;
     }
 
+    @Override
     public String getLocalName() {
         if (misc != null && misc.localName != null) {
             return misc.localName;

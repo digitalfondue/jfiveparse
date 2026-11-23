@@ -236,6 +236,7 @@ public final class Element extends Node implements SelectableElement<Node> {
         setInnerHtml(new Parser().parseFragment(this, html));
     }
 
+    @Override
     public Attributes getAttributes() {
         if (attributes == null) {
             attributes = new Attributes();
