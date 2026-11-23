@@ -291,6 +291,10 @@ final class Common {
         }
     }
 
+    static String nullToString(String n) {
+        return n == null ? "null" : n;
+    }
+
 
     // ----------------
 

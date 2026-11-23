@@ -34,7 +34,7 @@ public final class Text extends Node {
     }
 
     public Text(String data) {
-        this.data = data == null ? "null" : data;
+        this.data = Common.nullToString(data);;
     }
 
     @Override

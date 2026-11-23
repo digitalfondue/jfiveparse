@@ -24,7 +24,7 @@ public final class ProcessingInstruction extends Node {
 
     public ProcessingInstruction(String target, String data) {
         this.target = target;
-        this.data = data == null ? "null" : data;
+        this.data = Common.nullToString(data);
     }
 
     public String getTarget() {

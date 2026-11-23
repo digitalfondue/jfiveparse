@@ -511,7 +511,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * be returned in "tree order".
      */
     public List<Element> getElementsByTagName(String tagTame) {
-        var name = tagTame == null ? "null" : tagTame;
+        var name = Common.nullToString(tagTame);
         boolean all = "*".equals(name);
         String asciiLowerName = Common.convertToAsciiLowerCase(name);
         return getAllNodesMatchingAsStream(new NodeMatcher<>((n, base) -> {
@@ -531,7 +531,8 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * Get all the {@link Element} that match the given name and namespace. The
      * elements will be returned in "tree order".
      */
-    public List<Element> getElementsByTagNameNS(String name, String namespace) {
+    public List<Element> getElementsByTagNameNS(String tagName, String namespace) {
+        String name = Common.nullToString(tagName);
         String normalizedNamespace = Common.isEmpty(namespace) ? null : namespace;
         boolean allName = "*".equals(name);
         boolean allNS = "*".equals(normalizedNamespace);
@@ -548,6 +549,7 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * element found during the traversal will be returned.
      */
     public Element getElementById(String idValue) {
+        idValue = Common.nullToString(idValue);
         return getAllNodesMatchingAsStream(Selector.select().id(idValue).toMatcher(), true, this)
                 .findFirst().map(Element.class::cast).orElse(null);
     }

@@ -25,7 +25,7 @@ public final class Comment extends Node {
     private String data;
 
     public Comment(String data) {
-        this.data = data == null ? "null" : data;
+        this.data = Common.nullToString(data);
     }
 
     @Override

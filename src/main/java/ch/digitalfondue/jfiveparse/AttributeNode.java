@@ -41,7 +41,7 @@ public final class AttributeNode {
     }
 
     public AttributeNode(String name, String value) {
-        this.name = name;
+        this.name = Common.nullToString(name);
         this.value = value;
     }
 
@@ -80,13 +80,13 @@ public final class AttributeNode {
         misc().namespace = namespace;
         misc().hasNamespace = true;
         misc().namespaceAware  = true;
-        var separator = qualifiedName.indexOf(':');
+        var separator = name.indexOf(':');
         if (separator > 0) {
             if (namespace == null) {
                 throw new IllegalArgumentException("A prefix is not allowed when the namespace is null: " + qualifiedName);
             }
-            misc().prefix = qualifiedName.substring(0, separator);
-            misc().localName = qualifiedName.substring(separator + 1);
+            misc().prefix = name.substring(0, separator);
+            misc().localName = name.substring(separator + 1);
         }
 
     }
@@ -103,7 +103,7 @@ public final class AttributeNode {
     }
 
     boolean matches(String namespace, String localName) {
-        return ("*".equals(namespace) || Objects.equals(getNamespace(), namespace)) && Objects.equals(getLocalName(), localName);
+        return Objects.equals(getNamespace(), namespace) && Objects.equals(getLocalName(), localName);
     }
 
     public String getValue() {

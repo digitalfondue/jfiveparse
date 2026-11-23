@@ -842,4 +842,38 @@ class MiscBugsTest {
         Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector("   "));
         Assertions.assertThrows(ParserException.class, () -> JFiveParse.parse("<div></div>").getElementsByTagName("div").get(0).matches(""));
     }
+
+    @Test
+    void nullIdTagName() {
+        var doc = JFiveParse.parse("<div id=null></div><null></null>");
+        Assertions.assertNotNull(doc.getElementById(null));
+        Assertions.assertEquals(1, doc.getElementsByTagNameNS(null, "*").size());
+    }
+
+    @Test
+    void attributeNameNull() {
+        var div = new Element("div");
+        Assertions.assertDoesNotThrow(() -> div.setAttributeNode(new AttributeNode(null, "v")));
+        Assertions.assertEquals("<div null=\"v\"></div>", div.getOuterHTML());
+
+        var div2 = new Element("div");
+        Assertions.assertDoesNotThrow(() -> div2.setAttributeNode(new AttributeNode(null, "v", "urn:ns")));
+        Assertions.assertEquals("<div null=\"v\"></div>", div2.getOuterHTML());
+    }
+
+
+    @Test
+    void nameSpaceWildcardCheck() {
+        var svg = (Element) JFiveParse
+                .parseFragment("<svg><a xlink:href=v></a></svg>")
+                .get(0);
+        var a = svg.getFirstElementChild();
+
+        Assertions.assertNull(a.getAttributeNS("*", "href"));
+        Assertions.assertFalse(a.hasAttributeNS("*", "href"));
+
+        var copy = (Element) a.cloneNode(true);
+        copy.removeAttributeNS("*", "href");
+        Assertions.assertEquals("<a xlink:href=\"v\"></a>", copy.getOuterHTML());
+    }
 }
