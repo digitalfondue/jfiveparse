@@ -60,8 +60,8 @@ class AttributesTest {
     @Test
     void attributeNodeEqualsHashCodeContract() {
         // same namespace/localName/value but different prefix must have the same hashCode
-        AttributeNode a = new AttributeNode("x:foo", "v", "x", "urn:ns");
-        AttributeNode b = new AttributeNode("y:foo", "v", "y", "urn:ns");
+        AttributeNode a = new AttributeNode("x:foo", "v",  "urn:ns");
+        AttributeNode b = new AttributeNode("y:foo", "v",  "urn:ns");
         Assertions.assertEquals(a, b);
         Assertions.assertEquals(a.hashCode(), b.hashCode());
     }

@@ -76,40 +76,20 @@ public final class AttributeNode {
         }
     }
 
-    public AttributeNode(String name, String value, String prefix, String namespace) {
-        // TODO: handle name + prefix coherence, can be name="foo:name" and then pass prefix="plop"
-        //       change constructor to, String name, String value, String namespace
-        //       this is the document.createAttributeNS()
-        this(name, value);
-        String normalizedNamespace = normalizeNamespace(namespace);
-        if (Common.notEmpty(prefix)) {
-            if (normalizedNamespace == null) {
-                throw new IllegalArgumentException("A prefix is not allowed when the namespace is null: " + name);
-            }
-            misc().prefix = prefix;
-            if (name.startsWith(prefix + ":")) {
-                misc().localName = name.substring(prefix.length() + 1);
-            }
-        }
-
-        misc().namespace = normalizedNamespace;
-        misc().hasNamespace = true;
-    }
-
-    static AttributeNode createWithNamespace(String namespace, String qualifiedName, String value) {
+    public AttributeNode(String qualifiedName, String value, String namespace) {
+        this(qualifiedName, value);
         namespace = normalizeNamespace(namespace);
-        var attribute = new AttributeNode(qualifiedName, value);
-        attribute.misc().namespace = namespace;
-        attribute.misc().hasNamespace = true;
+        misc().namespace = namespace;
+        misc().hasNamespace = true;
         var separator = qualifiedName.indexOf(':');
         if (separator > 0) {
             if (namespace == null) {
                 throw new IllegalArgumentException("A prefix is not allowed when the namespace is null: " + qualifiedName);
             }
-            attribute.misc().prefix = qualifiedName.substring(0, separator);
-            attribute.misc().localName = qualifiedName.substring(separator + 1);
+            misc().prefix = qualifiedName.substring(0, separator);
+            misc().localName = qualifiedName.substring(separator + 1);
         }
-        return attribute;
+
     }
 
     private Misc misc() {

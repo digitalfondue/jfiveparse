@@ -203,7 +203,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     public void put(String namespace, String name, String value) {
-        var attribute = AttributeNode.createWithNamespace(namespace, name, value);
+        var attribute = new AttributeNode(name, value, namespace);
         var existing = get(attribute.getNamespace(), attribute.getLocalName());
         if (existing != null) {
             existing.setValue(attribute.getValue());

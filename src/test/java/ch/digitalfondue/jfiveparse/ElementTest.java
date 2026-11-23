@@ -302,7 +302,7 @@ class ElementTest {
     void setAttributeNodeDoesNotLowercaseNamespacedAttributes() {
         // browser: setAttributeNode keeps the case of namespaced attributes
         Element div = new Element("div");
-        div.setAttributeNode(AttributeNode.createWithNamespace("urn:ns", "CLASS", "x"));
+        div.setAttributeNode(new AttributeNode("CLASS", "x", "urn:ns"));
         assertEquals(Set.of("CLASS"), AttributesUtils.keySet(div.getAttributes()));
         assertEquals("x", div.getAttributeNS("urn:ns", "CLASS"));
         assertNull(div.getAttributeNS("urn:ns", "class"));
@@ -361,7 +361,9 @@ class ElementTest {
         Element div = new Element("div");
         assertThrows(IllegalArgumentException.class, () -> div.setAttributeNS(null, "P:FOO", "v"));
         assertThrows(IllegalArgumentException.class, () -> div.setAttributeNS("", "P:FOO", "v"));
-        assertThrows(IllegalArgumentException.class, () -> new AttributeNode("P:FOO", "v", "P", null));
+        assertThrows(IllegalArgumentException.class, () -> new AttributeNode("P:FOO", "v",  null));
+        assertThrows(IllegalArgumentException.class, () -> new AttributeNode("P:FOO", "v",  ""));
+
     }
 
     @Test
@@ -437,7 +439,7 @@ class ElementTest {
         div.setAttributeNS("urn:ns", "xlink:href", "old");
         div.setAttribute("b", "2");
 
-        var replacement = AttributeNode.createWithNamespace("urn:ns", "other:href", "new");
+        var replacement = new AttributeNode("other:href", "new", "urn:ns");
         var old = div.setAttributeNode(replacement);
 
         assertEquals("old", old.getValue());

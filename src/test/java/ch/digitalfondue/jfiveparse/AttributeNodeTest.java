@@ -49,7 +49,7 @@ class AttributeNodeTest {
         assertNull(originalCase.getNamespace());
         assertNull(originalCase.getPrefix());
 
-        AttributeNode foreign = AttributeNode.createWithNamespace(Node.NAMESPACE_XLINK, "xlink:href", "value");
+        AttributeNode foreign = new AttributeNode("xlink:href", "value", Node.NAMESPACE_XLINK);
         assertEquals("xlink:href", foreign.getName());
         assertEquals("href", foreign.getLocalName());
         assertEquals("xlink", foreign.getPrefix());
