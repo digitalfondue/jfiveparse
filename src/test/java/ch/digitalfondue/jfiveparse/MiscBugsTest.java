@@ -779,4 +779,12 @@ class MiscBugsTest {
         }
         return count;
     }
+
+    @Test
+    void emptyNameSpaceNormalization() {
+        var el = new Element("div", "");
+        Assertions.assertNull(el.getNamespaceURI());
+        Assertions.assertEquals(new Element("div", null).getNamespaceURI(), el.getNamespaceURI());
+    }
+
 }

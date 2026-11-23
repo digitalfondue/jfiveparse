@@ -62,6 +62,7 @@ public final class Element extends Node implements SelectableElement<Node> {
         if (Common.isEmpty(name)) {
             throw new IllegalArgumentException("Tag name ('" + name + "') is not valid.");
         }
+        nameSpace = Common.notEmpty(nameSpace) ? nameSpace : null;
         var lowerCased = Common.convertToAsciiLowerCase(name);
         this.nodeName = Node.NAMESPACE_HTML.equals(nameSpace) ? lowerCased : name;
         this.originalNodeName = name;
