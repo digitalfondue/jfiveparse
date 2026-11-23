@@ -221,7 +221,7 @@ public final class DOMTokenList implements Iterable<String> {
         if (others != null) {
             for (var o : others) {
                 var added = values.add(validateToken(o));
-                res = res && added;
+                res = res || added;
             }
         }
         updateAttribute(values);
