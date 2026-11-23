@@ -973,4 +973,15 @@ class MiscBugsTest {
         assertDoesNotThrow(() -> Selector.parseSelector("[a='']"));
         assertDoesNotThrow(() -> Selector.parseSelector("[a=\"\"]"));
     }
+
+    @Test
+    void attrNsWildcardValue() {
+        Element a = new Element("a", Node.NAMESPACE_SVG);
+        a.setAttribute("href", "first");
+        a.setAttributeNS(Node.NAMESPACE_XLINK, "xlink:href", "second");
+
+        assertTrue(a.matches("[*|href=\"second\"]"));
+        assertTrue(a.matches("[*|href]"));
+        assertFalse(a.matches("[*|href=\"missing\"]"));
+    }
 }

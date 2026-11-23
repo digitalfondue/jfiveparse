@@ -428,7 +428,7 @@ public final class Element extends Node implements SelectableElement<Node> {
      * Get the html content of the child of this node.
      */
     public String getInnerHTML() {
-        return Common.isVoidTag(nodeNameID) && NAMESPACE_HTML_ID == namespaceID ? "" : getInnerHTML(Option.EMPTY_OPTIONS);
+        return getInnerHTML(Option.EMPTY_OPTIONS);
     }
 
     /**
@@ -440,6 +440,9 @@ public final class Element extends Node implements SelectableElement<Node> {
      * @return
      */
     public String getInnerHTML(Set<Option> options) {
+        if (Common.isVoidTag(nodeNameID) && NAMESPACE_HTML_ID == namespaceID) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         traverse(new HtmlSerializer(sb, options));
         return sb.toString();
