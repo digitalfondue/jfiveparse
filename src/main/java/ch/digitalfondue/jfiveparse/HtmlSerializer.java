@@ -116,8 +116,9 @@ public class HtmlSerializer implements NodesVisitor {
                         appendable.append(' ');
                         serializeAttributeName(appendable, attr);//
 
+                        boolean emptyString = attr.getValue() != null && attr.getValue().isEmpty();
                         if ((hideEmptyAttributeValue || (printOriginalAttributeQuote && attr.getAttributeQuoteType() == Tokenizer.ATTRIBUTE_VALUE_UNQUOTED_STATE))
-                                && (!Common.notEmpty(attr.getValue()))) {
+                                && emptyString) {
                             continue;
                         }
                         String quoteChars = quoteCharacters(attr);

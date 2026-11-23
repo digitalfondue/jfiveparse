@@ -1,7 +1,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.w3c.dom.Comment;
@@ -889,16 +888,59 @@ class MiscBugsTest {
 
     @Test
     void nullAsParamGetElemAttr() {
-        Document doc = JFiveParse.parse(
-                "<null id=x></null><div id=y null='v'></div>");
+        Document doc = JFiveParse.parse("<null id=x></null><div id=y null='v'></div>");
 
-        assertEquals(1, doc.getElementsByTagNameNS(
-                "null", Node.NAMESPACE_HTML).size());
-        assertEquals(1, doc.getElementsByTagNameNS(
-                null, Node.NAMESPACE_HTML).size());
+        assertEquals(1, doc.getElementsByTagNameNS("null", Node.NAMESPACE_HTML).size());
+        assertEquals(1, doc.getElementsByTagNameNS(null, Node.NAMESPACE_HTML).size());
 
         Element y = doc.getElementById("y");
         assertEquals("v", y.getAttributeNS(null, null));
         assertTrue(y.hasAttributeNS(null, null));
+    }
+
+    @Test
+    void nullValueIsNotAnEmptyString() {
+        Element el = new Element("div");
+        el.setAttribute("data-x", null);
+
+        String html = el.getOuterHTML(Set.of(Option.HIDE_EMPTY_ATTRIBUTE_VALUE));
+        assertEquals("<div data-x=\"null\"></div>", html);
+
+        Element reparsed = JFiveParse.parse(html).getElementsByTagName("div").get(0);
+        assertEquals("null", reparsed.getAttribute("data-x"));
+    }
+
+    @Test
+    void ofType() {
+        Element div = new Element("div");
+        Element svgA = new Element("a", Node.NAMESPACE_SVG);
+        Element htmlA = new Element("a");
+        Element htmlA2 = new Element("a");
+
+        div.appendChild(svgA);
+        div.appendChild(htmlA);
+        div.appendChild(htmlA2);
+
+        assertTrue(htmlA.matches(":first-of-type"));
+        assertTrue(htmlA.matches(":nth-of-type(1)"));
+        assertFalse(htmlA.matches(":only-of-type"));
+        assertTrue(htmlA2.matches(":nth-of-type(2)"));
+        assertTrue(svgA.matches(":only-of-type"));
+    }
+
+    @Test
+    void lastOfType() {
+        Element div = new Element("div");
+        Element htmlA = new Element("a");
+        Element svgA = new Element("a", Node.NAMESPACE_SVG);
+        Element htmlA2 = new Element("a");
+
+        div.appendChild(htmlA);
+        div.appendChild(svgA);
+        div.appendChild(htmlA2);
+
+        assertFalse(htmlA.matches(":last-of-type"));
+        assertTrue(svgA.matches(":last-of-type"));
+        assertTrue(htmlA2.matches(":last-of-type"));
     }
 }

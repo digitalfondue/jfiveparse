@@ -403,9 +403,18 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
         return false;
     }
 
+    private static <T> boolean isSameType(SelectableNode<T> a, SelectableNode<T> b) {
+        if (!a.getNodeName().equals(b.getNodeName())) {
+            return false;
+        }
+        if (a instanceof SelectableElement<?> ae && b instanceof SelectableElement<?> be) {
+            return Objects.equals(ae.getNamespaceURI(), be.getNamespaceURI());
+        }
+        return false;
+    }
+
     private boolean isAtNthOfType(SelectableNode<T> node, IntPredicate idxPredicate, boolean reversedOrder) {
         if (node.getParentNode() != null) {
-            var nodeName = node.getNodeName();
             var c = wrapper.apply(node.getParentNode()).getChildNodes();
             var childNodes = c;
             if (reversedOrder) {
@@ -418,8 +427,7 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
                     elemIdx++;
                     break;
                 }
-                var wrappedChild = wrapper.apply(child);
-                if (isElement(wrappedChild) && nodeName.equals(wrappedChild.getNodeName())) {
+                if (isSameType(node, wrapper.apply(child))) {
                     elemIdx++;
                 }
             }
@@ -430,12 +438,10 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
     private boolean isLastOfType(SelectableNode<T> node, SelectableNode<T> base) {
         if (node.getParentNode() != null) {
-            var nodeName = node.getNodeName();
             var childNodes = wrapper.apply(node.getParentNode()).getChildNodes();
             for (int i = childNodes.size() - 1; i >= 0; i--) {
                 var e = childNodes.get(i);
-                var we = wrapper.apply(e);
-                if (isElement(we) && we.getNodeName().equals(nodeName)) {
+                if (isSameType(node, wrapper.apply(e))) {
                     return node.isSameNode(e);
                 }
             }
@@ -445,11 +451,9 @@ abstract class BaseSelector<T, R extends BaseSelector<T, R>> {
 
     private boolean isFirstOfType(SelectableNode<T> node, SelectableNode<T> base) {
         if (node.getParentNode() != null) {
-            var nodeName = node.getNodeName();
             var childNodes = wrapper.apply(node.getParentNode()).getChildNodes();
             for (var e : childNodes) {
-                var we = wrapper.apply(e);
-                if (isElement(we) && we.getNodeName().equals(nodeName)) {
+                if (isSameType(node, wrapper.apply(e))) {
                     return node.isSameNode(e);
                 }
             }
