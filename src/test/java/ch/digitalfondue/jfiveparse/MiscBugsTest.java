@@ -787,4 +787,16 @@ class MiscBugsTest {
         Assertions.assertEquals(new Element("div", null).getNamespaceURI(), el.getNamespaceURI());
     }
 
+    @Test
+    void nullNameLookupsMustNotDependOnAttributePresence() {
+        var doc = JFiveParse.parse("<div id=x></div>");
+        var div = doc.getElementById("x");
+
+        Assertions.assertTrue(doc.getElementsByTagName(null).isEmpty());
+        Assertions.assertNull(div.getAttribute(null));
+        Assertions.assertFalse(div.hasAttribute(null));
+        Assertions.assertNull(div.getAttributeNode(null));
+        Assertions.assertDoesNotThrow(() -> div.removeAttribute(null));
+    }
+
 }

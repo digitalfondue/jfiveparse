@@ -510,7 +510,8 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
      * Get all the {@link Element} that match the given name. The elements will
      * be returned in "tree order".
      */
-    public List<Element> getElementsByTagName(String name) {
+    public List<Element> getElementsByTagName(String tagTame) {
+        var name = tagTame == null ? "null" : tagTame;
         boolean all = "*".equals(name);
         String asciiLowerName = Common.convertToAsciiLowerCase(name);
         return getAllNodesMatchingAsStream(new NodeMatcher<>((n, base) -> {

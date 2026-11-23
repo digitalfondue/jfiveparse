@@ -81,6 +81,7 @@ public final class Attributes implements Iterable<AttributeNode> {
     }
 
     private String nameKey(String key) {
+        key = key == null ? "null" : key;
         return html ? Common.convertToAsciiLowerCase(key) : key;
     }
 
