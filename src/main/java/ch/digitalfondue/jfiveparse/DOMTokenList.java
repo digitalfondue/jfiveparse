@@ -43,10 +43,10 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     static class ValuesIterator implements Iterator<String> {
-        final String value;
-        final int size;
-        LinkedHashSet<String> current;
-        int currentIndex = 0;
+        private final String value;
+        private final int size;
+        private LinkedHashSet<String> current;
+        private int currentIndex = 0;
 
         ValuesIterator(String value) {
             this.value = value;
