@@ -48,6 +48,9 @@ final class CSS {
         try {
             List<List<CssSelector>> subselects = new ArrayList<>();
             int endIndex = new ParseSelector(subselects, selector, 0).parse();
+            if (subselects.isEmpty()) {
+                throw new ParserException("Empty selector: " + selector);
+            }
             if (endIndex < selector.length()) {
                 throw new ParserException("Unmatched selector: " + selector.substring(endIndex));
             }

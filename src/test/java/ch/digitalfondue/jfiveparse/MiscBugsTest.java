@@ -834,4 +834,12 @@ class MiscBugsTest {
         out = JFiveParse.serialize(d, Set.of(Option.DONT_TRANSFORM_ENTITIES, Option.PRINT_ORIGINAL_ATTRIBUTE_QUOTE));
         Assertions.assertEquals("<html><head></head><body><div test='\" &#39; \"' test2=\"' ' &quot;\"></div></body></html>", out);
     }
+
+
+    @Test
+    void emptySelectorThrows() {
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector(""));
+        Assertions.assertThrows(ParserException.class, () -> Selector.parseSelector("   "));
+        Assertions.assertThrows(ParserException.class, () -> JFiveParse.parse("<div></div>").getElementsByTagName("div").get(0).matches(""));
+    }
 }

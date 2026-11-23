@@ -22,10 +22,6 @@ class CSSSelectorTest {
     // see https://github.com/fb55/css-select/blob/master/test/sizzle.ts#L15
     @Test
     void sizzleElementTest() {
-        //
-        Assertions.assertTrue(sizzle.getAllNodesMatching(Selector.parseSelector("")).isEmpty());
-        //
-
         sizzleCheckMatcherIds("html", "html");
         sizzleCheckMatcherIds("body", "body");
 

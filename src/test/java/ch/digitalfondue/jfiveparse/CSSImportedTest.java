@@ -1,6 +1,7 @@
 package ch.digitalfondue.jfiveparse;
 
 import com.google.gson.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -25,8 +26,13 @@ class CSSImportedTest {
         if (selector.equals(">.a>#booshTest")) {
             return;
         }
-        var parsed = CSS.parseSelector(selector);
-        CssTestAssert.assertEquals(expected, parsed);
+        if (expected.isEmpty()) {
+            // fail when empty
+            Assertions.assertThrows(ParserException.class, () -> CSS.parseSelector(selector));
+        } else {
+            var parsed = CSS.parseSelector(selector);
+            CssTestAssert.assertEquals(expected, parsed);
+        }
     }
 
     public static List<Object[]> data() throws IOException {
