@@ -129,4 +129,15 @@ class DOMTokenListTest {
         assertEquals("b", it.next());
         assertFalse(it.hasNext());
     }
+
+    @Test
+    void removeNonExistingTokenInNonExistingAttributeDontCreateEmptyAttr() {
+        var el = new Element("div");
+        el.getClassList().remove("x");
+        Assertions.assertFalse(el.hasAttribute("class"));
+
+        var el2 = new Element("div");
+        assertFalse(el2.getClassList().toggle("x", false));
+        assertFalse(el2.hasAttribute("class"));
+    }
 }

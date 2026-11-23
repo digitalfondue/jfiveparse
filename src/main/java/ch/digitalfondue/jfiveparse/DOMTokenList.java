@@ -166,6 +166,9 @@ public final class DOMTokenList implements Iterable<String> {
     }
 
     private void updateAttribute(LinkedHashSet<String> updated) {
+        if (updated.isEmpty() && !element.hasAttribute(attrName)) {
+            return;
+        }
         element.setAttribute(attrName, String.join(" ", updated));
     }
 
