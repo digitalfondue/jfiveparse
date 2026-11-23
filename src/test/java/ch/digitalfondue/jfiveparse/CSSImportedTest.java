@@ -22,8 +22,10 @@ class CSSImportedTest {
     @MethodSource("data")
     @ParameterizedTest(name = "selector: \"{0}\"")
     public void check(String selector, List<List<CSS.CssSelector>> expected) {
-        // we ignore this test, as we reject a relative combinator not inside a :has
-        if (selector.equals(">.a>#booshTest")) {
+        // we ignore the following
+        // - we reject a relative combinator not inside a :has & co
+        // - we reject empty value attribute selector
+        if (selector.equals(">.a>#booshTest") || selector.equals("[test=]")) {
             return;
         }
         if (expected.isEmpty()) {

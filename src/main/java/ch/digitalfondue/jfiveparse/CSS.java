@@ -454,6 +454,10 @@ final class CSS {
                             stripWhitespace(1);
                         }
 
+                        if (action != ATTR_ACTION_EXISTS && charAtIsEqual(selectorIndex, ']')) {
+                            throw new ParserException(selector + " is not a valid selector");
+                        }
+
                         String value = "";
                         int ignoreCase = IGNORE_CASE_UNKNOWN;
 

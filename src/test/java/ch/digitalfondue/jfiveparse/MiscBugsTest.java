@@ -959,4 +959,18 @@ class MiscBugsTest {
         assertEquals("", br.getInnerHTML());
         assertEquals("<br>", br.getOuterHTML());
     }
+
+    @Test
+    void selectorRejectEmptyAttr() {
+        assertThrows(ParserException.class, () -> Selector.parseSelector("[a=]"));
+        assertThrows(ParserException.class, () -> Selector.parseSelector("[a= ]"));
+        assertThrows(ParserException.class, () -> Selector.parseSelector("[a^=]"));
+        assertThrows(ParserException.class, () -> Selector.parseSelector("[a$=]"));
+        assertThrows(ParserException.class, () -> Selector.parseSelector("[a*=]"));
+        assertThrows(ParserException.class, () -> Selector.parseSelector("[a~=]"));
+        assertThrows(ParserException.class, () -> Selector.parseSelector("[a|=]"));
+
+        assertDoesNotThrow(() -> Selector.parseSelector("[a='']"));
+        assertDoesNotThrow(() -> Selector.parseSelector("[a=\"\"]"));
+    }
 }
