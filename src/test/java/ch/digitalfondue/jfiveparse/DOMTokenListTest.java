@@ -17,6 +17,7 @@ package ch.digitalfondue.jfiveparse;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.NoSuchElementException;
 
@@ -77,11 +78,15 @@ class DOMTokenListTest {
         var tokenList = classListFor("  foo       bar    baz     ");
         var it = tokenList.iterator();
         Assertions.assertTrue(it.hasNext());
+        Assertions.assertTrue(it.hasNext());
         Assertions.assertEquals("foo", it.next());
+        Assertions.assertTrue(it.hasNext());
         Assertions.assertTrue(it.hasNext());
         Assertions.assertEquals("bar", it.next());
         Assertions.assertTrue(it.hasNext());
+        Assertions.assertTrue(it.hasNext());
         Assertions.assertEquals("baz", it.next());
+        Assertions.assertFalse(it.hasNext());
         Assertions.assertFalse(it.hasNext());
         Assertions.assertThrows(NoSuchElementException.class, it::next);
     }
@@ -112,5 +117,16 @@ class DOMTokenListTest {
         el.setAttribute("class", "null foo");
 
         assertTrue(el.getClassList().contains(null));
+    }
+
+    @Timeout(value = 2, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+    @Test
+    void checkNextOnlyCall() {
+        var el = new Element("div");
+        el.setAttribute("class", "a a b");
+        var it = el.getClassList().iterator();
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
+        assertFalse(it.hasNext());
     }
 }

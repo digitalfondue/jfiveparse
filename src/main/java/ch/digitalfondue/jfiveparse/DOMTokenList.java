@@ -95,11 +95,11 @@ public final class DOMTokenList implements Iterable<String> {
                 if (current == null) {
                     current = new LinkedHashSet<>();
                 }
-                if (!current.contains(next)) {
-                    current.add(next);
+                if (current.add(next)) {
                     currentIndex = currentIndex + next.length();
                     return next;
                 }
+                currentIndex = currentIndex + next.length();
                 next = nextToken();
             }
         }

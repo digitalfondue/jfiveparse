@@ -745,5 +745,4 @@ class MiscBugsTest {
         Assertions.assertTrue(doc.getElementsByTagNameNS("TEXTPATH", Node.NAMESPACE_SVG).isEmpty());
     }
 
-
 }
