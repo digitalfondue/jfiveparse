@@ -137,15 +137,6 @@ public class HtmlSerializer implements NodesVisitor {
                 if (skipEndTag(e)) {
                     skipDepth = 1; // skip child of a void element
                 }
-                if ((Common.isHtmlNS(e, Common.ELEMENT_PRE_ID) || Common.isHtmlNS(e, Common.ELEMENT_TEXTAREA_ID) || Common.isHtmlNS(e, Common.ELEMENT_LISTING_ID)) && //
-                        e.hasChildNodes() && //
-                        e.getFirstChild() instanceof Text textNode) {
-                    String text = textNode.getData();
-                    if (!text.isEmpty() && text.charAt(0) == Characters.LF) {
-                        appendable.append(Characters.LF);
-                    }
-                }
-
             } else if (node instanceof Text t) {
                 // TODO: handle the case when the nodes are created with scripting disabled
                 Node parent = node.getParentNode();

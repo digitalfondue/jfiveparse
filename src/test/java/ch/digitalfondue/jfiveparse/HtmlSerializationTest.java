@@ -132,4 +132,19 @@ class HtmlSerializationTest {
         List<Node> fragment2 = JFiveParse.parseFragment(new StringReader("<p><span>Hello world</span></p>"));
         assertEquals("<p><span>Hello world</span></p>", JFiveParse.serialize(fragment2.get(0)));
     }
+
+    // this spec change was not tracked ^^'
+    // we don't need to add the double \n back
+    @Test
+    void alignNoMoreExtraLF() {
+
+        var pre = new Element("pre");
+        pre.appendChild(new Text("\nfoo"));
+        assertEquals("<pre>\nfoo</pre>", JFiveParse.serialize(pre));
+        assertEquals("<pre>\nfoo</pre>", pre.getOuterHTML());
+        assertEquals("\nfoo", pre.getInnerHTML());
+
+        var doc = JFiveParse.parse("<pre>\n\nfoo</pre>");
+        assertEquals("<html><head></head><body><pre>\nfoo</pre></body></html>", JFiveParse.serialize(doc));
+    }
 }
