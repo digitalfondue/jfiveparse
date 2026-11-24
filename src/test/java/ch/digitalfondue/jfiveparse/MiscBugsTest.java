@@ -1011,4 +1011,23 @@ class MiscBugsTest {
         assertEquals(p.getAttribute("class"), p.getClassName());
         assertEquals("  a   b  a ", p.getClassName());
     }
+
+    @Test
+    void checkVoidSerialization() {
+        Element br = new Element("br");
+        br.appendChild(new Text("x"));
+        br.appendChild(new Element("i"));
+        // same as chrome
+        assertEquals("", br.getInnerHTML());
+        assertEquals("x", br.getTextContent());
+        assertEquals("<br>", br.getOuterHTML());
+    }
+
+    @Test
+    void attributeCheckCoherenceNull() {
+        var div = new Element("div");
+        div.setAttribute("a", null);
+        assertTrue(div.hasAttribute("a"));
+        assertTrue(div.matches("[a]"));
+    }
 }

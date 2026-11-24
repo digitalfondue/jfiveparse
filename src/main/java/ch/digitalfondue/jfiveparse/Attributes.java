@@ -201,6 +201,7 @@ public final class Attributes implements Iterable<AttributeNode> {
 
     public void put(String key, String value) {
         key = nameKey(key);
+        value = Common.nullToString(value);
         var existing = get(key);
         if (existing != null) {
             existing.setValue(value);
