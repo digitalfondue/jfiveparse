@@ -16,7 +16,6 @@
 package ch.digitalfondue.jfiveparse;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.io.Writer;
 import java.util.Set;
 
@@ -182,7 +181,7 @@ public class HtmlSerializer implements NodesVisitor {
                 appendable.append('>');
             }
         } catch (IOException ioe) {
-            throw new SerializationException(ioe);
+            throw new RuntimeException(ioe);
         }
     }
 
@@ -205,19 +204,8 @@ public class HtmlSerializer implements NodesVisitor {
                 }
             }
         } catch (IOException ioe) {
-            throw new SerializationException(ioe);
+            throw new RuntimeException(ioe);
         }
-    }
-
-    public static class SerializationException extends RuntimeException {
-
-        @Serial
-        private static final long serialVersionUID = -2182908125163112627L;
-
-        public SerializationException(Throwable t) {
-            super(t);
-        }
-
     }
 
     public static void serialize(Node node, Writer writer) throws IOException {
@@ -225,7 +213,15 @@ public class HtmlSerializer implements NodesVisitor {
     }
 
     public static void serialize(Node node, Set<Option> options, Writer writer) throws IOException {
-        node.traverseWithCurrentNode(new HtmlSerializer(writer, options));
+        try {
+            node.traverseWithCurrentNode(new HtmlSerializer(writer, options));
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof IOException ioe) {
+                throw ioe;
+            } else {
+                throw e;
+            }
+        }
         writer.flush();
     }
 
