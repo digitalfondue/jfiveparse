@@ -998,4 +998,10 @@ class MiscBugsTest {
         assertFalse(div.hasAttributeNS(null, null));
         assertNull(div.getAttributeNS(null, null));
     }
+
+    @Test
+    void svgStartTagReconstructsActiveFormattingElements() {
+        var d = JFiveParse.parse("<html><body><li><b>x</li><svg><circle/></svg></body></html>");
+        assertEquals("<li><b>x</b></li><b><svg><circle></circle></svg></b>", d.getBody().getInnerHTML());
+    }
 }

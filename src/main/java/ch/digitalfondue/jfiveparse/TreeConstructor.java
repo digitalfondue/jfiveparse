@@ -2519,6 +2519,7 @@ class TreeConstructor {
             }
             case ELEMENT_SVG_ID: {
                 // startSvg(treeConstructor);
+                treeConstructor.activeFormattingElements.reconstruct();
                 Attributes attrs = treeConstructor.getAttributes();
                 Common.adjustSVGAttributes(attrs);
                 Common.adjustForeignAttributes(attrs);
