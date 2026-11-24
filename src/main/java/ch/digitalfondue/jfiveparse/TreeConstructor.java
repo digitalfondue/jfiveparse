@@ -1479,11 +1479,11 @@ class TreeConstructor {
         }
         var publicId = documentType.getPublicId();
         if (publicId != null) {
-            publicId = publicId.toLowerCase(Locale.ROOT);
+            publicId = Common.convertToAsciiLowerCase(publicId);
         }
         var systemId = documentType.getSystemId();
         if (systemId != null) {
-            systemId = systemId.toLowerCase(Locale.ROOT);
+            systemId = Common.convertToAsciiLowerCase(systemId);
         }
         if ("html".equals(publicId) ||
                 "-//w3o//dtd w3 html strict 3.0//en//".equals(publicId) ||

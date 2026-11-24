@@ -1030,4 +1030,10 @@ class MiscBugsTest {
         assertTrue(div.hasAttribute("a"));
         assertTrue(div.matches("[a]"));
     }
+
+    @Test
+    void checkDoctypeNameASCIILowerCase() {
+        var doc = JFiveParse.parse("<!DOCTYPE ÀBc><div>");
+        Assertions.assertEquals("Àbc", doc.getDoctype().getName());
+    }
 }

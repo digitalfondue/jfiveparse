@@ -524,8 +524,7 @@ final class Tokenizer {
 
     void emitDoctypeToken(StringBuilder doctypeName, StringBuilder doctypePublicId, StringBuilder doctypeSystemId) {
         if (doctypeName != null) {
-            // FIXME to check, in the tests the name is always lowercase
-            doctypeName = new StringBuilder(doctypeName.toString().toLowerCase(Locale.ROOT));
+            doctypeName = new StringBuilder(Common.convertToAsciiLowerCase(doctypeName.toString()));
         }
         tokenHandler.emitDoctypeToken(doctypeName, doctypePublicId, doctypeSystemId, !doctypeForceQuirksFlag);
     }
