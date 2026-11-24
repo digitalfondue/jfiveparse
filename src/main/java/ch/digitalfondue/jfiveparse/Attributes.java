@@ -244,6 +244,7 @@ public final class Attributes implements Iterable<AttributeNode> {
      */
     public void remove(String namespace, String localName) {
         namespace = AttributeNode.normalizeNamespace(namespace);
+        localName = Common.nullToString(localName);
         if (attributes instanceof AttributeNode single) {
             if (single.matches(namespace, localName)) {
                 attributes = null;

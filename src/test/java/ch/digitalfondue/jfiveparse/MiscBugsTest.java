@@ -984,4 +984,18 @@ class MiscBugsTest {
         assertTrue(a.matches("[*|href]"));
         assertFalse(a.matches("[*|href=\"missing\"]"));
     }
+
+    @Test
+    void removeAttrNsNull() {
+        Element div = new Element("div");
+        div.setAttributeNS(null, null, "v");
+
+        assertTrue(div.hasAttributeNS(null, null));
+        assertEquals("v", div.getAttributeNS(null, null));
+
+        div.removeAttributeNS(null, null);
+
+        assertFalse(div.hasAttributeNS(null, null));
+        assertNull(div.getAttributeNS(null, null));
+    }
 }
