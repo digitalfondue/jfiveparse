@@ -187,7 +187,7 @@ class NodeTest {
 
         Document doc2 = parser.parse("<div id=myid class=' my class    \n abc '></div>");
         Element e2 = doc2.getElementById("myid");
-        assertEquals("my class abc", e2.getClassName());
+        assertEquals(" my class    \n abc ", e2.getClassName());
         assertFalse(e2.getClassList().isEmpty());
         assertEquals(Arrays.asList("my", "class", "abc"), asList(e2.getClassList()));
     }

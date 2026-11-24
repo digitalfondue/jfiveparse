@@ -327,10 +327,11 @@ public final class Element extends Node implements SelectableElement<Node> {
     }
 
     /**
-     * Get a space separated list of class names.
+     * Get the value from the attribute class (or empty string if not present).
      */
     public String getClassName() {
-        return String.join(" ", getClassList());
+        var res = getAttribute("class");
+        return res == null ? "" : res;
     }
 
     /**

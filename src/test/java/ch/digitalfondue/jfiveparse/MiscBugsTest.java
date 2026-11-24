@@ -1004,4 +1004,11 @@ class MiscBugsTest {
         var d = JFiveParse.parse("<html><body><li><b>x</li><svg><circle/></svg></body></html>");
         assertEquals("<li><b>x</b></li><b><svg><circle></circle></svg></b>", d.getBody().getInnerHTML());
     }
+
+    @Test
+    void getClassNameAsItIs() {
+        var p = JFiveParse.parse("<p id='p' class='  a   b  a '></p>").getElementById("p");
+        assertEquals(p.getAttribute("class"), p.getClassName());
+        assertEquals("  a   b  a ", p.getClassName());
+    }
 }
