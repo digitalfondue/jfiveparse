@@ -575,9 +575,9 @@ class MiscBugsTest {
     void elementByTagNameAndNS() {
         Document doc = JFiveParse.parse("<div id=div><svg><rect id=r></rect></svg></div>");
 
-        assertEquals(List.of(doc.getElementById("r")), doc.getElementsByTagNameNS("rect", "*"));
+        assertEquals(List.of(doc.getElementById("r")), doc.getElementsByTagNameNS("*", "rect"));
         assertEquals(doc.getAllNodesMatching(Selector.parseSelector("*")) , doc.getElementsByTagNameNS("*", "*"));
-        assertEquals(List.of(), doc.getElementsByTagNameNS("div", null));
+        assertEquals(List.of(), doc.getElementsByTagNameNS(null, "div"));
     }
 
     @Test
@@ -737,12 +737,12 @@ class MiscBugsTest {
         Assertions.assertTrue(doc.getElementsByTagName("TEXTPATH").isEmpty());
 
 
-        assertEquals(1, doc.getElementsByTagNameNS("div", Node.NAMESPACE_HTML).size());
-        Assertions.assertTrue(doc.getElementsByTagNameNS("DIV", Node.NAMESPACE_HTML).isEmpty());
+        assertEquals(1, doc.getElementsByTagNameNS(Node.NAMESPACE_HTML, "div").size());
+        Assertions.assertTrue(doc.getElementsByTagNameNS(Node.NAMESPACE_HTML, "DIV").isEmpty());
 
-        assertEquals(1, doc.getElementsByTagNameNS("linearGradient", Node.NAMESPACE_SVG).size());
-        Assertions.assertTrue(doc.getElementsByTagNameNS("lineargradient", Node.NAMESPACE_SVG).isEmpty());
-        Assertions.assertTrue(doc.getElementsByTagNameNS("TEXTPATH", Node.NAMESPACE_SVG).isEmpty());
+        assertEquals(1, doc.getElementsByTagNameNS(Node.NAMESPACE_SVG, "linearGradient").size());
+        Assertions.assertTrue(doc.getElementsByTagNameNS(Node.NAMESPACE_SVG, "lineargradient").isEmpty());
+        Assertions.assertTrue(doc.getElementsByTagNameNS(Node.NAMESPACE_SVG, "TEXTPATH").isEmpty());
     }
 
     @Test
@@ -848,7 +848,7 @@ class MiscBugsTest {
     void nullIdTagName() {
         var doc = JFiveParse.parse("<div id=null></div><null></null>");
         assertNotNull(doc.getElementById(null));
-        assertEquals(1, doc.getElementsByTagNameNS(null, "*").size());
+        assertEquals(1, doc.getElementsByTagNameNS("*", null).size());
     }
 
     @Test
@@ -890,8 +890,8 @@ class MiscBugsTest {
     void nullAsParamGetElemAttr() {
         Document doc = JFiveParse.parse("<null id=x></null><div id=y null='v'></div>");
 
-        assertEquals(1, doc.getElementsByTagNameNS("null", Node.NAMESPACE_HTML).size());
-        assertEquals(1, doc.getElementsByTagNameNS(null, Node.NAMESPACE_HTML).size());
+        assertEquals(1, doc.getElementsByTagNameNS(Node.NAMESPACE_HTML, "null").size());
+        assertEquals(1, doc.getElementsByTagNameNS(Node.NAMESPACE_HTML, null).size());
 
         Element y = doc.getElementById("y");
         assertEquals("v", y.getAttributeNS(null, null));

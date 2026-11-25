@@ -100,11 +100,11 @@ class NodeTest {
         assertEquals(2, doc.getElementsByTagName("div").size());
         assertEquals(1, doc.getElementsByTagName("span").size());
 
-        assertEquals(2, doc.getElementsByTagNameNS("div", Node.NAMESPACE_HTML).size());
-        assertEquals(1, doc.getElementsByTagNameNS("span", Node.NAMESPACE_HTML).size());
+        assertEquals(2, doc.getElementsByTagNameNS(Node.NAMESPACE_HTML, "div").size());
+        assertEquals(1, doc.getElementsByTagNameNS(Node.NAMESPACE_HTML, "span").size());
 
-        assertEquals(0, doc.getElementsByTagNameNS("div", Node.NAMESPACE_SVG).size());
-        assertEquals(0, doc.getElementsByTagNameNS("span", Node.NAMESPACE_SVG).size());
+        assertEquals(0, doc.getElementsByTagNameNS(Node.NAMESPACE_SVG, "div").size());
+        assertEquals(0, doc.getElementsByTagNameNS(Node.NAMESPACE_SVG, "span").size());
     }
 
     @Test

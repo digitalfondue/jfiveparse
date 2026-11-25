@@ -528,10 +528,10 @@ public sealed abstract class Node implements SelectableNode<Node> permits Commen
     }
 
     /**
-     * Get all the {@link Element} that match the given name and namespace. The
+     * Get all the {@link Element} that match the given namespace and name. The
      * elements will be returned in "tree order".
      */
-    public List<Element> getElementsByTagNameNS(String tagName, String namespace) {
+    public List<Element> getElementsByTagNameNS(String namespace, String tagName) {
         String name = Common.nullToString(tagName);
         String normalizedNamespace = Common.isEmpty(namespace) ? null : namespace;
         boolean allName = "*".equals(name);
