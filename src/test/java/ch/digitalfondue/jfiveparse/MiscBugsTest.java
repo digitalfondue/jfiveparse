@@ -1036,4 +1036,17 @@ class MiscBugsTest {
         var doc = JFiveParse.parse("<!DOCTYPE ÀBc><div>");
         Assertions.assertEquals("Àbc", doc.getDoctype().getName());
     }
+
+    @Test
+    void checkNullDoctypeIsEmptyString() {
+        var dt = new DocumentType(null, null, null);
+        Assertions.assertEquals("", dt.getNodeName());
+        Assertions.assertEquals("", dt.getName());
+    }
+
+    @Test
+    void documentTypeNodeNameMustBeItsName() {
+        var doc = JFiveParse.parse("<!DOCTYPE ÀBc><div>");
+        Assertions.assertEquals("Àbc", doc.getDoctype().getNodeName());
+    }
 }

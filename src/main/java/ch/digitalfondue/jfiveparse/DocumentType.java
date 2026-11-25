@@ -27,7 +27,7 @@ public final class DocumentType extends Node {
     private final String systemId;
 
     public DocumentType(String name, String publicId, String systemId) {
-        this.name = name;
+        this.name = name == null ? "" : name;
         this.publicId = publicId;
         this.systemId = systemId;
     }
@@ -58,12 +58,9 @@ public final class DocumentType extends Node {
     public void setTextContent(String text) {
     }
 
-    /**
-     * Return the {@link String} "#doctype".
-     */
     @Override
     public String getNodeName() {
-        return "#doctype";
+        return name;
     }
 
 	@Override
