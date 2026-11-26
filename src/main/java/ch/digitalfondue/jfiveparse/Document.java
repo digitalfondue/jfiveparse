@@ -47,9 +47,11 @@ public final class Document extends Node {
 
     public void setDoctype(DocumentType doctype) {
         var currentDoctype = getDoctype();
-        if (currentDoctype != null) {
+        if (currentDoctype != null && doctype != null) {
             replaceChild(doctype, currentDoctype);
-        } else {
+        } else if (currentDoctype != null) {
+            removeChild(currentDoctype);
+        } else if (doctype != null) {
             insertChildren(0, doctype);
         }
     }

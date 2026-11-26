@@ -1049,4 +1049,15 @@ class MiscBugsTest {
         var doc = JFiveParse.parse("<!DOCTYPE ÀBc><div>");
         Assertions.assertEquals("Àbc", doc.getDoctype().getNodeName());
     }
+
+    // setting a doctype to null remove it from the document
+    @Test
+    void setDoctypeToNull() {
+        var doc = JFiveParse.parse("<!DOCTYPE ÀBc><div>");
+        var doctype = doc.getDoctype();
+        Assertions.assertSame(doc, doctype.getParentNode());
+        doc.setDoctype(null);
+        Assertions.assertNull(doc.getDoctype());
+        Assertions.assertNull(doctype.getParentNode());
+    }
 }
