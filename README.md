@@ -145,7 +145,7 @@ The &ntities; are by default (and by specification) parsed and interpreted.
 This behavior can be disabled by:
 
   - passing the enum "Option.DONT_TRANSFORM_ENTITIES" to the Parser
-  - when calling Node.get{Inner,Outer}HTML(), pass the enum 
+  - when calling Element.get{Inner,Outer}HTML(), pass the enum 
     "Option.DONT_TRANSFORM_ENTITIES" for disabling the escaping.
     It's possible that something will be wrong in the generated document.
     
